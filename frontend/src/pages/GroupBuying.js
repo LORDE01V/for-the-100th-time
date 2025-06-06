@@ -147,7 +147,6 @@ function GroupBuying() {
   };
 
   // Color mode values
-  const textColor = useColorModeValue('gray.800', 'whiteAlpha.900');
   const headingColor = useColorModeValue('gray.800', 'white');
   const inputBgColor = useColorModeValue('white', 'gray.800');
   const inputBorderColor = useColorModeValue('gray.300', 'gray.600');
@@ -289,7 +288,7 @@ function GroupBuying() {
           <AnimatePresence mode="wait">
              <MotionText
                 key={animationKey}
-                color={textColor}
+                color={headingColor}
                 fontSize="lg"
                 textAlign="center"
                 mb={6}
@@ -342,7 +341,7 @@ function GroupBuying() {
 
                     <VStack spacing={3} align="stretch">
                       <HStack justify="space-between">
-                        <Text color={textColor}>
+                        <Text color={headingColor}>
                           <Icon as={FaTag} mr={2} />
                           Original: R{campaign.originalPrice}
                         </Text>
@@ -357,11 +356,11 @@ function GroupBuying() {
                         Group Price: R{campaign.groupPrice}
                       </Text>
 
-                      <Text color={textColor} noOfLines={2}>{campaign.description}</Text>
+                      <Text color={headingColor} noOfLines={2}>{campaign.description}</Text>
 
                       <HStack>
                         <Icon as={FaUsers} />
-                        <Text color={textColor}>
+                        <Text color={headingColor}>
                           {campaign.participants} of {campaign.goal} joined
                         </Text>
                       </HStack>
@@ -370,7 +369,7 @@ function GroupBuying() {
 
                       <HStack>
                         <Icon as={FaClock} />
-                        <Text color={textColor}>{campaign.timeLeft}</Text>
+                        <Text color={headingColor}>{campaign.timeLeft}</Text>
                       </HStack>
 
                       <Button
