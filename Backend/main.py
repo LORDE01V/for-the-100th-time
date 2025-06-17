@@ -24,6 +24,11 @@ from support import (
     create_payment_methods_table
 )
 from werkzeug.utils import secure_filename
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+from typing import Optional
 
 # Load environment variables (same as support.py)
 load_dotenv()
@@ -202,155 +207,103 @@ def login():
             if 'cur' in locals(): cur.close()
             conn.close()
 
-@app.route('/api/auth/change-password', methods=['POST'])
-@jwt_required()
-def change_password():
+# ================= FASTAPI APP =================
+fastapi_app = FastAPI(title="Lumina Solar FastAPI")
+
+# CORS (match Flask's config)
+fastapi_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# JWT (compatible with Flask's tokens)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/fastapi/auth/login")
+
+# --- FastAPI Models ---
+class UserRegister(BaseModel):
+    name: str
+    email: str
+    password: str
+    phone: Optional[str] = None
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+# --- FastAPI Routes ---
+@fastapi_app.post("/fastapi/auth/register")
+async def fastapi_register(user: UserRegister):
+    """FastAPI version of /api/auth/register"""
+    conn = None
     try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        old_password = str(data.get('oldPassword', ''))
-        new_password = str(data.get('newPassword', ''))
-
-        if not old_password or not new_password:
-            return jsonify({'success': False, 'message': 'Both old and new passwords are required'}), 400
-
         conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+        with conn.cursor() as cur:
+            # Check if email exists
+            cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
+            if cur.fetchone():
+                raise HTTPException(status_code=400, detail="Email already registered")
 
-        cur = conn.cursor()
+            # Hash password and insert
+            hashed_password = generate_password_hash(user.password)
+            cur.execute(
+                'INSERT INTO users (email, password_hash, full_name) VALUES (%s, %s, %s) RETURNING id',
+                (user.email, hashed_password, user.name)
+            )
+            user_id = cur.fetchone()[0]
+            conn.commit()
 
-        # Get current password hash
-        cur.execute('SELECT password_hash FROM users WHERE id = %s', (user_id,))
-        result = cur.fetchone()
-        
-        if not result:
-            return jsonify({'success': False, 'message': 'User not found'}), 404
-
-        current_hash = result[0]
-
-        # Verify old password
-        if not check_password_hash(current_hash, old_password):
-            return jsonify({'success': False, 'message': 'Current password is incorrect'}), 401
-
-        # Hash and update new password
-        new_hash = generate_password_hash(new_password)
-        cur.execute('UPDATE users SET password_hash = %s WHERE id = %s', (new_hash, user_id))
-        conn.commit()
-
-        return jsonify({'success': True, 'message': 'Password updated successfully'})
+            # Create token
+            access_token = create_access_token(identity=str(user_id))
+            
+            return {
+                'success': True,
+                'token': access_token,
+                'user': {
+                    'id': user_id,
+                    'name': user.name,
+                    'email': user.email
+                }
+            }
 
     except Exception as e:
-        print(f"Password change error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to change password'}), 500
+        print(f"FastAPI Registration error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Registration failed")
     finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
+        if conn:
             conn.close()
 
-# Settings routes
-@app.route('/api/settings', methods=['GET'])
-@jwt_required()
-def get_user_settings():
+@fastapi_app.post("/fastapi/auth/login")
+async def fastapi_login(user: UserLogin):
+    """FastAPI version of /api/auth/login"""
+    conn = None
     try:
-        user_id = get_jwt_identity()
         conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+        with conn.cursor() as cur:
+            cur.execute(
+                'SELECT id, email, password_hash, full_name FROM users WHERE email = %s',
+                (user.email,)
+            )
+            db_user = cur.fetchone()
 
-        cur = conn.cursor()
-        
-        # Get user settings or create default if not exists
-        cur.execute('''
-            INSERT INTO user_settings (user_id)
-            VALUES (%s)
-            ON CONFLICT (user_id) DO NOTHING
-            RETURNING receive_sms, receive_email, language
-        ''', (user_id,))
-        
-        if cur.rowcount == 0:
-            # If no insert happened, get existing settings
-            cur.execute('''
-                SELECT receive_sms, receive_email, language
-                FROM user_settings
-                WHERE user_id = %s
-            ''', (user_id,))
-        
-        settings = cur.fetchone()
-        conn.commit()
-        
-        return jsonify({
-            'success': True,
-            'settings': {
-                'receiveSms': settings[0],
-                'receiveEmail': settings[1],
-                'language': settings[2]
-            }
-        })
-
+            if db_user and check_password_hash(db_user[2], user.password):
+                token = create_access_token(identity=str(db_user[0]))
+                return {
+                    "success": True,
+                    "token": token,
+                    "user": {
+                        "id": db_user[0],
+                        "name": db_user[3],
+                        "email": db_user[1]
+                    }
+                }
+            raise HTTPException(status_code=401, detail="Invalid credentials")
     except Exception as e:
-        print(f"Get settings error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to get settings'}), 500
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            conn.close()
-
-@app.route('/api/settings', methods=['PUT'])
-@jwt_required()
-def update_user_settings():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        # Extract and validate settings
-        receive_sms = bool(data.get('receiveSms', False))
-        receive_email = bool(data.get('receiveEmail', False))
-        language = str(data.get('language', 'en'))
-
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Update or insert settings
-        cur.execute('''
-            INSERT INTO user_settings (user_id, receive_sms, receive_email, language)
-            VALUES (%s, %s, %s, %s)
-            ON CONFLICT (user_id) DO UPDATE
-            SET receive_sms = EXCLUDED.receive_sms,
-                receive_email = EXCLUDED.receive_email,
-                language = EXCLUDED.language,
-                updated_at = CURRENT_TIMESTAMP
-            RETURNING receive_sms, receive_email, language
-        ''', (user_id, receive_sms, receive_email, language))
-        
-        settings = cur.fetchone()
-        conn.commit()
-        
-        return jsonify({
-            'success': True,
-            'settings': {
-                'receiveSms': settings[0],
-                'receiveEmail': settings[1],
-                'language': settings[2]
-            }
-        })
-
-    except Exception as e:
-        print(f"Update settings error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to update settings'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
+        if conn:
             conn.close()
 
 # Add these profile endpoints
@@ -369,7 +322,6 @@ def get_profile():
             # Get user profile data
             cur.execute('''
                 SELECT p.full_name, p.email_address, p.phone_number, p.address, p.energy_motto,
-                       p.profile_picture_url,
                        s.facebook_profile_url, s.twitter_profile_url, s.instagram_profile_url
                 FROM user_profiles p
                 LEFT JOIN social_links s ON p.user_id = s.user_id
@@ -387,11 +339,10 @@ def get_profile():
                         'phone_number': profile[2],
                         'address': profile[3],
                         'energy_motto': profile[4] if profile[4] is not None else '',
-                        'profilePictureUrl': profile[5],
                         'social_accounts': {
-                            'facebook_profile_url': profile[6],
-                            'twitter_profile_url': profile[7],
-                            'instagram_profile_url': profile[8]
+                            'facebook_profile_url': profile[5],
+                            'twitter_profile_url': profile[6],
+                            'instagram_profile_url': profile[7]
                         }
                     }
                 })
@@ -405,7 +356,6 @@ def get_profile():
                         'phone_number': '',
                         'address': '',
                         'energy_motto': '',
-                        'profilePictureUrl': None,
                         'social_accounts': {
                             'facebook_profile_url': None,
                             'twitter_profile_url': None,
@@ -487,590 +437,15 @@ def update_profile():
             ''', (user_id, facebook_url, twitter_url, instagram_url))
             
             conn.commit()
-            
-            if not profile:
-                return jsonify({'success': False, 'message': 'Failed to update profile'}), 500
 
-            return jsonify({
-                'success': True,
-                'profile': {
-                    'full_name': profile[0],
-                    'email_address': profile[1],
-                    'phone_number': profile[2],
-                    'address': profile[3],
-                    'energy_motto': profile[4],
-                    'social_accounts': {
-                        'facebook_profile_url': facebook_url,
-                        'twitter_profile_url': twitter_url,
-                        'instagram_profile_url': instagram_url
-                    }
-                }
-            })
-
-        except Exception as e:
-            conn.rollback()
-            print(f"Database error in update_profile: {str(e)}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
+        return {
+            "success": True,
+            "user": {"id": user_data[0], "email": user_data[1], "name": user_data[2]}
+        }
     except Exception as e:
-        print(f"Update profile error: {str(e)}")
-        return jsonify({'success': False, 'message': f'Failed to update profile: {str(e)}'}), 500
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            conn.close()
-
-# Add these new routes to main.py
-
-@app.route('/api/expenses', methods=['GET'])
-@jwt_required()
-def get_expenses():
-    try:
-        user_id = get_jwt_identity()
-        print(f"=== Fetching expenses for user {user_id} ===")
-
-        try:
-            expenses_list = get_user_expenses(user_id)
-            print(f"Successfully fetched {len(expenses_list)} expenses")
-            
-            return jsonify({
-                'success': True,
-                'expenses': expenses_list
-            })
-
-        except Exception as e:
-            print(f"Error fetching expenses: {str(e)}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Unexpected error in expenses endpoint: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': 'Internal server error'}), 500
-
-@app.route('/api/expenses', methods=['POST'])
-@jwt_required()
-def create_expense():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-
-        # Debug logging
-        print("=== Expense Creation Request Debug ===")
-        print(f"User ID: {user_id}")
-        print(f"Request Data: {data}")
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        amount = data.get('amount')
-        purpose = data.get('purpose')
-        type = data.get('type')
-
-        # Validate required fields
-        if not all([amount, purpose, type]):
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-
-        # Validate amount
-        try:
-            amount = float(amount)
-            if amount <= 0:
-                return jsonify({'success': False, 'message': 'Amount must be greater than 0'}), 400
-        except (TypeError, ValueError) as e:
-            print(f"Amount validation error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Invalid amount format'}), 400
-
-        try:
-            expense_id = create_expense(user_id, amount, purpose, type)
-            print(f"Expense created successfully with ID: {expense_id}")
-            
-            return jsonify({
-                'success': True,
-                'expense_id': expense_id
-            }), 201
-
-        except Exception as e:
-            print(f"Error creating expense: {str(e)}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Unexpected error in expense creation: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': 'Internal server error'}), 500
-
-@app.route('/api/topup', methods=['POST'])
-@jwt_required()
-def process_top_up():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-
-        # Debug logging
-        print("=== Top-up Request Debug ===")
-        print(f"User ID: {user_id}")
-        print(f"Request Data: {data}")
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        amount = data.get('amount')
-        type = data.get('type')
-        promo_code = data.get('promoCode')
-        voucher_code = data.get('voucherCode')
-
-        # Debug logging
-        print(f"Parsed data - Amount: {amount}, Type: {type}")
-        print(f"Promo Code: {promo_code}, Voucher Code: {voucher_code}")
-
-        # Validate amount
-        try:
-            amount = float(amount)
-            if amount <= 0:
-                return jsonify({'success': False, 'message': 'Amount must be greater than 0'}), 400
-        except (TypeError, ValueError) as e:
-            print(f"Amount validation error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Invalid amount format'}), 400
-
-        if not type:
-            return jsonify({'success': False, 'message': 'Transaction type is required'}), 400
-
-        try:
-            result = process_top_up_transaction(user_id, amount, type, promo_code, voucher_code)
-            print(f"Top-up successful - Result: {result}")
-            
-            # Ensure we're sending the correct property names
-            return jsonify({
-                'success': True,
-                'top_up_id': result['top_up_id'],
-                'new_balance': float(result['new_balance'])  # Make sure this matches the frontend expectation
-            }), 201
-
-        except Exception as e:
-            print(f"Error in process_top_up_transaction: {str(e)}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Unexpected error in top-up endpoint: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': 'Internal server error'}), 500
-
-@app.route('/api/topup/balance', methods=['GET'])
-@jwt_required()
-def get_balance():
-    try:
-        user_id = get_jwt_identity()
-        balance = get_user_balance(user_id)
-        
-        return jsonify({
-            'success': True,
-            'balance': float(balance)
-        })
-
-    except Exception as e:
-        print(f"Error fetching balance: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to fetch balance'}), 500
-
-@app.route('/api/auto-topup/settings', methods=['GET'])
-@jwt_required()
-def get_auto_top_up_settings():
-    try:
-        user_id = get_jwt_identity()
-        print(f"=== Getting auto top-up settings for user {user_id} ===")
-        
-        # Debug log the user_id
-        print(f"User ID from JWT: {user_id}")
-        
-        # Use the renamed function
-        settings = get_user_auto_top_up_settings(user_id)
-        print(f"Settings found: {settings}")
-        
-        # If no settings exist, return empty settings instead of None
-        if settings is None:
-            return jsonify({
-                'success': True,
-                'settings': {
-                    'min_balance': 0,
-                    'top_up_amount': 0,
-                    'frequency': 'weekly',
-                    'is_enabled': False
-                }
-            })
-        
-        return jsonify({
-            'success': True,
-            'settings': settings
-        })
-
-    except Exception as e:
-        print(f"Error getting auto top-up settings: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': f'Failed to get auto top-up settings: {str(e)}'}), 500
-
-@app.route('/api/auto-topup/settings', methods=['POST'])
-@jwt_required()
-def save_auto_top_up_settings():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-
-        print(f"=== Saving auto top-up settings for user {user_id} ===")
-        print(f"Request data: {data}")
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        # Extract and validate the data
-        try:
-            min_balance = float(data.get('minBalance'))
-            top_up_amount = float(data.get('autoTopUpAmount'))
-            frequency = data.get('autoTopUpFrequency')
-        except (TypeError, ValueError) as e:
-            print(f"Data validation error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Invalid data format'}), 400
-
-        if not all([min_balance, top_up_amount, frequency]):
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-
-        if min_balance <= 0 or top_up_amount <= 0:
-            return jsonify({'success': False, 'message': 'Amounts must be greater than 0'}), 400
-
-        if frequency not in ['weekly', 'monthly', 'quarterly']:
-            return jsonify({'success': False, 'message': 'Invalid frequency'}), 400
-
-        try:
-            settings = save_user_auto_top_up_settings(user_id, min_balance, top_up_amount, frequency)
-            print(f"Settings saved successfully: {settings}")
-            
-            return jsonify({
-                'success': True,
-                'settings': settings
-            })
-
-        except Exception as e:
-            print(f"Error saving settings: {str(e)}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Unexpected error in save settings endpoint: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': 'Internal server error'}), 500
-
-@app.route('/api/auto-topup/toggle', methods=['POST'])
-@jwt_required()
-def toggle_auto_top_up():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        is_enabled = data.get('isEnabled')
-        if is_enabled is None:
-            return jsonify({'success': False, 'message': 'Missing isEnabled field'}), 400
-
-        success = toggle_auto_top_up(user_id, is_enabled)
-        
-        return jsonify({
-            'success': True,
-            'isEnabled': is_enabled
-        })
-
-    except Exception as e:
-        print(f"Error toggling auto top-up: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to toggle auto top-up'}), 500
-
-@app.route('/api/auth/delete-account', methods=['POST'])
-@jwt_required()
-def delete_account():
-    try:
-        user_id = get_jwt_identity()
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Start transaction
-        cur.execute("BEGIN")
-        
-        try:
-            # Delete all user-related data in the correct order (due to foreign key constraints)
-            # Delete from user_profiles
-            cur.execute('DELETE FROM user_profiles WHERE user_id = %s', (user_id,))
-            
-            # Delete from user_settings
-            cur.execute('DELETE FROM user_settings WHERE user_id = %s', (user_id,))
-            
-            # Delete from expenses
-            cur.execute('DELETE FROM expenses WHERE user_id = %s', (user_id,))
-            
-            # Delete from top_ups
-            cur.execute('DELETE FROM top_ups WHERE user_id = %s', (user_id,))
-            
-            # Delete from user_balances
-            cur.execute('DELETE FROM user_balances WHERE user_id = %s', (user_id,))
-            
-            # Delete from auto_top_up_settings
-            cur.execute('DELETE FROM auto_top_up_settings WHERE user_id = %s', (user_id,))
-            
-            # Delete from social_links
-            cur.execute('DELETE FROM social_links WHERE user_id = %s', (user_id,))
-            
-            # Delete from solar_systems
-            cur.execute('DELETE FROM solar_systems WHERE user_id = %s', (user_id,))
-            
-            # Delete from energy_usage
-            cur.execute('DELETE FROM energy_usage WHERE user_id = %s', (user_id,))
-            
-            # Delete from environmental_impact
-            cur.execute('DELETE FROM environmental_impact WHERE user_id = %s', (user_id,))
-            
-            # Delete from payment_methods
-            cur.execute('DELETE FROM payment_methods WHERE user_id = %s', (user_id,))
-            
-            # Delete from transactions
-            cur.execute('DELETE FROM transactions WHERE user_id = %s', (user_id,))
-            
-            # Delete from forum_topics
-            cur.execute('DELETE FROM forum_topics WHERE user_id = %s', (user_id,))
-            
-            # Delete from forum_replies
-            cur.execute('DELETE FROM forum_replies WHERE user_id = %s', (user_id,))
-            
-            # Delete from support_tickets
-            cur.execute('DELETE FROM support_tickets WHERE user_id = %s', (user_id,))
-            
-            # Finally, delete the user
-            cur.execute('DELETE FROM users WHERE id = %s', (user_id,))
-            
-            # Commit the transaction
-            conn.commit()
-            
-            return jsonify({
-                'success': True,
-                'message': 'Account deleted successfully'
-            })
-            
-        except Exception as e:
-            # Rollback in case of error
-            conn.rollback()
-            print(f"Error during account deletion: {str(e)}")
-            raise
-            
-    except Exception as e:
-        print(f"Delete account error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to delete account'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            conn.close()
-
-# Forum routes
-@app.route('/api/forum/topics', methods=['GET'])
-@jwt_required()
-def get_forum_topics():
-    try:
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Get all topics with author info and reply count
-        cur.execute('''
-            SELECT 
-                t.id,
-                t.title,
-                t.content,
-                t.created_at,
-                u.full_name as author_name,
-                u.id as author_id,
-                COUNT(r.id) as reply_count,
-                COALESCE(MAX(r.created_at), t.created_at) as last_activity
-            FROM forum_topics t
-            LEFT JOIN users u ON t.user_id = u.id
-            LEFT JOIN forum_replies r ON t.id = r.topic_id
-            GROUP BY t.id, u.full_name, u.id
-            ORDER BY last_activity DESC
-        ''')
-        
-        topics = []
-        for row in cur.fetchall():
-            topics.append({
-                'id': row[0],
-                'title': row[1],
-                'content': row[2],
-                'created_at': row[3].isoformat(),
-                'author': {
-                    'id': row[5],
-                    'name': row[4]
-                },
-                'posts': row[6] + 1,  # Include the original post in count
-                'last_activity': row[7].isoformat()
-            })
-        
-        return jsonify({
-            'success': True,
-            'topics': topics
-        })
-
-    except Exception as e:
-        print(f"Error fetching forum topics: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to fetch forum topics'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            conn.close()
-
-@app.route('/api/forum/topics', methods=['POST'])
-@jwt_required()
-def create_forum_topic():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        title = data.get('title')
-        content = data.get('content')
-
-        if not all([title, content]):
-            return jsonify({'success': False, 'message': 'Title and content are required'}), 400
-
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Create new topic
-        cur.execute('''
-            INSERT INTO forum_topics (user_id, title, content)
-            VALUES (%s, %s, %s)
-            RETURNING id, created_at
-        ''', (user_id, title, content))
-        
-        topic_id, created_at = cur.fetchone()
-        conn.commit()
-        
-        # Get author info
-        cur.execute('SELECT full_name FROM users WHERE id = %s', (user_id,))
-        author_name = cur.fetchone()[0]
-        
-        return jsonify({
-            'success': True,
-            'topic': {
-                'id': topic_id,
-                'title': title,
-                'content': content,
-                'created_at': created_at.isoformat(),
-                'author': {
-                    'id': user_id,
-                    'name': author_name
-                },
-                'posts': 1,
-                'last_activity': created_at.isoformat()
-            }
-        }), 201
-
-    except Exception as e:
-        print(f"Error creating forum topic: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to create forum topic'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            conn.close()
-
-@app.route('/api/forum/topics/<int:topic_id>', methods=['GET'])
-@jwt_required()
-def get_forum_topic(topic_id):
-    try:
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Get topic with author info
-        cur.execute('''
-            SELECT 
-                t.id,
-                t.title,
-                t.content,
-                t.created_at,
-                u.id as author_id,
-                u.full_name as author_name
-            FROM forum_topics t
-            JOIN users u ON t.user_id = u.id
-            WHERE t.id = %s
-        ''', (topic_id,))
-        
-        topic = cur.fetchone()
-        if not topic:
-            return jsonify({'success': False, 'message': 'Topic not found'}), 404
-        
-        # Get all replies for the topic
-        cur.execute('''
-            SELECT 
-                r.id,
-                r.content,
-                r.created_at,
-                u.id as author_id,
-                u.full_name as author_name
-            FROM forum_replies r
-            JOIN users u ON r.user_id = u.id
-            WHERE r.topic_id = %s
-            ORDER BY r.created_at ASC
-        ''', (topic_id,))
-        
-        replies = []
-        for row in cur.fetchall():
-            replies.append({
-                'id': row[0],
-                'content': row[1],
-                'created_at': row[2].isoformat(),
-                'author': {
-                    'id': row[3],
-                    'name': row[4]
-                }
-            })
-        
-        return jsonify({
-            'success': True,
-            'topic': {
-                'id': topic[0],
-                'title': topic[1],
-                'content': topic[2],
-                'created_at': topic[3].isoformat(),
-                'author': {
-                    'id': topic[4],
-                    'name': topic[5]
-                },
-                'replies': replies
-            }
-        })
-
-    except Exception as e:
-        print(f"Error fetching forum topic: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to fetch forum topic'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            conn.close()
+        if conn: conn.close()
 
 @app.route('/api/forum/topics/<int:topic_id>/replies', methods=['POST'])
 @jwt_required()
@@ -1222,28 +597,6 @@ def add_payment_method():
         print("Save payment method result:", result)
 
         if result:
-            # Create notification for successful payment method addition
-            conn = get_db()
-            cur = conn.cursor()
-            try:
-                # Create notification
-                cur.execute('''
-                    INSERT INTO notifications (user_id, title, message, type)
-                    VALUES (%s, %s, %s, %s)
-                ''', (
-                    user_id,
-                    'Payment Method Added',
-                    f'Successfully added a new {payment_data["payment_type"]} payment method.',
-                    'success'
-                ))
-                conn.commit()
-            except Exception as e:
-                print(f"Error creating notification: {str(e)}")
-                conn.rollback()
-            finally:
-                if cur: cur.close()
-                if conn: conn.close()
-
             return jsonify({
                 'success': True,
                 'message': 'Payment method saved successfully',
@@ -1258,160 +611,6 @@ def add_payment_method():
         import traceback
         print("Traceback:", traceback.format_exc())
         return jsonify({'success': False, 'message': str(e)}), 500
-
-@app.route('/api/payment-methods', methods=['GET'])
-@jwt_required()
-def get_payment_methods():
-    try:
-        user_id = get_jwt_identity()
-        payment_methods = fetch_user_payment_methods(user_id)
-        
-        # Format the payment methods for the frontend
-        formatted_methods = []
-        
-        # Check if payment_methods is not None and is iterable
-        if payment_methods:
-            for method in payment_methods:
-                try:
-                    formatted_method = {
-                        'id': method[0],  # Assuming id is the first column
-                        'payment_type': method[1],
-                        'card_number': method[2],
-                        'expiry_date': method[3].strftime('%m/%y') if method[3] else None,
-                        'card_holder_name': method[4],
-                        'is_default': method[5],
-                        'created_at': method[6].isoformat() if method[6] else None  # Add created_at
-                    }
-                    formatted_methods.append(formatted_method)
-                except (IndexError, AttributeError) as e:
-                    print(f"Error formatting payment method: {str(e)}")
-                    continue
-        
-        print("Debug - Formatted payment methods:", formatted_methods)  # Debug log
-        
-        return jsonify({
-            'success': True,
-            'payment_methods': formatted_methods
-        })
-    except Exception as e:
-        print("Error fetching payment methods:", str(e))
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
-
-@app.route('/api/payment-methods/<int:payment_method_id>', methods=['DELETE'])
-@jwt_required()
-def delete_payment_method(payment_method_id):
-    try:
-        user_id = get_jwt_identity()
-        
-        # Get payment method details before deleting
-        conn = get_db()
-        cur = conn.cursor()
-        try:
-            cur.execute('''
-                SELECT payment_type, card_number, card_holder_name 
-                FROM payment_methods 
-                WHERE id = %s AND user_id = %s
-            ''', (payment_method_id, user_id))
-            payment_method = cur.fetchone()
-            
-            if not payment_method:
-                return jsonify({
-                    'success': False,
-                    'message': 'Payment method not found or could not be deleted'
-                }), 404
-            
-            # Use the renamed function to delete the payment method
-            result = remove_payment_method(payment_method_id, user_id)
-            
-            if result:
-                # Create notification for successful payment method deletion
-                cur.execute('''
-                    INSERT INTO notifications (user_id, title, message, type)
-                    VALUES (%s, %s, %s, %s)
-                ''', (
-                    user_id,
-                    'Payment Method Removed',
-                    f'Successfully removed your {payment_method[0]} payment method ending in {payment_method[1][-4:] if payment_method[1] else "N/A"}.',
-                    'info'
-                ))
-                conn.commit()
-                
-                return jsonify({
-                    'success': True,
-                    'message': 'Payment method deleted successfully'
-                })
-            else:
-                return jsonify({
-                    'success': False,
-                    'message': 'Payment method not found or could not be deleted'
-                }), 404
-
-        except Exception as e:
-            conn.rollback()
-            raise e
-        finally:
-            if cur: cur.close()
-            if conn: conn.close()
-
-    except Exception as e:
-        print(f"Error deleting payment method: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
-
-@app.route('/api/payment-methods/<int:payment_method_id>/default', methods=['PUT'])
-@jwt_required()
-def set_default_payment_method(payment_method_id):
-    try:
-        user_id = get_jwt_identity()
-        
-        # First, unset all default payment methods for this user
-        conn = get_db()
-        cur = conn.cursor()
-        
-        # Update all payment methods to not be default
-        cur.execute('''
-            UPDATE payment_methods 
-            SET is_default = FALSE 
-            WHERE user_id = %s
-        ''', (user_id,))
-        
-        # Set the selected payment method as default
-        cur.execute('''
-            UPDATE payment_methods 
-            SET is_default = TRUE 
-            WHERE id = %s AND user_id = %s
-            RETURNING id
-        ''', (payment_method_id, user_id))
-        
-        result = cur.fetchone()
-        conn.commit()
-        
-        if result:
-            return jsonify({
-                'success': True,
-                'message': 'Default payment method updated successfully'
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': 'Payment method not found'
-            }), 404
-
-    except Exception as e:
-        print(f"Error setting default payment method: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            conn.close()
 
 # Add debug logging
 @app.before_request
