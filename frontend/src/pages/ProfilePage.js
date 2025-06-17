@@ -23,11 +23,15 @@ import {
   CardHeader,
   CardBody,
   HStack, // This line is essential for the HStack component to be defined
+  Select,
+  Divider,
+  Icon,
 } from '@chakra-ui/react';
 
 // Import icons
 // Added import for FaArrowLeft from react-icons/fa
 import { FaArrowLeft } from 'react-icons/fa';
+import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 
 // Define API base URL constant
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -38,20 +42,29 @@ function ProfilePage() {
 
   // State for form fields
   const [profileData, setProfileData] = useState({
-    name: '',
-    email: '',
-    phone: '',
+    full_name: '',
+    email_address: '',
+    phone_number: '',
     address: '',
-    bio: '',
-    socialAccounts: {
-      facebook: '',
-      twitter: '',
-      instagram: '',
-    },
-    profilePictureUrl: null,
+    energy_motto: '',
+    social_accounts: {
+      facebook_profile_url: '',
+      twitter_profile_url: '',
+      instagram_profile_url: ''
+    }
   });
+  console.log('Initial profileData state:', profileData);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false); // Loading state for saving account changes
+
+  // Add new state for payment methods
+  const [paymentMethods, setPaymentMethods] = useState({
+    type: '',
+    cardNumber: '',
+    expiryDate: '',
+    cardHolderName: '',
+    isDefault: false
+  });
 
   const user = auth.getCurrentUser(); // Get current user data from localStorage
 
@@ -74,8 +87,22 @@ function ProfilePage() {
   // Define the spinner color using useColorModeValue at the top level:
   const spinnerColor = useColorModeValue('blue.500', 'blue.300'); // Define the spinner color here
 
+  const [profileStatus, setProfileStatus] = useState(null);
+
+  const mutedTextColor = useColorModeValue('gray.600', 'gray.400');
+  const inputFocusBorderColor = useColorModeValue('blue.500', 'blue.300');
+  const successIconColor = useColorModeValue('green.500', 'green.500');
+  const warningIconColor = useColorModeValue('red.500', 'red.500');
+  const successTextColor = useColorModeValue('green.500', 'green.500');
+  const warningTextColor = useColorModeValue('red.500', 'red.500');
+
+  const [socialAccountsStatus, setSocialAccountsStatus] = useState(null);
+
+  // Add a loading state
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Modify the useEffect to only fetch data once on mount
   useEffect(() => {
-    // Redirect if user is not logged in (should be handled by ProtectedRoute too, but good check)
     if (!user) {
       navigate('/login');
       toast({
@@ -88,55 +115,59 @@ function ProfilePage() {
       return;
     }
 
-    // Populate form fields with current user data
-    setProfileData({
-      name: user.name || '',
-      email: user.email || '',
-      phone: user.phone || '',
-      address: user.address || '',
-      bio: user.bio || '',
-      socialAccounts: {
-        facebook: user.socialAccounts?.facebook || '',
-        twitter: user.socialAccounts?.twitter || '',
-        instagram: user.socialAccounts?.instagram || '',
-      },
-      profilePictureUrl: user.profilePictureUrl || null,
-    });
+    fetchProfileData();
+  }, [user, navigate, toast]); // Only depend on user, navigate, and toast
 
-  }, [user, navigate, toast]); // Re-run effect if user or navigate changes
-
-  // Handler for saving account changes (currently just logs and shows toast)
-  const handleSaveChanges = async () => {
-    setIsSaving(true);
-    const formData = new FormData();
-
-    // Append text fields
-    formData.append('name', profileData.name);
-    formData.append('email', profileData.email);
-    formData.append('phone', profileData.phone);
-    formData.append('address', profileData.address);
-    formData.append('bio', profileData.bio);
-    formData.append('facebook', profileData.socialAccounts.facebook);
-    formData.append('twitter', profileData.socialAccounts.twitter);
-    formData.append('instagram', profileData.socialAccounts.instagram);
-
-    // Append profile picture file if selected
-    if (profilePictureFile) {
-      formData.append('profilePicture', profilePictureFile);
-    }
-
+  const fetchProfileData = async () => {
     try {
-      // Replace with your actual backend endpoint to update profile data
-      const response = await axios.put(`${API_BASE_URL}/api/profile`, formData, {
+      setIsLoading(true);
+      const response = await axios.get(`${API_BASE_URL}/api/profile`, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Important for file uploads
-          Authorization: `Bearer ${auth.getToken()}`, // Include auth token
+          Authorization: `Bearer ${auth.getToken()}`,
         },
       });
+      
+      if (response.data.success) {
+        setProfileData(response.data.profile);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch profile data.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    setIsSaving(true);
+    setProfileStatus(null);
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/api/profile`,
+        {
+          ...profileData,
+          social_accounts: {
+            facebook_profile_url: profileData.social_accounts.facebook_profile_url || '',
+            twitter_profile_url: profileData.social_accounts.twitter_profile_url || '',
+            instagram_profile_url: profileData.social_accounts.instagram_profile_url || ''
+          }
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${auth.getToken()}`,
+          },
+        }
+      );
 
       if (response.data.success) {
-        // Update the local user object (in auth service or localStorage) if needed
-        // For now, we'll just show success and refetch
+        setProfileData(response.data.profile);
         toast({
           title: 'Profile updated.',
           description: 'Your profile information has been saved.',
@@ -144,17 +175,7 @@ function ProfilePage() {
           duration: 3000,
           isClosable: true,
         });
-         // Refetch data to display the new profile picture URL if uploaded
-        fetchProfileData();
-
-      } else {
-        toast({
-          title: 'Update failed.',
-          description: response.data.message || 'An error occurred while saving.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
+        setProfileStatus({ status: 'success', message: 'Profile updated successfully' });
       }
     } catch (error) {
       console.error('Error saving profile:', error);
@@ -165,48 +186,19 @@ function ProfilePage() {
         duration: 5000,
         isClosable: true,
       });
+      setProfileStatus({ status: 'error', message: 'Failed to update profile' });
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  // Function to fetch profile data from backend
-  const fetchProfileData = async () => {
-    try {
-      // Replace with your actual backend endpoint to get profile data
-      const response = await axios.get(`${API_BASE_URL}/api/profile`, {
-        headers: {
-          Authorization: `Bearer ${auth.getToken()}`, // Include auth token
-        },
-      });
-      // Assuming the backend returns profile data including bio, social, and profilePictureUrl
-      setProfileData(prev => ({
-        ...prev,
-        ...response.data, // Merge fetched data with existing state (keeps name/email from auth)
-      }));
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-      // Optionally show an error toast
+      setTimeout(() => setProfileStatus(null), 5000);
     }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfileData({
-      ...profileData,
+    setProfileData(prev => ({
+      ...prev,
       [name]: value,
-    });
-  };
-
-  const handleSocialInputChange = (e) => {
-    const { name, value } = e.target;
-    setProfileData({
-      ...profileData,
-      socialAccounts: {
-        ...profileData.socialAccounts,
-        [name]: value,
-      },
-    });
+    }));
   };
 
   const handleProfilePictureChange = (e) => {
@@ -224,6 +216,146 @@ function ProfilePage() {
        // Optional: Revert to previous image if file selection is cancelled
       //  setProfileData(prev => ({ ...prev, profilePictureUrl: user?.profilePictureUrl || null }));
     }
+  };
+
+  // Add handler for payment method changes
+  const handlePaymentMethodChange = (e) => {
+    const { name, value } = e.target;
+    setPaymentMethods(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Add this validation function
+  const validatePaymentMethod = () => {
+    const errors = {};
+    
+    if (!paymentMethods.type) {
+      errors.type = 'Payment type is required';
+    }
+    
+    if (!paymentMethods.cardNumber) {
+      errors.cardNumber = 'Card number is required';
+    } else if (!/^\d{16}$/.test(paymentMethods.cardNumber.replace(/\s/g, ''))) {
+      errors.cardNumber = 'Invalid card number (must be 16 digits)';
+    }
+    
+    if (!paymentMethods.expiryDate) {
+      errors.expiryDate = 'Expiry date is required';
+    } else if (!/^(0[1-9]|1[0-2])\/([0-9]{2})$/.test(paymentMethods.expiryDate)) {
+      errors.expiryDate = 'Invalid expiry date (MM/YY)';
+    }
+    
+    if (!paymentMethods.cardHolderName) {
+      errors.cardHolderName = 'Card holder name is required';
+    }
+    
+    return errors;
+  };
+
+  // Update the handleSavePaymentMethod function with more detailed logging
+  const handleSavePaymentMethod = async () => {
+    // Add validation
+    const errors = validatePaymentMethod();
+    if (Object.keys(errors).length > 0) {
+      toast({
+        title: 'Validation Error',
+        description: Object.values(errors)[0],
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      // Log the exact data being sent
+      console.log('Sending payment method data:', {
+        type: paymentMethods.type,
+        cardNumber: paymentMethods.cardNumber,
+        expiryDate: paymentMethods.expiryDate,
+        cardHolderName: paymentMethods.cardHolderName,
+        isDefault: paymentMethods.isDefault
+      });
+
+      // Log the API URL and headers
+      console.log('API URL:', `${API_BASE_URL}/api/payment-methods`);
+      console.log('Auth Token:', auth.getToken());
+
+      const response = await axios.post(
+        `${API_BASE_URL}/api/payment-methods`,
+        {
+          type: paymentMethods.type,
+          cardNumber: paymentMethods.cardNumber,
+          expiryDate: paymentMethods.expiryDate,
+          cardHolderName: paymentMethods.cardHolderName,
+          isDefault: paymentMethods.isDefault
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${auth.getToken()}`,
+          },
+        }
+      );
+
+      console.log('Server response:', response.data);
+
+      if (response.data.success) {
+        toast({
+          title: 'Payment method saved.',
+          description: 'Your payment method has been saved successfully.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        // Reset form
+        setPaymentMethods({
+          type: '',
+          cardNumber: '',
+          expiryDate: '',
+          cardHolderName: '',
+          isDefault: false
+        });
+      }
+    } catch (error) {
+      // Detailed error logging
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        headers: error.response?.headers,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers,
+          data: error.config?.data
+        }
+      });
+      
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to save payment method. Please try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSocialInputChange = (e) => {
+    const { name, value } = e.target;
+    setProfileData(prev => ({
+      ...prev,
+      social_accounts: {
+        ...prev.social_accounts,
+        [`${name}_profile_url`]: value
+      }
+    }));
   };
 
   if (!user) {
@@ -286,7 +418,7 @@ function ProfilePage() {
                <VStack spacing={4} align="center">
                  <Avatar
                    size="xl"
-                   name={profileData.name}
+                   name={profileData.full_name}
                    src={profileData.profilePictureUrl || ''}
                    bg={avatarBg}
                    color={avatarColor}
@@ -328,35 +460,35 @@ function ProfilePage() {
              </CardHeader>
              <CardBody>
                <VStack spacing={4} as="form">
-                 <FormControl id="name">
+                 <FormControl id="full_name">
                    <FormLabel>Full Name</FormLabel>
                    <Input
-                     name="name"
-                     value={profileData.name}
+                     name="full_name"
+                     value={profileData.full_name}
                      onChange={handleInputChange}
                      bg={inputBgColor}
                      borderColor={inputBorderColor}
                    />
                  </FormControl>
 
-                 <FormControl id="email">
+                 <FormControl id="email_address">
                    <FormLabel>Email Address</FormLabel>
                    <Input
-                     name="email"
+                     name="email_address"
                      type="email"
-                     value={profileData.email}
+                     value={profileData.email_address}
                      onChange={handleInputChange}
                      bg={inputBgColor}
                      borderColor={inputBorderColor}
                    />
                  </FormControl>
 
-                 <FormControl id="phone">
+                 <FormControl id="phone_number">
                    <FormLabel>Phone Number</FormLabel>
                    <Input
                      type="tel"
-                     value={profileData.phone}
-                     onChange={handleInputChange}
+                     value={profileData.phone_number}
+                     isReadOnly
                      bg={inputBgColor}
                      borderColor={inputBorderColor}
                    />
@@ -367,68 +499,68 @@ function ProfilePage() {
                    <Input
                      type="text"
                      value={profileData.address}
-                     onChange={handleInputChange}
+                     isReadOnly
                      bg={inputBgColor}
                      borderColor={inputBorderColor}
+                   />
+                 </FormControl>
+
+                 <FormControl id="energy_motto">
+                   <FormLabel>Energy Motto</FormLabel>
+                   <Input
+                     type="text"
+                     value={profileData.energy_motto || ''}
+                     isReadOnly
+                     bg={inputBgColor}
+                     borderColor={inputBorderColor}
+                     placeholder="No energy motto set"
                    />
                  </FormControl>
                </VStack>
              </CardBody>
            </Card>
 
-           {/* Profile Bio Section */}
-           <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-             <CardHeader>
-               <Heading size="md">Profile Bio</Heading>
-             </CardHeader>
-             <CardBody>
-               <FormControl id="bio">
-                 <FormLabel>Your Energy Motto or Goal</FormLabel>
-                 <Textarea
-                   value={profileData.bio}
-                   onChange={handleInputChange}
-                   bg={inputBgColor}
-                   borderColor={inputBorderColor}
-                 />
-               </FormControl>
-             </CardBody>
-           </Card>
-
-           {/* Link Social Accounts Section */}
+           {/* Social Accounts Section */}
            <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
              <CardHeader>
                <Heading size="md">Linked Accounts</Heading>
              </CardHeader>
              <CardBody>
-               <VStack spacing={4} as="form">
+               <VStack spacing={4}>
                  <FormControl id="facebook">
-                   <FormLabel>Facebook Profile URL</FormLabel>
+                   <FormLabel color={mutedTextColor}>Facebook Profile URL</FormLabel>
                    <Input
                      name="facebook"
-                     value={profileData.socialAccounts.facebook}
+                     value={profileData.social_accounts.facebook_profile_url || ''}
                      onChange={handleSocialInputChange}
                      bg={inputBgColor}
                      borderColor={inputBorderColor}
+                     focusBorderColor={inputFocusBorderColor}
+                     placeholder="Enter your Facebook profile URL"
                    />
                  </FormControl>
                  <FormControl id="twitter">
-                   <FormLabel>Twitter Profile URL</FormLabel>
+                   <FormLabel color={mutedTextColor}>Twitter Profile URL</FormLabel>
                    <Input
                      name="twitter"
-                     value={profileData.socialAccounts.twitter}
+                     value={profileData.social_accounts.twitter_profile_url || ''}
                      onChange={handleSocialInputChange}
                      bg={inputBgColor}
                      borderColor={inputBorderColor}
+                     focusBorderColor={inputFocusBorderColor}
+                     placeholder="Enter your Twitter profile URL"
                    />
                  </FormControl>
                  <FormControl id="instagram">
-                   <FormLabel>Instagram Profile URL</FormLabel>
+                   <FormLabel color={mutedTextColor}>Instagram Profile URL</FormLabel>
                    <Input
                      name="instagram"
-                     value={profileData.socialAccounts.instagram}
+                     value={profileData.social_accounts.instagram_profile_url || ''}
                      onChange={handleSocialInputChange}
                      bg={inputBgColor}
                      borderColor={inputBorderColor}
+                     focusBorderColor={inputFocusBorderColor}
+                     placeholder="Enter your Instagram profile URL"
                    />
                  </FormControl>
                </VStack>
@@ -441,7 +573,74 @@ function ProfilePage() {
                <Heading size="md">Saved Payment Methods</Heading>
              </CardHeader>
              <CardBody>
-               <Text color={textColor}>Manage your saved payment methods here (Requires backend implementation).</Text>
+               <VStack spacing={4}>
+                 <FormControl id="paymentType">
+                   <FormLabel>Payment Type</FormLabel>
+                   <Select
+                     name="type"
+                     value={paymentMethods.type}
+                     onChange={handlePaymentMethodChange}
+                     placeholder="Select payment type"
+                     bg={inputBgColor}
+                     borderColor={inputBorderColor}
+                   >
+                     <option value="credit_card">Credit Card</option>
+                     <option value="debit_card">Debit Card</option>
+                     <option value="bank_transfer">Bank Transfer</option>
+                     <option value="e_wallet">E-Wallet</option>
+                   </Select>
+                 </FormControl>
+
+                 {paymentMethods.type && (
+                   <>
+                     <FormControl id="cardNumber">
+                       <FormLabel>Card Number</FormLabel>
+                       <Input
+                         name="cardNumber"
+                         value={paymentMethods.cardNumber}
+                         onChange={handlePaymentMethodChange}
+                         placeholder="Enter card number"
+                         bg={inputBgColor}
+                         borderColor={inputBorderColor}
+                       />
+                     </FormControl>
+
+                     <FormControl id="expiryDate">
+                       <FormLabel>Expiry Date</FormLabel>
+                       <Input
+                         name="expiryDate"
+                         value={paymentMethods.expiryDate}
+                         onChange={handlePaymentMethodChange}
+                         placeholder="MM/YY"
+                         bg={inputBgColor}
+                         borderColor={inputBorderColor}
+                       />
+                     </FormControl>
+
+                     <FormControl id="cardHolderName">
+                       <FormLabel>Card Holder Name</FormLabel>
+                       <Input
+                         name="cardHolderName"
+                         value={paymentMethods.cardHolderName}
+                         onChange={handlePaymentMethodChange}
+                         placeholder="Enter card holder name"
+                         bg={inputBgColor}
+                         borderColor={inputBorderColor}
+                       />
+                     </FormControl>
+
+                     <Button
+                       colorScheme="blue"
+                       onClick={handleSavePaymentMethod}
+                       isLoading={isSaving}
+                       loadingText="Saving..."
+                       width="full"
+                     >
+                       Save Payment Method
+                     </Button>
+                   </>
+                 )}
+               </VStack>
              </CardBody>
            </Card>
 

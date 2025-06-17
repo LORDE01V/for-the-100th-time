@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api';
+import { auth, expenses } from '../services/api';
 
 // Import Chakra UI Components
 import {
@@ -30,23 +30,16 @@ function ExpensesPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const user = auth.getCurrentUser();
+  const [expensesList, setExpensesList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Color mode values
   const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const textColor = useColorModeValue('gray.600', 'gray.400');
   const headingColor = useColorModeValue('gray.800', 'white');
   const tableColor = useColorModeValue('gray.800', 'white');
   const tableHeaderColor = useColorModeValue('gray.600', 'gray.300');
-
-  // Define spinner color if not already defined globally or in a theme
   const spinnerColor = useColorModeValue('blue.500', 'blue.300');
-
-  // Dummy expense data
-  const dummyExpenses = [
-    { id: 1, date: '2023-10-26', amount: 150.00, purpose: 'October Energy Bill' },
-    { id: 2, date: '2023-11-15', amount: 220.50, purpose: 'November Energy Bill' },
-    { id: 3, date: '2023-12-05', amount: 180.75, purpose: 'December Energy Bill' },
-  ];
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -61,6 +54,38 @@ function ExpensesPage() {
       });
     }
   }, [user, navigate, toast]);
+
+  // Add useEffect to fetch expenses
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await expenses.getAll();
+        console.log('Expenses response:', response); // Debug log
+        
+        if (response.success && Array.isArray(response.expenses)) {
+          setExpensesList(response.expenses);
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (error) {
+        console.error('Error fetching expenses:', error);
+        setError(error.message || 'Failed to fetch expenses');
+        toast({
+          title: 'Error',
+          description: 'Failed to fetch expenses. Please try again.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExpenses();
+  }, [toast]);
 
   if (!user) {
     return (
@@ -116,20 +141,37 @@ function ExpensesPage() {
               </Tr>
             </Thead>
             <Tbody color={tableColor}>
-              {dummyExpenses.map((expense) => (
-                <Tr key={expense.id}>
-                  <Td>{expense.date}</Td>
-                  <Td isNumeric>{expense.amount.toFixed(2)}</Td>
-                  <Td>{expense.purpose}</Td>
+              {isLoading ? (
+                <Tr>
+                  <Td colSpan={3} textAlign="center">
+                    <Spinner size="sm" mr={2} />
+                    Loading expenses...
+                  </Td>
                 </Tr>
-              ))}
+              ) : error ? (
+                <Tr>
+                  <Td colSpan={3} textAlign="center" color="red.500">
+                    {error}
+                  </Td>
+                </Tr>
+              ) : expensesList.length > 0 ? (
+                expensesList.map((expense) => (
+                  <Tr key={expense.id}>
+                    <Td>{new Date(expense.date).toLocaleDateString()}</Td>
+                    <Td isNumeric>R{expense.amount.toFixed(2)}</Td>
+                    <Td>{expense.purpose}</Td>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <Td colSpan={3} textAlign="center">
+                    No expenses recorded yet.
+                  </Td>
+                </Tr>
+              )}
             </Tbody>
           </Table>
         </TableContainer>
-
-        {dummyExpenses.length === 0 && (
-            <Text textAlign="center" mt={8} color={textColor}>No expenses recorded yet.</Text>
-        )}
       </Container>
     </Box>
   );

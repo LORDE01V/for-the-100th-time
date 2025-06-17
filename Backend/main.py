@@ -8,31 +8,60 @@ from datetime import timedelta, datetime
 import secrets
 import os
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional
-import threading
-import uvicorn
-from flask import Blueprint, url_for, session
-from email_utils import send_welcome_email
-from app import create_app
+from support import (
+    get_user_balance,
+    get_user_expenses,
+    create_expense,
+    process_top_up_transaction,
+    get_user_auto_top_up_settings,
+    save_user_auto_top_up_settings,
+    toggle_auto_top_up,
+    create_support_ticket,
+    add_energy_motto_column,
+    save_payment_method
+)
 
 # Load environment variables (same as support.py)
 load_dotenv()
 
 app = Flask(__name__)
 
-# Configuration (use environment variables for secrets in production)
+# Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_hex(32))
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
+app.config['JWT_TOKEN_LOCATION'] = ['headers']
+app.config['JWT_HEADER_NAME'] = 'Authorization'
+app.config['JWT_HEADER_TYPE'] = 'Bearer'
 
 # Initialize extensions
-CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000"]}})
+# Update CORS configuration to:
+# Initialize extensions
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
 jwt = JWTManager(app)
+
+# Add these error handlers
+@jwt.invalid_token_loader
+def invalid_token_callback(error_string):
+    return jsonify({
+        'success': False,
+        'message': 'Invalid token. Please log in again.'
+    }), 401
+
+@jwt.unauthorized_loader
+def unauthorized_callback(error_string):
+    return jsonify({
+        'success': False,
+        'message': 'Missing token. Please log in.'
+    }), 401
 
 # Database connection helper (PostgreSQL)
 def get_db():
@@ -129,18 +158,19 @@ def login():
 
         cur = conn.cursor()
 
-        # Check credentials (PostgreSQL users table)
+        # Check credentials
         cur.execute('SELECT id, email, password_hash, full_name FROM users WHERE email = %s', (email,))
         user = cur.fetchone()
 
-        if user and check_password_hash(user[2], password):  # user[2] = password_hash
-            access_token = create_access_token(identity=user[0])  # user[0] = id
+        if user and check_password_hash(user[2], password):
+            # Create token with user ID as string
+            access_token = create_access_token(identity=str(user[0]))
             return jsonify({
                 'success': True,
                 'token': access_token,
                 'user': {
                     'id': user[0],
-                    'name': user[3],  # full_name
+                    'name': user[3],
                     'email': user[1]
                 }
             })
@@ -154,41 +184,6 @@ def login():
         if 'conn' in locals():
             if 'cur' in locals(): cur.close()
             conn.close()
-
-@flask_app.route('/api/solar/systems', methods=['POST'])
-@jwt_required()
-def flask_create_solar_system():
-    """Handle solar system installations"""
-    current_user = get_jwt_identity()
-    data = request.get_json()
-    # Add validation and call support.py's add_solar_system()
-    # ... implementation ...
-
-@flask_app.route('/api/contracts', methods=['POST'])
-@jwt_required()
-def flask_create_solar_contract():
-    """Handle contract creation"""
-    current_user = get_jwt_identity()
-    data = request.get_json()
-    # Add validation and call support.py's create_contract()
-    # ... implementation ...
-
-@flask_app.route('/api/payments', methods=['POST'])
-@jwt_required()
-def flask_record_payment():
-    """Handle payment processing"""
-    current_user = get_jwt_identity()
-    data = request.get_json()
-    # Add validation and call support.py's record_payment()
-    # ... implementation ...
-
-@flask_app.route('/api/contracts', methods=['GET'])
-@jwt_required()
-def flask_get_contracts():
-    """Get user's solar contracts"""
-    current_user = get_jwt_identity()
-    # Add authorization and call support.py's get_user_contracts()
-    # ... implementation ...
 
 # ================= FASTAPI APP =================
 fastapi_app = FastAPI(title="Lumina Solar FastAPI")
@@ -272,6 +267,5 @@ async def fastapi_login(user: UserLogin):
     finally:
         if conn: conn.close()
 
-# ================= RUN BOTH APPS =================
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
