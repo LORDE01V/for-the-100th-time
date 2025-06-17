@@ -8,6 +8,16 @@ from datetime import timedelta, datetime
 import secrets
 import os
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordBearer
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Optional
+import threading
+import uvicorn
+from flask import Blueprint, url_for, session
+from email_utils import send_welcome_email
+from app import create_app
 
 # Load environment variables (same as support.py)
 load_dotenv()
@@ -145,5 +155,123 @@ def login():
             if 'cur' in locals(): cur.close()
             conn.close()
 
+@flask_app.route('/api/solar/systems', methods=['POST'])
+@jwt_required()
+def flask_create_solar_system():
+    """Handle solar system installations"""
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    # Add validation and call support.py's add_solar_system()
+    # ... implementation ...
+
+@flask_app.route('/api/contracts', methods=['POST'])
+@jwt_required()
+def flask_create_solar_contract():
+    """Handle contract creation"""
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    # Add validation and call support.py's create_contract()
+    # ... implementation ...
+
+@flask_app.route('/api/payments', methods=['POST'])
+@jwt_required()
+def flask_record_payment():
+    """Handle payment processing"""
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    # Add validation and call support.py's record_payment()
+    # ... implementation ...
+
+@flask_app.route('/api/contracts', methods=['GET'])
+@jwt_required()
+def flask_get_contracts():
+    """Get user's solar contracts"""
+    current_user = get_jwt_identity()
+    # Add authorization and call support.py's get_user_contracts()
+    # ... implementation ...
+
+# ================= FASTAPI APP =================
+fastapi_app = FastAPI(title="Lumina Solar FastAPI")
+
+# CORS (match Flask's config)
+fastapi_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# JWT (compatible with Flask's tokens)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/fastapi/auth/login")
+
+# --- FastAPI Models ---
+class UserRegister(BaseModel):
+    name: str
+    email: str
+    password: str
+    phone: Optional[str] = None
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+# --- FastAPI Routes ---
+@fastapi_app.post("/fastapi/auth/register")
+async def fastapi_register(user: UserRegister):
+    """FastAPI version of /api/auth/register"""
+    conn = None
+    try:
+        conn = get_db()
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
+            if cur.fetchone():
+                raise HTTPException(status_code=400, detail="Email exists")
+
+            hashed_pw = generate_password_hash(user.password)
+            cur.execute(
+                """INSERT INTO users (email, password_hash, full_name, phone)
+                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+                (user.email, hashed_pw, user.name, user.phone)
+            )
+            user_data = cur.fetchone()
+            conn.commit()
+
+        return {
+            "success": True,
+            "user": {"id": user_data[0], "email": user_data[1], "name": user_data[2]}
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn: conn.close()
+
+@fastapi_app.post("/fastapi/auth/login")
+async def fastapi_login(user: UserLogin):
+    """FastAPI version of /api/auth/login"""
+    conn = None
+    try:
+        conn = get_db()
+        with conn.cursor() as cur:
+            cur.execute(
+                'SELECT id, email, password_hash, full_name FROM users WHERE email = %s',
+                (user.email,)
+            )
+            db_user = cur.fetchone()
+
+            if db_user and check_password_hash(db_user[2], user.password):
+                token = create_access_token(identity=db_user[0])
+                return {
+                    "success": True,
+                    "token": token,
+                    "user": {"id": db_user[0], "name": db_user[3], "email": db_user[1]}
+                }
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn: conn.close()
+
+# ================= RUN BOTH APPS =================
 if __name__ == '__main__':
     app.run(debug=True)
