@@ -18,8 +18,12 @@ from support import (
     toggle_auto_top_up,
     create_support_ticket,
     add_energy_motto_column,
-    save_payment_method
+    save_payment_method,
+    fetch_user_payment_methods,
+    remove_payment_method,
+    create_payment_methods_table
 )
+from werkzeug.utils import secure_filename
 
 # Load environment variables (same as support.py)
 load_dotenv()
@@ -77,6 +81,19 @@ def get_db():
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
         return None
+
+# Add these constants at the top of your file
+UPLOAD_FOLDER = 'uploads/profile_pictures'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+# Create the upload folder if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Add this near the top of your file, after imports
+create_payment_methods_table()
 
 # Auth routes (updated for PostgreSQL)
 @app.route('/api/auth/register', methods=['POST'])
@@ -352,6 +369,7 @@ def get_profile():
             # Get user profile data
             cur.execute('''
                 SELECT p.full_name, p.email_address, p.phone_number, p.address, p.energy_motto,
+                       p.profile_picture_url,
                        s.facebook_profile_url, s.twitter_profile_url, s.instagram_profile_url
                 FROM user_profiles p
                 LEFT JOIN social_links s ON p.user_id = s.user_id
@@ -369,10 +387,11 @@ def get_profile():
                         'phone_number': profile[2],
                         'address': profile[3],
                         'energy_motto': profile[4] if profile[4] is not None else '',
+                        'profilePictureUrl': profile[5],
                         'social_accounts': {
-                            'facebook_profile_url': profile[5],
-                            'twitter_profile_url': profile[6],
-                            'instagram_profile_url': profile[7]
+                            'facebook_profile_url': profile[6],
+                            'twitter_profile_url': profile[7],
+                            'instagram_profile_url': profile[8]
                         }
                     }
                 })
@@ -386,6 +405,7 @@ def get_profile():
                         'phone_number': '',
                         'address': '',
                         'energy_motto': '',
+                        'profilePictureUrl': None,
                         'social_accounts': {
                             'facebook_profile_url': None,
                             'twitter_profile_url': None,
@@ -1202,6 +1222,28 @@ def add_payment_method():
         print("Save payment method result:", result)
 
         if result:
+            # Create notification for successful payment method addition
+            conn = get_db()
+            cur = conn.cursor()
+            try:
+                # Create notification
+                cur.execute('''
+                    INSERT INTO notifications (user_id, title, message, type)
+                    VALUES (%s, %s, %s, %s)
+                ''', (
+                    user_id,
+                    'Payment Method Added',
+                    f'Successfully added a new {payment_data["payment_type"]} payment method.',
+                    'success'
+                ))
+                conn.commit()
+            except Exception as e:
+                print(f"Error creating notification: {str(e)}")
+                conn.rollback()
+            finally:
+                if cur: cur.close()
+                if conn: conn.close()
+
             return jsonify({
                 'success': True,
                 'message': 'Payment method saved successfully',
@@ -1216,6 +1258,160 @@ def add_payment_method():
         import traceback
         print("Traceback:", traceback.format_exc())
         return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/api/payment-methods', methods=['GET'])
+@jwt_required()
+def get_payment_methods():
+    try:
+        user_id = get_jwt_identity()
+        payment_methods = fetch_user_payment_methods(user_id)
+        
+        # Format the payment methods for the frontend
+        formatted_methods = []
+        
+        # Check if payment_methods is not None and is iterable
+        if payment_methods:
+            for method in payment_methods:
+                try:
+                    formatted_method = {
+                        'id': method[0],  # Assuming id is the first column
+                        'payment_type': method[1],
+                        'card_number': method[2],
+                        'expiry_date': method[3].strftime('%m/%y') if method[3] else None,
+                        'card_holder_name': method[4],
+                        'is_default': method[5],
+                        'created_at': method[6].isoformat() if method[6] else None  # Add created_at
+                    }
+                    formatted_methods.append(formatted_method)
+                except (IndexError, AttributeError) as e:
+                    print(f"Error formatting payment method: {str(e)}")
+                    continue
+        
+        print("Debug - Formatted payment methods:", formatted_methods)  # Debug log
+        
+        return jsonify({
+            'success': True,
+            'payment_methods': formatted_methods
+        })
+    except Exception as e:
+        print("Error fetching payment methods:", str(e))
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/api/payment-methods/<int:payment_method_id>', methods=['DELETE'])
+@jwt_required()
+def delete_payment_method(payment_method_id):
+    try:
+        user_id = get_jwt_identity()
+        
+        # Get payment method details before deleting
+        conn = get_db()
+        cur = conn.cursor()
+        try:
+            cur.execute('''
+                SELECT payment_type, card_number, card_holder_name 
+                FROM payment_methods 
+                WHERE id = %s AND user_id = %s
+            ''', (payment_method_id, user_id))
+            payment_method = cur.fetchone()
+            
+            if not payment_method:
+                return jsonify({
+                    'success': False,
+                    'message': 'Payment method not found or could not be deleted'
+                }), 404
+            
+            # Use the renamed function to delete the payment method
+            result = remove_payment_method(payment_method_id, user_id)
+            
+            if result:
+                # Create notification for successful payment method deletion
+                cur.execute('''
+                    INSERT INTO notifications (user_id, title, message, type)
+                    VALUES (%s, %s, %s, %s)
+                ''', (
+                    user_id,
+                    'Payment Method Removed',
+                    f'Successfully removed your {payment_method[0]} payment method ending in {payment_method[1][-4:] if payment_method[1] else "N/A"}.',
+                    'info'
+                ))
+                conn.commit()
+                
+                return jsonify({
+                    'success': True,
+                    'message': 'Payment method deleted successfully'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'message': 'Payment method not found or could not be deleted'
+                }), 404
+
+        except Exception as e:
+            conn.rollback()
+            raise e
+        finally:
+            if cur: cur.close()
+            if conn: conn.close()
+
+    except Exception as e:
+        print(f"Error deleting payment method: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/api/payment-methods/<int:payment_method_id>/default', methods=['PUT'])
+@jwt_required()
+def set_default_payment_method(payment_method_id):
+    try:
+        user_id = get_jwt_identity()
+        
+        # First, unset all default payment methods for this user
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Update all payment methods to not be default
+        cur.execute('''
+            UPDATE payment_methods 
+            SET is_default = FALSE 
+            WHERE user_id = %s
+        ''', (user_id,))
+        
+        # Set the selected payment method as default
+        cur.execute('''
+            UPDATE payment_methods 
+            SET is_default = TRUE 
+            WHERE id = %s AND user_id = %s
+            RETURNING id
+        ''', (payment_method_id, user_id))
+        
+        result = cur.fetchone()
+        conn.commit()
+        
+        if result:
+            return jsonify({
+                'success': True,
+                'message': 'Default payment method updated successfully'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Payment method not found'
+            }), 404
+
+    except Exception as e:
+        print(f"Error setting default payment method: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+    finally:
+        if 'conn' in locals():
+            if 'cur' in locals(): cur.close()
+            conn.close()
 
 # Add debug logging
 @app.before_request
@@ -1307,6 +1503,51 @@ def mark_notification_read(notification_id):
         if 'conn' in locals():
             if 'cur' in locals(): cur.close()
             conn.close()
+
+@app.route('/api/profile/picture', methods=['POST'])
+@jwt_required()
+def upload_profile_picture():
+    try:
+        if 'profile_picture' not in request.files:
+            return jsonify({'success': False, 'message': 'No file provided'}), 400
+            
+        file = request.files['profile_picture']
+        if file.filename == '':
+            return jsonify({'success': False, 'message': 'No file selected'}), 400
+            
+        if file and allowed_file(file.filename):
+            user_id = get_jwt_identity()
+            filename = secure_filename(f"{user_id}_{file.filename}")
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(filepath)
+            
+            # Store the file path in the database
+            conn = get_db()
+            cur = conn.cursor()
+            try:
+                cur.execute('''
+                    UPDATE user_profiles 
+                    SET profile_picture_url = %s 
+                    WHERE user_id = %s
+                ''', (f"/uploads/profile_pictures/{filename}", user_id))
+                conn.commit()
+                
+                return jsonify({
+                    'success': True,
+                    'profile_picture_url': f"/uploads/profile_pictures/{filename}"
+                })
+            except Exception as e:
+                conn.rollback()
+                raise e
+            finally:
+                cur.close()
+                conn.close()
+                
+        return jsonify({'success': False, 'message': 'Invalid file type'}), 400
+        
+    except Exception as e:
+        print(f"Upload profile picture error: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to upload profile picture: {str(e)}'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

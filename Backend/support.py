@@ -27,30 +27,44 @@ def connect_db():
         return None, None
 
 # ================== CORE FUNCTIONS ==================
-def execute_query(operation=None, query=None, params=None):
+def execute_query(query_type, query, params=None):
     """Execute a database query"""
-    conn, cur = connect_db()
-    if not conn or not cur:
-        raise Exception("Database connection failed")
-
+    conn = None
     try:
-        if params:
-            cur.execute(query, params)
-        else:
+        conn = connect_db()[0]
+        if not conn:
+            raise Exception("Database connection failed")
+        
+        cur = conn.cursor()
+        
+        if query_type == 'alter':
+            # For ALTER TABLE commands, we need to execute them directly
             cur.execute(query)
-
-        if operation == 'search':
-            return cur.fetchall()
-        elif operation == 'insert':
+        else:
+            # For other query types, use parameterized queries
+            if params:
+                cur.execute(query, params)
+            else:
+                cur.execute(query)
+        
+        if query_type in ['insert', 'update', 'delete']:
             conn.commit()
-            return cur.fetchone()[0] if cur.description else None
+            result = cur.fetchone() if cur.description else None
+        else:
+            result = cur.fetchall() if cur.description else None
+            
+        return result
+        
     except Exception as e:
-        conn.rollback()
-        print(f"🚨 Query failed: {e}\nQuery: {query}")
+        if conn:
+            conn.rollback()
+        print(f"🚨 Query failed: {str(e)}")
+        print(f"\nQuery:\n{query}")
         raise
     finally:
-        if cur: cur.close()
-        if conn: conn.close()
+        if conn:
+            cur.close()
+            conn.close()
 
 # ================== USER OPERATIONS ==================
 def create_user(email, password_hash, full_name=None, phone=None, is_installer=False):
@@ -123,32 +137,63 @@ def record_environmental_impact(user_id, system_id, co2_saved, trees_equivalent,
     return execute_query('insert', query, (user_id, system_id, co2_saved, trees_equivalent, calculation_date))
 
 # ================== FINANCIAL OPERATIONS ==================
-def save_payment_method(user_id, payment_type, card_number, expiry_date, card_holder_name, is_default=False):
+def save_payment_method(user_id, payment_type, card_number=None, expiry_date=None, card_holder_name=None, is_default=False, ewallet_provider=None, ewallet_identifier=None):
     """Save a new payment method"""
     try:
         print("=== Save Payment Method Debug ===")
         print(f"User ID: {user_id}")
         print(f"Payment Type: {payment_type}")
-        print(f"Card Number: {card_number}")
-        print(f"Expiry Date: {expiry_date}")
-        print(f"Card Holder Name: {card_holder_name}")
-        print(f"Is Default: {is_default}")
-
-        # Convert MM/YY to a proper date (first day of the month)
-        try:
-            month, year = expiry_date.split('/')
-            expiry_date = f"20{year}-{month}-01"  # Convert to YYYY-MM-DD format
-            print(f"Converted expiry date: {expiry_date}")
-        except Exception as e:
-            print(f"Error converting expiry date: {str(e)}")
-            raise
-
-        query = """
-        INSERT INTO payment_methods (user_id, payment_type, card_number, expiry_date, card_holder_name, is_default)
-        VALUES (%s, %s, %s, %s, %s, %s) RETURNING id
-        """
         
-        result = execute_query('insert', query, (user_id, payment_type, card_number, expiry_date, card_holder_name, is_default))
+        if payment_type == 'ewallet':
+            # Handle eWallet payment method
+            query = """
+            INSERT INTO payment_methods (
+                user_id, 
+                payment_type, 
+                ewallet_provider, 
+                ewallet_identifier, 
+                is_default
+            )
+            VALUES (%s, %s, %s, %s, %s) 
+            RETURNING id
+            """
+            result = execute_query('insert', query, (
+                user_id, 
+                payment_type, 
+                ewallet_provider, 
+                ewallet_identifier, 
+                is_default
+            ))
+        else:
+            # Handle card payment methods
+            try:
+                month, year = expiry_date.split('/')
+                expiry_date = f"20{year}-{month}-01"  # Convert to YYYY-MM-DD format
+            except Exception as e:
+                print(f"Error converting expiry date: {str(e)}")
+                raise
+
+            query = """
+            INSERT INTO payment_methods (
+                user_id, 
+                payment_type, 
+                card_number, 
+                expiry_date, 
+                card_holder_name, 
+                is_default
+            )
+            VALUES (%s, %s, %s, %s, %s, %s) 
+            RETURNING id
+            """
+            result = execute_query('insert', query, (
+                user_id, 
+                payment_type, 
+                card_number, 
+                expiry_date, 
+                card_holder_name, 
+                is_default
+            ))
+        
         print(f"Query result: {result}")
         return result
 
@@ -878,17 +923,29 @@ def toggle_auto_top_up(user_id, is_enabled):
         if cur: cur.close()
         if conn: conn.close()
 
-def get_payment_methods(user_id):
+def fetch_user_payment_methods(user_id):
     """Get all payment methods for a user"""
-    query = """
-    SELECT id, payment_type, card_number, expiry_date, card_holder_name, is_default
-    FROM payment_methods
-    WHERE user_id = %s
-    ORDER BY is_default DESC, created_at DESC
-    """
-    return execute_query('select', query, (user_id,))
+    try:
+        query = """
+        SELECT id, payment_type, card_number, expiry_date, card_holder_name, is_default, created_at
+        FROM payment_methods
+        WHERE user_id = %s
+        ORDER BY is_default DESC, created_at DESC
+        """
+        result = execute_query('select', query, (user_id,))
+        
+        print("Debug - Payment methods query result:", result)  # Debug log
+        
+        # Return empty list if no results
+        if result is None:
+            return []
+            
+        return result
+    except Exception as e:
+        print(f"Error in fetch_user_payment_methods: {str(e)}")
+        return []  # Return empty list on error
 
-def delete_payment_method(payment_method_id, user_id):
+def remove_payment_method(payment_method_id, user_id):
     """Delete a payment method"""
     query = """
     DELETE FROM payment_methods
@@ -896,3 +953,59 @@ def delete_payment_method(payment_method_id, user_id):
     RETURNING id
     """
     return execute_query('delete', query, (payment_method_id, user_id))
+
+def create_payment_methods_table():
+    """Create the payment_methods table if it doesn't exist"""
+    try:
+        # First try to alter the existing table
+        alter_query = """
+        DO $$ 
+        BEGIN
+            -- Add ewallet columns if they don't exist
+            IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                         WHERE table_name = 'payment_methods' 
+                         AND column_name = 'ewallet_provider') THEN
+                ALTER TABLE payment_methods 
+                ADD COLUMN ewallet_provider VARCHAR(50);
+            END IF;
+            
+            IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                         WHERE table_name = 'payment_methods' 
+                         AND column_name = 'ewallet_identifier') THEN
+                ALTER TABLE payment_methods 
+                ADD COLUMN ewallet_identifier VARCHAR(255);
+            END IF;
+        END $$;
+        """
+        
+        try:
+            execute_query('alter', alter_query)
+            print("Successfully updated payment_methods table with eWallet columns")
+            return
+        except Exception as alter_error:
+            print(f"Could not alter table: {str(alter_error)}")
+            # If alter fails, try to create the table
+            pass
+
+        # If alter fails or table doesn't exist, create new table
+        create_query = """
+        CREATE TABLE IF NOT EXISTS payment_methods (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            payment_type VARCHAR(50) NOT NULL,
+            card_number VARCHAR(255),
+            expiry_date DATE,
+            card_holder_name VARCHAR(255),
+            ewallet_provider VARCHAR(50),
+            ewallet_identifier VARCHAR(255),
+            is_default BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """
+        execute_query('create', create_query)
+        print("Created new payment_methods table with all required columns")
+
+    except Exception as e:
+        print(f"Error creating/updating payment_methods table: {str(e)}")
+        raise
