@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api'; // Assuming auth service is still used
+import api from '../services/api'; // Assuming api service is still used
 
 // Import Chakra UI Components
 import {
@@ -95,27 +96,81 @@ function SupportPage() {
   };
 
   // Handle Contact Form Submission
-  const handleContactSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      // Reset form
-      setName('');
-      setEmail('');
-      setSubject('');
-      setMessage('');
+    try {
+        // Validate form data
+        if (!subject || !message) {
+            toast({
+                title: 'Error',
+                description: 'Subject and message are required',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
 
-      toast({
-        title: 'Message Sent',
-        description: 'Your support request has been received. We will contact you shortly.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-    }, 2000); // Simulate a 2-second delay for submission
+        console.log('Submitting support ticket with data:', {
+            subject,
+            message
+        });
+
+        const response = await api.post('support/ticket', {
+            subject,
+            message
+        });
+
+        console.log('Support ticket response:', response);
+
+        if (response.data.success) {
+            // Reset form
+            setName('');
+            setEmail('');
+            setSubject('');
+            setMessage('');
+
+            toast({
+                title: 'Message Sent',
+                description: 'Your support request has been received. We will contact you shortly.',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+        } else {
+            throw new Error(response.data.message || 'Failed to send message');
+        }
+    } catch (error) {
+        console.error('Support ticket error details:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            headers: error.response?.headers,
+            config: error.config
+        });
+        
+        let errorMessage = 'Failed to send message. Please try again.';
+        
+        if (error.response) {
+            errorMessage = error.response.data?.message || errorMessage;
+        } else if (error.request) {
+            errorMessage = 'No response from server. Please check your connection.';
+        } else {
+            errorMessage = error.message || errorMessage;
+        }
+        
+        toast({
+            title: 'Error',
+            description: errorMessage,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
 
@@ -233,15 +288,16 @@ function SupportPage() {
                         _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
                     />
                 </FormControl>
-                <FormControl id="contact-subject">
+                <FormControl id="contact-subject" isRequired>
                     <FormLabel color={textColor}>Subject</FormLabel>
                     <Input
                         type="text"
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
-                         borderColor={inputBorderColor}
+                        borderColor={inputBorderColor}
                         _hover={{ borderColor: 'teal.500' }}
                         _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
+                        isRequired
                     />
                 </FormControl>
                 <FormControl id="contact-message" isRequired>
@@ -250,9 +306,10 @@ function SupportPage() {
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         rows={6}
-                         borderColor={inputBorderColor}
+                        borderColor={inputBorderColor}
                         _hover={{ borderColor: 'teal.500' }}
                         _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
+                        isRequired
                     />
                 </FormControl>
                 <Button

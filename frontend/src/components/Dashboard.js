@@ -52,6 +52,7 @@ function DashboardPage() { // Renamed component to DashboardPage
         }
     };
 
+    const headingColor = "#333"; // or whatever color you want
 
     const handleLogout = () => {
         auth.logout();

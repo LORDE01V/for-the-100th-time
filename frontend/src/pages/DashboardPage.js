@@ -56,7 +56,6 @@ function DashboardContent() {
             color="white"
             _hover={{ bg: 'whiteAlpha.200' }}
             onClick={() => navigate('/home')}
-            color={headingColor}
           >
             Back to Home
           </Button>

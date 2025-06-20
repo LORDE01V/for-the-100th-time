@@ -25,7 +25,7 @@ const DashboardCard = ({
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const textColor = useColorModeValue('gray.600', 'gray.400');
-  const headingColor = useColorModeValue('gray.800', 'white');
+  const headingColor = "#333"; // or any color you want
 
   return (
     <MotionBox

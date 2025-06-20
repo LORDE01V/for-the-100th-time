@@ -68,7 +68,7 @@ function App() {
         {/* If no other route matches, redirect to the root (RegisterPage) */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <SupportBot /> {/* Add the SupportBot component here */}
+      <SupportBot /> {/* Make sure this is here, outside of Routes */}
     </Router>
   );
 }

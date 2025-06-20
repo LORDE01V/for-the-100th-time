@@ -27,30 +27,44 @@ def connect_db():
         return None, None
 
 # ================== CORE FUNCTIONS ==================
-def execute_query(operation=None, query=None, params=None):
+def execute_query(query_type, query, params=None):
     """Execute a database query"""
-    conn, cur = connect_db()
-    if not conn or not cur:
-        raise Exception("Database connection failed")
-
+    conn = None
     try:
-        if params:
-            cur.execute(query, params)
-        else:
+        conn = connect_db()[0]
+        if not conn:
+            raise Exception("Database connection failed")
+        
+        cur = conn.cursor()
+        
+        if query_type == 'alter':
+            # For ALTER TABLE commands, we need to execute them directly
             cur.execute(query)
-
-        if operation == 'search':
-            return cur.fetchall()
-        elif operation == 'insert':
+        else:
+            # For other query types, use parameterized queries
+            if params:
+                cur.execute(query, params)
+            else:
+                cur.execute(query)
+        
+        if query_type in ['insert', 'update', 'delete']:
             conn.commit()
-            return cur.fetchone()[0] if cur.description else None
+            result = cur.fetchone() if cur.description else None
+        else:
+            result = cur.fetchall() if cur.description else None
+            
+        return result
+        
     except Exception as e:
-        conn.rollback()
-        print(f"🚨 Query failed: {e}\nQuery: {query}")
+        if conn:
+            conn.rollback()
+        print(f"🚨 Query failed: {str(e)}")
+        print(f"\nQuery:\n{query}")
         raise
     finally:
-        if cur: cur.close()
-        if conn: conn.close()
+        if conn:
+            cur.close()
+            conn.close()
 
 # ================== USER OPERATIONS ==================
 def create_user(email, password_hash, full_name=None, phone=None, is_installer=False):
@@ -123,13 +137,71 @@ def record_environmental_impact(user_id, system_id, co2_saved, trees_equivalent,
     return execute_query('insert', query, (user_id, system_id, co2_saved, trees_equivalent, calculation_date))
 
 # ================== FINANCIAL OPERATIONS ==================
-def save_payment_method(user_id, payment_type, card_number, expiry_date, card_holder_name, is_default=False):
+def save_payment_method(user_id, payment_type, card_number=None, expiry_date=None, card_holder_name=None, is_default=False, ewallet_provider=None, ewallet_identifier=None):
     """Save a new payment method"""
-    query = """
-    INSERT INTO payment_methods (user_id, payment_type, card_number, expiry_date, card_holder_name, is_default)
-    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id
-    """
-    return execute_query('insert', query, (user_id, payment_type, card_number, expiry_date, card_holder_name, is_default))
+    try:
+        print("=== Save Payment Method Debug ===")
+        print(f"User ID: {user_id}")
+        print(f"Payment Type: {payment_type}")
+        
+        if payment_type == 'ewallet':
+            # Handle eWallet payment method
+            query = """
+            INSERT INTO payment_methods (
+                user_id, 
+                payment_type, 
+                ewallet_provider, 
+                ewallet_identifier, 
+                is_default
+            )
+            VALUES (%s, %s, %s, %s, %s) 
+            RETURNING id
+            """
+            result = execute_query('insert', query, (
+                user_id, 
+                payment_type, 
+                ewallet_provider, 
+                ewallet_identifier, 
+                is_default
+            ))
+        else:
+            # Handle card payment methods
+            try:
+                month, year = expiry_date.split('/')
+                expiry_date = f"20{year}-{month}-01"  # Convert to YYYY-MM-DD format
+            except Exception as e:
+                print(f"Error converting expiry date: {str(e)}")
+                raise
+
+            query = """
+            INSERT INTO payment_methods (
+                user_id, 
+                payment_type, 
+                card_number, 
+                expiry_date, 
+                card_holder_name, 
+                is_default
+            )
+            VALUES (%s, %s, %s, %s, %s, %s) 
+            RETURNING id
+            """
+            result = execute_query('insert', query, (
+                user_id, 
+                payment_type, 
+                card_number, 
+                expiry_date, 
+                card_holder_name, 
+                is_default
+            ))
+        
+        print(f"Query result: {result}")
+        return result
+
+    except Exception as e:
+        print(f"Error in save_payment_method: {str(e)}")
+        import traceback
+        print("Traceback:", traceback.format_exc())
+        raise
 
 def record_transaction(user_id, amount, transaction_type, status, payment_method_id):
     """Record a new transaction"""
@@ -165,10 +237,21 @@ def add_forum_reply(topic_id, user_id, content):
     return execute_query('insert', query, (topic_id, user_id, content))
 
 def create_support_ticket(user_id, subject, message):
-    """Create a new support ticket"""
+    """
+    Create a new support ticket in the database
+    
+    Args:
+        user_id (int): The ID of the user creating the ticket
+        subject (str): The subject of the support ticket
+        message (str): The message content of the support ticket
+        
+    Returns:
+        int: The ID of the newly created ticket
+    """
     query = """
-    INSERT INTO support_tickets (user_id, subject, message)
-    VALUES (%s, %s, %s) RETURNING id
+        INSERT INTO support_tickets (user_id, subject, message, status)
+        VALUES (%s, %s, %s, 'open')
+        RETURNING id
     """
     return execute_query('insert', query, (user_id, subject, message))
 
@@ -206,9 +289,45 @@ def create_group_campaign(creator_id, title, description, goal_participants, dis
     """
     return execute_query('insert', query, (creator_id, title, description, goal_participants, discount_percentage))
 
-# Initialize database tables when module loads
+# Add this function BEFORE initialize_db()
+def add_energy_motto_column():
+    conn, cur = connect_db()
+    if not conn or not cur:
+        raise Exception("Database connection failed")
+
+    try:
+        # Add energy_motto column if it doesn't exist
+        cur.execute("""
+            DO $$ 
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 
+                    FROM information_schema.columns 
+                    WHERE table_name = 'user_profiles' 
+                    AND column_name = 'energy_motto'
+                ) THEN
+                    ALTER TABLE user_profiles 
+                    ADD COLUMN energy_motto TEXT;
+                END IF;
+            END $$;
+        """)
+        conn.commit()
+    except Exception as e:
+        print(f"Error adding energy_motto column: {str(e)}")
+        conn.rollback()
+        raise e
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+# Then the initialize_db function
 def initialize_db():
     conn, cur = connect_db()
+    if not conn or not cur:
+        raise Exception("Database connection failed")
+
     try:
         # 1. User Management & Authentication
         cur.execute("""
@@ -303,16 +422,21 @@ def initialize_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )""")
 
+        # Drop the existing expenses table if it exists
+        cur.execute("DROP TABLE IF EXISTS expenses CASCADE")
+        
+        # Create expenses table with the correct schema
         cur.execute("""
         CREATE TABLE IF NOT EXISTS expenses (
             id SERIAL PRIMARY KEY,
-            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            user_id INTEGER REFERENCES users(id),
             amount DECIMAL(10,2) NOT NULL,
-            category VARCHAR(50) NOT NULL,
-            description TEXT,
-            expense_date DATE NOT NULL,
+            purpose VARCHAR(255) NOT NULL,
+            type VARCHAR(50) NOT NULL,
+            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""")
+        )
+        """)
 
         # 4. Community & Support
         cur.execute("""
@@ -390,11 +514,64 @@ def initialize_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )""")
 
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS user_settings (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            receive_sms BOOLEAN DEFAULT true,
+            receive_email BOOLEAN DEFAULT true,
+            language VARCHAR(10) DEFAULT 'en',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id)
+        )""")
+
+        # Create top_ups table
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS top_ups (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            amount DECIMAL(10,2) NOT NULL,
+            type VARCHAR(50) NOT NULL,
+            promo_code VARCHAR(50),
+            voucher_code VARCHAR(50),
+            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+
+        # Create user_balances table
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS user_balances (
+            user_id INTEGER PRIMARY KEY REFERENCES users(id),
+            balance DECIMAL(10,2) DEFAULT 0.00,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+
+        # Create auto_top_up_settings table
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS auto_top_up_settings (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            min_balance DECIMAL(10,2) NOT NULL,
+            top_up_amount DECIMAL(10,2) NOT NULL,
+            frequency VARCHAR(20) NOT NULL,
+            is_enabled BOOLEAN DEFAULT true,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id)
+        )
+        """)
+
+        # Add energy_motto column if it doesn't exist
+        add_energy_motto_column()
+
         conn.commit()
-        print("✅ Database tables initialized")
+        print("✅ Database tables created successfully!")
     except Exception as e:
         conn.rollback()
-        print(f"🚨 Database initialization failed: {e}")
+        print(f"🚨 Error creating tables: {e}")
         raise
     finally:
         if cur: cur.close()
@@ -402,3 +579,433 @@ def initialize_db():
 
 # Initialize when imported
 initialize_db()
+
+# Add these new functions to support.py
+
+def create_expense(user_id, amount, purpose, type):
+    """Create a new expense record"""
+    print(f"=== Creating expense ===")
+    print(f"User ID: {user_id}, Amount: {amount}, Purpose: {purpose}, Type: {type}")
+    
+    conn, cur = connect_db()
+    if not conn or not cur:
+        print("Database connection failed")
+        raise Exception("Database connection failed")
+
+    try:
+        # Start transaction
+        cur.execute("BEGIN")
+        print("Transaction started")
+
+        # Validate user exists
+        cur.execute("SELECT id FROM users WHERE id = %s", (user_id,))
+        user = cur.fetchone()
+        if not user:
+            print(f"User {user_id} not found")
+            raise Exception(f"User {user_id} not found")
+
+        # Insert expense record
+        cur.execute("""
+        INSERT INTO expenses (user_id, amount, purpose, type)
+        VALUES (%s, %s, %s, %s)
+        RETURNING id
+        """, (user_id, amount, purpose, type))
+        expense_id = cur.fetchone()[0]
+        print(f"Expense record created with ID: {expense_id}")
+
+        # Commit transaction
+        conn.commit()
+        print("Transaction committed successfully")
+        
+        return expense_id
+
+    except Exception as e:
+        print(f"Error creating expense: {str(e)}")
+        conn.rollback()
+        print("Transaction rolled back")
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+        print("Database connection closed")
+
+def get_user_expenses(user_id):
+    """Get all expenses for a user"""
+    print(f"=== Fetching expenses for user {user_id} ===")
+    
+    conn, cur = connect_db()
+    if not conn or not cur:
+        print("Database connection failed")
+        raise Exception("Database connection failed")
+
+    try:
+        # Get expenses with proper date formatting
+        cur.execute("""
+        SELECT 
+            id,
+            amount,
+            purpose,
+            type,
+            date,
+            created_at
+        FROM expenses 
+        WHERE user_id = %s 
+        ORDER BY date DESC
+        """, (user_id,))
+        
+        expenses = cur.fetchall()
+        print(f"Found {len(expenses)} expenses")
+        
+        # Convert to list of dictionaries with proper formatting
+        formatted_expenses = [{
+            'id': exp[0],
+            'amount': float(exp[1]),  # Convert Decimal to float
+            'purpose': exp[2],
+            'type': exp[3],
+            'date': exp[4].isoformat() if exp[4] else None,
+            'created_at': exp[5].isoformat() if exp[5] else None
+        } for exp in expenses]
+        
+        return formatted_expenses
+
+    except Exception as e:
+        print(f"Error fetching expenses: {str(e)}")
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+def process_top_up_transaction(user_id, amount, type, promo_code=None, voucher_code=None):
+    """Process a top-up transaction"""
+    print(f"=== Starting process_top_up_transaction ===")
+    print(f"User ID: {user_id}, Amount: {amount}, Type: {type}")
+    
+    conn, cur = connect_db()
+    if not conn or not cur:
+        print("Database connection failed")
+        raise Exception("Database connection failed")
+
+    try:
+        # Start transaction
+        cur.execute("BEGIN")
+        print("Transaction started")
+
+        # Validate user exists
+        cur.execute("SELECT id FROM users WHERE id = %s", (user_id,))
+        user = cur.fetchone()
+        if not user:
+            print(f"User {user_id} not found")
+            raise Exception(f"User {user_id} not found")
+        print(f"User {user_id} validated")
+
+        # Insert top-up record
+        cur.execute("""
+        INSERT INTO top_ups (user_id, amount, type, promo_code, voucher_code)
+        VALUES (%s, %s, %s, %s, %s)
+        RETURNING id
+        """, (user_id, amount, type, promo_code, voucher_code))
+        top_up_id = cur.fetchone()[0]
+        print(f"Top-up record created with ID: {top_up_id}")
+
+        # Create expense record
+        cur.execute("""
+        INSERT INTO expenses (user_id, amount, purpose, type)
+        VALUES (%s, %s, %s, %s)
+        RETURNING id
+        """, (user_id, amount, f"{type} - Energy Credit", 'Spend'))
+        expense_id = cur.fetchone()[0]
+        print(f"Expense record created with ID: {expense_id}")
+
+        # Create notification
+        notification_title = f"{type.title()} Successful"
+        notification_message = f"Your {type} of R{amount:.2f} was successful. Your new balance is R{amount:.2f}."
+        cur.execute("""
+        INSERT INTO notifications (user_id, title, message, type)
+        VALUES (%s, %s, %s, %s)
+        RETURNING id
+        """, (user_id, notification_title, notification_message, 'success'))
+        notification_id = cur.fetchone()[0]
+        print(f"Notification created with ID: {notification_id}")
+
+        # Update user balance
+        cur.execute("""
+        INSERT INTO user_balances (user_id, balance)
+        VALUES (%s, %s)
+        ON CONFLICT (user_id) DO UPDATE
+        SET balance = user_balances.balance + EXCLUDED.balance,
+            updated_at = CURRENT_TIMESTAMP
+        RETURNING balance
+        """, (user_id, amount))
+        new_balance = cur.fetchone()[0]
+        print(f"Balance updated to: {new_balance}")
+
+        # Commit transaction
+        conn.commit()
+        print("Transaction committed successfully")
+        
+        # Ensure we return the correct data structure
+        return {
+            'top_up_id': top_up_id,
+            'expense_id': expense_id,
+            'notification_id': notification_id,
+            'new_balance': float(new_balance)  # Convert to float to ensure JSON serialization
+        }
+
+    except Exception as e:
+        print(f"Error in process_top_up_transaction: {str(e)}")
+        conn.rollback()
+        print("Transaction rolled back")
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+        print("Database connection closed")
+
+def get_user_balance(user_id):
+    """Get current balance for a user"""
+    query = """
+    SELECT balance
+    FROM user_balances
+    WHERE user_id = %s
+    """
+    result = execute_query('search', query, (user_id,))
+    return result[0][0] if result else 0.00
+
+def save_user_auto_top_up_settings(user_id, min_balance, top_up_amount, frequency):
+    """Save or update auto top-up settings for a user"""
+    print(f"=== Saving auto top-up settings for user {user_id} ===")
+    print(f"Settings: min_balance={min_balance}, top_up_amount={top_up_amount}, frequency={frequency}")
+    
+    conn, cur = connect_db()
+    if not conn or not cur:
+        print("Database connection failed")
+        raise Exception("Database connection failed")
+
+    try:
+        # First check if the table exists
+        cur.execute("""
+        SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_name = 'auto_top_up_settings'
+        )
+        """)
+        table_exists = cur.fetchone()[0]
+        
+        if not table_exists:
+            print("Creating auto_top_up_settings table")
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS auto_top_up_settings (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id),
+                min_balance DECIMAL(10,2) NOT NULL,
+                top_up_amount DECIMAL(10,2) NOT NULL,
+                frequency VARCHAR(20) NOT NULL,
+                is_enabled BOOLEAN DEFAULT true,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(user_id)
+            )
+            """)
+            conn.commit()
+
+        # Insert or update settings
+        cur.execute("""
+        INSERT INTO auto_top_up_settings 
+            (user_id, min_balance, top_up_amount, frequency, is_enabled)
+        VALUES (%s, %s, %s, %s, true)
+        ON CONFLICT (user_id) DO UPDATE
+        SET min_balance = EXCLUDED.min_balance,
+            top_up_amount = EXCLUDED.top_up_amount,
+            frequency = EXCLUDED.frequency,
+            is_enabled = true,
+            updated_at = CURRENT_TIMESTAMP
+        RETURNING id, min_balance, top_up_amount, frequency, is_enabled
+        """, (user_id, min_balance, top_up_amount, frequency))
+        
+        result = cur.fetchone()
+        conn.commit()
+        
+        print(f"Settings saved successfully: {result}")
+        
+        return {
+            'id': result[0],
+            'min_balance': float(result[1]),
+            'top_up_amount': float(result[2]),
+            'frequency': result[3],
+            'is_enabled': result[4]
+        }
+
+    except Exception as e:
+        print(f"Error saving auto top-up settings: {str(e)}")
+        conn.rollback()
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+def get_user_auto_top_up_settings(user_id):
+    """Get auto top-up settings for a user"""
+    print(f"=== Getting auto top-up settings for user {user_id} ===")
+    
+    conn, cur = connect_db()
+    if not conn or not cur:
+        print("Database connection failed")
+        raise Exception("Database connection failed")
+
+    try:
+        # First check if the table exists
+        cur.execute("""
+        SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_name = 'auto_top_up_settings'
+        )
+        """)
+        table_exists = cur.fetchone()[0]
+        
+        if not table_exists:
+            print("Auto top-up settings table does not exist")
+            return None
+
+        # Get settings
+        cur.execute("""
+        SELECT id, min_balance, top_up_amount, frequency, is_enabled
+        FROM auto_top_up_settings
+        WHERE user_id = %s
+        """, (user_id,))
+        
+        result = cur.fetchone()
+        print(f"Query result: {result}")
+        
+        if result:
+            return {
+                'id': result[0],
+                'min_balance': float(result[1]),
+                'top_up_amount': float(result[2]),
+                'frequency': result[3],
+                'is_enabled': result[4]
+            }
+        return None
+
+    except Exception as e:
+        print(f"Error getting auto top-up settings: {str(e)}")
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+def toggle_auto_top_up(user_id, is_enabled):
+    """Enable or disable auto top-up for a user"""
+    print(f"=== Toggling auto top-up for user {user_id} to {is_enabled} ===")
+    
+    conn, cur = connect_db()
+    if not conn or not cur:
+        raise Exception("Database connection failed")
+
+    try:
+        cur.execute("""
+        UPDATE auto_top_up_settings
+        SET is_enabled = %s,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = %s
+        RETURNING id
+        """, (is_enabled, user_id))
+        
+        result = cur.fetchone()
+        conn.commit()
+        
+        return result is not None
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Error toggling auto top-up: {str(e)}")
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+def fetch_user_payment_methods(user_id):
+    """Get all payment methods for a user"""
+    try:
+        query = """
+        SELECT id, payment_type, card_number, expiry_date, card_holder_name, is_default, created_at
+        FROM payment_methods
+        WHERE user_id = %s
+        ORDER BY is_default DESC, created_at DESC
+        """
+        result = execute_query('select', query, (user_id,))
+        
+        print("Debug - Payment methods query result:", result)  # Debug log
+        
+        # Return empty list if no results
+        if result is None:
+            return []
+            
+        return result
+    except Exception as e:
+        print(f"Error in fetch_user_payment_methods: {str(e)}")
+        return []  # Return empty list on error
+
+def remove_payment_method(payment_method_id, user_id):
+    """Delete a payment method"""
+    query = """
+    DELETE FROM payment_methods
+    WHERE id = %s AND user_id = %s
+    RETURNING id
+    """
+    return execute_query('delete', query, (payment_method_id, user_id))
+
+def create_payment_methods_table():
+    """Create the payment_methods table if it doesn't exist"""
+    try:
+        # First try to alter the existing table
+        alter_query = """
+        DO $$ 
+        BEGIN
+            -- Add ewallet columns if they don't exist
+            IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                         WHERE table_name = 'payment_methods' 
+                         AND column_name = 'ewallet_provider') THEN
+                ALTER TABLE payment_methods 
+                ADD COLUMN ewallet_provider VARCHAR(50);
+            END IF;
+            
+            IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                         WHERE table_name = 'payment_methods' 
+                         AND column_name = 'ewallet_identifier') THEN
+                ALTER TABLE payment_methods 
+                ADD COLUMN ewallet_identifier VARCHAR(255);
+            END IF;
+        END $$;
+        """
+        
+        try:
+            execute_query('alter', alter_query)
+            print("Successfully updated payment_methods table with eWallet columns")
+            return
+        except Exception as alter_error:
+            print(f"Could not alter table: {str(alter_error)}")
+            # If alter fails, try to create the table
+            pass
+
+        # If alter fails or table doesn't exist, create new table
+        create_query = """
+        CREATE TABLE IF NOT EXISTS payment_methods (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            payment_type VARCHAR(50) NOT NULL,
+            card_number VARCHAR(255),
+            expiry_date DATE,
+            card_holder_name VARCHAR(255),
+            ewallet_provider VARCHAR(50),
+            ewallet_identifier VARCHAR(255),
+            is_default BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """
+        execute_query('create', create_query)
+        print("Created new payment_methods table with all required columns")
+
+    except Exception as e:
+        print(f"Error creating/updating payment_methods table: {str(e)}")
+        raise
