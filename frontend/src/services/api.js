@@ -53,7 +53,7 @@ export const auth = {
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
-            throw error;
+            throw new Error('Failed to connect to the server');
         }
     },
 
@@ -65,7 +65,7 @@ export const auth = {
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
-            throw error;
+            throw new Error('Failed to connect to the server');
         }
     },
 

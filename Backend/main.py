@@ -31,7 +31,7 @@ def get_db():
             host=os.getenv('DB_HOST', 'localhost'),
             database=os.getenv('DB_NAME', 'Fintech_Solar'),
             user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', ''),
+            password=os.getenv('DB_PASSWORD', 'your_password_here'),
             port=os.getenv('DB_PORT', '5432')
         )
         return conn

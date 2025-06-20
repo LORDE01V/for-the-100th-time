@@ -1,74 +1,53 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api';
-
-// Import Chakra UI Components
+import React, { useState } from 'react';
 import {
   Box,
-  Flex,
-  Heading,
-  Text,
-  Button,
-  useColorModeValue,
-  useToast,
-  Spinner,
   Container,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  HStack
+  Heading,
+  Button,
+  VStack,
+  useColorModeValue,
+  Flex,
+  Icon,
+  Text,
+  SimpleGrid,
+  Badge,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft, FaMoneyBill, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
 
-// Import Icons
-import { FaArrowLeft } from 'react-icons/fa';
-
-function ExpensesPage() {
+const ExpensesPage = () => {
   const navigate = useNavigate();
-  const toast = useToast();
-  const user = auth.getCurrentUser();
+  
+  // Move all useColorModeValue hooks to the top level
+  const cardBg = useColorModeValue('white', 'gray.700');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const itemBg = useColorModeValue('gray.50', 'gray.600');
+  const subTextColor = useColorModeValue('gray.600', 'gray.300');
 
-  // Color mode values
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const textColor = useColorModeValue('gray.600', 'gray.400');
-  const headingColor = useColorModeValue('gray.800', 'white');
-  const tableColor = useColorModeValue('gray.800', 'white');
-  const tableHeaderColor = useColorModeValue('gray.600', 'gray.300');
-
-  // Define spinner color if not already defined globally or in a theme
-  const spinnerColor = useColorModeValue('blue.500', 'blue.300');
-
-  // Dummy expense data
-  const dummyExpenses = [
-    { id: 1, date: '2023-10-26', amount: 150.00, purpose: 'October Energy Bill' },
-    { id: 2, date: '2023-11-15', amount: 220.50, purpose: 'November Energy Bill' },
-    { id: 3, date: '2023-12-05', amount: 180.75, purpose: 'December Energy Bill' },
-  ];
-
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      toast({
-        title: 'Authentication required',
-        description: 'Please log in to access this page',
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      });
+  // Mock data for expenses
+  const [expenses] = useState([
+    {
+      id: 1,
+      date: '2024-03-15',
+      amount: 150.00,
+      category: 'Electricity',
+      status: 'Paid'
+    },
+    {
+      id: 2,
+      date: '2024-03-10',
+      amount: 75.50,
+      category: 'Solar Maintenance',
+      status: 'Pending'
+    },
+    {
+      id: 3,
+      date: '2024-03-05',
+      amount: 200.00,
+      category: 'Equipment',
+      status: 'Paid'
     }
-  }, [user, navigate, toast]);
-
-  if (!user) {
-    return (
-      <Flex minH="100vh" align="center" justify="center" bg={bgColor}>
-        <Spinner size="xl" color={spinnerColor} />
-      </Flex>
-    );
-  }
+  ]);
 
   return (
     <Box
@@ -79,60 +58,99 @@ function ExpensesPage() {
       backgroundAttachment="fixed"
       position="relative"
       _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          bg: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 1,
+        content: '""',
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        bg: "rgba(0, 0, 0, 0.5)",
+        zIndex: 1,
       }}
     >
       <Container maxW="container.xl" py={8} position="relative" zIndex={2}>
-        {/* Header with Back to Home button */}
-        <HStack justify="space-between" align="center" mb={8}>
-          <Button
-            leftIcon={<FaArrowLeft />}
-            variant="ghost"
-            onClick={() => navigate('/home')}
-            color={headingColor}
-          >
-            Back to Home
-          </Button>
-        </HStack>
+        <Button
+          leftIcon={<FaArrowLeft />}
+          variant="ghost"
+          mb={8}
+          onClick={() => navigate('/home')}
+          color="white"
+          _hover={{ bg: 'whiteAlpha.200' }}
+        >
+          Back to Home
+        </Button>
 
-        <Heading as="h1" size="xl" color={headingColor} mb={6} textAlign="center">
-          Your Energy Expenses
-        </Heading>
+        <VStack spacing={8} align="stretch">
+          <Heading size="xl" color="white">Expenses</Heading>
 
-        <TableContainer>
-          <Table variant="simple" colorScheme="teal">
-            <Thead>
-              <Tr>
-                <Th color={tableHeaderColor}>Date</Th>
-                <Th color={tableHeaderColor} isNumeric>Amount (ZAR)</Th>
-                <Th color={tableHeaderColor}>Purpose</Th>
-              </Tr>
-            </Thead>
-            <Tbody color={tableColor}>
-              {dummyExpenses.map((expense) => (
-                <Tr key={expense.id}>
-                  <Td>{expense.date}</Td>
-                  <Td isNumeric>{expense.amount.toFixed(2)}</Td>
-                  <Td>{expense.purpose}</Td>
-                </Tr>
+          {/* Summary Cards */}
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+            <Box p={6} bg={cardBg} borderRadius="lg" shadow="md">
+              <Flex align="center" mb={4}>
+                <Icon as={FaMoneyBill} w={6} h={6} color="green.500" mr={3} />
+                <Text fontSize="lg" fontWeight="bold" color={textColor}>Total Expenses</Text>
+              </Flex>
+              <Text fontSize="2xl" fontWeight="bold" color="green.500">
+                R{expenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}
+              </Text>
+            </Box>
+
+            <Box p={6} bg={cardBg} borderRadius="lg" shadow="md">
+              <Flex align="center" mb={4}>
+                <Icon as={FaChartLine} w={6} h={6} color="blue.500" mr={3} />
+                <Text fontSize="lg" fontWeight="bold" color={textColor}>Monthly Average</Text>
+              </Flex>
+              <Text fontSize="2xl" fontWeight="bold" color="blue.500">
+                R{(expenses.reduce((sum, exp) => sum + exp.amount, 0) / expenses.length).toFixed(2)}
+              </Text>
+            </Box>
+
+            <Box p={6} bg={cardBg} borderRadius="lg" shadow="md">
+              <Flex align="center" mb={4}>
+                <Icon as={FaCalendarAlt} w={6} h={6} color="purple.500" mr={3} />
+                <Text fontSize="lg" fontWeight="bold" color={textColor}>Last Payment</Text>
+              </Flex>
+              <Text fontSize="2xl" fontWeight="bold" color="purple.500">
+                {expenses[0].date}
+              </Text>
+            </Box>
+          </SimpleGrid>
+
+          {/* Expenses List */}
+          <Box p={6} bg={cardBg} borderRadius="lg" shadow="md">
+            <Heading size="md" mb={4} color={textColor}>Recent Expenses</Heading>
+            <VStack spacing={4} align="stretch">
+              {expenses.map((expense) => (
+                <Flex
+                  key={expense.id}
+                  justify="space-between"
+                  align="center"
+                  p={4}
+                  bg={itemBg}
+                  borderRadius="md"
+                >
+                  <Box>
+                    <Text fontWeight="bold" color={textColor}>{expense.category}</Text>
+                    <Text fontSize="sm" color={subTextColor}>
+                      {expense.date}
+                    </Text>
+                  </Box>
+                  <Box textAlign="right">
+                    <Text fontWeight="bold" color={textColor}>R{expense.amount.toFixed(2)}</Text>
+                    <Badge
+                      colorScheme={expense.status === 'Paid' ? 'green' : 'yellow'}
+                    >
+                      {expense.status}
+                    </Badge>
+                  </Box>
+                </Flex>
               ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-
-        {dummyExpenses.length === 0 && (
-            <Text textAlign="center" mt={8} color={textColor}>No expenses recorded yet.</Text>
-        )}
+            </VStack>
+          </Box>
+        </VStack>
       </Container>
     </Box>
   );
-}
+};
 
 export default ExpensesPage;

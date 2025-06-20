@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api'; // Assuming auth service is still used
-import gridxBackground from '../assets/images/gridx_background.jpg'; // Make sure this path and filename are correct
+import gridXBackground from '../assets/images/GridX-IMG.jpg'; // Make sure this path and filename are correct
 import { FcGoogle } from 'react-icons/fc'; // Add this import
 
 // Import Chakra UI Components
@@ -58,15 +58,14 @@ function LoginPage() {
     try {
       const response = await auth.login(email, password); // Call backend API
       if (response.success) {
-        // auth.login should handle storing token and user in localStorage
         toast({ // Show success message
             title: 'Login Successful!',
-            description: 'Redirecting to home...',
+            description: 'Welcome back!',
             status: 'success',
             duration: 3000,
             isClosable: true,
         });
-        navigate('/home'); // Changed back to '/home'
+        navigate('/home'); // Changed to '/home'
       } else {
         toast({ // Show error message from backend
             title: 'Login Failed.',
@@ -107,23 +106,50 @@ function LoginPage() {
       align="center"
       justify="center"
       p={4}
-      backgroundImage={`url(${gridxBackground})`}
+      position="relative"
+      backgroundImage={`url(${gridXBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
-      backgroundRepeat="no-repeat"
-      position="relative"
-      _before={{
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        bg: 'rgba(0, 0, 0, 0.6)',
-        zIndex: 1,
-      }}
+      backgroundAttachment="fixed"
     >
-      <Box zIndex={2} maxW="md" w="full" bg={formBg} boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)" borderRadius="xl" p={8} textAlign="center">
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        right="0"
+        bottom="0"
+        bg="rgba(0, 0, 0, 0.5)"
+        zIndex="1"
+      />
+
+      <Box
+        maxW="md"
+        w="full"
+        bg={formBg}
+        boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
+        borderRadius="xl"
+        p={8}
+        textAlign="center"
+        position="relative"
+        zIndex="2"
+        backdropFilter="blur(16px)"
+        border="1px solid"
+        borderColor={borderColor}
+        _before={{
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          borderRadius: 'xl',
+          padding: '2px',
+          background: 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+        }}
+      >
         <Heading 
           as="h2" 
           size="xl" 
@@ -134,7 +160,7 @@ function LoginPage() {
           Login
         </Heading>
         <VStack as="form" spacing={4} onSubmit={handleSubmit} noValidate>
-          <FormControl id="login-email" isInvalid={!!errors.email}>
+          <FormControl id="email" isInvalid={!!errors.email}>
             <FormLabel color={textColor}>Email address</FormLabel>
             <Input
               type="email"
@@ -155,7 +181,7 @@ function LoginPage() {
             <FormErrorMessage>{errors.email}</FormErrorMessage>
           </FormControl>
 
-          <FormControl id="login-password" isInvalid={!!errors.password}>
+          <FormControl id="password" isInvalid={!!errors.password}>
             <FormLabel color={textColor}>Password</FormLabel>
             <Input
               type="password"
@@ -178,21 +204,21 @@ function LoginPage() {
 
           <Button
             type="submit"
-            colorScheme="blue"
+            colorScheme="teal"
             size="lg"
             fontSize="md"
             isLoading={loading}
             loadingText="Logging in..."
             w="full"
             mt={4}
-            bg="rgba(66, 153, 225, 0.8)"
+            bg="rgba(49, 151, 149, 0.8)"
             _hover={{
-              bg: 'rgba(66, 153, 225, 0.9)',
+              bg: 'rgba(49, 151, 149, 0.9)',
               transform: 'translateY(-2px)',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
             }}
             _active={{
-              bg: 'rgba(66, 153, 225, 1)',
+              bg: 'rgba(49, 151, 149, 1)',
               transform: 'translateY(0)',
             }}
           >
@@ -233,15 +259,9 @@ function LoginPage() {
           Don't have an account?{' '}
           <Button
             variant="link"
-            color="blue.200"
-            _hover={{
-              color: 'blue.100',
-              textDecoration: 'underline',
-            }}
-            onClick={() => {
-              console.log('Navigating to register...');
-              navigate('/register', { replace: true });
-            }}
+            color="teal.300"
+            _hover={{ textDecoration: 'underline' }}
+            onClick={() => navigate('/register')}
           >
             Register here
           </Button>

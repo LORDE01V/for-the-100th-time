@@ -154,7 +154,12 @@ function TopUpPage() {
         isClosable: true,
     });
 
-    setIsProcessing(false);
+    setIsProcessing(false); // Reset loading state
+  };
+
+  // Handler for Back to Dashboard button
+  const handleBackToDashboard = () => {
+    navigate('/home');
   };
 
   // Render loading spinner if user is being checked (though ProtectedRoute handles the redirect)

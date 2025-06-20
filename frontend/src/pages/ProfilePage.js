@@ -260,12 +260,11 @@ function ProfilePage() {
 
         {/* Header */}
         <HStack justify="space-between" align="center" mb={8}> {/* Added align="center" for vertical alignment */}
-          {/* Changed from ReactRouterLink to Button with onClick navigation to /home */}
-          <Button 
-            leftIcon={<FaArrowLeft />} 
-            variant="ghost" 
+          {/* Correctly using ReactRouterLink with the Back to Dashboard button */}
+          <Button
+            leftIcon={<FaArrowLeft />}
+            variant="ghost"
             onClick={() => navigate('/home')}
-            color={headingColor}
           >
             Back to Home
           </Button>

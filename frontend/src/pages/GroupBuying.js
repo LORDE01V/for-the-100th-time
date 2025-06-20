@@ -386,6 +386,10 @@ function GroupBuying() {
                       >
                         {campaign.participants >= campaign.goal ? 'Goal Reached!' : 'Join Campaign'}
                       </Button>
+                       {/* Back to Home Button */}
+                      <Button variant="outline" onClick={() => navigate('/home')} size="sm" width="100%" mt={2}>
+                         Back to Home
+                      </Button>
                     </VStack>
                   </CardBody>
                 </Card>

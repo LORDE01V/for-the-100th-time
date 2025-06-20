@@ -244,6 +244,12 @@ function SettingsPage() {
   };
 
 
+  // Handle Back to Dashboard button
+  const handleBackToDashboard = () => {
+      navigate('/home');
+  };
+
+
   // Render loading spinner while user is being checked or data is loading initially
   if (!user) {
        return (

@@ -327,15 +327,11 @@ function RegisterPage() {
         {/* Link to Login page */}
         <Text mt={6} color={textColor}>
           Already have an account?{' '}
-          {/* Using Chakra Button styled as a link for consistency and clickability */}
           <Button
             variant="link"
-            color="teal.300" // Using a Chakra color, adjust as needed
-             _hover={{ textDecoration: 'underline' }} // Add underline on hover
-            onClick={() => {
-               console.log("Navigating to login from 'Already have an account? Login here' link...");
-               navigate('/login'); // Navigate to the login page
-            }}
+            color="teal.300"
+            _hover={{ textDecoration: 'underline' }}
+            onClick={() => navigate('/login')}
           >
             Login here
           </Button>

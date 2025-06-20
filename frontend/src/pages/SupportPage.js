@@ -91,11 +91,7 @@ function SupportPage() {
 
   // Update the back button handler
   const handleBackClick = () => {
-    if (!user) {
-      navigate('/');  // Go to landing page if not logged in
-    } else {
-      navigate('/home');  // Go to home page if logged in
-    }
+    navigate('/home');
   };
 
   // Handle Contact Form Submission
@@ -140,30 +136,29 @@ function SupportPage() {
       backgroundAttachment="fixed"
       position="relative"
       _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          bg: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 1,
+        content: '""',
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        bg: "rgba(0, 0, 0, 0.5)",
+        zIndex: 1,
       }}
     >
       <Container maxW="container.xl" py={8} position="relative" zIndex={2}>
-         {/* Header with Back to Home button */}
-        <HStack justify="space-between" align="center" mb={8}>
-          <Button
-            leftIcon={<FaArrowLeft />}
-            variant="ghost"
-            onClick={handleBackClick}
-            color={headingColor}
-          >
-            Back to Home
-          </Button>
-        </HStack>
+        <Button
+          leftIcon={<FaArrowLeft />}
+          variant="ghost"
+          mb={8}
+          onClick={handleBackClick}
+          color="white"
+          _hover={{ bg: 'whiteAlpha.200' }}
+        >
+          Back
+        </Button>
 
-        <Heading as="h1" size="xl" color={headingColor} mb={6}>
+        <Heading as="h1" size="xl" color="white" mb={6}>
           Support and Help Center
         </Heading>
 

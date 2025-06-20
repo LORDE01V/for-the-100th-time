@@ -117,17 +117,16 @@ function ReferPage() {
     >
       <Container maxW="container.lg" py={8} position="relative" zIndex={2}>
         <VStack spacing={8} align="stretch">
-          {/* Back Button - Replaced IconButton with Button and HStack */}
-          <HStack justify="space-between" align="center" mb={8}>
+          {/* Back Button */}
+          <Box>
             <Button
               leftIcon={<FaArrowLeft />}
               variant="ghost"
               onClick={() => navigate('/home')}
-              color={headingColor}
             >
               Back to Home
             </Button>
-          </HStack>
+          </Box>
 
           {/* Header Section */}
           <Box textAlign="center">
