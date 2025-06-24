@@ -166,12 +166,10 @@ def save_payment_method(user_id, payment_type, card_number=None, expiry_date=Non
             ))
         else:
             # Handle card payment methods
-            try:
-                month, year = expiry_date.split('/')
-                expiry_date = f"20{year}-{month}-01"  # Convert to YYYY-MM-DD format
-            except Exception as e:
-                print(f"Error converting expiry date: {str(e)}")
-                raise
+            if not expiry_date:  # Ensure expiry_date is valid
+                raise Exception("Expiry date is missing or invalid")
+            month, year = expiry_date.split('/')
+            expiry_date = f"20{year}-{month}-01"  # Convert to YYYY-MM-DD format
 
             query = """
             INSERT INTO payment_methods (
@@ -262,7 +260,12 @@ def create_notification(user_id, title, message, type):
     INSERT INTO notifications (user_id, title, message, type)
     VALUES (%s, %s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (user_id, title, message, type))
+    result = execute_query('insert', query, (user_id, title, message, type))
+    if not result:  # Ensure the query returned a result
+        raise Exception("Failed to create notification")
+    notification_id = result[0]
+    print(f"Notification created with ID: {notification_id}")
+    return notification_id
 
 def create_load_shedding_alert(user_id, stage, start_time, end_time, area):
     """Create a load shedding alert"""
@@ -610,7 +613,10 @@ def create_expense(user_id, amount, purpose, type):
         VALUES (%s, %s, %s, %s)
         RETURNING id
         """, (user_id, amount, purpose, type))
-        expense_id = cur.fetchone()[0]
+        result = cur.fetchone()
+        if result is None:
+            raise Exception("Failed to create expense record: No rows returned.")
+        expense_id = result[0]
         print(f"Expense record created with ID: {expense_id}")
 
         # Commit transaction
@@ -704,7 +710,10 @@ def process_top_up_transaction(user_id, amount, type, promo_code=None, voucher_c
         VALUES (%s, %s, %s, %s, %s)
         RETURNING id
         """, (user_id, amount, type, promo_code, voucher_code))
-        top_up_id = cur.fetchone()[0]
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            raise Exception("Failed to create top-up record")
+        top_up_id = result[0]
         print(f"Top-up record created with ID: {top_up_id}")
 
         # Create expense record
@@ -713,7 +722,10 @@ def process_top_up_transaction(user_id, amount, type, promo_code=None, voucher_c
         VALUES (%s, %s, %s, %s)
         RETURNING id
         """, (user_id, amount, f"{type} - Energy Credit", 'Spend'))
-        expense_id = cur.fetchone()[0]
+        result = cur.fetchone()
+        if result is None:
+            raise Exception("Failed to create expense record: No rows returned.")
+        expense_id = result[0]
         print(f"Expense record created with ID: {expense_id}")
 
         # Create notification
@@ -724,7 +736,10 @@ def process_top_up_transaction(user_id, amount, type, promo_code=None, voucher_c
         VALUES (%s, %s, %s, %s)
         RETURNING id
         """, (user_id, notification_title, notification_message, 'success'))
-        notification_id = cur.fetchone()[0]
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            raise Exception("Failed to create notification")
+        notification_id = result[0]
         print(f"Notification created with ID: {notification_id}")
 
         # Update user balance
@@ -736,7 +751,10 @@ def process_top_up_transaction(user_id, amount, type, promo_code=None, voucher_c
             updated_at = CURRENT_TIMESTAMP
         RETURNING balance
         """, (user_id, amount))
-        new_balance = cur.fetchone()[0]
+        result = cur.fetchone()
+        if result is None:
+            raise Exception("Failed to update balance: No rows returned.")
+        new_balance = result[0]
         print(f"Balance updated to: {new_balance}")
 
         # Commit transaction
@@ -789,7 +807,10 @@ def save_user_auto_top_up_settings(user_id, min_balance, top_up_amount, frequenc
             WHERE table_name = 'auto_top_up_settings'
         )
         """)
-        table_exists = cur.fetchone()[0]
+        table_exists_result = cur.fetchone()
+        if not table_exists_result:  # Ensure the query returned a result
+            raise Exception("Failed to check if table exists")
+        table_exists = table_exists_result[0]
         
         if not table_exists:
             print("Creating auto_top_up_settings table")
@@ -827,6 +848,8 @@ def save_user_auto_top_up_settings(user_id, min_balance, top_up_amount, frequenc
         
         print(f"Settings saved successfully: {result}")
         
+        if not result:  # Ensure the query returned a result
+            return None
         return {
             'id': result[0],
             'min_balance': float(result[1]),
@@ -860,7 +883,10 @@ def get_user_auto_top_up_settings(user_id):
             WHERE table_name = 'auto_top_up_settings'
         )
         """)
-        table_exists = cur.fetchone()[0]
+        table_exists_result = cur.fetchone()
+        if not table_exists_result:  # Ensure the query returned a result
+            raise Exception("Failed to check if table exists")
+        table_exists = table_exists_result[0]
         
         if not table_exists:
             print("Auto top-up settings table does not exist")
@@ -876,15 +902,15 @@ def get_user_auto_top_up_settings(user_id):
         result = cur.fetchone()
         print(f"Query result: {result}")
         
-        if result:
-            return {
-                'id': result[0],
-                'min_balance': float(result[1]),
-                'top_up_amount': float(result[2]),
-                'frequency': result[3],
-                'is_enabled': result[4]
-            }
-        return None
+        if not result:  # Ensure the query returned a result
+            return None
+        return {
+            'id': result[0],
+            'min_balance': float(result[1]),
+            'top_up_amount': float(result[2]),
+            'frequency': result[3],
+            'is_enabled': result[4]
+        }
 
     except Exception as e:
         print(f"Error getting auto top-up settings: {str(e)}")

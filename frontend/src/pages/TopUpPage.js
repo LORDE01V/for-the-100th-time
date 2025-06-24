@@ -198,12 +198,15 @@ function TopUpPage() {
 
     try {
         // Process the top-up (which now includes expense creation)
-        const topUpResult = await topUp.process({
+        const payload = {
             amount: topUpAmount,
             type: transactionType,
             promoCode,
-            voucherCode
-        });
+            voucherCode,
+            subject: 'Your subject here', // Add this field if required
+        };
+
+        const topUpResult = await topUp.process(payload);
 
         // Log the response for debugging
         console.log('Top-up result:', topUpResult);

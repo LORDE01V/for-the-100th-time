@@ -8,6 +8,7 @@ const api = axios.create({
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json'
     },
     timeout: 10000, // 10 second timeout
 });
@@ -43,12 +44,6 @@ api.interceptors.response.use(
         } else {
             // Something happened in setting up the request that triggered an Error
             console.error('Error message:', error.message);
-        }
-        if (error.response?.status === 401) {
-            // Clear local storage and redirect to login
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
         }
         return Promise.reject(error);
     }

@@ -46,47 +46,46 @@ function LoginPage() {
 
   // Handler for form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default browser form submission
-
-     if (!validateForm()) {
-        return; // Stop submission if validation fails
+    e.preventDefault();
+    
+    if (!validateForm()) {
+        return;
     }
 
-    setLoading(true); // Set loading state
-    setErrors({}); // Clear previous errors
+    setLoading(true);
+    setErrors({});
 
     try {
-      const response = await auth.login(email, password); // Call backend API
-      if (response.success) {
-        // auth.login should handle storing token and user in localStorage
-        toast({ // Show success message
-            title: 'Login Successful!',
-            description: 'Redirecting to home...',
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-        });
-        navigate('/home'); // Changed back to '/home'
-      } else {
-        toast({ // Show error message from backend
-            title: 'Login Failed.',
-            description: response.message || 'Invalid email or password.',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-        });
-      }
+        const response = await auth.login(email, password);
+        if (response.success) {
+            toast({
+                title: 'Login Successful!',
+                description: 'Redirecting to home...',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
+            navigate('/home');
+        } else {
+            toast({
+                title: 'Login Failed',
+                description: response.message || 'Invalid credentials',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+        }
     } catch (error) {
         console.error('Login error:', error);
-         toast({ // Handle network errors or other exceptions
-            title: 'An error occurred.',
-            description: error.message || 'Could not connect to the server.',
+        toast({
+            title: 'Network Error',
+            description: 'Could not connect to the server. Please check if the backend is running.',
             status: 'error',
             duration: 5000,
             isClosable: true,
         });
     } finally {
-      setLoading(false); // Reset loading state
+        setLoading(false);
     }
   };
 

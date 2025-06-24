@@ -20,7 +20,7 @@ chatbot = HuggingFaceChatbot()
 @app.route('/api/chat', methods=['POST'])
 def chat():
     try:
-        data = request.json
+        data = request.get_json() or {}
         message = data.get('message', '')
         logger.info(f"Received message: {message}")
         response = chatbot.get_response(message)
