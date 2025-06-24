@@ -13,7 +13,6 @@ import {
   VStack,
   HStack,
   Icon,
-  Spacer,
   Badge,
   useColorModeValue,
   Progress // Added Progress component
@@ -25,7 +24,6 @@ import {
   Zap,
   FileText,
   CircleDot,
-  Home, AlertCircle, User, Settings
 } from 'lucide-react'; // Make sure these icons are correctly imported
 
 // Helper component to convert Lucide icons to Chakra UI icons
@@ -33,7 +31,6 @@ const ChakraIcon = ({ icon, ...props }) => {
   const ChakraComp = icon;
   return <Icon as={ChakraComp} {...props} />;
 };
-
 
 function DashboardPage() { // Renamed component to DashboardPage
     const navigate = useNavigate();

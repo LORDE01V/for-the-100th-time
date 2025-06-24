@@ -78,11 +78,11 @@ function SettingsPage() {
   const glassBoxShadow = useColorModeValue('0 4px 6px rgba(0, 0, 0, 0.1)', '0 4px 6px rgba(0, 0, 0, 0.4)');
 
   // Define colors for conditionally rendered elements and input focus borders at the top level
-  const inputFocusBorderColor = useColorModeValue('blue.500', 'blue.300'); // For all inputs
-  const successIconColor = useColorModeValue('green.500', 'green.500'); // Assuming green is consistent
-  const warningIconColor = useColorModeValue('red.500', 'red.500'); // Assuming red is consistent
-  const successTextColor = useColorModeValue('green.500', 'green.500'); // Assuming green is consistent
-  const warningTextColor = useColorModeValue('red.500', 'red.500'); // Assuming red is consistent
+  const inputFocusBorderColor = useColorModeValue('blue.500', 'blue.300');
+  const successIconColor = useColorModeValue('green.500', 'green.500');
+  const warningIconColor = useColorModeValue('red.500', 'red.500');
+  const successTextColor = useColorModeValue('green.500', 'green.500');
+  const warningTextColor = useColorModeValue('red.500', 'red.500');
 
   const [isLoading, setIsLoading] = useState(true); // Add this line
 
@@ -283,7 +283,7 @@ function SettingsPage() {
       };
 
       loadUserData();
-  }, [user]); // Remove toast from dependencies
+  }, [user, isLoading, toast]);
 
   // Update handleSaveProfile
   const handleSaveProfile = async () => {
@@ -378,12 +378,6 @@ function SettingsPage() {
   };
 
 
-  // Handle Back to Dashboard button
-  const handleBackToDashboard = () => {
-      navigate('/home');
-  };
-
-
   // Render loading spinner while user is being checked or data is loading initially
   if (!user || isLoading) {
        return (
@@ -451,7 +445,7 @@ function SettingsPage() {
                     <VStack spacing={4} align="stretch">
                         <FormControl id="email">
                             <FormLabel color={mutedTextColor}>Email Address</FormLabel>
-                            <Input type="email" value={user?.email} isReadOnly focusBorderColor={inputFocusBorderColor} />
+                            <Input type="email" value={user.email} isReadOnly borderColor={inputFocusBorderColor} />
                         </FormControl>
                         <FormControl id="fullName">
                             <FormLabel color={mutedTextColor}>Full Name</FormLabel>

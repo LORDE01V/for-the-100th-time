@@ -11,7 +11,7 @@ import { FaLeaf, FaBolt } from 'react-icons/fa';
 import { useDashboard } from '../../context/DashboardContext';
 import DashboardCard from '../DashboardCard';
 
-const EnergyModeToggle = () => {
+export default function EnergyModeToggle() {
   const { energyMode, toggleEnergyMode, currentModeConfig } = useDashboard();
   const textColor = useColorModeValue('gray.600', 'gray.400');
 
@@ -55,6 +55,4 @@ const EnergyModeToggle = () => {
       </Text>
     </DashboardCard>
   );
-};
-
-export default EnergyModeToggle; 
+} 

@@ -28,17 +28,12 @@ const ThemeSwitcher = () => {
             placement="top"
           >
             <Box
-              p={4}
+              p={2}
               borderRadius="lg"
-              bg={`${key}.50`}
+              bgGradient={theme.gradients.card}
               borderWidth="2px"
-              borderColor={currentTheme === key ? `${key}.500` : 'transparent'}
+              borderColor={currentTheme === key ? theme.colors.primary : 'transparent'}
               cursor="pointer"
-              transition="all 0.2s"
-              _hover={{
-                transform: 'scale(1.05)',
-                borderColor: `${key}.300`,
-              }}
               onClick={() => updateTheme(key)}
             >
               <Text

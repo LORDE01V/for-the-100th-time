@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  Box,
   Text,
   useColorModeValue,
   VStack,
   Badge,
+  Avatar,
+  Center,
 } from '@chakra-ui/react';
-import { FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle, FaUser } from 'react-icons/fa';
 import { avatarStates } from '../../utils/mockData';
 import DashboardCard from '../DashboardCard';
 
@@ -29,13 +30,14 @@ const EnergyAvatar = () => {
       icon={FaUserCircle}
     >
       <VStack spacing={4}>
-        <Box
-          fontSize="6xl"
-          transition="all 0.3s"
-          _hover={{ transform: 'scale(1.1)' }}
-        >
-          {stateConfig.emoji}
-        </Box>
+        <Center h="100%">
+          <Avatar 
+            size="2xl" 
+            src="/assets/images/default-avatar.png"
+            bg="brand.100"
+            icon={<FaUser size={40} />}
+          />
+        </Center>
         <Text
           fontSize="xl"
           fontWeight="bold"
@@ -64,4 +66,14 @@ const EnergyAvatar = () => {
   );
 };
 
-export default EnergyAvatar; 
+export default EnergyAvatar;
+
+export function AvatarImage({ src, alt }) {
+  return (
+    <img 
+      src={src || '/assets/images/default-avatar.png'}
+      alt={alt}
+      style={{ borderRadius: '50%', width: '40px', height: '40px' }}
+    />
+  );
+} 

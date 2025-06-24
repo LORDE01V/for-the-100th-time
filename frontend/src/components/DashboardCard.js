@@ -8,8 +8,9 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { useDashboard } from '../context/DashboardContext';
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create ? motion.create(Box) : motion(Box);
 
 const DashboardCard = ({
   title,
@@ -22,10 +23,10 @@ const DashboardCard = ({
   bgGradient,
   ...props
 }) => {
+  const { currentThemeConfig } = useDashboard();
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const textColor = useColorModeValue('gray.600', 'gray.400');
-  const headingColor = "#333"; // or any color you want
 
   return (
     <MotionBox
@@ -34,19 +35,18 @@ const DashboardCard = ({
       transition={{ duration: 0.3 }}
       p={6}
       bg={bg || cardBg}
-      bgGradient={bgGradient}
+      bgGradient={bgGradient || currentThemeConfig.gradients.card}
       borderRadius="xl"
-      boxShadow="lg"
+      boxShadow="xl"
       borderWidth="1px"
-      borderColor={borderColor}
+      borderColor={borderColor || currentThemeConfig.colors.accent}
       height="100%"
       minH="250px"
       display="flex"
       flexDirection="column"
       _hover={{
-        transform: 'translateY(-4px)',
-        boxShadow: 'xl',
-        transition: 'all 0.2s ease-in-out',
+        transform: 'translateY(-2px)',
+        transition: 'all 0.2s',
       }}
       {...props}
     >
@@ -56,20 +56,19 @@ const DashboardCard = ({
           <Heading
             as="h3"
             size="md"
-            color={headingColor}
+            color={currentThemeConfig.colors.primary}
             fontWeight="semibold"
             isTruncated
           >
-            {title}
-          </Heading>
-          {icon && (
             <Icon 
               as={icon} 
               w={6} 
               h={6} 
               color={props.iconColor || "blue.500"}
+              mr={2}
             />
-          )}
+            {title}
+          </Heading>
         </Flex>
 
         {/* Metric Display (if provided) */}
@@ -92,7 +91,7 @@ const DashboardCard = ({
         )}
 
         {/* Main Content */}
-        <Box flex="1" mt={2}>
+        <Box flex="1" mt={2} color={currentThemeConfig.colors.text}>
           {children}
         </Box>
 

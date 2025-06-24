@@ -1,111 +1,98 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api'; // Assuming auth service is still used
-import gridXBackground from '../assets/images/GridX-IMG.jpg'; // Make sure this path is correct for your background image
-import { FcGoogle } from 'react-icons/fc'; // Import the Google icon
-// Import Chakra UI Components
-import {
-  Box,
-  Flex,
-  Heading,
-  FormControl,
-  FormLabel,
-  Input,
-  Button,
-  Text,
-  VStack,
-  useToast, // For displaying messages
-  useColorModeValue, // For light/dark mode styling
-  FormErrorMessage, // For displaying validation errors
+import { FcGoogle } from 'react-icons/fc';
+import { 
+  Flex, 
+  Box, 
+  Heading, 
+  VStack, 
+  FormControl, 
+  FormLabel, 
+  Input, 
+  Button, 
+  Text, 
+  useToast,
+  FormErrorMessage,
+  useColorModeValue
 } from '@chakra-ui/react';
+import { auth } from '../services/api';
+import gridXBackground from '../assets/images/gridx_background.jpg';
 
 function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({}); // State for validation errors
   const navigate = useNavigate();
-  const toast = useToast(); // Initialize toast for Chakra UI notifications
+  const toast = useToast();
 
-  // Update color mode values for glassmorphism effect
-  const formBg = useColorModeValue(
-    'rgba(255, 255, 255, 0.15)',
-    'rgba(26, 32, 44, 0.15)'
-  );
-  const textColor = useColorModeValue('white', 'white');
-  const borderColor = useColorModeValue(
-    'rgba(255, 255, 255, 0.2)',
-    'rgba(255, 255, 255, 0.1)'
-  );
+  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const formBg = useColorModeValue('rgba(255, 255, 255, 0.8)', 'rgba(0, 0, 0, 0.6)');
 
-  // Function to validate form inputs
   const validateForm = () => {
-      const newErrors = {};
-      if (!name.trim()) newErrors.name = 'Full Name is required';
-      if (!email.trim()) {
-          newErrors.email = 'Email is required';
-      } else if (!/\S+@\S+\.\S+/.test(email)) {
-          newErrors.email = 'Email address is invalid';
-      }
-      if (!password) {
-          newErrors.password = 'Password is required';
-      } else if (password.length < 6) {
-           newErrors.password = 'Password must be at least 6 characters long';
-      }
-      if (!confirmPassword) {
-          newErrors.confirmPassword = 'Confirm Password is required';
-      } else if (password !== confirmPassword) {
-          newErrors.confirmPassword = 'Passwords do not match';
-      }
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0; // Return true if no errors
+    const newErrors = {};
+    
+    if (!name.trim()) newErrors.name = 'Name is required';
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Email address is invalid';
+    }
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long';
+    }
+    if (!confirmPassword) {
+      newErrors.confirmPassword = 'Confirm Password is required';
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-
-  // Handler for form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
-    setErrors({});
 
     try {
-      console.log('Attempting registration with:', { name, email, password }); // Debug log
-      const response = await auth.register(name, email, password);
-      console.log('Registration response:', response); // Debug log
-      if (response.success) {
-        toast({
-          title: 'Registration Successful!',
-          description: 'You can now log in.',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-        navigate('/login');
-      } else {
-        toast({
-          title: 'Registration Failed.',
-          description: response.message || 'An unexpected error occurred.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    } catch (error) {
-      console.error('Registration error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      }); // Enhanced error logging
+      await auth.register({ 
+        name,
+        email,
+        password,
+        phone
+      });
+
       toast({
-        title: 'An error occurred.',
-        description: error.message || 'Could not connect to the server.',
+        title: 'Registration Successful!',
+        description: 'You can now log in.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+      navigate('/login');
+    } catch (error) {
+      let errorMessage = error.message;
+      
+      if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Connection to server timed out. Please check your internet connection and try again.';
+      }
+      
+      if (error.response?.status === 504) {
+        errorMessage = 'Server took too long to respond. Please try again later.';
+      }
+
+      toast({
+        title: 'Registration Error',
+        description: errorMessage,
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -115,225 +102,145 @@ function RegisterPage() {
     }
   };
 
+  const handleGoogleRegister = () => {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    window.location.href = `${backendUrl}/api/auth/google?action=register`;
+  };
+
   return (
-    // Use Flex for centering the form vertically and horizontally
     <Flex
       minH="100vh"
       align="center"
       justify="center"
       p={4}
       position="relative"
-      backgroundImage={`url(${gridXBackground})`} // Set background image
+      backgroundImage={`url(${gridXBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
-      backgroundAttachment="fixed"
     >
-      {/* Add overlay for better readability */}
       <Box
         position="absolute"
         top="0"
         left="0"
         right="0"
         bottom="0"
-        bg="rgba(0, 0, 0, 0.5)" // Dark overlay with 50% opacity
+        bg="rgba(0, 0, 0, 0.5)"
         zIndex="1"
       />
 
-      {/* Form container with enhanced glassmorphism styling */}
       <Box
         maxW="md"
         w="full"
         bg={formBg}
-        boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
+        boxShadow="xl"
         borderRadius="xl"
         p={8}
-        textAlign="center"
         position="relative"
         zIndex="2"
         backdropFilter="blur(16px)"
         border="1px solid"
         borderColor={borderColor}
-        _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          borderRadius: 'xl',
-          padding: '2px',
-          background: 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
-          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          WebkitMaskComposite: 'xor',
-          maskComposite: 'exclude',
-        }}
       >
         <Heading
           as="h2"
           size="xl"
           mb={6}
           color={textColor}
-          textShadow="0 2px 4px rgba(0,0,0,0.2)"
+          textAlign="center"
         >
-          Register
+          Create Account
         </Heading>
-        {/* VStack for vertical stacking of form controls */}
+
         <VStack as="form" spacing={4} onSubmit={handleSubmit} noValidate>
-          {/* Form Control for Full Name */}
           <FormControl id="name" isInvalid={!!errors.name}>
-            <FormLabel color={textColor}>Full Name</FormLabel>
+            <FormLabel>Full Name</FormLabel>
             <Input
-              type="text"
-              placeholder="Enter your full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              bg="rgba(255, 255, 255, 0.1)"
-              borderColor={borderColor}
-              color={textColor}
-              _hover={{
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-              }}
-              _focus={{
-                borderColor: 'rgba(255, 255, 255, 0.5)',
-                boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.5)',
-              }}
+              placeholder="Enter full name"
             />
-             {/* Display error message if validation fails */}
-             <FormErrorMessage>{errors.name}</FormErrorMessage>
+            <FormErrorMessage>{errors.name}</FormErrorMessage>
           </FormControl>
 
-          {/* Form Control for Email */}
           <FormControl id="email" isInvalid={!!errors.email}>
-            <FormLabel color={textColor}>Email address</FormLabel>
+            <FormLabel>Email</FormLabel>
             <Input
               type="email"
-              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              bg="rgba(255, 255, 255, 0.1)"
-              borderColor={borderColor}
-              color={textColor}
-              _hover={{
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-              }}
-              _focus={{
-                borderColor: 'rgba(255, 255, 255, 0.5)',
-                boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.5)',
-              }}
+              placeholder="Enter email"
             />
-             <FormErrorMessage>{errors.email}</FormErrorMessage>
+            <FormErrorMessage>{errors.email}</FormErrorMessage>
           </FormControl>
 
-          {/* Form Control for Password */}
           <FormControl id="password" isInvalid={!!errors.password}>
-            <FormLabel color={textColor}>Password</FormLabel>
+            <FormLabel>Password</FormLabel>
             <Input
               type="password"
-              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              bg="rgba(255, 255, 255, 0.1)"
-              borderColor={borderColor}
-              color={textColor}
-              _hover={{
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-              }}
-              _focus={{
-                borderColor: 'rgba(255, 255, 255, 0.5)',
-                boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.5)',
-              }}
+              placeholder="Create password"
             />
-             <FormErrorMessage>{errors.password}</FormErrorMessage>
+            <FormErrorMessage>{errors.password}</FormErrorMessage>
           </FormControl>
 
-          {/* Form Control for Confirm Password */}
-          <FormControl id="confirm-password" isInvalid={!!errors.confirmPassword}>
-            <FormLabel color={textColor}>Confirm Password</FormLabel>
+          <FormControl id="confirmPassword" isInvalid={!!errors.confirmPassword}>
+            <FormLabel>Confirm Password</FormLabel>
             <Input
               type="password"
-              placeholder="Confirm your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              bg="rgba(255, 255, 255, 0.1)"
-              borderColor={borderColor}
-              color={textColor}
-              _hover={{
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-              }}
-              _focus={{
-                borderColor: 'rgba(255, 255, 255, 0.5)',
-                boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.5)',
-              }}
+              placeholder="Confirm password"
             />
-             <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
+            <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
           </FormControl>
 
-          {/* Submit Button */}
+          <FormControl id="phone" isInvalid={!!errors.phone}>
+            <FormLabel>Phone Number</FormLabel>
+            <Input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter phone number"
+            />
+            <FormErrorMessage>{errors.phone}</FormErrorMessage>
+          </FormControl>
+
           <Button
             type="submit"
             colorScheme="teal"
             size="lg"
-            fontSize="md"
+            w="full"
             isLoading={loading}
             loadingText="Registering..."
-            w="full"
-            mt={4}
-            bg="rgba(49, 151, 149, 0.8)"
-            _hover={{
-              bg: 'rgba(49, 151, 149, 0.9)',
-              transform: 'translateY(-2px)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            }}
-            _active={{
-              bg: 'rgba(49, 151, 149, 1)',
-              transform: 'translateY(0)',
-            }}
           >
-            Register
+            Create Account
           </Button>
 
-          {/* Add divider */}
           <Flex w="full" align="center" my={4}>
             <Box flex="1" h="1px" bg={borderColor} />
-            <Text px={4} color={textColor} fontSize="sm">or</Text>
+            <Text px={4} color={textColor}>or</Text>
             <Box flex="1" h="1px" bg={borderColor} />
           </Flex>
 
-          {/* Gmail Button */}
           <Button
             w="full"
-            size="lg"
             variant="outline"
-            leftIcon={<FcGoogle size="20px" />}
-            onClick={() => navigate('/auth/google')}
-            bg="rgba(255, 255, 255, 0.1)"
-            borderColor={borderColor}
-            color={textColor}
-            _hover={{
-              bg: 'rgba(255, 255, 255, 0.2)',
-              borderColor: 'rgba(255, 255, 255, 0.3)',
-              transform: 'translateY(-2px)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            }}
-            _active={{
-              bg: 'rgba(255, 255, 255, 0.3)',
-              transform: 'translateY(0)',
-            }}
+            leftIcon={<FcGoogle />}
+            onClick={handleGoogleRegister}
           >
-            Continue with Gmail
+            Continue with Google
           </Button>
         </VStack>
 
-        {/* Link to Login page */}
-        <Text mt={6} color={textColor}>
+        <Text mt={6} textAlign="center" color={textColor}>
           Already have an account?{' '}
           <Button
             variant="link"
-            color="teal.300"
-            _hover={{ textDecoration: 'underline' }}
+            color="teal.500"
             onClick={() => navigate('/login')}
           >
-            Login here
+            Log in here
           </Button>
         </Text>
       </Box>
@@ -341,4 +248,4 @@ function RegisterPage() {
   );
 }
 
-export default RegisterPage; // Export the component 
+export default RegisterPage; 

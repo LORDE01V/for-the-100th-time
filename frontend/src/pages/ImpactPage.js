@@ -54,11 +54,6 @@ function ImpactPage() {
       }
   }, [user, navigate, toast]);
 
-  // Handle Back to Dashboard button
-  const handleBackToDashboard = () => {
-    navigate('/home');
-  };
-
   // Mock data (replace with actual data fetching later)
   const impactStats = [
     { label: 'Total Solar Energy Provided', value: '1.2M kWh saved', icon: FaSolarPanel },

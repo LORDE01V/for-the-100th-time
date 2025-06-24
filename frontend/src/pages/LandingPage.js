@@ -31,7 +31,7 @@ import kgothatsoProfile from '../assets/images/kg_img.png';
 import gridXBackground from '../assets/images/GridX-IMG.jpg';
 
 // Create motion components
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 // Add these animation variants at the top of the file, after the imports
 const textVariants = {

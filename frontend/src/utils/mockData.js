@@ -39,29 +39,86 @@ export const dailyForecast = [
 // Theme Presets
 export const themePresets = {
   coolBlue: {
-    name: 'Cool Blue',
+    name: 'Arctic Blue',
     colors: {
-      primary: 'blue.500',
-      secondary: 'cyan.500',
-      accent: 'teal.500',
+      primary: '#4299E1',
+      secondary: '#63B3ED',
+      accent: '#90CDF4',
+      background: '#F7FAFC',
+      text: '#2D3748'
     },
+    gradients: {
+      card: 'linear(to-br, #EBF8FF, #BEE3F8)'
+    }
+  },
+  warmSunrise: {
+    name: 'Warm Sunrise',
+    colors: {
+      primary: '#DD6B20',
+      secondary: '#F6AD55',
+      background: '#FFFAF0',
+      text: '#2D3748',
+      accent: '#F6AD55'
+    },
+    gradients: {
+      main: 'linear(to-br, #DD6B20, #F6AD55)',
+      card: 'linear(to-br, #FFFAF0, #FEEBC8)'
+    }
   },
   warmOrange: {
     name: 'Warm Orange',
     colors: {
       primary: 'orange.500',
       secondary: 'red.500',
+      background: 'orange.50',
+      text: 'gray.800',
       accent: 'yellow.500',
     },
+    gradients: {
+      main: 'linear(to-br, orange.500, red.500)',
+      card: 'linear(to-br, orange.50, red.50)'
+    }
   },
   deepPurple: {
     name: 'Deep Purple',
     colors: {
       primary: 'purple.500',
       secondary: 'pink.500',
+      background: 'purple.50',
+      text: 'gray.800',
       accent: 'indigo.500',
     },
+    gradients: {
+      main: 'linear(to-br, purple.500, pink.500)',
+      card: 'linear(to-br, purple.50, pink.50)'
+    }
   },
+  ecoGreen: {
+    name: 'Eco Green',
+    colors: {
+      primary: '#48BB78',
+      secondary: '#68D391',
+      accent: '#9AE6B4',
+      background: '#F0FFF4',
+      text: '#2F855A'
+    },
+    gradients: {
+      card: 'linear(to-br, #C6F6D5, #9AE6B4)'
+    }
+  },
+  sunsetPink: {
+    name: 'Sunset Pink',
+    colors: {
+      primary: '#ED64A6',
+      secondary: '#F687B3',
+      accent: '#FBB6CE',
+      background: '#FFF5F7',
+      text: '#97266D'
+    },
+    gradients: {
+      card: 'linear(to-br, #FED7E2, #FBB6CE)'
+    }
+  }
 };
 
 // Energy Avatar States
@@ -93,7 +150,6 @@ export const solarOutputData = {
 // Widget Layout Configuration
 export const defaultWidgetLayout = {
   energyMode: true,
-  weeklyHeatmap: true,
   budgetDial: true,
   dailyForecast: true,
   themeSwitcher: true,

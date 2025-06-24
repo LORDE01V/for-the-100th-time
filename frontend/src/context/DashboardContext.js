@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { energyModes, defaultWidgetLayout } from '../utils/mockData';
+import { energyModes, defaultWidgetLayout, themePresets } from '../utils/mockData';
+import { Box } from '@chakra-ui/react';
 
 const DashboardContext = createContext();
 
@@ -21,6 +22,8 @@ export const DashboardProvider = ({ children }) => {
     const saved = localStorage.getItem('widgetLayout');
     return saved ? JSON.parse(saved) : defaultWidgetLayout;
   });
+
+  const currentThemeConfig = themePresets[currentTheme] || themePresets.coolBlue;
 
   // Persist Energy Mode
   useEffect(() => {
@@ -60,11 +63,18 @@ export const DashboardProvider = ({ children }) => {
     updateTheme,
     toggleWidget,
     currentModeConfig: energyModes[energyMode],
+    currentThemeConfig,
   };
 
   return (
     <DashboardContext.Provider value={value}>
-      {children}
+      <Box
+        minH="100vh"
+        bgGradient={currentThemeConfig.gradients.main}
+        backgroundAttachment="fixed"
+      >
+        {children}
+      </Box>
     </DashboardContext.Provider>
   );
 };

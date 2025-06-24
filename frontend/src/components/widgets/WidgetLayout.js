@@ -24,13 +24,13 @@ const WidgetLayout = () => {
   const textColor = useColorModeValue('gray.600', 'gray.400');
 
   const widgetLabels = {
-    energyMode: 'Energy Mode Toggle',
-    weeklyHeatmap: 'Weekly Heatmap',
-    budgetDial: 'Budget Dial',
-    dailyForecast: 'Daily Forecast',
-    themeSwitcher: 'Theme Switcher',
-    energyAvatar: 'Energy Avatar',
+    energyMode: 'Energy Mode',
+    budgetDial: 'Budget Control',
+    dailyForecast: 'Energy Forecast',
+    themeSwitcher: 'Theme Settings',
+    energyAvatar: 'Energy Profile',
     solarOutput: 'Solar Output',
+    weeklyHeatmap: 'Usage Heatmap'
   };
 
   return (
@@ -61,26 +61,32 @@ const WidgetLayout = () => {
           <DrawerHeader>Widget Configuration</DrawerHeader>
           <DrawerBody>
             <VStack spacing={4} align="stretch">
-              {Object.entries(widgetLayout).map(([key, isVisible]) => (
-                <Box
-                  key={key}
-                  p={4}
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Text fontSize="sm" color={textColor}>
-                    {widgetLabels[key]}
-                  </Text>
-                  <Switch
-                    isChecked={isVisible}
-                    onChange={() => toggleWidget(key)}
-                    colorScheme="blue"
-                  />
-                </Box>
-              ))}
+              {Object.entries(widgetLayout).map(([key, isVisible]) => {
+                if (!widgetLabels[key]) {
+                  console.error(`Missing widget label for: ${key}`);
+                  return null;
+                }
+                return (
+                  <Box
+                    key={key}
+                    p={4}
+                    borderWidth="1px"
+                    borderRadius="lg"
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Text fontSize="sm" color={textColor}>
+                      {widgetLabels[key]}
+                    </Text>
+                    <Switch
+                      isChecked={isVisible}
+                      onChange={() => toggleWidget(key)}
+                      colorScheme="blue"
+                    />
+                  </Box>
+                );
+              })}
             </VStack>
           </DrawerBody>
         </DrawerContent>
