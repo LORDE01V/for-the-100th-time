@@ -285,3 +285,40 @@
 2025-06-24 12:18:18,568 - INFO -  * Restarting with stat
 2025-06-24 12:18:26,618 - WARNING -  * Debugger is active!
 2025-06-24 12:18:26,623 - INFO -  * Debugger PIN: 240-196-647
+2025-06-24 12:30:42,355 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 12:30:43,208 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:43] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 12:30:50,159 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,475 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/payment-methods HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,477 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,513 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/payment-methods HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,518 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,554 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,556 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,931 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:56,481 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:56] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-06-24 12:30:56,793 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:56] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-06-24 12:30:59,946 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:59] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:30:59,948 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:59] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:00,208 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:00] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:05,684 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:05] "[33mOPTIONS /settings HTTP/1.1[0m" 404 -
+2025-06-24 12:31:06,001 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:06] "[33mOPTIONS /settings HTTP/1.1[0m" 404 -
+2025-06-24 12:31:13,825 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:13] "[33mOPTIONS /api/forum/topics HTTP/1.1[0m" 404 -
+2025-06-24 12:31:13,831 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:13] "[33mOPTIONS /api/forum/topics HTTP/1.1[0m" 404 -
+2025-06-24 12:31:17,273 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:17] "[33mOPTIONS /api/forum/topics HTTP/1.1[0m" 404 -
+2025-06-24 12:31:17,585 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:17] "[33mOPTIONS /api/forum/topics HTTP/1.1[0m" 404 -
+2025-06-24 12:31:24,484 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:24] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:24,486 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:24] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:24,749 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:24] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:27,547 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:27] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:27,857 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:27] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:27,933 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:27] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:30,388 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:30] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-06-24 12:31:30,393 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:30] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,550 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,865 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/payment-methods HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,867 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,868 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/payment-methods HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,871 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:34,006 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:34] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:34,023 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:34] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:34,444 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:34] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
