@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -17,7 +17,24 @@ import { FaArrowLeft, FaCreditCard } from 'react-icons/fa';
 
 function SubscriptionPage() {
   const navigate = useNavigate();
-  
+
+  // State for selected plan
+  const [selectedPlan, setSelectedPlan] = useState('');
+
+  // Load the saved subscription plan from localStorage on component mount
+  useEffect(() => {
+    const savedPlan = localStorage.getItem('subscriptionPlan');
+    if (savedPlan) {
+      setSelectedPlan(savedPlan);
+    }
+  }, []);
+
+  // Handle plan selection
+  const handlePlanSelect = (plan) => {
+    setSelectedPlan(plan);
+    localStorage.setItem('subscriptionPlan', plan); // Save the selection to localStorage
+  };
+
   // Color mode values
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const headingColor = useColorModeValue('gray.900', 'white');
@@ -25,7 +42,7 @@ function SubscriptionPage() {
   const cardBg = useColorModeValue('white', 'gray.800');
   const cardBorderColor = useColorModeValue('gray.300', 'gray.700');
 
-  // Reuse the subscription plans from HomePage
+  // Subscription plans
   const subscriptionPlans = useMemo(() => [
     {
       id: 'basic',
@@ -93,7 +110,8 @@ function SubscriptionPage() {
               borderWidth="1px"
               borderRadius="md"
               borderColor={cardBorderColor}
-              bg={cardBg}
+              bg={selectedPlan === plan.id ? 'blue.500' : cardBg}
+              color={selectedPlan === plan.id ? 'white' : textColor}
               _hover={{
                 transform: 'translateY(-5px)',
                 transition: 'all 0.2s',
@@ -101,36 +119,38 @@ function SubscriptionPage() {
               }}
             >
               <VStack spacing={4} align="stretch">
-                <Heading size="md" color={headingColor}>{plan.name}</Heading>
-                <Text fontSize="2xl" fontWeight="bold" color="green.500">
+                <Heading size="md">{plan.name}</Heading>
+                <Text fontSize="2xl" fontWeight="bold">
                   R{plan.price}/month
                 </Text>
                 
                 <VStack align="start" spacing={2}>
                   {plan.features.map((feature, index) => (
-                    <Text key={index} color={textColor}>
+                    <Text key={index}>
                       ✓ {feature}
                     </Text>
                   ))}
                 </VStack>
 
                 <Button
-                  colorScheme="blue"
+                  colorScheme={selectedPlan === plan.id ? 'green' : 'blue'}
                   mt={4}
                   w="full"
-                  onClick={() => {
-                    /* Add subscription logic here */
-                  }}
+                  onClick={() => handlePlanSelect(plan.id)}
                 >
-                  Choose Plan
+                  {selectedPlan === plan.id ? 'Selected' : 'Choose Plan'}
                 </Button>
               </VStack>
             </Box>
           ))}
         </SimpleGrid>
+
+        <Text mt={8} fontSize="lg" fontWeight="bold">
+          Selected Plan: {selectedPlan ? subscriptionPlans.find(plan => plan.id === selectedPlan)?.name : 'None'}
+        </Text>
       </Container>
     </Box>
   );
 }
 
-export default SubscriptionPage; 
+export default SubscriptionPage;
