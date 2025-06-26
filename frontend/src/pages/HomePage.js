@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api';
 import { useDashboard } from '../context/DashboardContext';
 import ErrorBoundary from '../components/ErrorBoundary';
+import { motion } from 'framer-motion';
 
 // Import the video
 import backgroundVideo from '../assets/videos/Slowed-GridX-Video.mp4';
@@ -46,9 +47,6 @@ import {
 // Import useColorMode hook
 import { useColorMode } from '@chakra-ui/react';
 
-// Import keyframes
-import { keyframes } from '@emotion/react';
-
 // Constants and utility functions
 const getTimeOfDay = () => {
   const hour = new Date().getHours();
@@ -69,13 +67,6 @@ const GLASS_STYLES = {
     boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
   }
 };
-
-// Add animation keyframes at the top of the file (before component definition)
-const flipAnimation = keyframes`
-  0% { transform: rotateY(0deg); }
-  50% { transform: rotateY(180deg); }
-  100% { transform: rotateY(360deg); }
-`;
 
 function HomePage() {
   // Hooks and state
@@ -318,66 +309,47 @@ function HomePage() {
   );
 
   const renderNavGrid = () => (
-          <SimpleGrid
-            columns={{ base: 1, md: 2, lg: 3 }}
-            spacing={6}
-            mb={12}
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mt={8}>
+      {navItems.map((item) => (
+        <motion.div
+          key={item.title}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          whileHover={{ scale: 1.05, boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.1)' }}
+        >
+          <Box
+            p={6}
+            borderWidth="1px"
+            borderRadius="md"
+            bg={colors.glass.backgroundColor}
+            boxShadow="lg"
+            _hover={{ boxShadow: 'xl' }}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            height="200px"  // Consistent height for cards
+            backdropFilter="blur(10px)"
           >
-            {navItems.map((item) => (
-              <Box
-                key={item.path}
-                p={6}
-                borderRadius="lg"
-                _hover={{
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 0 20px rgba(66, 153, 225, 0.6)',
-                  transition: 'all 0.3s ease-in-out'
-                }}
-                onClick={() => navigate(item.path)}
-                cursor="pointer"
-                role="group"
-                {...colors.glass}
-                position="relative"
-                overflow="hidden"
-                _before={{
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  bg: 'rgba(66, 153, 225, 0.1)',
-                  opacity: 0,
-                  transition: 'opacity 0.3s ease-in-out'
-                }}
-                _hoverBefore={{
-                  opacity: 1
-                }}
-              >
-                <Flex align="center" mb={3}>
-                   <Icon
-                      as={item.icon}
-                      w={8}
-                      h={8}
-                      color={`${item.colorScheme}.500`}
-                      _groupHover={{
-                        color: `${item.colorScheme}.600`,
-                        animation: `${flipAnimation} 2s ease-in-out`,
-                        transformOrigin: 'center'
-                      }}
-                      mr={4}
-                      transition="color 0.3s ease-in-out"
-                   />
-             <Heading as="h3" size="md" color={colors.heading}>
-                      {item.title}
-                   </Heading>
-                </Flex>
-          <Text fontSize="sm" color={colors.text}>
-                  {item.description}
-                </Text>
-              </Box>
-            ))}
-          </SimpleGrid>
+            <Flex align="center" justify="center">
+              <Icon as={item.icon} boxSize={8} color={item.colorScheme + '.500'} />
+              <Heading size="md" color={colors.heading} ml={2}>{item.title}</Heading>
+            </Flex>
+            <Text color={colors.text} mt={2} textAlign="center">
+              {item.description}
+            </Text>
+            <Button
+              mt={4}
+              colorScheme={item.colorScheme}
+              onClick={() => navigate(item.path)}
+            >
+              Go to {item.title}
+            </Button>
+          </Box>
+        </motion.div>
+      ))}
+    </SimpleGrid>
   );
 
   if (!user) {

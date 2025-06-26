@@ -151,7 +151,10 @@ def login():
         if 'email' not in data or 'password' not in data:
             logging.error(f"Missing required fields in data: {data}")
             return create_response("Invalid credentials", 400)
-
+        
+        # Normalize email to lowercase
+        data['email'] = data['email'].lower()
+        
         user = get_user_by_email(data['email'])
         if not user:
             logging.error(f"User not found for email: {data['email']}")
@@ -178,15 +181,18 @@ def login():
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    # Validate required fields (remove phone_number from required)
+    # Validate required fields
     if not all(key in data for key in ['name', 'email', 'password']):
         return jsonify({"error": "Missing required fields"}), 400
-        
+    
+    # Normalize email to lowercase
+    data['email'] = data['email'].lower()
+    
     # Check if user exists
     if get_user_by_email(data['email']):
         return jsonify({"error": "Email already registered"}), 409
-        
-    # Create user with optional phone_number
+    
+    # Create user
     try:
         logging.info(f"Registration attempt for {data['email']}")
         start_time = time.time()
