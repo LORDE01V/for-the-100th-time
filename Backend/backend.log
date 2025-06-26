@@ -1,0 +1,324 @@
+2025-06-23 16:21:40,832 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 16:21:40,837 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 16:21:40,843 - INFO -  * Restarting with stat
+2025-06-23 16:21:58,672 - WARNING -  * Debugger is active!
+2025-06-23 16:21:58,678 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 16:22:47,853 - INFO - 127.0.0.1 - - [23/Jun/2025 16:22:47] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-06-23 16:22:48,220 - INFO - Registration attempt for saa@gmail.com
+2025-06-23 16:22:48,641 - INFO - 127.0.0.1 - - [23/Jun/2025 16:22:48] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-06-23 16:32:04,557 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 16:32:04,558 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 16:32:04,567 - INFO -  * Restarting with stat
+2025-06-23 16:32:24,734 - WARNING -  * Debugger is active!
+2025-06-23 16:32:24,741 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 16:35:48,938 - INFO - 127.0.0.1 - - [23/Jun/2025 16:35:48] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-06-23 16:35:49,445 - INFO - Registration attempt for Nathisduv@gmail.com
+2025-06-23 16:35:50,057 - INFO - 127.0.0.1 - - [23/Jun/2025 16:35:50] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-06-23 16:38:16,353 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 16:38:16,355 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 16:38:16,359 - INFO -  * Restarting with stat
+2025-06-23 16:38:40,579 - WARNING -  * Debugger is active!
+2025-06-23 16:38:40,606 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 16:38:46,984 - INFO - 127.0.0.1 - - [23/Jun/2025 16:38:46] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-06-23 16:38:47,299 - INFO - Registration attempt for Nathilll@gmail.com
+2025-06-23 16:38:48,238 - INFO - 127.0.0.1 - - [23/Jun/2025 16:38:48] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-06-23 16:41:56,054 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 16:41:56,056 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 16:41:56,063 - INFO -  * Restarting with stat
+2025-06-23 16:42:17,305 - WARNING -  * Debugger is active!
+2025-06-23 16:42:17,313 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 16:43:33,621 - INFO - 127.0.0.1 - - [23/Jun/2025 16:43:33] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-06-23 16:43:33,937 - INFO - Registration attempt for Nathiljjll@gmail.com
+2025-06-23 16:43:34,178 - INFO - 127.0.0.1 - - [23/Jun/2025 16:43:34] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-06-23 16:47:03,533 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Videos\\cleanv1\\cleanv1\\for-the-100th-time-main\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-06-23 16:47:04,532 - INFO -  * Restarting with stat
+2025-06-23 16:47:54,016 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 16:47:54,016 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 16:47:54,018 - INFO -  * Restarting with stat
+2025-06-23 16:48:05,818 - WARNING -  * Debugger is active!
+2025-06-23 16:48:05,820 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 16:48:51,119 - INFO - 127.0.0.1 - - [23/Jun/2025 16:48:51] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-06-23 16:48:51,437 - INFO - Registration attempt for lhukft@gmail.com
+2025-06-23 16:48:51,679 - INFO - 127.0.0.1 - - [23/Jun/2025 16:48:51] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-06-23 16:56:06,915 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 16:56:06,916 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 16:56:06,917 - INFO -  * Restarting with stat
+2025-06-23 16:56:17,389 - WARNING -  * Debugger is active!
+2025-06-23 16:56:17,399 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 16:57:48,741 - INFO - 127.0.0.1 - - [23/Jun/2025 16:57:48] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-06-23 16:57:49,066 - INFO - Registration attempt for lhukkukft@gmail.com
+2025-06-23 16:57:49,426 - INFO - 127.0.0.1 - - [23/Jun/2025 16:57:49] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-06-23 16:57:56,376 - INFO - 127.0.0.1 - - [23/Jun/2025 16:57:56] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 16:57:56,757 - INFO - 127.0.0.1 - - [23/Jun/2025 16:57:56] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2025-06-23 16:58:12,194 - INFO - 127.0.0.1 - - [23/Jun/2025 16:58:12] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 16:58:12,571 - INFO - 127.0.0.1 - - [23/Jun/2025 16:58:12] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2025-06-23 17:03:00,084 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 17:03:00,085 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 17:03:00,086 - INFO -  * Restarting with stat
+2025-06-23 17:03:08,765 - WARNING -  * Debugger is active!
+2025-06-23 17:03:08,770 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 17:03:17,910 - INFO - 127.0.0.1 - - [23/Jun/2025 17:03:17] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 17:03:18,211 - ERROR - Login error: cannot convert dictionary update sequence element #0 to a sequence
+2025-06-23 17:03:18,212 - INFO - 127.0.0.1 - - [23/Jun/2025 17:03:18] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2025-06-23 17:03:57,946 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Videos\\cleanv1\\cleanv1\\for-the-100th-time-main\\for-the-100th-time\\Backend\\support.py', reloading
+2025-06-23 17:03:58,946 - INFO -  * Restarting with stat
+2025-06-23 17:04:09,789 - WARNING -  * Debugger is active!
+2025-06-23 17:04:09,792 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 17:04:40,417 - INFO - 127.0.0.1 - - [23/Jun/2025 17:04:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 17:04:40,856 - INFO - 127.0.0.1 - - [23/Jun/2025 17:04:40] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 17:07:35,486 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 17:07:35,487 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 17:07:35,489 - INFO -  * Restarting with stat
+2025-06-23 17:07:43,582 - WARNING -  * Debugger is active!
+2025-06-23 17:07:43,586 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 17:08:24,685 - INFO - 127.0.0.1 - - [23/Jun/2025 17:08:24] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 17:08:25,174 - ERROR - Login error: Could not build url for endpoint 'home.home_page'. Did you mean 'auth.google_login' instead?
+2025-06-23 17:08:25,175 - INFO - 127.0.0.1 - - [23/Jun/2025 17:08:25] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2025-06-23 17:11:16,550 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 17:11:16,551 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 17:11:16,552 - INFO -  * Restarting with stat
+2025-06-23 17:11:24,789 - WARNING -  * Debugger is active!
+2025-06-23 17:11:24,792 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 17:12:21,190 - INFO - 127.0.0.1 - - [23/Jun/2025 17:12:21] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 17:12:21,638 - INFO - 127.0.0.1 - - [23/Jun/2025 17:12:21] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 17:27:42,468 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Videos\\cleanv1\\cleanv1\\for-the-100th-time-main\\for-the-100th-time\\Backend\\main.py', reloading
+2025-06-23 17:27:43,378 - INFO -  * Restarting with stat
+2025-06-23 17:27:51,922 - WARNING -  * Debugger is active!
+2025-06-23 17:27:51,926 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 17:55:33,625 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Videos\\cleanv1\\cleanv1\\for-the-100th-time-main\\for-the-100th-time\\Backend\\main.py', reloading
+2025-06-23 17:55:34,619 - INFO -  * Restarting with stat
+2025-06-23 17:55:43,471 - WARNING -  * Debugger is active!
+2025-06-23 17:55:43,475 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 18:29:30,585 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 18:29:30,586 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 18:29:30,588 - INFO -  * Restarting with stat
+2025-06-23 18:29:38,469 - WARNING -  * Debugger is active!
+2025-06-23 18:29:38,473 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 18:29:54,503 - INFO - 127.0.0.1 - - [23/Jun/2025 18:29:54] "[33mOPTIONS /auth/login HTTP/1.1[0m" 404 -
+2025-06-23 18:31:34,357 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 18:31:34,357 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 18:31:34,358 - INFO -  * Restarting with stat
+2025-06-23 18:31:43,701 - WARNING -  * Debugger is active!
+2025-06-23 18:31:43,706 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 18:31:45,971 - INFO - 127.0.0.1 - - [23/Jun/2025 18:31:45] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 18:31:46,608 - INFO - 127.0.0.1 - - [23/Jun/2025 18:31:46] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 19:54:45,302 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 19:54:45,303 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 19:54:45,306 - INFO -  * Restarting with stat
+2025-06-23 19:55:00,472 - WARNING -  * Debugger is active!
+2025-06-23 19:55:00,476 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 19:56:16,914 - INFO - 127.0.0.1 - - [23/Jun/2025 19:56:16] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 19:56:17,683 - INFO - 127.0.0.1 - - [23/Jun/2025 19:56:17] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 20:00:56,542 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 20:00:56,542 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 20:00:56,544 - INFO -  * Restarting with stat
+2025-06-23 20:01:06,360 - WARNING -  * Debugger is active!
+2025-06-23 20:01:06,367 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 20:01:39,315 - INFO - 127.0.0.1 - - [23/Jun/2025 20:01:39] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 20:01:40,104 - INFO - 127.0.0.1 - - [23/Jun/2025 20:01:40] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 20:14:02,280 - INFO - 127.0.0.1 - - [23/Jun/2025 20:14:02] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 20:14:03,108 - INFO - 127.0.0.1 - - [23/Jun/2025 20:14:03] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 20:59:41,411 - INFO - 127.0.0.1 - - [23/Jun/2025 20:59:41] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 20:59:42,229 - INFO - 127.0.0.1 - - [23/Jun/2025 20:59:42] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 21:49:46,691 - INFO - 127.0.0.1 - - [23/Jun/2025 21:49:46] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 21:49:47,355 - INFO - 127.0.0.1 - - [23/Jun/2025 21:49:47] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 21:50:17,312 - INFO - 127.0.0.1 - - [23/Jun/2025 21:50:17] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 21:50:17,627 - INFO - 127.0.0.1 - - [23/Jun/2025 21:50:17] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 22:30:27,332 - INFO - 127.0.0.1 - - [23/Jun/2025 22:30:27] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 22:30:27,981 - INFO - 127.0.0.1 - - [23/Jun/2025 22:30:27] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 22:33:37,987 - INFO - 127.0.0.1 - - [23/Jun/2025 22:33:37] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 22:34:24,314 - INFO - 127.0.0.1 - - [23/Jun/2025 22:34:24] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 22:34:24,919 - INFO - 127.0.0.1 - - [23/Jun/2025 22:34:24] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 22:39:09,242 - INFO - 127.0.0.1 - - [23/Jun/2025 22:39:09] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 22:39:09,829 - INFO - 127.0.0.1 - - [23/Jun/2025 22:39:09] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 23:44:17,513 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-23 23:44:17,514 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 23:44:17,517 - INFO -  * Restarting with stat
+2025-06-23 23:44:26,263 - WARNING -  * Debugger is active!
+2025-06-23 23:44:26,269 - INFO -  * Debugger PIN: 240-196-647
+2025-06-23 23:45:31,380 - INFO - 127.0.0.1 - - [23/Jun/2025 23:45:31] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 23:45:32,280 - INFO - 127.0.0.1 - - [23/Jun/2025 23:45:32] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 23:54:16,587 - INFO - 127.0.0.1 - - [23/Jun/2025 23:54:16] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 23:54:17,443 - INFO - 127.0.0.1 - - [23/Jun/2025 23:54:17] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 23:56:33,788 - INFO - 127.0.0.1 - - [23/Jun/2025 23:56:33] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 23:56:34,654 - INFO - 127.0.0.1 - - [23/Jun/2025 23:56:34] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-23 23:56:49,533 - INFO - 127.0.0.1 - - [23/Jun/2025 23:56:49] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-23 23:56:50,055 - INFO - 127.0.0.1 - - [23/Jun/2025 23:56:50] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 00:11:19,093 - INFO - 127.0.0.1 - - [24/Jun/2025 00:11:19] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 00:11:20,346 - INFO - 127.0.0.1 - - [24/Jun/2025 00:11:20] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 00:19:10,810 - INFO - 127.0.0.1 - - [24/Jun/2025 00:19:10] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 00:19:11,942 - INFO - 127.0.0.1 - - [24/Jun/2025 00:19:11] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 00:19:31,829 - INFO - 127.0.0.1 - - [24/Jun/2025 00:19:31] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 00:19:32,689 - INFO - 127.0.0.1 - - [24/Jun/2025 00:19:32] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 00:20:25,399 - INFO - 127.0.0.1 - - [24/Jun/2025 00:20:25] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 00:20:26,598 - INFO - 127.0.0.1 - - [24/Jun/2025 00:20:26] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:13:08,214 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-24 09:13:08,214 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-24 09:13:08,217 - INFO -  * Restarting with stat
+2025-06-24 09:13:19,049 - WARNING -  * Debugger is active!
+2025-06-24 09:13:19,055 - INFO -  * Debugger PIN: 240-196-647
+2025-06-24 09:15:17,088 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:17] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:15:17,400 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:17] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:15:19,074 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:19] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:15:21,407 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:21] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:15:36,714 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:36] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:15:36,718 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:36] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:15:37,175 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:37] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:15:37,437 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:37] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:15:37,655 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:37] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:15:37,844 - INFO - 127.0.0.1 - - [24/Jun/2025 09:15:37] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:16:24,712 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Videos\\cleanv1\\cleanv1\\for-the-100th-time-main\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-06-24 09:16:25,757 - INFO -  * Restarting with stat
+2025-06-24 09:16:40,204 - WARNING -  * Debugger is active!
+2025-06-24 09:16:40,214 - INFO -  * Debugger PIN: 240-196-647
+2025-06-24 09:16:42,019 - INFO - 127.0.0.1 - - [24/Jun/2025 09:16:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:16:42,324 - ERROR - Invalid request data: {'email': {'email': 'lhukkukft@gmail.com', 'password': '111111111111111111'}}
+2025-06-24 09:16:42,324 - INFO - 127.0.0.1 - - [24/Jun/2025 09:16:42] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:16:44,620 - ERROR - Invalid request data: {'email': {'email': 'lhukkukft@gmail.com', 'password': '111111111111111111'}}
+2025-06-24 09:16:44,620 - INFO - 127.0.0.1 - - [24/Jun/2025 09:16:44] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:16:45,588 - ERROR - Invalid request data: {'email': {'email': 'lhukkukft@gmail.com', 'password': '111111111111111111'}}
+2025-06-24 09:16:45,589 - INFO - 127.0.0.1 - - [24/Jun/2025 09:16:45] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 400 -
+2025-06-24 09:17:33,393 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Videos\\cleanv1\\cleanv1\\for-the-100th-time-main\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-06-24 09:17:34,433 - INFO -  * Restarting with stat
+2025-06-24 09:17:48,264 - WARNING -  * Debugger is active!
+2025-06-24 09:17:48,272 - INFO -  * Debugger PIN: 240-196-647
+2025-06-24 09:19:12,944 - INFO - 127.0.0.1 - - [24/Jun/2025 09:19:12] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:19:13,723 - INFO - 127.0.0.1 - - [24/Jun/2025 09:19:13] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:27:19,806 - INFO - 127.0.0.1 - - [24/Jun/2025 09:27:19] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:27:20,457 - INFO - 127.0.0.1 - - [24/Jun/2025 09:27:20] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:29:06,841 - INFO - 127.0.0.1 - - [24/Jun/2025 09:29:06] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:29:07,379 - INFO - 127.0.0.1 - - [24/Jun/2025 09:29:07] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:48:10,790 - INFO - 127.0.0.1 - - [24/Jun/2025 09:48:10] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:48:11,339 - INFO - 127.0.0.1 - - [24/Jun/2025 09:48:11] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:50:37,356 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-24 09:50:37,357 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-24 09:50:37,359 - INFO -  * Restarting with stat
+2025-06-24 09:50:47,318 - WARNING -  * Debugger is active!
+2025-06-24 09:50:47,327 - INFO -  * Debugger PIN: 240-196-647
+2025-06-24 09:51:07,367 - INFO - 127.0.0.1 - - [24/Jun/2025 09:51:07] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:51:07,951 - INFO - 127.0.0.1 - - [24/Jun/2025 09:51:07] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:52:18,564 - INFO - 127.0.0.1 - - [24/Jun/2025 09:52:18] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:52:19,130 - INFO - 127.0.0.1 - - [24/Jun/2025 09:52:19] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:58:05,133 - INFO - 127.0.0.1 - - [24/Jun/2025 09:58:05] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:58:05,744 - INFO - 127.0.0.1 - - [24/Jun/2025 09:58:05] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:59:21,910 - INFO - 127.0.0.1 - - [24/Jun/2025 09:59:21] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:59:22,447 - INFO - 127.0.0.1 - - [24/Jun/2025 09:59:22] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:59:52,971 - INFO - 127.0.0.1 - - [24/Jun/2025 09:59:52] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 09:59:53,251 - INFO - 127.0.0.1 - - [24/Jun/2025 09:59:53] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:00:19,434 - INFO - 127.0.0.1 - - [24/Jun/2025 10:00:19] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:00:20,000 - INFO - 127.0.0.1 - - [24/Jun/2025 10:00:20] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:04:35,437 - INFO - 127.0.0.1 - - [24/Jun/2025 10:04:35] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:04:36,120 - INFO - 127.0.0.1 - - [24/Jun/2025 10:04:36] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:04:46,749 - INFO - 127.0.0.1 - - [24/Jun/2025 10:04:46] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:04:47,194 - INFO - 127.0.0.1 - - [24/Jun/2025 10:04:47] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:07:26,072 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-24 10:07:26,073 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-24 10:07:26,075 - INFO -  * Restarting with stat
+2025-06-24 10:07:35,528 - WARNING -  * Debugger is active!
+2025-06-24 10:07:35,532 - INFO -  * Debugger PIN: 240-196-647
+2025-06-24 10:07:46,658 - INFO - 127.0.0.1 - - [24/Jun/2025 10:07:46] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:07:47,269 - INFO - 127.0.0.1 - - [24/Jun/2025 10:07:47] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:08:06,086 - INFO - 127.0.0.1 - - [24/Jun/2025 10:08:06] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:08:06,288 - INFO - 127.0.0.1 - - [24/Jun/2025 10:08:06] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:11:57,880 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-24 10:11:57,880 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-24 10:11:57,882 - INFO -  * Restarting with stat
+2025-06-24 10:12:07,542 - WARNING -  * Debugger is active!
+2025-06-24 10:12:07,547 - INFO -  * Debugger PIN: 240-196-647
+2025-06-24 10:13:53,308 - INFO - 127.0.0.1 - - [24/Jun/2025 10:13:53] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:13:53,962 - INFO - 127.0.0.1 - - [24/Jun/2025 10:13:53] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:14:11,148 - INFO - 127.0.0.1 - - [24/Jun/2025 10:14:11] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:14:11,499 - INFO - 127.0.0.1 - - [24/Jun/2025 10:14:11] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:14:35,573 - INFO - 127.0.0.1 - - [24/Jun/2025 10:14:35] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:14:36,154 - INFO - 127.0.0.1 - - [24/Jun/2025 10:14:36] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:16:40,403 - INFO - 127.0.0.1 - - [24/Jun/2025 10:16:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:16:40,987 - INFO - 127.0.0.1 - - [24/Jun/2025 10:16:40] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:23:25,126 - INFO - 127.0.0.1 - - [24/Jun/2025 10:23:25] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:23:25,623 - INFO - 127.0.0.1 - - [24/Jun/2025 10:23:25] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:24:38,132 - INFO - 127.0.0.1 - - [24/Jun/2025 10:24:38] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:24:38,667 - INFO - 127.0.0.1 - - [24/Jun/2025 10:24:38] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:32:41,597 - INFO - 127.0.0.1 - - [24/Jun/2025 10:32:41] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:32:42,180 - INFO - 127.0.0.1 - - [24/Jun/2025 10:32:42] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:32:51,043 - INFO - 127.0.0.1 - - [24/Jun/2025 10:32:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:32:51,345 - INFO - 127.0.0.1 - - [24/Jun/2025 10:32:51] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:44:48,362 - INFO - 127.0.0.1 - - [24/Jun/2025 10:44:48] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:44:48,859 - INFO - 127.0.0.1 - - [24/Jun/2025 10:44:48] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:45:51,643 - INFO - 127.0.0.1 - - [24/Jun/2025 10:45:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:45:52,145 - INFO - 127.0.0.1 - - [24/Jun/2025 10:45:52] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:46:35,604 - INFO - 127.0.0.1 - - [24/Jun/2025 10:46:35] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:46:35,940 - INFO - 127.0.0.1 - - [24/Jun/2025 10:46:35] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:47:23,770 - INFO - 127.0.0.1 - - [24/Jun/2025 10:47:23] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:47:24,294 - INFO - 127.0.0.1 - - [24/Jun/2025 10:47:24] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:47:42,927 - INFO - 127.0.0.1 - - [24/Jun/2025 10:47:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:47:43,163 - INFO - 127.0.0.1 - - [24/Jun/2025 10:47:43] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:49:41,570 - INFO - 127.0.0.1 - - [24/Jun/2025 10:49:41] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:49:42,156 - INFO - 127.0.0.1 - - [24/Jun/2025 10:49:42] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:50:29,562 - INFO - 127.0.0.1 - - [24/Jun/2025 10:50:29] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:50:29,787 - INFO - 127.0.0.1 - - [24/Jun/2025 10:50:29] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:50:40,225 - INFO - 127.0.0.1 - - [24/Jun/2025 10:50:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 10:50:40,788 - INFO - 127.0.0.1 - - [24/Jun/2025 10:50:40] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 11:04:10,388 - INFO - 127.0.0.1 - - [24/Jun/2025 11:04:10] "[33mOPTIONS /api/chat HTTP/1.1[0m" 404 -
+2025-06-24 11:04:40,871 - INFO - 127.0.0.1 - - [24/Jun/2025 11:04:40] "[33mOPTIONS /api/chat HTTP/1.1[0m" 404 -
+2025-06-24 11:07:28,341 - INFO - 127.0.0.1 - - [24/Jun/2025 11:07:28] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 11:07:28,877 - INFO - 127.0.0.1 - - [24/Jun/2025 11:07:28] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 12:18:18,566 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-24 12:18:18,566 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-24 12:18:18,568 - INFO -  * Restarting with stat
+2025-06-24 12:18:26,618 - WARNING -  * Debugger is active!
+2025-06-24 12:18:26,623 - INFO -  * Debugger PIN: 240-196-647
+2025-06-24 12:30:42,355 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-24 12:30:43,208 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:43] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-24 12:30:50,159 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,475 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/payment-methods HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,477 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,513 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/payment-methods HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,518 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,554 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,556 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:50,931 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:50] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:30:56,481 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:56] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-06-24 12:30:56,793 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:56] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-06-24 12:30:59,946 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:59] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:30:59,948 - INFO - 127.0.0.1 - - [24/Jun/2025 12:30:59] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:00,208 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:00] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:05,684 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:05] "[33mOPTIONS /settings HTTP/1.1[0m" 404 -
+2025-06-24 12:31:06,001 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:06] "[33mOPTIONS /settings HTTP/1.1[0m" 404 -
+2025-06-24 12:31:13,825 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:13] "[33mOPTIONS /api/forum/topics HTTP/1.1[0m" 404 -
+2025-06-24 12:31:13,831 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:13] "[33mOPTIONS /api/forum/topics HTTP/1.1[0m" 404 -
+2025-06-24 12:31:17,273 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:17] "[33mOPTIONS /api/forum/topics HTTP/1.1[0m" 404 -
+2025-06-24 12:31:17,585 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:17] "[33mOPTIONS /api/forum/topics HTTP/1.1[0m" 404 -
+2025-06-24 12:31:24,484 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:24] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:24,486 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:24] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:24,749 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:24] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:27,547 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:27] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:27,857 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:27] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:27,933 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:27] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-06-24 12:31:30,388 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:30] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-06-24 12:31:30,393 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:30] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,550 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,865 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/payment-methods HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,867 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,868 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/payment-methods HTTP/1.1[0m" 404 -
+2025-06-24 12:31:33,871 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:33] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:34,006 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:34] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:34,023 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:34] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -
+2025-06-24 12:31:34,444 - INFO - 127.0.0.1 - - [24/Jun/2025 12:31:34] "[33mOPTIONS /api/profile HTTP/1.1[0m" 404 -

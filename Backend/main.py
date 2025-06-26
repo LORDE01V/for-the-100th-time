@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, make_response
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -28,29 +28,47 @@ from werkzeug.utils import secure_filename
 # Load environment variables (same as support.py)
 load_dotenv()
 
-app = Flask(__name__)
+# Configuration (use environment variables for secrets in production)
+SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
 
-# Configuration
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_hex(32))
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
-app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
-app.config['JWT_TOKEN_LOCATION'] = ['headers']
-app.config['JWT_HEADER_NAME'] = 'Authorization'
-app.config['JWT_HEADER_TYPE'] = 'Bearer'
+# ================= FLASK APP =================
+# Rename existing app to flask_app
+flask_app = create_app()  # Use factory app
+flask_app.config.update(
+    SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev'),
+    SESSION_COOKIE_NAME='session',
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=False,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_TYPE='filesystem'
+)
+flask_app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
+flask_app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+flask_app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
+flask_app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
+flask_app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
+flask_app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
 # Initialize extensions
-# Update CORS configuration to:
-# Initialize extensions
-CORS(app, resources={
-    r"/*": {
-        "origins": ["http://localhost:3000"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"],
-        "supports_credentials": True
-    }
-})
-jwt = JWTManager(app)
+CORS(flask_app, 
+     resources={r"/api/*": {"origins": "http://localhost:3000"}},
+     expose_headers=["Authorization"],
+     supports_credentials=True)
+jwt = JWTManager(flask_app)
+
+# Register blueprints
+flask_app.register_blueprint(home_bp)
+flask_app.register_blueprint(auth_bp, name='auth_bp')
+
+# Add after request handler
+@flask_app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    return response
 
 # Add these error handlers
 @jwt.invalid_token_loader
@@ -74,7 +92,7 @@ def get_db():
             host=os.getenv('DB_HOST', 'localhost'),
             database=os.getenv('DB_NAME', 'Fintech_Solar'),
             user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', ''),
+            password=os.getenv('DB_PASSWORD', 'your_password_here'),
             port=os.getenv('DB_PORT', '5432')
         )
         return conn
@@ -96,35 +114,28 @@ def allowed_file(filename):
 create_payment_methods_table()
 
 # Auth routes (updated for PostgreSQL)
-@app.route('/api/auth/register', methods=['POST'])
-def register():
+@flask_app.route('/api/auth/register', methods=['POST'])
+def flask_register():
+    conn = None
     try:
         data = request.get_json()
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+        # Validate required fields
+        if not all(key in data for key in ['name', 'email', 'password']):
+            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
 
-        name = data.get('name')
-        email = data.get('email')
-        password = data.get('password')
-
-        if not all([name, email, password]):
-            return jsonify({'success': False, 'message': 'All fields are required'}), 400
-
-        if len(password) < 8:
-            return jsonify({'success': False, 'message': 'Password must be at least 8 characters'}), 400
+        # Get optional phone or set None
+        phone = data.get('phone', None)
 
         conn = get_db()
         if not conn:
             return jsonify({'success': False, 'message': 'Database error'}), 500
 
-        cur = conn.cursor()
-
-        # Check if email exists (now in PostgreSQL users table)
-        cur.execute('SELECT * FROM users WHERE email = %s', (email,))
-        if cur.fetchone():
-            cur.close()
-            conn.close()
-            return jsonify({'success': False, 'message': 'Email already registered'}), 400
+        with conn.cursor() as cur:
+            # Check existing user
+            cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
+            if cur.fetchone():
+                return jsonify({'success': False, 'message': 'Email already exists'}), 400
 
         # Hash password and insert (using users table from support.py)
         hashed_password = generate_password_hash(password)
@@ -138,21 +149,19 @@ def register():
         user_id = result[0]
         conn.commit()
 
-        # Generate token
-        access_token = create_access_token(identity=user_id)
-        
+        send_welcome_email(data['email'], data['name'])
+
         return jsonify({
             'success': True,
-            'token': access_token,
             'user': {
-                'id': user_id,
-                'name': name,
-                'email': email
+                'id': user_data[0],
+                'email': user_data[1],
+                'name': user_data[2]
             }
         }), 201
 
     except Exception as e:
-        print(f"Registration error: {str(e)}")
+        print(f"Registration Error: {str(e)}")
         return jsonify({'success': False, 'message': 'Registration failed'}), 500
     finally:
         if 'conn' in locals():
@@ -160,8 +169,9 @@ def register():
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@app.route('/api/auth/login', methods=['POST'])
-def login():
+@flask_app.route('/api/auth/login', methods=['POST'])
+def flask_login():
+    conn = None
     try:
         data = request.get_json()
         if not data:
@@ -193,13 +203,14 @@ def login():
                     'id': user[0],
                     'name': user[3],
                     'email': user[1]
-                }
+                },
+                'redirect': '/'  # Simple frontend route
             })
 
         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
     except Exception as e:
-        print(f"Login error: {str(e)}")
+        app.logger.error(f"Login error: {str(e)}")
         return jsonify({'success': False, 'message': 'Login failed'}), 500
     finally:
         if 'conn' in locals():
@@ -1612,4 +1623,4 @@ def process_chat_message(user_message):
     return f"Echo: {user_message}"
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    flask_app.run(port=5000)

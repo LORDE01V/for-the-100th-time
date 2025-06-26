@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 // Create an axios instance with default config
 const api = axios.create({
@@ -10,7 +10,7 @@ const api = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
-    timeout: 10000, // 10 second timeout
+    timeout: 20000, // 20 second timeout
 });
 
 // Add a request interceptor to add the auth token to requests
@@ -53,30 +53,38 @@ api.interceptors.response.use(
 export const auth = {
     login: async (email, password) => {
         try {
-            const response = await api.post('/auth/login', { email, password });
+            const response = await api.post('/api/auth/login', { email, password });
             if (response.data.success) {
                 const token = String(response.data.token).trim();
                 localStorage.setItem('token', token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
+                // Removed redirection to let the component handle navigation
+                // window.location.href = '/dashboard';
             }
             return response.data;
         } catch (error) {
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
-            throw error;
+            throw new Error('Failed to connect to the server');
         }
     },
 
-    register: async (name, email, password) => {
+    register: async (userData) => {
         try {
-            const response = await api.post('/auth/register', { name, email, password });
+            const response = await api.post('/api/auth/register', {
+                name: userData.name,
+                username: userData.username,
+                email: userData.email,
+                password: userData.password,
+                phone: userData.phone  // Changed from phone_number to phone
+            });
             return response.data;
         } catch (error) {
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
-            throw error;
+            throw new Error('Failed to connect to the server');
         }
     },
 
@@ -96,110 +104,34 @@ export const auth = {
     }
 };
 
-export const registerUser = async (userData) => {
-    const response = await fetch(`${API_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData)
-    });
-    return response.json();
-};
-
-// Add these new API endpoints
-export const expenses = {
-    // Get all expenses for the current user
-    getAll: async () => {
+export const autoTopUp = {
+    getSettings: async () => {
         try {
-            const response = await api.get('/expenses');
+            const response = await api.get('/api/auto-topup/settings');
             return response.data;
         } catch (error) {
-            console.error('Error in expenses.getAll:', error);
-            throw error;
+            throw new Error('Failed to get auto top-up settings');
         }
     },
-
-    // Add a new expense
-    create: async (expenseData) => {
+    saveSettings: async (settings) => {
         try {
-            const response = await api.post('/expenses', expenseData);
+            const response = await api.post('/api/auto-topup/settings', settings);
             return response.data;
         } catch (error) {
-            console.error('Error in expenses.create:', error);
-            throw error;
+            throw new Error('Failed to save auto top-up settings');
         }
-    }
+    },
 };
 
 export const topUp = {
-    // Process a top-up transaction
-    process: async (topUpData) => {
+    process: async (data) => {
         try {
-            console.log('Sending top-up request with data:', topUpData); // Debug log
-            const response = await api.post('/topup', topUpData);
-            console.log('Top-up response:', response.data); // Debug log
+            const response = await api.post('/api/topup/process', data);
             return response.data;
         } catch (error) {
-            console.error('Top-up error details:', error.response?.data); // Debug log
-            throw error;
+            throw new Error('Failed to process top-up');
         }
     },
-
-    // Get current balance
-    getBalance: async () => {
-        try {
-            const response = await api.get('/topup/balance');
-            return response.data;
-        } catch (error) {
-            console.error('Balance fetch error:', error.response?.data); // Debug log
-            throw error;
-        }
-    }
-};
-
-// Add this to your existing API services
-export const autoTopUp = {
-    // Get auto top-up settings
-    getSettings: async () => {
-        try {
-            console.log('Fetching auto top-up settings...');
-            const response = await api.get('/auto-topup/settings');
-            console.log('Auto top-up settings response:', response.data);
-            return response.data;
-        } catch (error) {
-            console.error('Error in autoTopUp.getSettings:', error);
-            console.error('Error response:', error.response?.data);
-            throw error;
-        }
-    },
-
-    // Save auto top-up settings
-    saveSettings: async (settings) => {
-        try {
-            console.log('Saving auto top-up settings:', settings);
-            const response = await api.post('/auto-topup/settings', {
-                minBalance: parseFloat(settings.minBalance),
-                autoTopUpAmount: parseFloat(settings.autoTopUpAmount),
-                autoTopUpFrequency: settings.autoTopUpFrequency
-            });
-            console.log('Save settings response:', response.data);
-            return response.data;
-        } catch (error) {
-            console.error('Error in autoTopUp.saveSettings:', error);
-            console.error('Error response:', error.response?.data);
-            throw error;
-        }
-    },
-
-    // Toggle auto top-up
-    toggle: async (isEnabled) => {
-        try {
-            const response = await api.post('/auto-topup/toggle', { isEnabled });
-            return response.data;
-        } catch (error) {
-            console.error('Error in autoTopUp.toggle:', error);
-            throw error;
-        }
-    }
 };
 
 export default api;

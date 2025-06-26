@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, expenses, topUp, autoTopUp } from '../services/api'; // Assuming auth service is still used
+import { auth, topUp, autoTopUp } from '../services/api';
 import { FaArrowLeft } from 'react-icons/fa'; // Import FaArrowLeft
 
 // Import Chakra UI Components
@@ -215,11 +215,9 @@ function TopUpPage() {
         if (topUpResult && typeof topUpResult.new_balance !== 'undefined') {
             setCurrentBalance(topUpResult.new_balance);
         } else {
-            console.error('Invalid balance in response:', topUpResult);
             throw new Error('Invalid balance received from server');
         }
 
-        // Clear form fields
         setAmount('');
         setPromoCode('');
         setVoucherCode('');
@@ -231,14 +229,11 @@ function TopUpPage() {
             duration: 5000,
             isClosable: true,
         });
-
-        // Navigate to expenses page
-        navigate('/expenses');
     } catch (error) {
-        console.error('Top-up error:', error);
+        console.error('Error in top-up:', error);
         toast({
             title: 'Error',
-            description: error.response?.data?.message || 'Failed to process the top-up. Please try again.',
+            description: 'Failed to process top-up.',
             status: 'error',
             duration: 5000,
             isClosable: true,
@@ -247,26 +242,6 @@ function TopUpPage() {
         setIsProcessing(false);
     }
   };
-
-  // Add useEffect to fetch current balance
-  useEffect(() => {
-    const fetchBalance = async () => {
-      try {
-        const balanceData = await topUp.getBalance();
-        setCurrentBalance(balanceData.balance);
-      } catch (error) {
-        toast({
-          title: 'Error',
-          description: 'Failed to fetch current balance.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    };
-
-    fetchBalance();
-  }, [toast]); // Add toast to the dependency array
 
   // Render loading spinner if user is being checked (though ProtectedRoute handles the redirect)
   if (!user) {
@@ -338,12 +313,9 @@ function TopUpPage() {
 
         <VStack as="form" spacing={4} onSubmit={handleTopUp} noValidate>
           {/* Transaction Type Selection */}
-          <FormControl id="transaction-type">
+          <FormControl>
             <FormLabel>Transaction Type</FormLabel>
-            <Select
-              value={transactionType}
-              onChange={(e) => setTransactionType(e.target.value)}
-            >
+            <Select value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
               <option value="topup">Top-Up</option>
               <option value="recharge">Recharge</option>
             </Select>
@@ -352,25 +324,13 @@ function TopUpPage() {
           {/* Amount Input */}
           <FormControl id="top-up-amount">
             <FormLabel>Amount (ZAR)</FormLabel>
-            <Input
-              type="number" // Use number type for currency
-              placeholder="Enter amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              step="0.01" // Allow decimal values
-              min="0" // Ensure positive amount
-            />
+            <Input type="number" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} step="0.01" min="0" />
           </FormControl>
 
           {/* Optional Promo Code Input */}
           <FormControl id="promo-code">
             <FormLabel>Promo Code (Optional)</FormLabel>
-            <Input
-              type="text"
-              placeholder="Enter promo code"
-              value={promoCode}
-              onChange={(e) => setPromoCode(e.target.value)}
-            />
+            <Input type="text" placeholder="Enter promo code" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} />
           </FormControl>
 
            {/* Optional Voucher Code Input */}

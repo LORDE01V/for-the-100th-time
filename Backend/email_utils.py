@@ -1,25 +1,17 @@
-import os
 import smtplib
-from email.message import EmailMessage
+from email.mime.text import MIMEText
 
-def send_email(recipient_email, subject, html_body):
-    msg = EmailMessage()
-    msg['Subject'] = subject
-    msg['From'] = os.getenv('EMAIL_USER', 'noreply@gridx.com')
-    msg['To'] = recipient_email
-    msg.set_content(html_body, subtype='html')
+def send_welcome_email(to_email, username):
+    from_email = "gridx.noreply@gmail.com"
+    subject = "Welcome to GridX!"
+    body = f"Hello {username},\n\nWelcome to GridX! We're excited to have you on board.\n\nBest,\nThe GridX Team"
 
-    with smtplib.SMTP_SSL('smtp.example.com', 465) as smtp:
-        smtp.login(
-            os.getenv('EMAIL_USER', ''),  # Default empty string
-            os.getenv('EMAIL_PASS', '')   # Default empty string
-        )
-        smtp.send_message(msg)
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = from_email
+    msg["To"] = to_email
 
-def send_welcome_email(recipient_email, username):
-    subject = "Welcome to GridX Energy Platform"  # Explicit string subject
-    body = f"""
-    <h1>Welcome {username}!</h1>
-    <p>Thank you for joining GridX. Your account has been successfully created.</p>
-    """
-    send_email(recipient_email, subject, body)
+    # Use Gmail's SMTP server
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(from_email, "YOUR_APP_PASSWORD")  # Replace with your Gmail App Password
+        server.sendmail(from_email, to_email, msg.as_string()) 
