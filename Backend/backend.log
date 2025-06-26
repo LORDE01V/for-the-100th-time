@@ -146,3 +146,11 @@
 2025-06-26 14:58:19,343 - INFO - Attempting login for email: nathiradebe2020@gmail.com
 2025-06-26 14:58:19,412 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
 2025-06-26 14:58:19,622 - INFO - 127.0.0.1 - - [26/Jun/2025 14:58:19] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-26 15:03:35,830 - INFO -  * Detected change in "C:\\Users\\Nkosinathi Radebe\\Videos\\sleigh's_features\\For_the_100th_Time.Sleigh116\\Backend\\app\\routes\\auth.py", reloading
+2025-06-26 15:03:37,777 - INFO -  * Restarting with stat
+2025-06-26 15:03:52,009 - WARNING -  * Debugger is active!
+2025-06-26 15:03:52,013 - INFO -  * Debugger PIN: 240-196-647
+2025-06-26 15:03:53,252 - INFO - 127.0.0.1 - - [26/Jun/2025 15:03:53] "GET /api/solar-output HTTP/1.1" 200 -
+2025-06-26 15:03:53,258 - INFO - 127.0.0.1 - - [26/Jun/2025 15:03:53] "GET /api/solar-output HTTP/1.1" 200 -
+2025-06-26 15:10:23,745 - INFO -  * Detected change in "C:\\Users\\Nkosinathi Radebe\\Videos\\sleigh's_features\\For_the_100th_Time.Sleigh116\\Backend\\app.py", reloading
+2025-06-26 15:10:24,857 - INFO -  * Restarting with stat
