@@ -29,12 +29,20 @@ api.interceptors.request.use(
 // Add a response interceptor to handle common errors
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            // Clear local storage and redirect to login
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
+    async (error) => {
+        if (error.response?.status === 401 && error.config && !error.config._retry) {  // Check if it's a 401 and not already retried
+            error.config._retry = true;
+            try {
+                const refreshResponse = await api.post('/api/auth/refresh');  // Assume a refresh endpoint exists
+                const newToken = refreshResponse.data.token;  // Get the new token from response
+                localStorage.setItem('token', newToken);  // Update the token
+                error.config.headers.Authorization = `Bearer ${newToken}`;  // Retry with new token
+                return api(error.config);  // Retry the original request
+            } catch (refreshError) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';  // Redirect if refresh fails
+            }
         }
         return Promise.reject(error);
     }
@@ -88,5 +96,22 @@ export const auth = {
         return user ? JSON.parse(user) : null;
     }
 };
+
+// MOCK: Intercept /api/ai/sentiment for local dev/demo
+if (window.location.hostname === 'localhost') {
+  const originalPost = api.post;
+  api.post = async function(url, data, ...args) {
+    if (url === '/api/ai/sentiment') {
+      // Simulate network delay
+      await new Promise(res => setTimeout(res, 800));
+      const text = (data.text || '').toLowerCase();
+      let tone = 'neutral';
+      if (text.match(/happy|great|awesome|love|good|excellent/)) tone = 'positive';
+      else if (text.match(/sad|bad|terrible|hate|angry|awful/)) tone = 'negative';
+      return { data: { tone } };
+    }
+    return originalPost.call(this, url, data, ...args);
+  };
+}
 
 export default api;

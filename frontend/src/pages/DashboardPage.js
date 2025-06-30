@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable react/jsx-no-undef */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   SimpleGrid,
@@ -10,17 +11,13 @@ import {
   Text,
   ColorModeScript,
   useColorMode,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerHeader,
-  DrawerBody,
   VStack,
   IconButton,
-  useDisclosure
+  useToast,
+  Spinner,
+  HStack
 } from '@chakra-ui/react';
-import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaBars } from 'react-icons/fa';
+import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaMoon, FaSun } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
@@ -34,22 +31,62 @@ import ActivityReport from '../components/widgets/ActivityReport';
 import AITipsPanel from '../components/AITipsPanel';
 import ErrorBoundary from '../components/ErrorBoundary';
 import DashboardCard from '../components/DashboardCard';
-import { LineChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Line } from 'recharts';
-
-// Comment out or remove these lines:
-// import StatusIndicator from '../components/widgets/StatusIndicator';
-// import FinancialMetric from '../components/widgets/FinancialMetric';
-// import ImpactMetrics from '../components/widgets/ImpactMetrics';
+import { LineChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Line, Legend } from 'recharts';
+import ThemeSwitcher from '../components/widgets/ThemeSwitcher';
+import { auth } from '../services/api';  // Keep if used elsewhere
+import { useSubscription } from '../context/SubscriptionContext';
+import dashboardBg from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.png';
 
 // Add missing variable declarations at the top
 
 // Keep only one declaration at the top with other mock values
 
+// Add the subscription plans array here for use in this component
+const subscriptionPlans = [
+  { id: 'basic-lite', name: 'Basic Lite', price: 29 },
+  { id: 'basic', name: 'Basic', price: 49 },
+  { id: 'basic-plus', name: 'Basic Plus', price: 69 },
+  { id: 'standard-lite', name: 'Standard Lite', price: 79 },
+  { id: 'standard', name: 'Standard', price: 99 },
+  { id: 'standard-plus', name: 'Standard Plus', price: 119 },
+  { id: 'premium', name: 'Premium', price: 149 },
+  { id: 'premium-plus', name: 'Premium Plus', price: 309 },
+];
+
+// Update the mockSuggestPlan function to return the full plan object
+function mockSuggestPlan(data) {
+  if (!data || !data.budget) return subscriptionPlans[0] || { name: 'Basic Plan', description: 'Default plan' };  // Fallback
+  const suitablePlan = subscriptionPlans.reduce((bestPlan, plan) => {
+    if (plan.price <= data.budget && plan.price > bestPlan.price) {
+      return plan;
+    }
+    return bestPlan;
+  }, subscriptionPlans[0] || { name: 'Basic Plan', description: 'Default plan' });
+  return suitablePlan;  // Return the full plan object
+}
+
+const themePresets = {
+  arcticBlue: {
+    bg: 'rgba(173, 216, 230, 0.18)',
+    borderColor: 'rgba(173, 216, 230, 0.35)',
+    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)',
+  },
+  warmSunrise: {
+    bg: 'rgba(255, 223, 186, 0.18)',
+    borderColor: 'rgba(255, 183, 94, 0.35)',
+    boxShadow: '0 8px 32px 0 rgba(255, 183, 94, 0.18)',
+  },
+  // ...add more themes
+};
+
 function DashboardContent() {
   const navigate = useNavigate();
   const { setEnabledWidgets, enabledWidgets } = useDashboard();
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();  // For mobile drawer
+  const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const { selectedPlan: recommendedPlan } = useSubscription();
+  const [selectedTheme, setSelectedTheme] = useState('arcticBlue');
 
   // Update theme variables to be dynamic based on color mode
   const backgroundColor = colorMode === 'light' ? '#ffffff' : '#1e1e2f';  // Light: white, Dark: dark background
@@ -84,297 +121,332 @@ function DashboardContent() {
     setEnabledWidgets(['EnergyModeToggle', 'BudgetDial', 'ThemeSwitcher', 'SolarOutput', 'DailyForecast', 'WidgetLayout', 'EnergyAvatar', 'ActivityReport', 'AITipsPanel']);  // Initialize if needed
   }
 
+  const glassCardStyle = {
+    bg: themePresets[selectedTheme].bg,
+    border: '2px solid rgba(255,255,255,0.7)',
+    borderColor: themePresets[selectedTheme].borderColor,
+    boxShadow: themePresets[selectedTheme].boxShadow,
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    borderRadius: '2xl',
+    transition: 'background 0.3s, border 0.3s',
+  };
+
+  // Common style for both buttons
+  const bubbleButtonProps = {
+    borderRadius: "full",
+    boxSize: "56px",
+    fontSize: "2xl",
+    boxShadow: "lg",
+    bg: "teal.400",
+    color: "white",
+    border: "4px solid white", // Optional: makes the border stand out
+    _hover: { bg: "teal.500" },
+    zIndex: 9999,
+  };
+
   return (
     <Box
       minH="100vh"
-      bg={backgroundColor}
-      color={textColor}
-      overflowY="auto"
-      px={{ base: 4, md: 8 }}
-      py={6}
+      backgroundImage={`url(${dashboardBg})`}
+      backgroundSize="cover"
+      backgroundPosition="center"
+      backgroundRepeat="no-repeat"
+      position="relative"
     >
-      <Flex direction="row" w="full" maxW="1400px" mx="auto">
-        {/* Mobile Menu Button */}
-        <IconButton
-          aria-label="Open Menu"
-          icon={<FaBars />}
-          display={{ base: 'flex', md: 'none' }}
-          onClick={onOpen}
-          position="fixed"
-          top={4}
-          left={4}
-          zIndex={1000}
-          bg={accentColor}
-          color="white"
-        />
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        bg={colorMode === 'light' ? 'rgba(255,255,255,0.1)' : 'rgba(30,30,47,0.1)'}
+        zIndex={0}
+      />
+      <Box position="relative" zIndex={1} p={8}>
+        <Flex direction="row" w="full" maxW="1400px" mx="auto">
+          <Box w="full" px={8} py={6}>
+            <Box
+              display="inline-block"
+              bg="rgba(0,0,0,0.45)"
+              px={6}
+              py={2}
+              borderRadius="lg"
+              mt={6}
+              mb={4}
+              mx="auto"
+              style={{ display: 'block' }}
+            >
+              <Heading
+                as="h1"
+                size="xl"
+                color="white"
+                textShadow="0 2px 8px rgba(0,0,0,0.7)"
+                textAlign="center"
+              >
+                Energy Dashboard
+              </Heading>
+            </Box>
 
-        {/* Sidebar for Desktop */}
-        <Box
-          as="nav"
-          w={{ base: '0', md: '200px' }}  // Hidden on mobile
-          bg={backgroundColor}
-          color={textColor}
-          h="100vh"
-          position={{ md: 'fixed' }}
-          left={0}
-          p={4}
-          borderRightWidth="1px"
-          borderColor={colorMode === 'light' ? 'gray.300' : 'gray.700'}
-          display={{ base: 'none', md: 'block' }}  // Only visible on md and up
-        >
-          <VStack align="stretch" spacing={4}>
-            <Text fontSize="lg" fontWeight="bold">Menu</Text>
-            <NavLink to="/dashboard" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })}>
-              <Button variant="ghost" leftIcon={<FaTachometerAlt />} w="full">Dashboard</Button>
-            </NavLink>
-            <NavLink to="/profile" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })}>
-              <Button variant="ghost" leftIcon={<FaUser />} w="full">Profile</Button>
-            </NavLink>
-            <NavLink to="/expenses" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })}>
-              <Button variant="ghost" leftIcon={<FaWallet />} w="full">Expenses</Button>
-            </NavLink>
-            <NavLink to="/energy" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })}>
-              <Button variant="ghost" leftIcon={<FaBolt />} w="full">Energy Monitor</Button>
-            </NavLink>
-            <NavLink to="/forum" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })}>
-              <Button variant="ghost" leftIcon={<FaComments />} w="full">Forum</Button>
-            </NavLink>
-            <NavLink to="/ai-suggestions" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })}>
-              <Button variant="ghost" leftIcon={<FaLightbulb />} w="full">AI Suggestions</Button>
-            </NavLink>
-            <NavLink to="/analytics" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })}>
-              <Button variant="ghost" leftIcon={<FaChartBar />} w="full">Analytics</Button>
-            </NavLink>
-            <NavLink to="/settings" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })}>
-              <Button variant="ghost" leftIcon={<FaCog />} w="full">Settings</Button>
-            </NavLink>
-            <NavLink to="/help" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })}>
-              <Button variant="ghost" leftIcon={<FaQuestionCircle />} w="full">Help Center</Button>
-            </NavLink>
-            <Button variant="ghost" leftIcon={<FaSignOutAlt />} w="full" onClick={() => navigate('/login')}>Logout</Button>  // Triggers logout and redirect
-          </VStack>
-        </Box>
+            <Box textAlign="center" mb={8}>
+              <Button
+                onClick={async () => {
+                  setIsLoading(true);
+                  try {
+                    const mockData = {
+                      usageHours: 10,  // Hardcoded mock value
+                      budget: 500,     // Hardcoded mock value
+                      deviceCount: 5   // Hardcoded mock value
+                    };
+                    const plan = mockSuggestPlan(mockData);  // Now returns full object
+                    toast({
+                      title: `Recommended: ${plan.name}`,
+                      status: 'success',
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                  } catch (error) {
+                    toast({
+                      title: 'Failed to fetch recommendation',
+                      status: 'error',
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
+                rightIcon={isLoading ? <Spinner size="sm" /> : null}
+                isLoading={isLoading}
+                colorScheme="teal"
+                size="lg"
+              >
+                Suggest Plan
+              </Button>
+            </Box>
 
-        {/* Drawer for Mobile */}
-        <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
-          <DrawerOverlay />
-          <DrawerContent bg={backgroundColor} color={textColor}>
-            <DrawerCloseButton />
-            <DrawerHeader>Menu</DrawerHeader>
-            <DrawerBody>
-              <VStack align="stretch" spacing={4}>
-                <NavLink to="/dashboard" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })} onClick={onClose}>
-                  <Button variant="ghost" leftIcon={<FaTachometerAlt />} w="full">Dashboard</Button>
-                </NavLink>
-                <NavLink to="/profile" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })} onClick={onClose}>
-                  <Button variant="ghost" leftIcon={<FaUser />} w="full">Profile</Button>
-                </NavLink>
-                <NavLink to="/expenses" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })} onClick={onClose}>
-                  <Button variant="ghost" leftIcon={<FaWallet />} w="full">Expenses</Button>
-                </NavLink>
-                <NavLink to="/energy" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })} onClick={onClose}>
-                  <Button variant="ghost" leftIcon={<FaBolt />} w="full">Energy Monitor</Button>
-                </NavLink>
-                <NavLink to="/forum" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })} onClick={onClose}>
-                  <Button variant="ghost" leftIcon={<FaComments />} w="full">Forum</Button>
-                </NavLink>
-                <NavLink to="/ai-suggestions" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })} onClick={onClose}>
-                  <Button variant="ghost" leftIcon={<FaLightbulb />} w="full">AI Suggestions</Button>
-                </NavLink>
-                <NavLink to="/analytics" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })} onClick={onClose}>
-                  <Button variant="ghost" leftIcon={<FaChartBar />} w="full">Analytics</Button>
-                </NavLink>
-                <NavLink to="/settings" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })} onClick={onClose}>
-                  <Button variant="ghost" leftIcon={<FaCog />} w="full">Settings</Button>
-                </NavLink>
-                <NavLink to="/help" style={({ isActive }) => ({ color: isActive ? accentColor : textColor })} onClick={onClose}>
-                  <Button variant="ghost" leftIcon={<FaQuestionCircle />} w="full">Help Center</Button>
-                </NavLink>
-                <Button variant="ghost" leftIcon={<FaSignOutAlt />} w="full" onClick={() => { navigate('/login'); onClose(); }}>Logout</Button>
-              </VStack>
-            </DrawerBody>
-          </DrawerContent>
-        </Drawer>
+            <SimpleGrid columns={3} spacing={6}>
+              {enabledWidgets.includes('EnergyModeToggle') && (
+                <ErrorBoundary>
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    whileHover={{ scale: 1.05, boxShadow: 'lg' }}
+                    as={Box}
+                    bg={cardBg}
+                    p={6}
+                    borderRadius="2xl"
+                    boxShadow="md"
+                  >
+                    <Box {...glassCardStyle}>
+                      <EnergyModeToggle />
+                    </Box>
+                  </motion.div>
+                </ErrorBoundary>
+              )}
+              {enabledWidgets.includes('ThemeSwitcher') && (
+                <ErrorBoundary>
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    whileHover={{ scale: 1.05, boxShadow: 'lg' }}
+                  >
+                    <Box {...glassCardStyle}>
+                      <ThemeSwitcher />
+                    </Box>
+                  </motion.div>
+                </ErrorBoundary>
+              )}
+              <DashboardCard
+                title={`Recommended Plan: ${recommendedPlan ? recommendedPlan.name : 'None'}`}
+                isHighlighted={recommendedPlan}
+                borderColor={recommendedPlan ? 'green.400' : 'transparent'}
+                boxShadow={recommendedPlan ? 'outline' : 'md'}
+                content={
+                  recommendedPlan ? (
+                    <VStack align="start" spacing={2}>
+                      <Text fontWeight="bold">Plan Name: {recommendedPlan.name}</Text>
+                      <Text>Description: {recommendedPlan.description || 'No description available.'}</Text>
+                      <Text fontWeight="bold">Price: ${recommendedPlan.price}</Text>
+                      <Text fontWeight="bold">Features:</Text>
+                      {recommendedPlan.features && recommendedPlan.features.length > 0 ? (
+                        <VStack align="start" pl={4}>
+                          {recommendedPlan.features.map((feature, index) => (
+                            <Text key={index} fontSize="sm">- {feature}</Text>
+                          ))}
+                        </VStack>
+                      ) : (
+                        <Text>No features available.</Text>
+                      )}
+                      <Text fontWeight="bold">ID: {recommendedPlan.id || 'N/A'}</Text>
+                    </VStack>
+                  ) : 'No plan recommended yet'
+                }
+                sx={glassCardStyle}
+              />
+              {enabledWidgets.includes('DailyForecast') && (
+                <ErrorBoundary>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    as={Box}
+                    bg={cardBg}
+                    p={6}
+                    borderRadius="2xl"
+                    boxShadow="md"
+                    _hover={{ boxShadow: "lg" }}
+                  >
+                    <Box {...glassCardStyle}>
+                      <DailyForecast />
+                    </Box>
+                  </motion.div>
+                </ErrorBoundary>
+              )}
+              {enabledWidgets.includes('EnergyAvatar') && (  // Assuming EnergyAvatar is Energy Status
+                <ErrorBoundary>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    as={Box}
+                    bg={cardBg}
+                    p={6}
+                    borderRadius="2xl"
+                    boxShadow="md"
+                    _hover={{ boxShadow: "lg" }}
+                  >
+                    <Box {...glassCardStyle}>
+                      <EnergyAvatar />
+                    </Box>
+                  </motion.div>
+                </ErrorBoundary>
+              )}
 
-        {/* Main Content with Padding for Sidebar */}
-        <Box ml={{ base: 0, md: '200px' }} w="full" px={8} py={6}>
-          {/* Theme toggle button at the top */}
-          <Flex justify="flex-end" mb={6}>
-            <Button onClick={toggleColorMode} bg="teal.500" color="white" _hover={{ bg: "teal.600" }}>
-              Toggle Mode
-            </Button>
-          </Flex>
+              {enabledWidgets.includes('BudgetDial') && (
+                <ErrorBoundary>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    as={Box}
+                    bg={cardBg}
+                    p={6}
+                    borderRadius="2xl"
+                    boxShadow="md"
+                    _hover={{ boxShadow: "lg" }}
+                  >
+                    <Box {...glassCardStyle}>
+                      <BudgetDial />
+                    </Box>
+                  </motion.div>
+                </ErrorBoundary>
+              )}
+              {enabledWidgets.includes('SolarOutput') && (
+                <ErrorBoundary>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    as={Box}
+                    bg={cardBg}
+                    p={6}
+                    borderRadius="2xl"
+                    boxShadow="md"
+                    _hover={{ boxShadow: "lg" }}
+                  >
+                    <Box {...glassCardStyle}>
+                      <SolarOutput />
+                    </Box>
+                  </motion.div>
+                </ErrorBoundary>
+              )}
 
-          <Heading as="h1" size="xl" color={accentColor} mb={8}>
-            Energy Dashboard
-          </Heading>
+              {enabledWidgets.includes('AITipsPanel') && (
+                <ErrorBoundary>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    as={Box}
+                    bg={cardBg}
+                    p={6}
+                    borderRadius="2xl"
+                    boxShadow="md"
+                    _hover={{ boxShadow: "lg" }}
+                  >
+                    <Box {...glassCardStyle}>
+                      <AITipsPanel />
+                    </Box>
+                  </motion.div>
+                </ErrorBoundary>
+              )}
+              {enabledWidgets.includes('ActivityReport') && (
+                <ErrorBoundary>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    as={Box}
+                    bg={cardBg}
+                    p={6}
+                    borderRadius="2xl"
+                    boxShadow="md"
+                    _hover={{ boxShadow: "lg" }}
+                  >
+                    <Box {...glassCardStyle}>
+                      <ActivityReport />
+                    </Box>
+                  </motion.div>
+                </ErrorBoundary>
+              )}
+              {enabledWidgets.includes('WidgetLayout') && (
+                <ErrorBoundary>
+                  <motion.div>
+                    <Box {...glassCardStyle}>
+                      <WidgetLayout />
+                    </Box>
+                  </motion.div>
+                </ErrorBoundary>
+              )}
+            </SimpleGrid>
 
-          {/* Widget Grid */}
-          <SimpleGrid
-            columns={{ base: 1, md: 2, lg: 3 }}
-            spacing={6}
-            mb={8}
-          >
-            {enabledWidgets.includes('EnergyModeToggle') && (
-              <ErrorBoundary>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  as={Box}
-                  bg={cardBg}
-                  p={6}
-                  borderRadius="2xl"
-                  boxShadow="md"
-                  _hover={{ boxShadow: "lg" }}
-                >
-                  <EnergyModeToggle />
-                </motion.div>
-              </ErrorBoundary>
-            )}
-            {enabledWidgets.includes('DailyForecast') && (
-              <ErrorBoundary>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  as={Box}
-                  bg={cardBg}
-                  p={6}
-                  borderRadius="2xl"
-                  boxShadow="md"
-                  _hover={{ boxShadow: "lg" }}
-                >
-                  <DailyForecast />
-                </motion.div>
-              </ErrorBoundary>
-            )}
-            {enabledWidgets.includes('EnergyAvatar') && (  // Assuming EnergyAvatar is Energy Status
-              <ErrorBoundary>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  as={Box}
-                  bg={cardBg}
-                  p={6}
-                  borderRadius="2xl"
-                  boxShadow="md"
-                  _hover={{ boxShadow: "lg" }}
-                >
-                  <EnergyAvatar />
-                </motion.div>
-              </ErrorBoundary>
-            )}
-
-            {enabledWidgets.includes('BudgetDial') && (
-              <ErrorBoundary>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  as={Box}
-                  bg={cardBg}
-                  p={6}
-                  borderRadius="2xl"
-                  boxShadow="md"
-                  _hover={{ boxShadow: "lg" }}
-                >
-                  <BudgetDial />
-                </motion.div>
-              </ErrorBoundary>
-            )}
-            {enabledWidgets.includes('SolarOutput') && (
-              <ErrorBoundary>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  as={Box}
-                  bg={cardBg}
-                  p={6}
-                  borderRadius="2xl"
-                  boxShadow="md"
-                  _hover={{ boxShadow: "lg" }}
-                >
-                  <SolarOutput />
-                </motion.div>
-              </ErrorBoundary>
-            )}
-
-            {enabledWidgets.includes('AITipsPanel') && (
-              <ErrorBoundary>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  as={Box}
-                  bg={cardBg}
-                  p={6}
-                  borderRadius="2xl"
-                  boxShadow="md"
-                  _hover={{ boxShadow: "lg" }}
-                >
-                  <AITipsPanel />
-                </motion.div>
-              </ErrorBoundary>
-            )}
-            {enabledWidgets.includes('ActivityReport') && (
-              <ErrorBoundary>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  as={Box}
-                  bg={cardBg}
-                  p={6}
-                  borderRadius="2xl"
-                  boxShadow="md"
-                  _hover={{ boxShadow: "lg" }}
-                >
-                  <ActivityReport />
-                </motion.div>
-              </ErrorBoundary>
-            )}
-            {enabledWidgets.includes('WidgetLayout') && (
-              <ErrorBoundary>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  as={Box}
-                  bg={cardBg}
-                  p={6}
-                  borderRadius="2xl"
-                  boxShadow="md"
-                  _hover={{ boxShadow: "lg" }}
-                >
-                  <WidgetLayout />
-                </motion.div>
-              </ErrorBoundary>
-            )}
-          </SimpleGrid>
-
-          {/* Full-width Energy Usage Chart */}
-          <Box w="full" mt={8} bg={cardBg} p={6} borderRadius="2xl" boxShadow="md" _hover={{ boxShadow: "lg" }}>
-            <ErrorBoundary>
-              <DashboardCard title="Energy Usage" icon={FaBolt}>
-                <Box h="400px" w="100%">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={energyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#ffffff" />
-                      <XAxis dataKey="time" stroke="#ffffff" />
-                      <YAxis stroke="#ffffff" />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="usage" stroke={accentColor} strokeWidth={3} />
-                    </LineChart>
-                  </ResponsiveContainer>
+            <Box w="full" mt={8} {...glassCardStyle} p={6}>
+              <DashboardCard title="Loadshedding Updates" icon={FaBolt}>
+                <Box h="400px" w="100%" display="flex" alignItems="center" justifyContent="center">
+                  <Text color="gray.400" fontSize="lg" textAlign="center">
+                    Loadshedding updates will appear here.
+                  </Text>
                 </Box>
               </DashboardCard>
-            </ErrorBoundary>
+            </Box>
           </Box>
-        </Box>
-      </Flex>
+        </Flex>
+
+        {/* Chatbot Bubble Button */}
+        <IconButton
+          aria-label="Open Chatbot"
+          icon={<FaComments />}
+          position="fixed"
+          bottom="24px"
+          right="24px"
+          {...bubbleButtonProps}
+          // onClick={...} // your chatbot open handler
+        />
+
+        {/* Toggle Mode Bubble Button (just above chatbot) */}
+        <IconButton
+          aria-label="Toggle color mode"
+          icon={<FaSun />}
+          onClick={toggleColorMode}
+          position="fixed"
+          bottom="90px"   // 24px (chatbot) + 56px (button size) + 10px (gap)
+          right="24px"
+          {...bubbleButtonProps}
+        />
+      </Box>
     </Box>
   );
 }

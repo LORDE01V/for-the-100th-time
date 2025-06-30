@@ -3,6 +3,7 @@ from authlib.integrations.flask_client import OAuth
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 # Load environment variables
 load_dotenv()
@@ -13,6 +14,7 @@ oauth = OAuth()
 def create_app():
     app = Flask(__name__,
                 template_folder='templates')
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://192.168.18.3:3000"]}})
     
     # Configuration
     app.config.update(

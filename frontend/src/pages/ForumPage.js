@@ -17,7 +17,10 @@ import {
   ListItem,
   SimpleGrid,
   Icon,
+  Spinner,
+  Tooltip,
 } from '@chakra-ui/react';
+import api from '../services/api';
 
 const ForumPage = () => {
   const toast = useToast();
@@ -35,6 +38,8 @@ const ForumPage = () => {
   const [summary, setSummary] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [replies, setReplies] = useState({});
+  const [tone, setTone] = useState(null);
+  const [isCheckingTone, setIsCheckingTone] = useState(false);
 
   // Mock data for forum topics
   const topics = [
@@ -434,6 +439,48 @@ const ForumPage = () => {
     }
   };
 
+  const handleCheckTone = async () => {
+    if (!newMessage.trim()) {
+      toast({
+        title: 'Please enter some text to check the tone.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    setIsCheckingTone(true);
+    setTone(null);
+    try {
+      // This will call the mock endpoint you add in api.js
+      const response = await api.post('/api/ai/sentiment', { text: newMessage });
+      setTone(response.data.tone);
+    } catch (error) {
+      toast({
+        title: 'Failed to check tone. Please try again.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsCheckingTone(false);
+    }
+  };
+
+  const renderTone = () => {
+    if (!tone) return null;
+    let color = 'gray.400', label = 'Neutral', emoji = '😐';
+    if (tone === 'positive') { color = 'green.400'; label = 'Positive'; emoji = '😊'; }
+    if (tone === 'negative') { color = 'red.400'; label = 'Negative'; emoji = '😞'; }
+    return (
+      <Tooltip label={label}>
+        <Text ml={2} color={color} fontWeight="bold" as="span" fontSize="lg">
+          {emoji}
+        </Text>
+      </Tooltip>
+    );
+  };
+
   const renderTopicsList = () => (
     <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w='full'>
       {topics.map((topic) => (
@@ -515,10 +562,24 @@ const ForumPage = () => {
       <Box p={6} bg="white" borderRadius="lg" shadow="md">
         <Textarea
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Write your message..."
-          mb={4}
+          onChange={e => {
+            setNewMessage(e.target.value);
+            setTone(null); // Reset tone if user edits
+          }}
+          placeholder="Type your message..."
+          mb={2}
         />
+        <Flex align="center" mb={2}>
+          <Button
+            size="sm"
+            onClick={handleCheckTone}
+            isDisabled={isCheckingTone || !newMessage.trim()}
+            mr={2}
+          >
+            {isCheckingTone ? <Spinner size="xs" /> : 'Check Tone'}
+          </Button>
+          {renderTone()}
+        </Flex>
         <Button
           rightIcon={<FaPaperPlane />}
           colorScheme="blue"

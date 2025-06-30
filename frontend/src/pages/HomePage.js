@@ -42,7 +42,8 @@ import {
   FaRegLightbulb,
   FaRegSun,
   FaRegMoon,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaUser
 } from 'react-icons/fa';
 
 // Import useColorMode hook
@@ -192,6 +193,13 @@ function HomePage() {
       description: 'Get smart tips from our AI to save energy and manage finances',
       path: '/ai-suggestions',
       colorScheme: 'purple'
+    },
+    {
+      icon: FaUser,
+      title: 'Profile Details',
+      description: 'Update your personal information',
+      path: '/personal-user',
+      colorScheme: 'blue'
     }
     ],
     solarTips: [

@@ -1,14 +1,16 @@
 from flask import Blueprint, redirect, url_for, session, jsonify, request, current_app, render_template
 from app import oauth
-from support import get_user_by_email, create_user
+from support import get_user_by_email, create_user, update_user_by_id, get_db
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
 import time
 import logging
 from datetime import datetime
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_cors import CORS
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
+CORS(auth_bp, origins=["http://localhost:3000", "http://192.168.18.3:3000"])
 
 # Configure logging
 logging.basicConfig(
@@ -112,17 +114,20 @@ def google_callback():
         """
 
 @auth_bp.route('/user')
+@jwt_required()
 def get_current_user():
-    user_id = session.get('user_id')
-    if not user_id:
-        return create_response("Not authenticated", 401)
-    
-    user = get_user_by_email(user_id)
+    user_email = get_jwt_identity()
+    user = get_user_by_email(user_email)
     if not user:
         return create_response("User not found", 404)
         
     return jsonify({
-        "authenticated": True
+        "id": user['id'],
+        "full_name": user['full_name'],
+        "surname": user.get('surname', ''),
+        "email": user['email'],
+        "phone_number": user.get('phone', ''),
+        "address": user.get('address', ''),
     })
 
 @auth_bp.route('/logout')
@@ -191,10 +196,9 @@ def register():
     if not all(key in data for key in ['name', 'email', 'password']):
         return jsonify({'error': 'Missing required fields'}), 400
     
-    email = data.get('email').lower() if data.get('email') else None
+    email = data.get('email').lower()
     password = data.get('password')
-    if not email or not password:
-        return jsonify({'error': 'Invalid email or password'}), 400
+    full_name = data.get('name')
     
     if get_user_by_email(email):
         return jsonify({'error': 'Email already registered'}), 409
@@ -202,8 +206,85 @@ def register():
     try:
         password_hash = generate_password_hash(password)
         logging.info(f'User registration for email: {email} - Plain password length: {len(password)}, Hashed password length: {len(password_hash)}')
-        create_user(email=email, password_hash=password_hash, full_name=data.get('name'), phone=data.get('phone'))
-        return jsonify({'message': 'User created successfully'}), 201
+        create_user(email=email, password_hash=password_hash, full_name=full_name)
+        return jsonify({'message': 'User registered successfully'}), 201
     except Exception as e:
         logging.error(f'Registration error: {str(e)} - Email: {email}')
-        return jsonify({'error': str(e)}), 500 
+        return jsonify({'error': str(e)}), 500
+
+@auth_bp.route('/user', methods=['PUT'])
+@jwt_required()
+def update_user():
+    try:
+        data = request.get_json()
+        if not data:
+            return create_response('No data provided', 400)
+        
+        user_email = get_jwt_identity()
+        user = get_user_by_email(user_email)
+        if not user:
+            return create_response('User not found', 404)
+        
+        user_id = user['id']
+        
+        # Only include fields that are provided and exist in your schema
+        updates = {}
+        if 'email' in data:
+            updates['email'] = data.get('email')
+        if 'full_name' in data:
+            updates['full_name'] = data.get('full_name')
+        # Skip 'surname' for now, or add it after migrating the database
+        # if 'surname' in data:  # Uncomment this once the column is added
+        #     updates['surname'] = data.get('surname')
+        if 'phone_number' in data:
+            updates['phone_number'] = data.get('phone_number')
+        if 'address' in data:
+            updates['address'] = data.get('address')
+        
+        if not updates:  # No valid updates
+            return create_response('No valid fields to update', 400)
+        
+        # Build the update query dynamically based on provided fields
+        query = "UPDATE users SET "
+        query_values = []
+        for key in updates:
+            if key in ['email', 'full_name', 'phone_number', 'address']:  # Only include known columns
+                query += f"{key} = COALESCE(%s, {key}), "
+                query_values.append(updates[key])
+        query = query.rstrip(', ')  # Remove trailing comma
+        query += " WHERE id = %s RETURNING id"
+        query_values.append(user_id)
+        
+        # Execute the query
+        conn = get_db()  # Now this should be defined
+        with conn.cursor() as cur:
+            cur.execute(query, query_values)
+            conn.commit()
+        
+        return create_response('Profile updated successfully', 200)
+    
+    except Exception as e:
+        logging.error(f'Update error: {str(e)}')
+        return create_response('Internal server error', 500)
+
+@auth_bp.route('/reset-password', methods=['POST'])
+def reset_password():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        new_password = data.get('new_password')
+        if not email or not new_password:
+            return create_response('Email and new password are required', 400)
+        
+        user = get_user_by_email(email)
+        if not user:
+            return create_response('User not found', 404)
+        
+        new_hash = generate_password_hash(new_password)
+        if update_user_by_id(user['id'], password_hash=new_hash):  # Assuming update_user_by_id can handle password_hash
+            return create_response('Password reset successfully', 200)
+        else:
+            return create_response('Reset failed', 500)
+    except Exception as e:
+        logging.error(f'Password reset error: {str(e)}')
+        return create_response('Reset failed', 500) 

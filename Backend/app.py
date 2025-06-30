@@ -7,6 +7,8 @@ from hugging_services import HuggingFaceChatbot
 import logging
 from agent import EnergyUsageOptimizerAgent
 from sys import stdout  # Import for StreamHandler
+from flask_jwt_extended import JWTManager
+import datetime
 
 # Set up logging to console only
 logger = logging.getLogger(__name__)
@@ -20,7 +22,11 @@ load_dotenv()  # Load .env variables
 ESKOM_TOKEN = os.getenv("ESKOM_TOKEN")  # Added Eskom token loading
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://192.168.18.3:3000"]}})
+
+# Add JWT configuration
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your_default_secret_key_here')  # Use an environment variable for security
+jwt = JWTManager(app)
 
 chatbot = HuggingFaceChatbot()
 
@@ -125,6 +131,31 @@ def version():
     }
     logger.info(f"Version info requested: {version_info}")
     return jsonify(version_info)
+
+@app.route('/api/ai/suggest-plan', methods=['POST'])
+def suggest_plan():
+    try:
+        data = request.json  # Expecting JSON with usageHours, budget, deviceCount
+        logger.info(f"Received suggest-plan request: {data}")
+        # Simple mock logic: Based on input, return a plan (e.g., 'Pro Saver' if budget > 50)
+        if data and data.get('budget', 0) > 50:
+            return jsonify({'plan': 'Pro Saver'})
+        else:
+            return jsonify({'plan': 'Basic Plan'})
+    except Exception as e:
+        logger.error(f"Error in suggest-plan endpoint: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/log', methods=['POST'])
+def log_message():
+    try:
+        message = request.json.get('message', '')
+        log_file_path = os.path.abspath('../frontend/frontend.log')  # Path relative to backend
+        with open(log_file_path, 'a') as log_file:
+            log_file.write(f"{datetime.datetime.now()} - {message}\n")
+        return jsonify({'status': 'success'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     logger.info("Starting Flask app on port 5000")
