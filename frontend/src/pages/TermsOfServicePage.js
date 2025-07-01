@@ -135,9 +135,9 @@ function TermsOfServicePage() {
           </Box>
 
           <Box>
-            <Heading as="h3" size="md" mb={2} color={headingColor}>9. Governing Law</Heading>
+            <Heading as="h3" size="md" mb={2} color={headingColor}>9. Contact Information</Heading>
             <Text>
-              These Terms shall be governed by and construed in accordance with the laws of South Africa. Any disputes shall be resolved in the courts of Johannesburg.
+              If you have any questions or need assistance, please contact us at [Your Company Email] or [Your Company Phone Number].
             </Text>
           </Box>
         </VStack>
