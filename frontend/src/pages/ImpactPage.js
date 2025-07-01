@@ -22,25 +22,29 @@ import {
   Stack,
   Icon,
   HStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  FormControl,
-  FormLabel,
-  Input,
   IconButton
 } from '@chakra-ui/react';
-import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaStar } from 'react-icons/fa';
+import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload } from 'react-icons/fa';
+import { jsPDF } from "jspdf";
+
+function generateImpactReportPDF() {
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text("Gridx Impact Report", 20, 20);
+
+  doc.setFontSize(12);
+  doc.text("Total Solar Energy Provided: 1.2M kWh saved", 20, 40);
+  doc.text("Households Served: 4,300+ families empowered", 20, 50);
+  doc.text("CO₂ Emissions Reduced: 620 tons offset", 20, 60);
+
+  doc.save("impact_report.pdf");
+}
 
 function ImpactPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const user = auth.getCurrentUser();
-  const [isOpen, setIsOpen] = useState(false);
   const [quote, setQuote] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -53,15 +57,12 @@ function ImpactPage() {
     ];
   });
 
-  const onOpen = () => setIsOpen(true);
-  const onClose = () => setIsOpen(false);
-
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name) {
       toast({ title: 'Error', description: 'Name is required.', status: 'error', duration: 3000, isClosable: true });
@@ -83,15 +84,21 @@ function ImpactPage() {
       rating,
       avatar: 'https://via.placeholder.com/150',
     };
-    const updatedTestimonials = [...testimonials, newTestimonial];
-    setTestimonials(updatedTestimonials);
-    localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
+    
+    try {
+      const updatedTestimonials = [...testimonials, newTestimonial];
+      setTestimonials(updatedTestimonials);
+      localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
+      toast({ title: 'Story Submitted', description: 'Your story has been simulated successfully! (Not yet saved to database)', status: 'success', duration: 3000, isClosable: true });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Submission failed. Please try again later.', status: 'error', duration: 3000, isClosable: true });
+      console.error('Submission error:', error);
+    }
+    
     setName('');
     setEmail('');
     setQuote('');
     setRating(0);
-    setIsOpen(false);
-    toast({ title: 'Story Submitted', description: 'Your story has been added successfully!', status: 'success', duration: 3000, isClosable: true });
   };
 
   const bgColor = useColorModeValue('gray.50', 'gray.700');
@@ -181,7 +188,7 @@ function ImpactPage() {
                     <Icon as={stat.icon} w={8} h={8} color={statColor} mr={3} />
                     <Stat>
                       <StatLabel fontSize="md">{stat.label}</StatLabel>
-                      <StatNumber fontSize="2xl" fontWeight="bold">{stat.value}</StatNumber>
+                      <StatNumber>{stat.value}</StatNumber>
                     </Stat>
                   </Flex>
                 </Box>
@@ -236,58 +243,35 @@ function ImpactPage() {
           </Box>
 
           <Box textAlign="center" mt={10}>
-            <Button onClick={onOpen} colorScheme="teal">Share Your Story</Button>
-
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
-              <ModalOverlay />
-              <ModalContent bg="gray.800" color="white">
-                <ModalHeader>Share Your Story</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <form onSubmit={handleSubmit}>
-                    <Stack spacing={4}>
-                      <FormControl isRequired>
-                        <FormLabel>Name</FormLabel>
-                        <Input placeholder="Your name..." value={name} onChange={(e) => setName(e.target.value)} />
-                      </FormControl>
-                      
-                      <FormControl isRequired isInvalid={!isValidEmail(email) && email !== ''}>
-                        <FormLabel>Email</FormLabel>
-                        <Input type="email" placeholder="Your email..." value={email} onChange={(e) => setEmail(e.target.value)} />
-                      </FormControl>
-                      
-                      <FormControl isRequired>
-                        <FormLabel>Testimonial</FormLabel>
-                        <Input placeholder="Share your experience..." value={quote} onChange={(e) => setQuote(e.target.value)} />
-                      </FormControl>
-                      
-                      <FormControl>
-                        <FormLabel>Star Rating (Optional, 1-5)</FormLabel>
-                        <HStack>
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <IconButton
-                              key={star}
-                              aria-label={`Rate ${star} stars`}
-                              icon={<Icon as={FaStar} />}
-                              variant={star <= rating ? 'solid' : 'ghost'}
-                              colorScheme="yellow"
-                              onClick={() => setRating(star)}
-                            />
-                          ))}
-                        </HStack>
-                      </FormControl>
-                      
-                      <Button colorScheme="teal" type="submit">Submit</Button>
-                    </Stack>
-                  </form>
-                </ModalBody>
-                <ModalFooter>
-                  <Button onClick={onClose}>Cancel</Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
+            <Button onClick={handleSubmit} colorScheme="teal">Share Your Story</Button>
           </Box>
         </Stack>
+      </Box>
+
+      <Box
+        position="fixed"
+        bottom="90px"
+        right="24px"
+        zIndex="9999"
+      >
+        <IconButton
+          aria-label="Download Impact Report"
+          icon={<FaDownload />}
+          size="lg"
+          colorScheme="teal"
+          isRound
+          boxShadow="lg"
+          onClick={() => {
+            generateImpactReportPDF();
+            toast({
+              title: 'Report downloaded',
+              description: 'Your impact report has been downloaded successfully.',
+              status: 'success',
+              duration: 3000,
+              isClosable: true,
+            });
+          }}
+        />
       </Box>
     </Box>
   );
