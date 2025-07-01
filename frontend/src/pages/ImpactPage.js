@@ -31,9 +31,10 @@ import {
   ModalFooter,
   FormControl,
   FormLabel,
-  Input
+  Input,
+  IconButton
 } from '@chakra-ui/react';
-import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft } from 'react-icons/fa';
+import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaStar } from 'react-icons/fa';
 
 function ImpactPage() {
   const navigate = useNavigate();
@@ -42,6 +43,8 @@ function ImpactPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [quote, setQuote] = useState('');
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [rating, setRating] = useState(0);
   const [testimonials, setTestimonials] = useState(() => {
     const savedTestimonials = localStorage.getItem('testimonials');
     return savedTestimonials ? JSON.parse(savedTestimonials) : [
@@ -53,18 +56,42 @@ function ImpactPage() {
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (name && quote) {
-      const newTestimonial = { name, quote, avatar: 'https://via.placeholder.com/150' };
-      const updatedTestimonials = [...testimonials, newTestimonial];
-      setTestimonials(updatedTestimonials);
-      localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
-      setQuote('');
-      setName('');
-      setIsOpen(false);
-      toast({ title: 'Story Submitted', description: 'Your story has been added!', status: 'success', duration: 3000, isClosable: true });
+    if (!name) {
+      toast({ title: 'Error', description: 'Name is required.', status: 'error', duration: 3000, isClosable: true });
+      return;
     }
+    if (!email || !isValidEmail(email)) {
+      toast({ title: 'Error', description: 'A valid Email is required.', status: 'error', duration: 3000, isClosable: true });
+      return;
+    }
+    if (!quote) {
+      toast({ title: 'Error', description: 'Testimonial is required.', status: 'error', duration: 3000, isClosable: true });
+      return;
+    }
+    
+    const newTestimonial = {
+      name,
+      quote,
+      email,
+      rating,
+      avatar: 'https://via.placeholder.com/150',
+    };
+    const updatedTestimonials = [...testimonials, newTestimonial];
+    setTestimonials(updatedTestimonials);
+    localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
+    setName('');
+    setEmail('');
+    setQuote('');
+    setRating(0);
+    setIsOpen(false);
+    toast({ title: 'Story Submitted', description: 'Your story has been added successfully!', status: 'success', duration: 3000, isClosable: true });
   };
 
   const bgColor = useColorModeValue('gray.50', 'gray.700');
@@ -213,26 +240,49 @@ function ImpactPage() {
 
             <Modal isOpen={isOpen} onClose={onClose} isCentered>
               <ModalOverlay />
-              <ModalContent>
+              <ModalContent bg="gray.800" color="white">
                 <ModalHeader>Share Your Story</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                   <form onSubmit={handleSubmit}>
                     <Stack spacing={4}>
-                      <FormControl>
-                        <FormLabel>Quote</FormLabel>
-                        <Input placeholder="Share your experience..." value={quote} onChange={(e) => setQuote(e.target.value)} />
-                      </FormControl>
-                      <FormControl>
+                      <FormControl isRequired>
                         <FormLabel>Name</FormLabel>
                         <Input placeholder="Your name..." value={name} onChange={(e) => setName(e.target.value)} />
                       </FormControl>
+                      
+                      <FormControl isRequired isInvalid={!isValidEmail(email) && email !== ''}>
+                        <FormLabel>Email</FormLabel>
+                        <Input type="email" placeholder="Your email..." value={email} onChange={(e) => setEmail(e.target.value)} />
+                      </FormControl>
+                      
+                      <FormControl isRequired>
+                        <FormLabel>Testimonial</FormLabel>
+                        <Input placeholder="Share your experience..." value={quote} onChange={(e) => setQuote(e.target.value)} />
+                      </FormControl>
+                      
+                      <FormControl>
+                        <FormLabel>Star Rating (Optional, 1-5)</FormLabel>
+                        <HStack>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <IconButton
+                              key={star}
+                              aria-label={`Rate ${star} stars`}
+                              icon={<Icon as={FaStar} />}
+                              variant={star <= rating ? 'solid' : 'ghost'}
+                              colorScheme="yellow"
+                              onClick={() => setRating(star)}
+                            />
+                          ))}
+                        </HStack>
+                      </FormControl>
+                      
+                      <Button colorScheme="teal" type="submit">Submit</Button>
                     </Stack>
                   </form>
                 </ModalBody>
                 <ModalFooter>
                   <Button onClick={onClose}>Cancel</Button>
-                  <Button colorScheme="teal" ml={3} type="submit">Submit</Button>
                 </ModalFooter>
               </ModalContent>
             </Modal>
