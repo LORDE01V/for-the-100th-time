@@ -445,11 +445,31 @@ function HomePage() {
                   placeholder="Enter your email"
                   variant="outline"
                   size="md"
-                  w="100%"  // Full width in the grid cell
+                  w="100%"
+                  id="newsletterEmail"
                 />
                 <Button 
                   colorScheme="blue" 
-                  onClick={() => toast({ title: 'Subscribed!', status: 'success', duration: 3000, isClosable: true })}
+                  onClick={() => {
+                    const emailInput = document.getElementById('newsletterEmail');
+                    if (emailInput && emailInput.value.includes('@')) {
+                      toast({
+                        title: 'Subscription Successful!',
+                        description: 'You have been subscribed. Check your email for confirmation.',
+                        status: 'success',
+                        duration: 5000,
+                        isClosable: true
+                      });
+                    } else {
+                      toast({
+                        title: 'Error',
+                        description: 'Please enter a valid email address.',
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                      });
+                    }
+                  }}
                 >
                   Subscribe
                 </Button>
