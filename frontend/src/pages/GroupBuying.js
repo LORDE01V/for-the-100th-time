@@ -44,7 +44,10 @@ import solarPanelImage from '../assets/images/solar_panel_350w.png';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Create a motion component for Text
-const MotionText = motion(Text);
+const MotionText = motion.create(Text);
+
+// Change this line:
+// const MotionBox = motion.create(Box);
 
 function GroupBuying() {
   const toast = useToast();

@@ -1,0 +1,48 @@
+2025-07-01 09:24:15,474 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-01 09:24:15,475 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-01 09:24:15,480 - INFO -  * Restarting with stat
+2025-07-01 09:24:35,782 - WARNING -  * Debugger is active!
+2025-07-01 09:24:35,789 - INFO -  * Debugger PIN: 240-196-647
+2025-07-01 09:25:01,263 - INFO - 127.0.0.1 - - [01/Jul/2025 09:25:01] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 09:25:01,584 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-01 09:25:01,885 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-01 09:25:02,700 - INFO - 127.0.0.1 - - [01/Jul/2025 09:25:02] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-01 09:36:44,317 - INFO - 127.0.0.1 - - [01/Jul/2025 09:36:44] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 09:36:44,627 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-01 09:36:44,871 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-01 09:36:45,815 - INFO - 127.0.0.1 - - [01/Jul/2025 09:36:45] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-01 09:38:23,694 - INFO - 127.0.0.1 - - [01/Jul/2025 09:38:23] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 09:38:24,013 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-01 09:38:24,125 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-01 09:38:24,626 - INFO - 127.0.0.1 - - [01/Jul/2025 09:38:24] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-01 09:45:37,687 - INFO - 127.0.0.1 - - [01/Jul/2025 09:45:37] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 09:45:38,021 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-01 09:45:38,182 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-01 09:45:38,807 - INFO - 127.0.0.1 - - [01/Jul/2025 09:45:38] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-01 10:06:16,790 - INFO - 127.0.0.1 - - [01/Jul/2025 10:06:16] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 10:06:17,126 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-01 10:06:17,394 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-01 10:06:17,896 - INFO - 127.0.0.1 - - [01/Jul/2025 10:06:17] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-01 10:54:25,983 - INFO - 127.0.0.1 - - [01/Jul/2025 10:54:25] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 10:54:26,293 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-01 10:54:26,360 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-01 10:54:26,546 - INFO - 127.0.0.1 - - [01/Jul/2025 10:54:26] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-01 12:16:40,674 - INFO - 127.0.0.1 - - [01/Jul/2025 12:16:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 12:16:40,998 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-01 12:16:41,101 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-01 12:16:41,309 - INFO - 127.0.0.1 - - [01/Jul/2025 12:16:41] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-01 14:16:48,222 - INFO - 127.0.0.1 - - [01/Jul/2025 14:16:48] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 14:16:48,590 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-01 14:16:48,827 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-01 14:16:49,271 - INFO - 127.0.0.1 - - [01/Jul/2025 14:16:49] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-01 14:38:09,914 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-01 14:38:09,916 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-01 14:38:09,918 - INFO -  * Restarting with stat
+2025-07-01 14:38:18,936 - WARNING -  * Debugger is active!
+2025-07-01 14:38:18,952 - INFO -  * Debugger PIN: 240-196-647
+2025-07-01 14:48:04,989 - INFO - 127.0.0.1 - - [01/Jul/2025 14:48:04] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 14:48:05,298 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-01 14:48:05,364 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-01 14:48:05,509 - INFO - 127.0.0.1 - - [01/Jul/2025 14:48:05] "POST /api/auth/login HTTP/1.1" 200 -

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api';
+// eslint-disable-next-line no-unused-vars
 import { useDashboard } from '../context/DashboardContext';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { motion } from 'framer-motion';
 import { Bot } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Import the video
 import backgroundVideo from '../assets/videos/Slowed-GridX-Video.mp4';
@@ -24,7 +26,9 @@ import {
   useToast,
   IconButton,
   VStack,
-  Fade
+  Fade,
+  // eslint-disable-next-line no-unused-vars
+  Stack
 } from '@chakra-ui/react';
 
 // Import Icons
@@ -48,6 +52,9 @@ import {
 
 // Import useColorMode hook
 import { useColorMode } from '@chakra-ui/react';
+
+// Import the image
+import aboutBg from '../assets/images/About_Page_IMG.png';
 
 // Constants and utility functions
 const getTimeOfDay = () => {
@@ -77,7 +84,7 @@ function HomePage() {
   const { colorMode, toggleColorMode } = useColorMode();
   const user = auth.getCurrentUser();
   console.log('HomePage rendering: User is', user ? 'logged in' : 'not logged in');
-  const { currentThemeConfig } = useDashboard();
+  // const { currentThemeConfig } = useDashboard(); // Remove or comment out this line
 
   const [isLoadingGreeting, setIsLoadingGreeting] = useState(true);
   const [aiGreeting, setAiGreeting] = useState(null);
@@ -99,6 +106,12 @@ function HomePage() {
     spinner: spinnerColor,
     glass: glassStyles
   }), [bgColor, textColor, headingColor, spinnerColor, glassStyles]);
+
+  // Add these at the top of your component, before any return
+  const footerBorderColor = useColorModeValue('gray.200', 'gray.700');
+  const footerBg = useColorModeValue('whiteAlpha.900', 'gray.900');
+  const footerTextColor = useColorModeValue('gray.600', 'gray.400');
+  const footerLinkColor = useColorModeValue('blue.600', 'blue.300');
 
   // Memoized data configs
   const { navItems, solarTips } = useMemo(() => ({
@@ -358,7 +371,8 @@ function HomePage() {
             <Button
               mt={4}
               colorScheme={item.colorScheme}
-              onClick={() => navigate(item.path)}
+              as={Link}
+              to={item.path}
             >
               Go to {item.title}
             </Button>
@@ -380,9 +394,12 @@ function HomePage() {
     <ErrorBoundary fallback={<Text>Error loading page. Please try refreshing. Check console for details.</Text>}>
       <Box
         minH="100vh"
-        bgGradient={currentThemeConfig.gradients.main}
-        position="relative"
-        overflow="hidden"
+        backgroundImage={`url(${aboutBg})`}
+        backgroundSize="cover"
+        backgroundPosition="center"
+        backgroundRepeat="no-repeat"
+        px={4}
+        py={8}
       >
         {/* Video Background */}
         <Box
@@ -438,6 +455,50 @@ function HomePage() {
                 Logout
               </Button>
             </Box>
+          </Container>
+        </Box>
+
+        {/* Responsive Footer */}
+        <Box
+          as="footer"
+          width="100%"
+          borderTop="1px"
+          borderColor={footerBorderColor}
+          bg={footerBg}
+          py={4}
+          mt={8}
+          position="relative"
+          zIndex="2"
+        >
+          <Container maxW="container.xl">
+            <Stack
+              direction={{ base: 'column', md: 'row' }}
+              spacing={{ base: 2, md: 6 }}
+              align="center"
+              justify="space-between"
+              textAlign="center"
+            >
+              <Text fontSize="sm" color={footerTextColor}>
+                © 2025 Gridx. All rights reserved.
+              </Text>
+              <Stack direction="row" spacing={4}>
+                <Button as={Link} to="/about" variant="link" color={footerLinkColor}>
+                  About
+                </Button>
+                <Button as={Link} to="/contact" variant="link" color={footerLinkColor}>
+                  Contact
+                </Button>
+                <Button as={Link} to="/support" variant="link" color={footerLinkColor}>
+                  Support
+                </Button>
+                <Button as={Link} to="/privacy-policy" variant="link" color={footerLinkColor}>
+                  Privacy Policy
+                </Button>
+                <Button as={Link} to="/terms-of-service" variant="link" color={footerLinkColor}>
+                  Terms of Service
+                </Button>
+              </Stack>
+            </Stack>
           </Container>
         </Box>
       </Box>

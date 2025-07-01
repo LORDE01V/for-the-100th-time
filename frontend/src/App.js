@@ -34,6 +34,8 @@ import GroupBuying from './pages/GroupBuying';
 import SubscriptionPage from './pages/SubscriptionPage';
 import AISuggestions from './pages/AISuggestions';
 import PersonalUserPage from './pages/PersonalUserPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 
 // Protected Route component
 const ProtectedRoute = () => {
@@ -82,6 +84,10 @@ function App() {
                   <Route path="/ai-suggestions" element={<AISuggestions />} />
                   <Route path="/personal-user" element={<PersonalUserPage />} />
                 </Route>
+
+                {/* New Routes */}
+                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
                 {/* Fallback route */}
                 <Route path="*" element={<Navigate to="/" replace />} />

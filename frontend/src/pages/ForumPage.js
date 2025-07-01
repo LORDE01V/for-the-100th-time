@@ -47,7 +47,7 @@ const ForumPage = () => {
       id: 1,
       title: 'Solar Panel Maintenance Tips',
       author: 'John Doe',
-      lastActivity: '2024-03-15',
+      lastActivity: '2025-03-15',
       replies: 5,
       posts: [
         'Post 1: Regular cleaning of panels is essential for efficiency.',
@@ -71,7 +71,7 @@ const ForumPage = () => {
       id: 2,
       title: 'Best Battery Storage Solutions',
       author: 'Jane Smith',
-      lastActivity: '2024-03-14',
+      lastActivity: '2025-03-14',
       replies: 3,
       posts: [
         'Post 1: Lithium-ion batteries are reliable for home use.',
@@ -100,7 +100,7 @@ const ForumPage = () => {
       id: 3,
       title: 'Energy Saving Strategies',
       author: 'Mike Johnson',
-      lastActivity: '2024-03-13',
+      lastActivity: '2025-03-13',
       replies: 7,
       posts: [
         'Post 1: Turn off lights when not in use.',
@@ -128,7 +128,7 @@ const ForumPage = () => {
       id: 4,
       title: 'Inverter Installation Guide',
       author: 'Emily Clark',
-      lastActivity: '2024-03-12',
+      lastActivity: '2025-03-12',
       replies: 4,
       posts: [
         'Post 1: Start with selecting the right inverter size.',
@@ -154,7 +154,7 @@ const ForumPage = () => {
       id: 5,
       title: 'Renewable Energy Grants',
       author: 'Alex Rivera',
-      lastActivity: '2024-03-11',
+      lastActivity: '2025-03-11',
       replies: 6,
       posts: [
         'Post 1: Government grants cover solar installations.',
@@ -178,7 +178,7 @@ const ForumPage = () => {
       id: 6,
       title: 'Solar vs. Wind Energy',
       author: 'Sarah Lee',
-      lastActivity: '2024-03-10',
+      lastActivity: '2025-03-10',
       replies: 8,
       posts: [
         'Post 1: Solar is ideal for sunny regions.',
@@ -202,7 +202,7 @@ const ForumPage = () => {
       id: 7,
       title: 'Home Battery Backup Systems',
       author: 'David Kim',
-      lastActivity: '2024-03-09',
+      lastActivity: '2025-03-09',
       replies: 2,
       posts: [
         'Post 1: Essential during power outages.',
@@ -226,7 +226,7 @@ const ForumPage = () => {
       id: 8,
       title: 'Eco-Friendly Appliances',
       author: 'Laura Chen',
-      lastActivity: '2024-03-08',
+      lastActivity: '2025-03-08',
       replies: 5,
       posts: [
         'Post 1: Energy-star fridges save power.',
@@ -250,7 +250,7 @@ const ForumPage = () => {
       id: 9,
       title: 'Grid Independence Tips',
       author: 'Robert Garcia',
-      lastActivity: '2024-03-07',
+      lastActivity: '2025-03-07',
       replies: 3,
       posts: [
         'Post 1: Start with solar panels installation.',
@@ -274,7 +274,7 @@ const ForumPage = () => {
       id: 10,
       title: 'Energy Monitoring Tools',
       author: 'Maria Lopez',
-      lastActivity: '2024-03-06',
+      lastActivity: '2025-03-06',
       replies: 7,
       posts: [
         'Post 1: Apps like Sense for real-time tracking.',
@@ -298,7 +298,7 @@ const ForumPage = () => {
       id: 11,
       title: 'Sustainable Home Design',
       author: 'James Patel',
-      lastActivity: '2024-03-05',
+      lastActivity: '2025-03-05',
       replies: 4,
       posts: [
         'Post 1: Passive solar design maximizes light.',
@@ -322,7 +322,7 @@ const ForumPage = () => {
       id: 12,
       title: 'EV Charging Solutions',
       author: 'Olivia Nguyen',
-      lastActivity: '2024-03-04',
+      lastActivity: '2025-03-04',
       replies: 6,
       posts: [
         'Post 1: Home chargers are convenient for daily use.',
