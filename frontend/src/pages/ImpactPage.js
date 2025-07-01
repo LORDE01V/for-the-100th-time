@@ -39,10 +39,33 @@ function ImpactPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const user = auth.getCurrentUser();
-  const [isOpen, setIsOpen] = useState(false);  // Define state for modal
+  const [isOpen, setIsOpen] = useState(false);
+  const [quote, setQuote] = useState('');
+  const [name, setName] = useState('');
+  const [testimonials, setTestimonials] = useState(() => {
+    const savedTestimonials = localStorage.getItem('testimonials');
+    return savedTestimonials ? JSON.parse(savedTestimonials) : [
+      { name: 'Sarah M.', quote: 'This app has made managing my solar energy so easy!', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956' },
+      { name: 'John D.', quote: 'Empowering my community through clean energy!', avatar: 'https://images.unsplash.com/photo-1544005313-94cdfd42a3b9' }
+    ];
+  });
 
-  const onOpen = () => setIsOpen(true);  // Define onOpen function
-  const onClose = () => setIsOpen(false);  // Define onClose function
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (name && quote) {
+      const newTestimonial = { name, quote, avatar: 'https://via.placeholder.com/150' };
+      const updatedTestimonials = [...testimonials, newTestimonial];
+      setTestimonials(updatedTestimonials);
+      localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
+      setQuote('');
+      setName('');
+      setIsOpen(false);
+      toast({ title: 'Story Submitted', description: 'Your story has been added!', status: 'success', duration: 3000, isClosable: true });
+    }
+  };
 
   const bgColor = useColorModeValue('gray.50', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'whiteAlpha.900');
@@ -68,20 +91,6 @@ function ImpactPage() {
     { label: 'Total Solar Energy Provided', value: '1.2M kWh saved', icon: FaSolarPanel },
     { label: 'Households Served', value: '4,300+ families empowered', icon: FaUsers },
     { label: 'CO₂ Emissions Reduced', value: '620 tons offset', icon: FaLeaf },
-  ];
-
-  const testimonials = [
-    {
-      name: 'Sarah M.',
-      quote: 'This app has made managing my solar energy so easy! I can see my impact and top up credits effortlessly.',
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1361&q=80',
-    },
-    {
-      name: 'John D.',
-      quote: 'Empowering my community through clean energy has never been more accessible. Great initiative!',
-      avatar: 'https://images.unsplash.com/photo-1544005313-94cdfd42a3b9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1361&q=80',
-    },
-    // Add more testimonials here
   ];
 
   if (!user) {
@@ -208,20 +217,22 @@ function ImpactPage() {
                 <ModalHeader>Share Your Story</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                  <Stack spacing={4}>
-                    <FormControl>
-                      <FormLabel>Quote</FormLabel>
-                      <Input placeholder="Share your experience..." />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Name</FormLabel>
-                      <Input placeholder="Your name..." />
-                    </FormControl>
-                  </Stack>
+                  <form onSubmit={handleSubmit}>
+                    <Stack spacing={4}>
+                      <FormControl>
+                        <FormLabel>Quote</FormLabel>
+                        <Input placeholder="Share your experience..." value={quote} onChange={(e) => setQuote(e.target.value)} />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Name</FormLabel>
+                        <Input placeholder="Your name..." value={name} onChange={(e) => setName(e.target.value)} />
+                      </FormControl>
+                    </Stack>
+                  </form>
                 </ModalBody>
                 <ModalFooter>
                   <Button onClick={onClose}>Cancel</Button>
-                  <Button colorScheme="teal" ml={3} onClick={() => { /* Handle form submission logic here */ }}>Submit</Button>
+                  <Button colorScheme="teal" ml={3} type="submit">Submit</Button>
                 </ModalFooter>
               </ModalContent>
             </Modal>
