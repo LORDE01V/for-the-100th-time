@@ -27,8 +27,9 @@ import {
   IconButton,
   VStack,
   Fade,
-  // eslint-disable-next-line no-unused-vars
-  Stack
+  Stack,
+  Input,
+  Grid
 } from '@chakra-ui/react';
 
 // Import Icons
@@ -82,6 +83,12 @@ function HomePage() {
   const navigate = useNavigate();
   const toast = useToast();
   const { colorMode, toggleColorMode } = useColorMode();
+  const newsletterBg = useColorModeValue('whiteAlpha.900', 'gray.800');
+  const bgColor = useColorModeValue('gray.50', 'gray.900');
+  const textColor = useColorModeValue('gray.800', 'gray.400');
+  const headingColor = useColorModeValue('gray.900', 'white');
+  const spinnerColor = useColorModeValue('blue.500', 'blue.300');
+  const glassStyles = useColorModeValue(GLASS_STYLES.light, GLASS_STYLES.dark);
   const user = auth.getCurrentUser();
   console.log('HomePage rendering: User is', user ? 'logged in' : 'not logged in');
   // const { currentThemeConfig } = useDashboard(); // Remove or comment out this line
@@ -90,28 +97,6 @@ function HomePage() {
   const [aiGreeting, setAiGreeting] = useState(null);
   const [greetingError, setGreetingError] = useState(false);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
-
-  // Color mode values (move these outside useMemo)
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const textColor = useColorModeValue('gray.800', 'gray.400');
-  const headingColor = useColorModeValue('gray.900', 'white');
-  const spinnerColor = useColorModeValue('blue.500', 'blue.300');
-  const glassStyles = useColorModeValue(GLASS_STYLES.light, GLASS_STYLES.dark);
-
-  // Then memoize the colors object
-  const colors = useMemo(() => ({
-    bg: bgColor,
-    text: textColor,
-    heading: headingColor,
-    spinner: spinnerColor,
-    glass: glassStyles
-  }), [bgColor, textColor, headingColor, spinnerColor, glassStyles]);
-
-  // Add these at the top of your component, before any return
-  const footerBorderColor = useColorModeValue('gray.200', 'gray.700');
-  const footerBg = useColorModeValue('whiteAlpha.900', 'gray.900');
-  const footerTextColor = useColorModeValue('gray.600', 'gray.400');
-  const footerLinkColor = useColorModeValue('blue.600', 'blue.300');
 
   // Memoized data configs
   const { navItems, solarTips } = useMemo(() => ({
@@ -223,6 +208,13 @@ function HomePage() {
     ]
   }), []);
 
+  // Add this new variable at the top, after the existing useColorModeValue calls
+  // Memoized data configs
+  const footerBorderColor = useColorModeValue('gray.200', 'gray.700');
+  const footerBg = useColorModeValue('whiteAlpha.900', 'gray.900');
+  const footerTextColor = useColorModeValue('gray.600', 'gray.400');
+  const footerLinkColor = useColorModeValue('blue.600', 'blue.300');
+
   // Effects
   useEffect(() => {
     console.log('Checking user authentication in useEffect');
@@ -285,14 +277,14 @@ function HomePage() {
   const renderHeader = () => (
           <Flex justify="space-between" align="flex-start" mb={8} direction={{ base: 'column', md: 'row' }} gap={4}>
             <Box flex="1">
-        <Heading as="h1" size="xl" color={colors.heading} mb={2}>
+        <Heading as="h1" size="xl" color={headingColor} mb={2}>
           Welcome, {user.name}! 
               </Heading>
               
               {isLoadingGreeting ? (
                 <Flex align="center" mt={2}>
-            <Spinner size="sm" mr={2} color={colors.spinner} />
-            <Text fontSize="sm" color={colors.text}>
+            <Spinner size="sm" mr={2} color={spinnerColor} />
+            <Text fontSize="sm" color={textColor}>
                     Crafting your energy insights...
                   </Text>
                 </Flex>
@@ -300,7 +292,7 @@ function HomePage() {
                 <Fade in={true} key={currentTipIndex}>
                   <Text 
                     fontSize="lg" 
-              color={colors.heading} 
+              color={headingColor} 
                     fontWeight="medium" 
                     mt={2}
                     transition="opacity 0.5s ease-in-out"
@@ -317,7 +309,7 @@ function HomePage() {
 
             <Flex align="center" gap={4} mt={{ base: 2, md: 0 }}>
               <VStack align="flex-end" spacing={1}>
-          <Text fontSize="sm" color={colors.text} textAlign="right">
+          <Text fontSize="sm" color={textColor} textAlign="right">
                   {new Date().toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     month: 'long', 
@@ -330,7 +322,7 @@ function HomePage() {
                   onClick={toggleColorMode}
                   variant="ghost"
                   size="sm"
-            color={colors.text}
+            color={textColor}
                 />
               </VStack>
             </Flex>
@@ -351,7 +343,7 @@ function HomePage() {
             p={6}
             borderWidth="1px"
             borderRadius="md"
-            bg={colors.glass.backgroundColor}
+            bg={glassStyles.backgroundColor}
             boxShadow="lg"
             _hover={{ boxShadow: 'xl' }}
             display="flex"
@@ -363,9 +355,9 @@ function HomePage() {
           >
             <Flex align="center" justify="center">
               <Icon as={item.icon} boxSize={8} color={item.colorScheme + '.500'} />
-              <Heading size="md" color={colors.heading} ml={2}>{item.title}</Heading>
+              <Heading size="md" color={headingColor} ml={2}>{item.title}</Heading>
             </Flex>
-            <Text color={colors.text} mt={2} textAlign="center">
+            <Text color={textColor} mt={2} textAlign="center">
               {item.description}
             </Text>
             <Button
@@ -384,8 +376,8 @@ function HomePage() {
 
   if (!user) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg={colors.bg}>
-        <Spinner size="xl" color={colors.spinner} />
+      <Flex minH="100vh" align="center" justify="center" bg={bgColor}>
+        <Spinner size="xl" color={spinnerColor} />
       </Flex>
     );
   }
@@ -445,6 +437,26 @@ function HomePage() {
             {renderHeader()}
             {renderNavGrid()}
             
+            {/* Newsletter Signup Section */}
+            <Box as="section" py={4} px={6} bg={newsletterBg} borderRadius="md" boxShadow="sm" mt={8} borderWidth="0">
+              <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4} justify="center" align="center">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  variant="outline"
+                  size="md"
+                  w="100%"  // Full width in the grid cell
+                />
+                <Button 
+                  colorScheme="blue" 
+                  onClick={() => toast({ title: 'Subscribed!', status: 'success', duration: 3000, isClosable: true })}
+                >
+                  Subscribe
+                </Button>
+              </Grid>
+            </Box>
+            
+            {/* Moved Logout Button */}
             <Box textAlign="center" mt={8}>
               <Button
                 colorScheme="red"
