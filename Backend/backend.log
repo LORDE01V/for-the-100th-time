@@ -154,3 +154,29 @@
 2025-06-26 15:03:53,258 - INFO - 127.0.0.1 - - [26/Jun/2025 15:03:53] "GET /api/solar-output HTTP/1.1" 200 -
 2025-06-26 15:10:23,745 - INFO -  * Detected change in "C:\\Users\\Nkosinathi Radebe\\Videos\\sleigh's_features\\For_the_100th_Time.Sleigh116\\Backend\\app.py", reloading
 2025-06-26 15:10:24,857 - INFO -  * Restarting with stat
+2025-06-26 15:38:51,472 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-26 15:38:51,472 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-26 15:41:23,461 - INFO - 127.0.0.1 - - [26/Jun/2025 15:41:23] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-06-26 15:41:23,965 - INFO - 127.0.0.1 - - [26/Jun/2025 15:41:23] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 409 -
+2025-06-26 15:43:51,561 - INFO - 127.0.0.1 - - [26/Jun/2025 15:43:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-26 15:43:51,885 - INFO - Attempting login for email: sleigh.ndo@gmail.com
+2025-06-26 15:43:52,071 - INFO - Verifying password: Incoming password length 9, Stored hash length 162
+2025-06-26 15:43:52,488 - INFO - 127.0.0.1 - - [26/Jun/2025 15:43:52] "POST /api/auth/login HTTP/1.1" 200 -
+2025-06-30 11:04:23,961 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-30 11:04:23,962 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-30 11:50:03,135 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-30 11:50:03,135 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-30 12:50:27,771 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:27] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-06-30 12:50:28,101 - INFO - Attempting login for email: sleigh.ndo@gmail.com
+2025-06-30 12:50:28,395 - INFO - Verifying password: Incoming password length 9, Stored hash length 162
+2025-06-30 12:50:28,757 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:28] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-01 08:10:44,225 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-01 08:10:44,226 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-01 08:11:37,923 - INFO - 127.0.0.1 - - [01/Jul/2025 08:11:37] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-01 08:11:38,250 - INFO - Attempting login for email: sleigh.ndo@gmail.com
+2025-07-01 08:11:38,536 - INFO - Verifying password: Incoming password length 9, Stored hash length 162
+2025-07-01 08:11:38,871 - INFO - 127.0.0.1 - - [01/Jul/2025 08:11:38] "POST /api/auth/login HTTP/1.1" 200 -

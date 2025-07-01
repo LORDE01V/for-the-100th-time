@@ -40,7 +40,7 @@ function TopUpPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // State for form fields and balance
-  const [currentBalance, setCurrentBalance] = useState(150.50); // Mock initial balance
+  const [currentBalance, setCurrentBalance] = useState(0); // State to manage balance
   const [amount, setAmount] = useState(''); // Amount to top-up
   const [promoCode, setPromoCode] = useState(''); // Optional promo code
   const [voucherCode, setVoucherCode] = useState(''); // Optional voucher code
@@ -78,6 +78,16 @@ function TopUpPage() {
           navigate('/login');
       }
   }, [user, navigate]); // Effect runs on component mount and if user/navigate changes
+
+  // Load balance from localStorage on page load
+  useEffect(() => {
+    const savedBalance = localStorage.getItem('balance');
+    if (savedBalance) {
+      setCurrentBalance(parseFloat(savedBalance)); // Parse saved balance
+    } else {
+      setCurrentBalance(0); // Default balance
+    }
+  }, []);
 
   // Handler for Auto-Top-Up settings
   const handleAutoTopUpSave = () => {
@@ -140,6 +150,7 @@ function TopUpPage() {
     // Simulate successful transaction and update balance
     const newBalance = currentBalance + topUpAmount;
     setCurrentBalance(newBalance);
+    localStorage.setItem('balance', newBalance.toString()); // Save to localStorage
 
     // Clear form fields after successful transaction
     setAmount('');
