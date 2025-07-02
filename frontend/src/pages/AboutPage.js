@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -13,6 +13,7 @@ import {
   Button,
   Flex,
   SimpleGrid,
+  Link,
 } from '@chakra-ui/react';
 import { FaArrowLeft, FaTwitter, FaFacebook, FaInstagram, FaEnvelope } from 'react-icons/fa';
 import kgImg from '../assets/images/kg_img.png';         // Kgotatso Mokgashi
@@ -215,6 +216,25 @@ function AboutPage() {
         <Box textAlign="center" mt={4}>
           <Button colorScheme="teal" size="md" as="a" href="/register">
             Join Gridx Today
+          </Button>
+        </Box>
+        <Box textAlign="center" mt={8}>
+          <Button
+            as={RouterLink}
+            to="/terms-of-service"
+            colorScheme="blue"
+            variant="outline"
+            mr={4}
+          >
+            Terms of Service
+          </Button>
+          <Button
+            as={RouterLink}
+            to="/privacy-policy"
+            colorScheme="blue"
+            variant="outline"
+          >
+            Privacy Policy
           </Button>
         </Box>
       </Box>
