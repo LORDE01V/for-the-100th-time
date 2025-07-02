@@ -22,7 +22,9 @@ import {
   Stack,
   Icon,
   HStack,
-  IconButton
+  IconButton,
+  Input,
+  Textarea
 } from '@chakra-ui/react';
 import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload } from 'react-icons/fa';
 import { jsPDF } from "jspdf";
@@ -243,7 +245,30 @@ function ImpactPage() {
           </Box>
 
           <Box textAlign="center" mt={10}>
-            <Button onClick={handleSubmit} colorScheme="teal">Share Your Story</Button>
+            <form onSubmit={handleSubmit}>
+              <Stack spacing={4} maxWidth="400px" mx="auto">
+                <Heading as="h2" size="md" mb={4}>Share Your Story</Heading>
+                <Input
+                  placeholder="Your Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  isRequired
+                />
+                <Input
+                  placeholder="Your Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                />
+                <Textarea
+                  placeholder="Share your story or testimonial"
+                  value={quote}
+                  onChange={(e) => setQuote(e.target.value)}
+                  isRequired
+                />
+                <Button type="submit" colorScheme="teal">Share Your Story</Button>
+              </Stack>
+            </form>
           </Box>
         </Stack>
       </Box>
