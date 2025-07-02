@@ -45,6 +45,8 @@ const Footer = () => {
           <ChakraLink as={RouterLink} to="/subscription" color="white" _hover={{ textDecoration: 'underline' }}>Services</ChakraLink>
           <ChakraLink as={RouterLink} to="/team" color="white" _hover={{ textDecoration: 'underline' }}>Team</ChakraLink>
           <ChakraLink as={RouterLink} to="/support" color="white" _hover={{ textDecoration: 'underline' }}>Contact</ChakraLink>
+          <ChakraLink as={RouterLink} to="/terms-of-service" color="white" _hover={{ textDecoration: 'underline' }}>Terms of Service</ChakraLink>
+          <ChakraLink as={RouterLink} to="/privacy-policy" color="white" _hover={{ textDecoration: 'underline' }}>Privacy Policy</ChakraLink>
         </Stack>
       </Flex>
       <Text fontSize="sm" mb={2} color="white" textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">©2025 | All Rights Reserved · Powered by GridX</Text>

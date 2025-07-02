@@ -54,10 +54,23 @@ function ImpactPage() {
   const [email, setEmail] = useState('');
   const [rating, setRating] = useState(0);
   const [testimonials, setTestimonials] = useState(() => {
-    const savedTestimonials = localStorage.getItem('testimonials');
-    return savedTestimonials ? JSON.parse(savedTestimonials) : [
-      { name: 'Sarah M.', quote: 'This app has made managing my solar energy so easy!', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956' },
-      { name: 'John D.', quote: 'Empowering my community through clean energy!', avatar: 'https://images.unsplash.com/photo-1544005313-94cdfd42a3b9' }
+    // Ignore localStorage for now to always show the new profiles
+    return [
+      { name: 'Emily Johnson', quote: 'GridX made solar simple for my family!', avatar: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167', rating: 5 },
+      { name: 'Michael Smith', quote: 'Fantastic support and easy to use.', avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91', rating: 4 },
+      { name: 'Jessica Brown', quote: 'I love tracking my energy savings.', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5 },
+      { name: 'David Wilson', quote: 'Solar energy has never been easier.', avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', rating: 5 },
+      { name: 'Ashley Miller', quote: 'GridX is a game changer for my home.', avatar: 'https://images.unsplash.com/photo-1464983953574-0892a716854b', rating: 4 },
+      { name: 'Matthew Davis', quote: 'Highly recommend to anyone going solar.', avatar: 'https://images.unsplash.com/photo-1519340333755-c2f6c58f5c4b', rating: 5 },
+      { name: 'Hannah Moore', quote: 'Easy to use and very informative.', avatar: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308', rating: 4 },
+      { name: 'Christopher Taylor', quote: 'Great for monitoring my energy use.', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d', rating: 5 },
+      { name: 'Lauren Anderson', quote: 'The best app for solar households.', avatar: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167', rating: 5 },
+      { name: 'Daniel Thomas', quote: 'I appreciate the detailed analytics.', avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91', rating: 4 },
+      { name: 'Olivia Jackson', quote: 'My bills have dropped thanks to Gridx.', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5 },
+      { name: 'James White', quote: 'Setup was quick and painless.', avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', rating: 5 },
+      { name: 'Samantha Harris', quote: 'I love seeing my energy impact.', avatar: 'https://images.unsplash.com/photo-1464983953574-0892a716854b', rating: 4 },
+      { name: 'Benjamin Martin', quote: 'GridX is the future of home energy.', avatar: 'https://images.unsplash.com/photo-1519340333755-c2f6c58f5c4b', rating: 5 },
+      { name: 'Grace Lee', quote: 'So easy, even my kids use it!', avatar: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308', rating: 5 }
     ];
   });
 
@@ -127,6 +140,10 @@ function ImpactPage() {
       });
     }
   }, [user, navigate, toast]);
+
+  useEffect(() => {
+    console.log('Number of testimonials:', testimonials.length);
+  }, [testimonials]);
 
   const impactStats = [
     { label: 'Total Solar Energy Provided', value: '1.2M kWh saved', icon: FaSolarPanel },
@@ -221,22 +238,22 @@ function ImpactPage() {
               slidesToShow={1}
               slidesToScroll={1}
               autoplay={true}
-              autoplaySpeed={5000}
+              autoplaySpeed={3000}
               accessibility={true}
             >
               {testimonials.map((testimonial, index) => (
-                <Box key={testimonial.name} p={4} bg={testimonialBg} borderWidth="1px" borderColor={testimonialBorderColor} borderRadius="md" mb={4}>
-                  <Flex align="center" mb={2}>
-                    <Avatar src={testimonial.avatar} name={testimonial.name} mr={3} />
-                    <VStack align="start">
-                      <Text color={textColor}>{testimonial.quote}</Text>
-                      <HStack>
+                <Box key={testimonial.name} p={6} bg={testimonialBg} borderWidth="1px" borderColor={testimonialBorderColor} borderRadius="lg" boxShadow="md">
+                  <Flex align="center" mb={4}>
+                    <Avatar src={testimonial.avatar} name={testimonial.name} size="xl" mr={4} />
+                    <VStack align="start" flex="1">
+                      <Text fontSize="lg" fontStyle="italic" color={textColor}>"{testimonial.quote}"</Text>
+                      <HStack mt={2}>
                         {Array(5).fill('').map((_, starIndex) => (
                           <MotionIcon
                             as={FaStar}
                             key={starIndex}
                             color={starIndex < testimonial.rating ? 'yellow.400' : 'gray.300'}
-                            boxSize={5}
+                            boxSize={6}
                             onClick={() => handleRate(index, starIndex + 1)}
                             cursor="pointer"
                             initial={{ scale: 1 }}
@@ -244,7 +261,7 @@ function ImpactPage() {
                           />
                         ))}
                       </HStack>
-                      <Text color={subTextColor}>{testimonial.name}</Text>
+                      <Text fontWeight="bold" fontSize="md" color={subTextColor}>{testimonial.name}</Text>
                     </VStack>
                   </Flex>
                 </Box>

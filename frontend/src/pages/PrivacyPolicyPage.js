@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
-import { Box, Heading, Text, VStack, UnorderedList, ListItem, Container, useColorModeValue } from '@chakra-ui/react';
+import { Box, Heading, Text, VStack, UnorderedList, ListItem, Container, useColorModeValue, IconButton } from '@chakra-ui/react';
 import backgroundImage from '../assets/images/Terms_Page_And_Services.png';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 
 console.log('Imported background image:', backgroundImage);  // Debug log for image
 
 function PrivacyPolicyPage() {
+  const navigate = useNavigate();
   const overlayBg = useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(0, 0, 0, 0.15)');
   const textColor = useColorModeValue('gray.700', 'gray.100');
   const headingColor = useColorModeValue('gray.800', 'white');
@@ -16,6 +19,16 @@ function PrivacyPolicyPage() {
 
   return (
     <Box position="relative" minH="100vh" py={10}>
+      <IconButton
+        aria-label="Back"
+        icon={<FaArrowLeft />}
+        size="sm"
+        position="absolute"
+        top="1rem"
+        left="1rem"
+        onClick={() => navigate(-1)}
+        zIndex="3"
+      />
       <Box
         position="absolute"
         top={0}
