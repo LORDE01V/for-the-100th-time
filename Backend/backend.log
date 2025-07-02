@@ -82,3 +82,31 @@
 2025-07-02 12:56:39,474 - INFO - Attempting login for email: nathiunathi@gmail.com
 2025-07-02 12:56:39,861 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
 2025-07-02 12:56:40,298 - INFO - 127.0.0.1 - - [02/Jul/2025 12:56:40] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 13:42:44,377 - INFO - 127.0.0.1 - - [02/Jul/2025 13:42:44] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-02 13:42:44,689 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-02 13:42:44,834 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-02 13:42:45,225 - INFO - 127.0.0.1 - - [02/Jul/2025 13:42:45] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 14:21:14,169 - INFO - 127.0.0.1 - - [02/Jul/2025 14:21:14] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-02 14:21:14,511 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-02 14:21:14,687 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-02 14:21:15,305 - INFO - 127.0.0.1 - - [02/Jul/2025 14:21:15] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 14:45:38,213 - INFO - 127.0.0.1 - - [02/Jul/2025 14:45:38] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-02 14:45:38,530 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-02 14:45:38,777 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-02 14:45:39,428 - INFO - 127.0.0.1 - - [02/Jul/2025 14:45:39] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 14:50:48,028 - INFO - 127.0.0.1 - - [02/Jul/2025 14:50:48] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-02 14:50:48,353 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-02 14:50:48,499 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-02 14:50:48,908 - INFO - 127.0.0.1 - - [02/Jul/2025 14:50:48] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 15:10:37,407 - INFO - 127.0.0.1 - - [02/Jul/2025 15:10:37] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-02 15:10:37,719 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-02 15:10:37,881 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-02 15:10:38,065 - INFO - 127.0.0.1 - - [02/Jul/2025 15:10:38] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 15:21:36,215 - INFO - 127.0.0.1 - - [02/Jul/2025 15:21:36] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-02 15:21:36,524 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-02 15:21:36,694 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-02 15:21:36,891 - INFO - 127.0.0.1 - - [02/Jul/2025 15:21:36] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 15:24:00,816 - INFO - 127.0.0.1 - - [02/Jul/2025 15:24:00] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-02 15:24:01,129 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-02 15:24:01,188 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-02 15:24:01,392 - INFO - 127.0.0.1 - - [02/Jul/2025 15:24:01] "POST /api/auth/login HTTP/1.1" 200 -

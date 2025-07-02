@@ -4,6 +4,8 @@ import { auth } from '../services/api'; // Assuming auth service is still used
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+// eslint-disable-next-line no-unused-vars
+import Calendar from 'react-calendar';
 import {
   Box,
   Flex,
@@ -30,6 +32,8 @@ import {
 import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload, FaStar } from 'react-icons/fa';
 import { jsPDF } from "jspdf";
 import { motion } from 'framer-motion';
+import './ImpactPage.css';  // Assuming we'll create a new CSS file for print styles, or add inline if needed
+import EventCalendar from '../components/EventCalendar';  // New import for the calendar component
 
 function generateImpactReportPDF() {
   const doc = new jsPDF();
@@ -195,6 +199,13 @@ function ImpactPage() {
           >
             Back to Home
           </Button>
+          <Button
+            onClick={() => window.print()}
+            colorScheme="teal"
+            leftIcon={<FaDownload />}
+          >
+            Print Page
+          </Button>
         </HStack>
 
         <Heading as="h1" size="xl" color={headingColor} mb={6}>
@@ -225,6 +236,13 @@ function ImpactPage() {
                 </Box>
               ))}
             </SimpleGrid>
+          </Box>
+
+          <Divider />
+
+          <Box>
+            <Heading as="h2" size="lg" mb={4}>Upcoming Events Calendar</Heading>
+            <EventCalendar />
           </Box>
 
           <Divider />
