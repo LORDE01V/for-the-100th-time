@@ -24,9 +24,10 @@ import {
   HStack,
   IconButton,
   Input,
-  Textarea
+  Textarea,
+  VStack
 } from '@chakra-ui/react';
-import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload } from 'react-icons/fa';
+import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload, FaStar } from 'react-icons/fa';
 import { jsPDF } from "jspdf";
 
 function generateImpactReportPDF() {
@@ -109,6 +110,7 @@ function ImpactPage() {
   const testimonialBg = useColorModeValue('white', 'gray.800');
   const testimonialBorderColor = useColorModeValue('gray.200', 'gray.600');
   const headingColor = useColorModeValue('gray.800', 'white');
+  const subTextColor = useColorModeValue('gray.600', 'whiteAlpha.700');
 
   useEffect(() => {
     if (!user) {
@@ -128,6 +130,13 @@ function ImpactPage() {
     { label: 'Households Served', value: '4,300+ families empowered', icon: FaUsers },
     { label: 'CO₂ Emissions Reduced', value: '620 tons offset', icon: FaLeaf },
   ];
+
+  function handleRate(testimonialIndex, newRating) {
+    const updatedTestimonials = [...testimonials];
+    updatedTestimonials[testimonialIndex].rating = newRating;
+    setTestimonials(updatedTestimonials);
+    localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
+  }
 
   if (!user) {
     return (
@@ -222,13 +231,25 @@ function ImpactPage() {
               accessibility={true}
             >
               {testimonials.map((testimonial, index) => (
-                <Box key={index} p={6} boxShadow="md" borderRadius="lg" bg={testimonialBg} borderColor={testimonialBorderColor} borderWidth="1px">
-                  <Flex>
-                    <Avatar name={testimonial.name} src={testimonial.avatar} mr={4} />
-                    <Stack spacing={3}>
-                      <Text fontStyle="italic">"{testimonial.quote}"</Text>
-                      <Text fontWeight="bold">- {testimonial.name}</Text>
-                    </Stack>
+                <Box key={testimonial.name} p={4} bg={testimonialBg} borderWidth="1px" borderColor={testimonialBorderColor} borderRadius="md" mb={4}>
+                  <Flex align="center" mb={2}>
+                    <Avatar src={testimonial.avatar} name={testimonial.name} mr={3} />
+                    <VStack align="start">
+                      <Text color={textColor}>{testimonial.quote}</Text>
+                      <HStack>
+                        {Array(5).fill('').map((_, starIndex) => (
+                          <Icon
+                            as={FaStar}
+                            key={starIndex}
+                            color={starIndex < testimonial.rating ? 'yellow.400' : 'gray.300'}
+                            boxSize={5}
+                            onClick={() => handleRate(index, starIndex + 1)}
+                            cursor="pointer"
+                          />
+                        ))}
+                      </HStack>
+                      <Text color={subTextColor}>{testimonial.name}</Text>
+                    </VStack>
                   </Flex>
                 </Box>
               ))}
