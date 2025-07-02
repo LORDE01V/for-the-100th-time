@@ -29,6 +29,7 @@ import {
 } from '@chakra-ui/react';
 import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload, FaStar } from 'react-icons/fa';
 import { jsPDF } from "jspdf";
+import { motion } from 'framer-motion';
 
 function generateImpactReportPDF() {
   const doc = new jsPDF();
@@ -111,6 +112,8 @@ function ImpactPage() {
   const testimonialBorderColor = useColorModeValue('gray.200', 'gray.600');
   const headingColor = useColorModeValue('gray.800', 'white');
   const subTextColor = useColorModeValue('gray.600', 'whiteAlpha.700');
+
+  const MotionIcon = motion(Icon);
 
   useEffect(() => {
     if (!user) {
@@ -217,17 +220,8 @@ function ImpactPage() {
               speed={500}
               slidesToShow={1}
               slidesToScroll={1}
-              adaptiveHeight={true}
-              responsive={[
-                {
-                  breakpoint: 768,
-                  settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 1,
-                  }
-                }
-              ]}
-              arrows={true}
+              autoplay={true}
+              autoplaySpeed={5000}
               accessibility={true}
             >
               {testimonials.map((testimonial, index) => (
@@ -238,13 +232,15 @@ function ImpactPage() {
                       <Text color={textColor}>{testimonial.quote}</Text>
                       <HStack>
                         {Array(5).fill('').map((_, starIndex) => (
-                          <Icon
+                          <MotionIcon
                             as={FaStar}
                             key={starIndex}
                             color={starIndex < testimonial.rating ? 'yellow.400' : 'gray.300'}
                             boxSize={5}
                             onClick={() => handleRate(index, starIndex + 1)}
                             cursor="pointer"
+                            initial={{ scale: 1 }}
+                            animate={testimonial.rating === 5 && starIndex === 4 ? { scale: [1, 1.5, 1], rotate: [0, 360, 0], transition: { duration: 0.5 } } : { scale: 1 }}
                           />
                         ))}
                       </HStack>
