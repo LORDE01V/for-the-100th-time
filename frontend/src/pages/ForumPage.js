@@ -47,7 +47,7 @@ const ForumPage = () => {
       id: 1,
       title: 'Solar Panel Maintenance Tips',
       author: 'John Doe',
-      lastActivity: '2024-03-15',
+      lastActivity: '2025-03-15',
       replies: 5,
       posts: [
         'Post 1: Regular cleaning of panels is essential for efficiency.',
@@ -71,7 +71,7 @@ const ForumPage = () => {
       id: 2,
       title: 'Best Battery Storage Solutions',
       author: 'Jane Smith',
-      lastActivity: '2024-03-14',
+      lastActivity: '2025-03-14',
       replies: 3,
       posts: [
         'Post 1: Lithium-ion batteries are reliable for home use.',
@@ -100,7 +100,7 @@ const ForumPage = () => {
       id: 3,
       title: 'Energy Saving Strategies',
       author: 'Mike Johnson',
-      lastActivity: '2024-03-13',
+      lastActivity: '2025-03-13',
       replies: 7,
       posts: [
         'Post 1: Turn off lights when not in use.',
@@ -122,8 +122,251 @@ const ForumPage = () => {
         'Post 17: Switch to renewable energy sources.',
         'Post 18: Educate family on conservation habits.'
       ]
+    },
+    // Adding 10 more topics with new authors and posts
+    {
+      id: 4,
+      title: 'Inverter Installation Guide',
+      author: 'Emily Clark',
+      lastActivity: '2025-03-12',
+      replies: 4,
+      posts: [
+        'Post 1: Start with selecting the right inverter size.',
+        'Post 2: Ensure proper wiring from panels.',
+        'Post 3: Mount in a cool, dry location.',
+        'Post 4: Connect to the battery system carefully.',
+        'Post 5: Test voltage compatibility first.',
+        'Post 6: Use surge protectors for safety.',
+        'Post 7: Follow local electrical codes.',
+        'Post 8: Secure all connections tightly.',
+        'Post 9: Monitor for overheating issues.',
+        'Post 10: Integrate with monitoring software.',
+        'Post 11: Hire a professional if unsure.',
+        'Post 12: Check for ground fault protection.',
+        'Post 13: Label all circuits clearly.',
+        'Post 14: Perform a load test after installation.',
+        'Post 15: Keep documentation for future reference.',
+        'Post 16: Update firmware if applicable.',
+        'Post 17: Ensure ventilation around the unit.'
+      ]
+    },
+    {
+      id: 5,
+      title: 'Renewable Energy Grants',
+      author: 'Alex Rivera',
+      lastActivity: '2025-03-11',
+      replies: 6,
+      posts: [
+        'Post 1: Government grants cover solar installations.',
+        'Post 2: Check eligibility based on income.',
+        'Post 3: Apply online for federal programs.',
+        'Post 4: State-specific grants vary by region.',
+        'Post 5: Include energy audits in applications.',
+        'Post 6: Deadlines are usually annual.',
+        'Post 7: Match grants don\'t require repayment.',
+        'Post 8: Verify with local energy offices.',
+        'Post 9: Combine with tax incentives.',
+        'Post 10: Small business grants available too.',
+        'Post 11: Track application status online.',
+        'Post 12: Required documents include estimates.',
+        'Post 13: Grants for wind and hydro exist.',
+        'Post 14: Community programs offer additional support.',
+        'Post 15: Success stories can guide applications.'
+      ]
+    },
+    {
+      id: 6,
+      title: 'Solar vs. Wind Energy',
+      author: 'Sarah Lee',
+      lastActivity: '2025-03-10',
+      replies: 8,
+      posts: [
+        'Post 1: Solar is ideal for sunny regions.',
+        'Post 2: Wind energy suits windy areas better.',
+        'Post 3: Solar panels have lower maintenance.',
+        'Post 4: Wind turbines can be noisier.',
+        'Post 5: Compare initial costs per kW.',
+        'Post 6: Solar is more space-efficient.',
+        'Post 7: Wind provides energy at night.',
+        'Post 8: Hybrid systems maximize output.',
+        'Post 9: Environmental impact differs slightly.',
+        'Post 10: Government incentives favor both.',
+        'Post 11: Scalability options for each.',
+        'Post 12: Energy storage needs vary.',
+        'Post 13: Installation complexity compared.',
+        'Post 14: Long-term ROI calculations.',
+        'Post 15: User experiences with reliability.'
+      ]
+    },
+    {
+      id: 7,
+      title: 'Home Battery Backup Systems',
+      author: 'David Kim',
+      lastActivity: '2025-03-09',
+      replies: 2,
+      posts: [
+        'Post 1: Essential during power outages.',
+        'Post 2: Costs can be high initially.',
+        'Post 3: Pair with solar for full independence.',
+        'Post 4: Capacity determines backup duration.',
+        'Post 5: Safety features include fire suppression.',
+        'Post 6: Integration with smart grids.',
+        'Post 7: Warranty periods are crucial.',
+        'Post 8: Maintenance involves cycle checks.',
+        'Post 9: Options for expandable systems.',
+        'Post 10: Compare brands like Tesla and LG.',
+        'Post 11: Environmental impact of batteries.',
+        'Post 12: Installation requires professionals.',
+        'Post 13: Monitor via mobile apps.',
+        'Post 14: Lifespan is 10-15 years typically.',
+        'Post 15: Rebates available in some areas.'
+      ]
+    },
+    {
+      id: 8,
+      title: 'Eco-Friendly Appliances',
+      author: 'Laura Chen',
+      lastActivity: '2025-03-08',
+      replies: 5,
+      posts: [
+        'Post 1: Energy-star fridges save power.',
+        'Post 2: Washers with high efficiency ratings.',
+        'Post 3: LED lighting for homes.',
+        'Post 4: Smart thermostats for heating.',
+        'Post 5: Low-flow water appliances.',
+        'Post 6: Compare costs and savings.',
+        'Post 7: Brands like Bosch and Miele.',
+        'Post 8: Long-term environmental benefits.',
+        'Post 9: Government rebates for upgrades.',
+        'Post 10: Maintenance tips for longevity.',
+        'Post 11: Impact on utility bills.',
+        'Post 12: Recycling old appliances.',
+        'Post 13: User reviews for reliability.',
+        'Post 14: Integration with home automation.',
+        'Post 15: Energy monitoring features.'
+      ]
+    },
+    {
+      id: 9,
+      title: 'Grid Independence Tips',
+      author: 'Robert Garcia',
+      lastActivity: '2025-03-07',
+      replies: 3,
+      posts: [
+        'Post 1: Start with solar panels installation.',
+        'Post 2: Batteries are key for storage.',
+        'Post 3: Use inverters for AC power.',
+        'Post 4: Monitor energy production daily.',
+        'Post 5: Reduce consumption with efficiency.',
+        'Post 6: Backup generators as a fallback.',
+        'Post 7: Legal requirements for off-grid.',
+        'Post 8: Water and waste management.',
+        'Post 9: Community resources for advice.',
+        'Post 10: Cost analysis for transition.',
+        'Post 11: Sustainable living practices.',
+        'Post 12: Weather-proofing your setup.',
+        'Post 13: Scaling up over time.',
+        'Post 14: Education on energy basics.',
+        'Post 15: Success stories from users.'
+      ]
+    },
+    {
+      id: 10,
+      title: 'Energy Monitoring Tools',
+      author: 'Maria Lopez',
+      lastActivity: '2025-03-06',
+      replies: 7,
+      posts: [
+        'Post 1: Apps like Sense for real-time tracking.',
+        'Post 2: Hardware like smart meters.',
+        'Post 3: Integration with home systems.',
+        'Post 4: Alerts for high usage.',
+        'Post 5: Data visualization features.',
+        'Post 6: Cost vs. benefit analysis.',
+        'Post 7: Compatibility with devices.',
+        'Post 8: User-friendly interfaces.',
+        'Post 9: Privacy concerns addressed.',
+        'Post 10: Accuracy of measurements.',
+        'Post 11: Recommendations from experts.',
+        'Post 12: Free vs. paid tools.',
+        'Post 13: Setting energy goals.',
+        'Post 14: Historical data tracking.',
+        'Post 15: Impact on behavior change.'
+      ]
+    },
+    {
+      id: 11,
+      title: 'Sustainable Home Design',
+      author: 'James Patel',
+      lastActivity: '2025-03-05',
+      replies: 4,
+      posts: [
+        'Post 1: Passive solar design maximizes light.',
+        'Post 2: Insulation tips for energy efficiency.',
+        'Post 3: Green roofing options.',
+        'Post 4: Material choices for sustainability.',
+        'Post 5: Water conservation in design.',
+        'Post 6: Architects specializing in eco-homes.',
+        'Post 7: Cost implications discussed.',
+        'Post 8: Long-term benefits outlined.',
+        'Post 9: Case studies shared.',
+        'Post 10: Community building aspects.',
+        'Post 11: Regulations and certifications.',
+        'Post 12: DIY vs. professional advice.',
+        'Post 13: Energy modeling tools.',
+        'Post 14: Aesthetic vs. functional balance.',
+        'Post 15: User experiences with designs.'
+      ]
+    },
+    {
+      id: 12,
+      title: 'EV Charging Solutions',
+      author: 'Olivia Nguyen',
+      lastActivity: '2025-03-04',
+      replies: 6,
+      posts: [
+        'Post 1: Home chargers are convenient for daily use.',
+        'Post 2: Cost comparison with public stations.',
+        'Post 3: Level 2 vs. DC fast charging.',
+        'Post 4: Installation guides for homes.',
+        'Post 5: Integration with solar power.',
+        'Post 6: App-based monitoring.',
+        'Post 7: Safety features to consider.',
+        'Post 8: Government incentives available.',
+        'Post 9: Range anxiety solutions.',
+        'Post 10: Compatibility with vehicle models.',
+        'Post 11: Maintenance and upkeep.',
+        'Post 12: Environmental impact.',
+        'Post 13: User reviews on reliability.',
+        'Post 14: Future-proofing with upgrades.',
+        'Post 15: Community charging networks.'
+      ]
+    },
+    {
+      id: 13,
+      title: 'Water Heating Efficiency',
+      author: 'Brian Taylor',
+      lastActivity: '2024-03-03',
+      replies: 5,
+      posts: [
+        'Post 1: Solar water heaters save money long-term.',
+        'Post 2: Maintenance advice for tanks.',
+        'Post 3: Heat pump options compared.',
+        'Post 4: Insulation wraps for pipes.',
+        'Post 5: Energy ratings to check.',
+        'Post 6: Installation costs broken down.',
+        'Post 7: Rebates and incentives.',
+        'Post 8: User tips for efficiency.',
+        'Post 9: Tankless vs. traditional systems.',
+        'Post 10: Environmental benefits.',
+        'Post 11: Monitoring water usage.',
+        'Post 12: Common issues and fixes.',
+        'Post 13: Integration with smart homes.',
+        'Post 14: Longevity and warranties.',
+        'Post 15: Success stories from users.'
+      ]
     }
-  ], []);
+  ];
 
   const mockSummarize = (posts) => {
     // Simple mock function to generate a bullet-point summary from posts

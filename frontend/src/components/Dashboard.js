@@ -42,7 +42,7 @@ function DashboardPage() { // Renamed component to DashboardPage
         batteryLevel: '85%',
         powerStatus: 'Stable',
         contract: {
-            id: 'CNT-2024-001',
+            id: 'CNT-2025-001',
             status: 'ACTIVE',
             progress: 33, // in percentage
             paymentsMade: 4,

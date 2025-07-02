@@ -34,7 +34,8 @@ import GroupBuying from './pages/GroupBuying';
 import SubscriptionPage from './pages/SubscriptionPage';
 import AISuggestions from './pages/AISuggestions';
 import PersonalUserPage from './pages/PersonalUserPage';
-import FaultDetails from './pages/FaultDetails'; // Import FaultDetails page
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 
 // Protected Route component
 const ProtectedRoute = () => {
@@ -84,6 +85,10 @@ function App() {
                   <Route path="/personal-user" element={<PersonalUserPage />} />
                   <Route path="/fault-details" element={<FaultDetails />} /> {/* Fault Details route */}
                 </Route>
+
+                {/* New Routes */}
+                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
                 {/* Fallback route */}
                 <Route path="*" element={<Navigate to="/" replace />} />

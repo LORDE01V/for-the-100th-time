@@ -272,3 +272,32 @@ button:disabled {
     justify-content: center;
     font-size: 2xl;
 }
+
+/* Add or override styles to force visibility */
+body, html {
+  visibility: visible !important;
+  opacity: 1 !important;
+  background-color: white !important; /* Override any hidden backgrounds */
+  color: black !important; /* Set text color to black */
+}
+/* Ensure Chakra components can render properly */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure no styles are hiding content */
+* {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: white !important; /* Reset background */
+}
+
+/* Override any potential conflicting styles */
+.ChakraProvider * {
+  display: block !important; /* Force display for debugging */
+}

@@ -36,21 +36,21 @@ function ReferPage() {
     {
       id: 1,
       name: "Thabo Mkhize",
-      date: "2024-03-15",
+      date: "2025-03-15",
       status: "completed",
       reward: "50 energy units"
     },
     {
       id: 2,
       name: "Nomsa Dlamini",
-      date: "2024-03-10",
+      date: "2025-03-10",
       status: "pending",
       reward: "25 energy units"
     },
     {
       id: 3,
       name: "Sipho Nkosi",
-      date: "2024-03-05",
+      date: "2025-03-05",
       status: "completed",
       reward: "50 energy units"
     }
