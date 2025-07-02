@@ -7,6 +7,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import { motion } from 'framer-motion';
 import { Bot } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 // Import the video
 import backgroundVideo from '../assets/videos/Slowed-GridX-Video.mp4';
@@ -27,7 +28,6 @@ import {
   IconButton,
   VStack,
   Fade,
-  Stack,
   Input,
   Grid
 } from '@chakra-ui/react';
@@ -208,13 +208,6 @@ function HomePage() {
     ]
   }), []);
 
-  // Add this new variable at the top, after the existing useColorModeValue calls
-  // Memoized data configs
-  const footerBorderColor = useColorModeValue('gray.200', 'gray.700');
-  const footerBg = useColorModeValue('whiteAlpha.900', 'gray.900');
-  const footerTextColor = useColorModeValue('gray.600', 'gray.400');
-  const footerLinkColor = useColorModeValue('blue.600', 'blue.300');
-
   // Effects
   useEffect(() => {
     console.log('Checking user authentication in useEffect');
@@ -365,6 +358,8 @@ function HomePage() {
               colorScheme={item.colorScheme}
               as={Link}
               to={item.path}
+              size="md"
+              width="full"
             >
               Go to {item.title}
             </Button>
@@ -490,49 +485,7 @@ function HomePage() {
           </Container>
         </Box>
 
-        {/* Responsive Footer */}
-        <Box
-          as="footer"
-          width="100%"
-          borderTop="1px"
-          borderColor={footerBorderColor}
-          bg={footerBg}
-          py={4}
-          mt={8}
-          position="relative"
-          zIndex="2"
-        >
-          <Container maxW="container.xl">
-            <Stack
-              direction={{ base: 'column', md: 'row' }}
-              spacing={{ base: 2, md: 6 }}
-              align="center"
-              justify="space-between"
-              textAlign="center"
-            >
-              <Text fontSize="sm" color={footerTextColor}>
-                © 2025 Gridx. All rights reserved.
-              </Text>
-              <Stack direction="row" spacing={4}>
-                <Button as={Link} to="/about" variant="link" color={footerLinkColor}>
-                  About
-                </Button>
-                <Button as={Link} to="/contact" variant="link" color={footerLinkColor}>
-                  Contact
-                </Button>
-                <Button as={Link} to="/support" variant="link" color={footerLinkColor}>
-                  Support
-                </Button>
-                <Button as={Link} to="/privacy-policy" variant="link" color={footerLinkColor}>
-                  Privacy Policy
-                </Button>
-                <Button as={Link} to="/terms-of-service" variant="link" color={footerLinkColor}>
-                  Terms of Service
-                </Button>
-              </Stack>
-            </Stack>
-          </Container>
-        </Box>
+        <Footer />
       </Box>
     </ErrorBoundary>
   );
