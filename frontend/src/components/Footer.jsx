@@ -38,7 +38,7 @@ const Footer = () => {
         </Stack>
       </Flex>
       <Flex justify="center" mb={4}>
-        <Stack direction="row" spacing={4} wrap="wrap">
+        <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
           <ChakraLink href="#" color="white" _hover={{ textDecoration: 'underline' }}>Home</ChakraLink>
           <ChakraLink href="#" color="white" _hover={{ textDecoration: 'underline' }}>About</ChakraLink>
           <ChakraLink href="#" color="white" _hover={{ textDecoration: 'underline' }}>Services</ChakraLink>
@@ -46,7 +46,7 @@ const Footer = () => {
           <ChakraLink href="#" color="white" _hover={{ textDecoration: 'underline' }}>Contact</ChakraLink>
         </Stack>
       </Flex>
-      <Text fontSize="sm">©2021 Nadine Coelho | All Rights Reserved</Text>
+      <Text fontSize="sm">©2021 Nadine Coelho | All Rights Reserved · Powered by GridX</Text>
     </Box>
   );
 };
