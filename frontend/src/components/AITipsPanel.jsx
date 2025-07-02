@@ -17,7 +17,6 @@ import PropTypes from 'prop-types';
 
 const AITipsPanel = ({ tips = [] }) => {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
-  const cardBg = useColorModeValue('white', 'gray.700');
   const headingColor = useColorModeValue('gray.800', 'whiteAlpha.900');
   const accentColor = useColorModeValue('blue.500', 'blue.300');
 
@@ -54,14 +53,17 @@ const AITipsPanel = ({ tips = [] }) => {
   };
 
   return (
-    <Box 
-      p={4} 
-      borderRadius="lg" 
-      bg={cardBg}
-      boxShadow="md"
-      position="relative"
-      borderLeft="4px solid"
-      borderColor={accentColor}
+    <Box
+      bg={useColorModeValue('linear-gradient(to bottom right, #EBF8FF, #BEE3F8)', 'linear-gradient(to bottom right, #1A202C, #2D3748)')}
+      p={6}
+      borderRadius="xl"
+      boxShadow="xl"
+      borderWidth="1px"
+      borderColor={useColorModeValue('gray.700', 'gray.600')}
+      height="100%"
+      minHeight="250px"
+      display="flex"
+      flexDirection="column"
     >
       <Flex justify="space-between" align="center" mb={4}>
         <Heading size="md" color={headingColor}>
@@ -73,7 +75,7 @@ const AITipsPanel = ({ tips = [] }) => {
       </Flex>
 
       <VStack spacing={4} align="stretch">
-        <Flex align="center" mb={2}>
+        <Flex alignItems="center" mb={2}>
           <Avatar 
             size="sm" 
             name="AI Tip Icon"
@@ -83,12 +85,12 @@ const AITipsPanel = ({ tips = [] }) => {
             _hover={{ transform: 'scale(1.05)' }}
             transition="transform 0.2s"
           />
-          <Text fontWeight="600" color={headingColor}>
+          <Text fontSize="lg" fontWeight="bold" color={useColorModeValue('gray.800', 'white')}>
             {energyTips[currentTipIndex].title}
           </Text>
         </Flex>
         
-        <Text fontSize="sm" lineHeight="tall">
+        <Text fontSize="md" fontWeight="medium" color={useColorModeValue('gray.600', 'gray.300')} lineHeight="tall">
           {energyTips[currentTipIndex].content}
         </Text>
 

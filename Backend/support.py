@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.express as px
 import json
 import datetime
+import logging
 
 # Load environment variables
 load_dotenv()
@@ -13,18 +14,35 @@ load_dotenv()
 # ================== DATABASE CONNECTION ==================
 def connect_db():
     """Connect to PostgreSQL database"""
+    password = os.getenv('DB_PASSWORD', '')
+    if not password:
+        raise ValueError("DB_PASSWORD environment variable must be set.")
     try:
         conn = psycopg2.connect(
             host=os.getenv('DB_HOST', 'localhost'),
             database=os.getenv('DB_NAME', 'Fintech_Solar'),
             user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', ''),
+            password=password,
             port=os.getenv('DB_PORT', '5432')
         )
         return conn, conn.cursor()
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
         return None, None
+
+def get_db():
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv('DB_HOST', 'localhost'),
+            database=os.getenv('DB_NAME', 'Fintech_Solar'),
+            user=os.getenv('DB_USER', 'postgres'),
+            password=os.getenv('DB_PASSWORD', 'your_password_here'),  # Ensure this is set in your .env
+            port=os.getenv('DB_PORT', '5432')
+        )
+        return conn
+    except OperationalError as e:
+        print(f"🚨 Database connection failed: {e}")
+        return None
 
 # ================== CORE FUNCTIONS ==================
 def execute_query(query_type, query, params=None):
@@ -57,9 +75,8 @@ def execute_query(query_type, query, params=None):
         
     except Exception as e:
         if conn:
-            conn.rollback()
-        print(f"🚨 Query failed: {str(e)}")
-        print(f"\nQuery:\n{query}")
+           conn.rollback()
+        logging.error("Query failed: %s - Query: %s", str(e), query)
         raise
     finally:
         if conn:
@@ -67,22 +84,35 @@ def execute_query(query_type, query, params=None):
             conn.close()
 
 # ================== USER OPERATIONS ==================
-def create_user(email, password_hash, full_name=None, phone=None, is_installer=False):
+def create_user(email, password_hash, full_name=None):
     """Create a new user account"""
     query = """
-    INSERT INTO users (email, password_hash, full_name, phone)
-    VALUES (%s, %s, %s, %s) RETURNING id
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (email, password_hash, full_name, phone))
+    return execute_query('insert', query, (email, password_hash, full_name))
 
 def get_user_by_email(email):
     """Get user by email address"""
-    query = "SELECT id, email, password_hash, full_name, phone FROM users WHERE email = %s"
+    query = "SELECT id, email, password_hash, full_name FROM users WHERE email = %s"
     result = execute_query('search', query, (email,))
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name', 'phone']
+        columns = ['id', 'email', 'password_hash', 'full_name']
         return dict(zip(columns, result[0]))
     return None
+
+def update_user_by_id(user_id, email=None, full_name=None, surname=None, phone_number=None, address=None):
+    query = """
+    UPDATE users 
+    SET email = COALESCE(%s, email), 
+        full_name = COALESCE(%s, full_name), 
+        surname = COALESCE(%s, surname), 
+        phone_number = COALESCE(%s, phone_number), 
+        address = COALESCE(%s, address)
+    WHERE id = %s RETURNING id
+    """
+    params = (email, full_name, surname, phone_number, address, user_id)
+    return execute_query('search', query, params) is not None
 
 # ================== SOLAR SYSTEM OPERATIONS ==================
 def add_solar_system(installer_id, capacity_kw, components=None, installation_date=None):
@@ -100,9 +130,21 @@ def create_contract(user_id, system_id, monthly_payment, total_cost, start_date,
     INSERT INTO environmental_impact (user_id, system_id, co2_saved, trees_equivalent, calculation_date)
     VALUES (%s, %s, %s, %s, %s) RETURNING id
     """
+
+    co2_saved = 0  # Replace with actual calculation or value
+    trees_equivalent = 0  # Replace with actual calculation or value
+    calculation_date = datetime.datetime.now()  # Example: current timestam
     return execute_query('insert', query, (user_id, system_id, co2_saved, trees_equivalent, calculation_date))
 
 # ================== FINANCIAL OPERATIONS ==================
+def create_expense(user_id, amount, description, date=None):
+    """Create a new expense for a user"""
+    query = """
+    INSERT INTO expenses (user_id, amount, description, date)
+    VALUES (%s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (user_id, amount, description, date))
+
 def save_payment_method(user_id, payment_type, card_number=None, expiry_date=None, card_holder_name=None, is_default=False, ewallet_provider=None, ewallet_identifier=None):
     """Save a new payment method"""
     try:
@@ -167,15 +209,39 @@ def save_payment_method(user_id, payment_type, card_number=None, expiry_date=Non
         print("Traceback:", traceback.format_exc())
         raise
 
-def record_transaction(user_id, amount, transaction_type, status, payment_method_id):
-    """Record a new transaction"""
+def fetch_user_payment_methods(user_id):
+    """Fetch all payment methods for a user"""
     query = """
-    SELECT sc.*, ss.capacity_kw, ss.components 
-    FROM solar_contracts sc
-    JOIN solar_systems ss ON sc.system_id = ss.id
-    WHERE sc.user_id = %s
+    SELECT id, payment_type, card_number, expiry_date, card_holder_name, ewallet_provider, ewallet_identifier, is_default
+    FROM payment_methods
+    WHERE user_id = %s
     """
-    return execute_query('search', query, (user_id,))
+    result = execute_query('search', query, (user_id,))
+    if result:
+        columns = ['id', 'payment_type', 'card_number', 'expiry_date', 'card_holder_name', 'ewallet_provider', 'ewallet_identifier', 'is_default']
+        return [dict(zip(columns, row)) for row in result]
+    return []
+
+def remove_payment_method(payment_method_id):
+    """Remove a payment method by its ID"""
+    query = """
+    DELETE FROM payment_methods
+    WHERE id = %s
+    RETURNING id
+    """
+    result = execute_query('delete', query, (payment_method_id,))
+    if result:
+        return {"message": f"Payment method with ID {result[0][0]} has been removed successfully."}
+    return {"error": "Payment method not found or could not be removed."}
+
+# ================== SUPPORT OPERATIONS ==================
+def create_support_ticket(user_id, subject, description, priority, status="open"):
+    """Create a new support ticket"""
+    query = """
+    INSERT INTO support_tickets (user_id, subject, description, priority, status, created_at)
+    VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP) RETURNING id
+    """
+    return execute_query('insert', query, (user_id, subject, description, priority, status))
 
 # ================== NOTIFICATION OPERATIONS ==================
 def create_notification(user_id, title, message, type):
@@ -220,9 +286,15 @@ def create_group_campaign(creator_id, title, description, goal_participants, dis
 def add_energy_motto_column():
     conn, cur = connect_db()
     try:
+        connur = connect_db()
+        if not conn or not cur:
+            raise Exception("Database connection failed")
         cur.execute("BEGIN")
         
         # Record payment
+        contract_id = 1  # Replace with the actual contract ID or logic to fetch it
+        amount = 0  # Replace with the actual amount
+        payment_method = "default"  # Replace with the actual payment method
         cur.execute("""
         INSERT INTO payments (contract_id, amount, payment_method)
         VALUES (%s, %s, %s)
@@ -238,7 +310,8 @@ def add_energy_motto_column():
         conn.commit()
         return True
     except Exception as e:
-        conn.rollback()
+        if conn:
+            conn.rollback()
         print(f"🚨 Payment failed: {e}")
         return False
     finally:
@@ -268,7 +341,9 @@ def initialize_db():
             email VARCHAR(255) UNIQUE NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
             full_name VARCHAR(100),
-            phone VARCHAR(20),
+            surname VARCHAR(100),
+            phone_number VARCHAR(20),
+            address TEXT,
             is_installer BOOLEAN DEFAULT FALSE
         )""")
         
@@ -323,6 +398,8 @@ def initialize_db():
         if cur: cur.close()
         if conn: conn.close()
 
+# ... existing code ...
+
 def create_payment_methods_table():
     conn, cur = connect_db()
     if not conn or not cur:
@@ -330,6 +407,9 @@ def create_payment_methods_table():
         raise Exception("Database connection failed")
 
     try:
+        # Initialize user_id (replace with actual logic to fetch user_id)
+        user_id = 1  # Example: Replace with dynamic user ID retrieval logic
+
         # Start transaction
         cur.execute("BEGIN")
         print("Transaction started")
@@ -346,7 +426,7 @@ def create_payment_methods_table():
         INSERT INTO expenses (user_id, amount, purpose, type)
         VALUES (%s, %s, %s, %s)
         RETURNING id
-        """, (user_id, amount, purpose, type))
+        """, (user_id, 100, "Example Purpose", "Example Type"))
         result = cur.fetchone()
         if result is None:
             raise Exception("Failed to create expense record: No rows returned.")
@@ -368,6 +448,8 @@ def create_payment_methods_table():
         if cur: cur.close()
         if conn: conn.close()
         print("Database connection closed")
+
+
 
 def get_user_expenses(user_id):
     """Get all expenses for a user"""

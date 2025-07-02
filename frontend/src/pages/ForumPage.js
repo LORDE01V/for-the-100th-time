@@ -1,62 +1,45 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+/* eslint-disable react/jsx-no-comment-textnodes */
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api';
-import axios from 'axios';
-import { Flex } from '@chakra-ui/react';
-import { FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
-
-// Import Chakra UI Components
+import { FaArrowLeft, FaPaperPlane, FaComments } from 'react-icons/fa';
 import {
   Box,
-  Container,
-  Heading,
   Button,
-  VStack,
-  Spinner,
-  useColorModeValue,
+  Flex,
+  Heading,
   Text,
   Textarea,
-  useToast
+  VStack,
+  Spinner, // Ensure Spinner is imported only once
+  useColorModeValue,
+  useToast,
+  Collapse,
+  UnorderedList,
+  ListItem,
+  SimpleGrid,
+  Icon,
+  Tooltip,
 } from '@chakra-ui/react';
+import api from '../services/api';
 
 const ForumPage = () => {
-  const navigate = useNavigate();
   const toast = useToast();
+  const navigate = useNavigate();
   
-  // Move all useColorModeValue hooks to the top level
-  const bgColor = useColorModeValue('gray.50', 'gray.800');
-  const cardBg = useColorModeValue('white', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'white');
   const subTextColor = useColorModeValue('gray.600', 'gray.300');
   const metaTextColor = useColorModeValue('gray.500', 'gray.400');
-
-  // Add missing state declarations, excluding unused ones
-  const [topics, setTopics] = useState([
-    {
-      id: 1,
-      title: 'Solar Panel Maintenance Tips',
-      author: 'John Doe',
-      lastActivity: '2024-03-15',
-      replies: 5
-    },
-    {
-      id: 2,
-      title: 'Best Battery Storage Solutions',
-      author: 'Jane Smith',
-      lastActivity: '2024-03-14',
-      replies: 3
-    },
-    {
-      id: 3,
-      title: 'Energy Saving Strategies',
-      author: 'Mike Johnson',
-      lastActivity: '2024-03-13',
-      replies: 7
-    }
-  ]);  // Now topics is a state array for dynamic updates
+  
+  const glassBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(17, 25, 40, 0.75)');
+  const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)');
+  
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [newMessage, setNewMessage] = useState('');
-  const [isLoadingTopics, setIsLoadingTopics] = useState(true);  // Existing state
+  const [summary, setSummary] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [replies, setReplies] = useState({});
+  const [tone, setTone] = useState(null);
+  const [isCheckingTone, setIsCheckingTone] = useState(false);
 
   // Mock data for dummyTopics
   const dummyTopics = useMemo(() => [
@@ -65,38 +48,87 @@ const ForumPage = () => {
       title: 'Solar Panel Maintenance Tips',
       author: 'John Doe',
       lastActivity: '2024-03-15',
-      replies: 5
+      replies: 5,
+      posts: [
+        'Post 1: Regular cleaning of panels is essential for efficiency.',
+        'Post 2: Check for dust buildup every month.',
+        'Post 3: Use mild soap for washing to avoid damage.',
+        'Post 4: Inspect wiring for any signs of wear.',
+        'Post 5: Angle adjustments based on seasons help.',
+        'Post 6: Monitor for shading issues from nearby trees.',
+        'Post 7: Professional inspections recommended annually.',
+        'Post 8: Avoid high-pressure water on panels.',
+        'Post 9: Keep an eye on inverter connections.',
+        'Post 10: Use protective covers during storms.',
+        'Post 11: Track performance with monitoring apps.',
+        'Post 12: Replace damaged panels promptly.',
+        'Post 13: Ensure proper grounding for safety.',
+        'Post 14: Clean edges and frames carefully.',
+        'Post 15: Test output regularly with a multimeter.'
+      ]
     },
     {
       id: 2,
       title: 'Best Battery Storage Solutions',
       author: 'Jane Smith',
       lastActivity: '2024-03-14',
-      replies: 3
+      replies: 3,
+      posts: [
+        'Post 1: Lithium-ion batteries are reliable for home use.',
+        'Post 2: Consider lead-acid for cost-effective options.',
+        'Post 3: Flow batteries offer long-duration storage.',
+        'Post 4: Saltwater batteries are eco-friendly alternatives.',
+        'Post 5: Hybrid systems combine solar and battery tech.',
+        'Post 6: Capacity should match your daily energy needs.',
+        'Post 7: Check for depth of discharge ratings.',
+        'Post 8: Maintenance involves regular charging cycles.',
+        'Post 9: Integrate with smart home systems for efficiency.',
+        'Post 10: Cost per kWh is a key factor in selection.',
+        'Post 11: Look for warranties over 10 years.',
+        'Post 12: Tesla Powerwall is popular for residential setups.',
+        'Post 13: Ensure proper ventilation for safety.',
+        'Post 14: Monitor battery health via apps.',
+        'Post 15: Scalability allows adding more units later.',
+        'Post 16: Compare efficiency ratings before buying.',
+        'Post 17: Grid-tied vs. off-grid compatibility matters.',
+        'Post 18: Recycling programs for old batteries are important.',
+        'Post 19: User reviews help in decision-making.',
+        'Post 20: Future-proof with expandable systems.'
+      ]
     },
     {
       id: 3,
       title: 'Energy Saving Strategies',
       author: 'Mike Johnson',
       lastActivity: '2024-03-13',
-      replies: 7
+      replies: 7,
+      posts: [
+        'Post 1: Turn off lights when not in use.',
+        'Post 2: Use LED bulbs for lower energy consumption.',
+        'Post 3: Unplug devices to avoid phantom power.',
+        'Post 4: Upgrade to energy-efficient appliances.',
+        'Post 5: Insulate your home to reduce heating needs.',
+        'Post 6: Install programmable thermostats.',
+        'Post 7: Optimize water heater settings.',
+        'Post 8: Use natural light during the day.',
+        'Post 9: Seal drafts around windows and doors.',
+        'Post 10: Monitor energy usage with smart meters.',
+        'Post 11: Adjust AC temperatures slightly.',
+        'Post 12: Choose energy-star rated products.',
+        'Post 13: Implement rainwater harvesting for savings.',
+        'Post 14: Carpool or use public transport.',
+        'Post 15: Plant trees for natural shading.',
+        'Post 16: Maintain HVAC systems regularly.',
+        'Post 17: Switch to renewable energy sources.',
+        'Post 18: Educate family on conservation habits.'
+      ]
     }
-  ], []);  // Empty dependency array since it's static
+  ], []);
 
-  // Pre-define the topic card styles
-  const topicCardStyles = {
-    p: 6,
-    bg: cardBg,
-    borderRadius: "lg",
-    shadow: "md",
-    cursor: "pointer",
-    _hover: { transform: 'translateY(-2px)', shadow: 'lg' },
-    transition: "all 0.2s"
+  const mockSummarize = (posts) => {
+    // Simple mock function to generate a bullet-point summary from posts
+    return posts.map((post, index) => `- Point ${index + 1}: ${post}`).join('\n');
   };
-
-  // Pre-define text styles
-  const authorTextStyle = { color: subTextColor };
-  const metaTextStyle = { fontSize: "sm", color: metaTextColor };
 
   const handlePostMessage = () => {
     if (!newMessage.trim()) {
@@ -107,112 +139,202 @@ const ForumPage = () => {
         duration: 3000,
         isClosable: true,
       });
-    } else {
-      // Simulate posting (you may want to add actual API call here)
+      return;
+    }
+
+    const userName = localStorage.getItem('forumUserName') || 'You';
+    const topicId = selectedTopic.id;
+
+    const newReplies = { ...replies };
+    if (!newReplies[topicId]) newReplies[topicId] = [];
+    newReplies[topicId].push({
+      name: userName,
+      message: newMessage,
+      timestamp: Date.now(),
+    });
+
+    setReplies(newReplies);
+
+    toast({
+      title: 'Message Posted',
+      description: 'Your message has been posted successfully',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+
+    setNewMessage('');
+  };
+
+  const handleSummarize = () => {
+    if (!selectedTopic || !selectedTopic.posts || selectedTopic.posts.length === 0) {
       toast({
-        title: 'Message Posted',
-        description: 'Your message has been posted successfully',
-        status: 'success',
+        title: 'No Posts',
+        description: 'There are no posts to summarize.',
+        status: 'warning',
         duration: 3000,
         isClosable: true,
       });
-      setNewMessage('');
+      return;
     }
-  };
 
-  const fetchTopics = useCallback(async () => {
+    setIsLoading(true);
     try {
-      setIsLoadingTopics(true);
-      const response = await axios.get('http://localhost:5000/api/forum/topics', {
-        headers: {
-          'Authorization': `Bearer ${auth.getToken()}`
-        }
-      });
-      
-      if (response.data.success) {
-        const newTopics = response.data.topics.filter(newTopic => 
-          !dummyTopics.some(dummyTopic => dummyTopic.id === newTopic.id)
-        );
-        setTopics(prevTopics => [...dummyTopics, ...newTopics]);
-      }
-    } catch (error) {
-      console.error('Error fetching topics:', error);
-    } finally {
-      setIsLoadingTopics(false);
-    }
-  }, [setIsLoadingTopics, setTopics, dummyTopics]);
-
-  useEffect(() => {
-    if (auth.getCurrentUser()) {
-      fetchTopics();
-    }
-  }, [fetchTopics]);  // Added fetchTopics to dependency array
-
-  // Fetch specific topic details
-  const fetchTopicDetails = async (topicId) => {
-    try {
-      const response = await axios.get(`http://localhost:5000/api/forum/topics/${topicId}`, {
-        headers: {
-          'Authorization': `Bearer ${auth.getToken()}`
-        }
-      });
-      
-      if (response.data.success) {
-        setSelectedTopic(response.data.topic);
-      }
+      const mockedSummary = mockSummarize(selectedTopic.posts);
+      setSummary(mockedSummary);
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to fetch topic details',
+        description: '⚠️ Failed to summarize thread. Please try again.',
         status: 'error',
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleCheckTone = async () => {
+    if (!newMessage.trim()) {
+      toast({
+        title: 'Please enter some text to check the tone.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    setIsCheckingTone(true);
+    setTone(null);
+    try {
+      const response = await api.post('/api/ai/sentiment', { text: newMessage });
+      setTone(response.data.tone);
+    } catch (error) {
+      toast({
+        title: 'Failed to check tone. Please try again.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsCheckingTone(false);
+    }
+  };
+
+  const renderTone = () => {
+    if (!tone) return null;
+    let color = 'gray.400', label = 'Neutral', emoji = '😐';
+    if (tone === 'positive') { color = 'green.400'; label = 'Positive'; emoji = '😊'; }
+    if (tone === 'negative') { color = 'red.400'; label = 'Negative'; emoji = '😞'; }
+    return (
+      <Tooltip label={label}>
+        <Text ml={2} color={color} fontWeight="bold" as="span" fontSize="lg">
+          {emoji}
+        </Text>
+      </Tooltip>
+    );
+  };
+
   const renderTopicsList = () => (
-    <VStack spacing={4} align="stretch">
-      {topics.map((topic) => (
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w='full'>
+      {dummyTopics.map((topic) => (
         <Box
           key={topic.id}
-          {...topicCardStyles}
-          onClick={() => fetchTopicDetails(topic.id)}
+          p={6}
+          bg={glassBg}
+          backdropFilter='blur(10px)'
+          borderWidth='1px'
+          borderRadius='lg'
+          boxShadow='lg'
+          borderColor={glassBorderColor}
+          transition='all 0.3s ease-in-out'
+          _hover={{ boxShadow: 'xl', transform: 'translateY(-5px)' }}
         >
-          <Heading size="md" mb={2} color={textColor}>
-            {topic.title}
-          </Heading>
-          <Flex justify="space-between">
-            <Text {...authorTextStyle}>By {topic.author}</Text>
-            <Text {...authorTextStyle}>{topic.replies} replies</Text>
+          <Flex align='center' mb={2}>
+            <Icon as={FaComments} mr={2} />
+            <Heading size='md' color={textColor}>
+              {topic.title}
+            </Heading>
           </Flex>
-          <Text {...metaTextStyle}>
-            Last activity: {topic.lastActivity}
-          </Text>
+          <Text color={subTextColor}>By {topic.author}</Text>
+          <Text color={subTextColor}>{topic.replies} replies</Text>
+          <Text color={metaTextColor}>Last activity: {topic.lastActivity}</Text>
+          <Button onClick={() => setSelectedTopic(topic)} mt={4} colorScheme='blue'>
+            View Discussion
+          </Button>
         </Box>
       ))}
-    </VStack>
+    </SimpleGrid>
   );
 
   const renderTopicDiscussion = () => (
     <Box>
-      <Box p={6} bg={cardBg} borderRadius="lg" shadow="md" mb={6}>
+      <Box p={6} bg="white" borderRadius="lg" shadow="md" mb={6}>
         <Heading size="lg" mb={4} color={textColor}>
           {selectedTopic.title}
         </Heading>
         <Text color={subTextColor}>
           Started by {selectedTopic.author}
         </Text>
+        <VStack mt={4} align="stretch" spacing={3}>
+          <Heading size="md" mt={4}>Posts:</Heading>
+          {selectedTopic.posts && selectedTopic.posts.length > 0 ? (
+            selectedTopic.posts.map((post, index) => (
+              <Box key={index} p={3} bg="gray.100" borderRadius="md" shadow="sm">
+                <Text color={textColor}>{post}</Text>
+              </Box>
+            ))
+          ) : (
+            <Text color={subTextColor}>No posts yet.</Text>
+          )}
+        </VStack>
+        <Button
+          onClick={handleSummarize}
+          isLoading={isLoading}
+          isDisabled={isLoading}
+          colorScheme="blue"
+          mb={4}
+          mt={4}
+        >
+          Summarize Thread
+        </Button>
+        {summary && (
+          <Collapse in={summary !== null} animateOpacity>
+            <Box p={4} bg="gray.100" borderRadius="md" mt={4}>
+              <Heading size="sm" mb={2} color={textColor}>Thread Summary</Heading>
+              <UnorderedList>
+                {summary.split('\n').map((item, index) => (
+                  <ListItem key={index} color={subTextColor}>{item}</ListItem>
+                ))}
+              </UnorderedList>
+            </Box>
+          </Collapse>
+        )}
       </Box>
 
       {/* Message Input */}
-      <Box p={6} bg={cardBg} borderRadius="lg" shadow="md">
+      <Box p={6} bg="white" borderRadius="lg" shadow="md">
         <Textarea
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Write your message..."
-          mb={4}
+          onChange={e => {
+            setNewMessage(e.target.value);
+            setTone(null); // Reset tone if user edits
+          }}
+          placeholder="Type your message..."
+          mb={2}
         />
+        <Flex align="center" mb={2}>
+          <Button
+            size="sm"
+            onClick={handleCheckTone}
+            isDisabled={isCheckingTone || !newMessage.trim()}
+            mr={2}
+          >
+            {isCheckingTone ? <Spinner size="xs" /> : 'Check Tone'}
+          </Button>
+          {renderTone()}
+        </Flex>
         <Button
           rightIcon={<FaPaperPlane />}
           colorScheme="blue"
@@ -225,8 +347,33 @@ const ForumPage = () => {
   );
 
   return (
-    <Box minH="100vh" bg={bgColor}>
-      <Container maxW="container.xl" py={8}>
+    <Flex
+      minH="100vh"
+      align="center"
+      justify="center"
+      p={4}
+      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundSize="cover"
+      backgroundPosition="center"
+      backgroundAttachment="fixed"
+      position="relative"
+      _before={{
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        bg: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 1,
+      }}
+    >
+      <Box
+        maxW="container.xl"
+        py={8}
+        position="relative"
+        zIndex={2}
+      >
         <Button
           leftIcon={<FaArrowLeft />}
           variant="ghost"
@@ -246,13 +393,11 @@ const ForumPage = () => {
           <Heading size="xl">Community Forum</Heading>
           {selectedTopic 
             ? renderTopicDiscussion() 
-            : isLoadingTopics 
-              ? <Spinner size="xl" />  // Show spinner while loading topics
-              : renderTopicsList()
+            : renderTopicsList()
           }
         </VStack>
-      </Container>
     </Box>
+    </Flex>
   );
 };
 

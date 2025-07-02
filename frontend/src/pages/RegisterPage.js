@@ -13,7 +13,8 @@ import {
   Text, 
   useToast,
   FormErrorMessage,
-  useColorModeValue
+  useColorModeValue,
+  Progress
 } from '@chakra-ui/react';
 import { auth } from '../services/api';
 import gridXBackground from '../assets/images/gridx_background.jpg';
@@ -26,6 +27,8 @@ function RegisterPage() {
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState('');
+  const [strengthScore, setStrengthScore] = useState(0);
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -107,6 +110,37 @@ function RegisterPage() {
     window.location.href = `${backendUrl}/api/auth/google?action=register`;
   };
 
+  const checkPasswordStrengthLocally = (password) => {
+    if (!password) return { message: 'Password is required.', score: 0 };
+    let score = 0;
+    const criteria = [
+      { regex: /[A-Z]/, points: 20, message: 'Include an uppercase letter.' },
+      { regex: /[a-z]/, points: 20, message: 'Include a lowercase letter.' },
+      { regex: /[0-9]/, points: 20, message: 'Include a number.' },
+      { regex: /[!@#$%^&*]/, points: 20, message: 'Include a special character.' },
+      { condition: password.length >= 8, points: 20, message: 'Aim for at least 8 characters.' }
+    ];
+
+    criteria.forEach(c => {
+      if ('condition' in c) {
+        if (c.condition) score += c.points;
+      } else if ('regex' in c) {
+        if (c.regex.test(password)) score += c.points;
+      }
+    });
+
+    if (score === 100) return { message: 'Strong - Good job!', score };
+    return { message: `Weak - ${criteria.find(c => !('condition' in c ? c.condition : c.regex && c.regex.test(password)))?.message || 'Improve your password.'}`, score };
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    const result = checkPasswordStrengthLocally(newPassword);
+    setPasswordStrength(result.message);
+    setStrengthScore(result.score);
+  };
+
   return (
     <Flex
       minH="100vh"
@@ -178,9 +212,11 @@ function RegisterPage() {
             <Input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               placeholder="Create password"
             />
+            {passwordStrength && <Text mt={2} color="gray.600" fontSize="sm">{passwordStrength}</Text>}
+            <Progress value={strengthScore} size="xs" mt={2} colorScheme={strengthScore > 60 ? 'green' : strengthScore > 20 ? 'yellow' : 'red'} />
             <FormErrorMessage>{errors.password}</FormErrorMessage>
           </FormControl>
 

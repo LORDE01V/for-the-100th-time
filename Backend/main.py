@@ -7,6 +7,9 @@ from psycopg2 import sql, OperationalError
 from datetime import timedelta, datetime
 import secrets
 import os
+from app.routes.home import home_bp
+from app.routes.auth import auth_bp
+from email_utils import send_welcome_email  # Assuming it's in email_utils.py
 from dotenv import load_dotenv
 from support import (
     get_user_balance,
@@ -28,6 +31,11 @@ from werkzeug.utils import secure_filename
 # Load environment variables (same as support.py)
 load_dotenv()
 
+def create_app():
+    """Factory function to create and configure the Flask application."""
+    app = Flask(__name__)
+    return app
+
 # Configuration (use environment variables for secrets in production)
 SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
@@ -35,6 +43,7 @@ JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
 # ================= FLASK APP =================
 # Rename existing app to flask_app
 flask_app = create_app()  # Use factory app
+
 flask_app.config.update(
     SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev'),
     SESSION_COOKIE_NAME='session',
@@ -49,6 +58,7 @@ flask_app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
 flask_app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
 flask_app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
 flask_app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+
 
 # Initialize extensions
 CORS(flask_app, 
@@ -138,6 +148,9 @@ def flask_register():
                 return jsonify({'success': False, 'message': 'Email already exists'}), 400
 
         # Hash password and insert (using users table from support.py)
+        email = data['email']
+        password = data['password']
+        name = data['name']
         hashed_password = generate_password_hash(password)
         cur.execute(
             'INSERT INTO users (email, password_hash, full_name) VALUES (%s, %s, %s) RETURNING id',
@@ -154,9 +167,9 @@ def flask_register():
         return jsonify({
             'success': True,
             'user': {
-                'id': user_data[0],
-                'email': user_data[1],
-                'name': user_data[2]
+                'id': result[0],
+                'email': email,
+                'name': name
             }
         }), 201
 
@@ -210,7 +223,7 @@ def flask_login():
         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
     except Exception as e:
-        app.logger.error(f"Login error: {str(e)}")
+        flask_app.logger.error(f"Login error: {str(e)}")
         return jsonify({'success': False, 'message': 'Login failed'}), 500
     finally:
         if 'conn' in locals():
@@ -218,7 +231,7 @@ def flask_login():
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@app.route('/api/auth/change-password', methods=['POST'])
+@flask_app.route('/api/auth/change-password', methods=['POST'])
 @jwt_required()
 def change_password():
     try:
@@ -270,7 +283,7 @@ def change_password():
                 conn.close()
 
 # Settings routes
-@app.route('/api/settings', methods=['GET'])
+@flask_app.route('/api/settings', methods=['GET'])
 @jwt_required()
 def get_user_settings():
     try:
@@ -321,7 +334,7 @@ def get_user_settings():
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@app.route('/api/settings', methods=['PUT'])
+@flask_app.route('/api/settings', methods=['PUT'])
 @jwt_required()
 def modify_user_settings():
     try:
@@ -379,7 +392,7 @@ def modify_user_settings():
                 conn.close()
 
 # Add these profile endpoints
-@app.route('/api/profile', methods=['GET'])
+@flask_app.route('/api/profile', methods=['GET'])
 @jwt_required()
 def get_profile():
     try:
@@ -453,7 +466,7 @@ def get_profile():
                 conn.close()
 
 # Update the profile endpoint to match frontend expectations
-@app.route('/api/profile', methods=['PUT'])
+@flask_app.route('/api/profile', methods=['PUT'])
 @jwt_required()
 def update_profile():
     try:
@@ -549,7 +562,7 @@ def update_profile():
 
 # Add these new routes to main.py
 
-@app.route('/api/expenses', methods=['GET'])
+@flask_app.route('/api/expenses', methods=['GET'])
 @jwt_required()
 def get_expenses():
     try:
@@ -577,7 +590,7 @@ def get_expenses():
         print(f"Traceback: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': 'Internal server error'}), 500
 
-@app.route('/api/expenses', methods=['POST'])
+@flask_app.route('/api/expenses', methods=['POST'])
 @jwt_required()
 def create_expense():
     try:
@@ -630,7 +643,7 @@ def create_expense():
         print(f"Traceback: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': 'Internal server error'}), 500
 
-@app.route('/api/topup', methods=['POST'])
+@flask_app.route('/api/topup', methods=['POST'])
 @jwt_required()
 def process_top_up():
     try:
@@ -689,7 +702,7 @@ def process_top_up():
         print(f"Traceback: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': 'Internal server error'}), 500
 
-@app.route('/api/topup/balance', methods=['GET'])
+@flask_app.route('/api/topup/balance', methods=['GET'])
 @jwt_required()
 def get_balance():
     try:
@@ -705,7 +718,7 @@ def get_balance():
         print(f"Error fetching balance: {str(e)}")
         return jsonify({'success': False, 'message': 'Failed to fetch balance'}), 500
 
-@app.route('/api/auto-topup/settings', methods=['GET'])
+@flask_app.route('/api/auto-topup/settings', methods=['GET'])
 @jwt_required()
 def get_auto_top_up_settings():
     try:
@@ -742,7 +755,7 @@ def get_auto_top_up_settings():
         print(f"Traceback: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': f'Failed to get auto top-up settings: {str(e)}'}), 500
 
-@app.route('/api/auto-topup/settings', methods=['POST'])
+@flask_app.route('/api/auto-topup/settings', methods=['POST'])
 @jwt_required()
 def save_auto_top_up_settings():
     try:
@@ -794,7 +807,7 @@ def save_auto_top_up_settings():
         print(f"Traceback: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': 'Internal server error'}), 500
 
-@app.route('/api/auto-topup/toggle', methods=['POST'])
+@flask_app.route('/api/auto-topup/toggle', methods=['POST'])
 @jwt_required()
 def toggle_auto_top_up():
     try:
@@ -819,7 +832,7 @@ def toggle_auto_top_up():
         print(f"Error toggling auto top-up: {str(e)}")
         return jsonify({'success': False, 'message': 'Failed to toggle auto top-up'}), 500
 
-@app.route('/api/auth/delete-account', methods=['POST'])
+@flask_app.route('/api/auth/delete-account', methods=['POST'])
 @jwt_required()
 def delete_account():
     try:
@@ -908,7 +921,7 @@ def delete_account():
                 conn.close()
 
 # Forum routes
-@app.route('/api/forum/topics', methods=['GET'])
+@flask_app.route('/api/forum/topics', methods=['GET'])
 @jwt_required()
 def get_forum_topics():
     try:
@@ -965,7 +978,7 @@ def get_forum_topics():
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@app.route('/api/forum/topics', methods=['POST'])
+@flask_app.route('/api/forum/topics', methods=['POST'])
 @jwt_required()
 def create_forum_topic():
     try:
@@ -1031,7 +1044,7 @@ def create_forum_topic():
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@app.route('/api/forum/topics/<int:topic_id>', methods=['GET'])
+@flask_app.route('/api/forum/topics/<int:topic_id>', methods=['GET'])
 @jwt_required()
 def get_forum_topic(topic_id):
     try:
@@ -1109,7 +1122,7 @@ def get_forum_topic(topic_id):
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@app.route('/api/forum/topics/<int:topic_id>/replies', methods=['POST'])
+@flask_app.route('/api/forum/topics/<int:topic_id>/replies', methods=['POST'])
 @jwt_required()
 def create_forum_reply(topic_id):
     try:
@@ -1175,7 +1188,7 @@ def create_forum_reply(topic_id):
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@app.route('/api/support/ticket', methods=['POST', 'OPTIONS'])
+@flask_app.route('/api/support/ticket', methods=['POST', 'OPTIONS'])
 @jwt_required()
 def handle_support_ticket():
     if request.method == 'OPTIONS':
@@ -1199,7 +1212,8 @@ def handle_support_ticket():
             return jsonify({'success': False, 'message': 'Subject and message are required'}), 400
 
         try:
-            ticket_id = create_support_ticket(user_id, subject, message)
+            priority = data.get('priority', 'low')
+            ticket_id = create_support_ticket(user_id, subject, message, priority)
             return jsonify({
                 'success': True,
                 'message': 'Support ticket created successfully',
@@ -1214,7 +1228,7 @@ def handle_support_ticket():
         print(f"Create support ticket error: {str(e)}")
         return jsonify({'success': False, 'message': 'Failed to create support ticket'}), 500
 
-@app.route('/api/payment-methods', methods=['POST'])
+@flask_app.route('/api/payment-methods', methods=['POST'])
 @jwt_required()
 def add_payment_method():
     try:
@@ -1303,7 +1317,7 @@ def add_payment_method():
         print("Traceback:", traceback.format_exc())
         return jsonify({'success': False, 'message': str(e)}), 500
 
-@app.route('/api/payment-methods', methods=['GET'])
+@flask_app.route('/api/payment-methods', methods=['GET'])
 @jwt_required()
 def get_payment_methods():
     try:
@@ -1318,13 +1332,13 @@ def get_payment_methods():
             for method in payment_methods:
                 try:
                     formatted_method = {
-                        'id': method[0],  # Assuming id is the first column
-                        'payment_type': method[1],
-                        'card_number': method[2],
-                        'expiry_date': method[3].strftime('%m/%y') if method[3] else None,
-                        'card_holder_name': method[4],
-                        'is_default': method[5],
-                        'created_at': method[6].isoformat() if method[6] else None  # Add created_at
+                        'id': method['id'],  # Assuming id is the first column
+                        'payment_type': method['payment_type'],
+                        'card_number': method['card_number'],
+                        'expiry_date': method['expiry_date'].strftime('%m/%y') if method['expiry_date'] else None,
+                        'card_holder_name': method['card_holder_name'],
+                        'is_default': method['is_default'],
+                        'created_at': method['created_at'].isoformat() if method['created_at'] else None  # Add created_at
                     }
                     formatted_methods.append(formatted_method)
                 except (IndexError, AttributeError) as e:
@@ -1344,7 +1358,7 @@ def get_payment_methods():
             'message': str(e)
         }), 500
 
-@app.route('/api/payment-methods/<int:payment_method_id>', methods=['DELETE'])
+@flask_app.route('/api/payment-methods/<int:payment_method_id>', methods=['DELETE'])
 @jwt_required()
 def delete_payment_method(payment_method_id):
     try:
@@ -1370,7 +1384,7 @@ def delete_payment_method(payment_method_id):
                 }), 404
             
             # Use the renamed function to delete the payment method
-            result = remove_payment_method(payment_method_id, user_id)
+            result = remove_payment_method(payment_method_id)
             
             if result:
                 # Create notification for successful payment method deletion
@@ -1409,7 +1423,7 @@ def delete_payment_method(payment_method_id):
             'message': str(e)
         }), 500
 
-@app.route('/api/payment-methods/<int:payment_method_id>/default', methods=['PUT'])
+@flask_app.route('/api/payment-methods/<int:payment_method_id>/default', methods=['PUT'])
 @jwt_required()
 def set_default_payment_method(payment_method_id):
     try:
@@ -1463,19 +1477,19 @@ def set_default_payment_method(payment_method_id):
                 conn.close()
 
 # Add debug logging
-@app.before_request
+@flask_app.before_request
 def log_request_info():
     print('Headers:', dict(request.headers))
     print('Body:', request.get_data())
     print('Method:', request.method)
     print('URL:', request.url)
 
-@app.after_request
+@flask_app.after_request
 def after_request(response):
     print('Response:', response.get_data())
     return response
 
-@app.route('/api/notifications', methods=['GET'])
+@flask_app.route('/api/notifications', methods=['GET'])
 @jwt_required()
 def get_notifications():
     try:
@@ -1517,7 +1531,7 @@ def get_notifications():
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@app.route('/api/notifications/<int:notification_id>/read', methods=['PUT'])
+@flask_app.route('/api/notifications/<int:notification_id>/read', methods=['PUT'])
 @jwt_required()
 def mark_notification_read(notification_id):
     try:
@@ -1555,7 +1569,7 @@ def mark_notification_read(notification_id):
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@app.route('/api/profile/picture', methods=['POST'])
+@flask_app.route('/api/profile/picture', methods=['POST'])
 @jwt_required()
 def upload_profile_picture():
     try:
@@ -1603,7 +1617,7 @@ def upload_profile_picture():
         print(f"Upload profile picture error: {str(e)}")
         return jsonify({'success': False, 'message': f'Failed to upload profile picture: {str(e)}'}), 500
 
-@app.route('/api/chat', methods=['POST'])
+@flask_app.route('/api/chat', methods=['POST'])
 def chat():
     try:
         # Example chat logic

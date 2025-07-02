@@ -1,11 +1,12 @@
 {
   "files": {
     "main.css": "/static/css/main.dc252bd1.css",
-    "main.js": "/static/js/main.bac71fbf.js",
+    "main.js": "/static/js/main.2be6d4e4.js",
     "static/js/239.dfdb0d71.chunk.js": "/static/js/239.dfdb0d71.chunk.js",
     "static/js/977.2caed02d.chunk.js": "/static/js/977.2caed02d.chunk.js",
     "static/js/455.795f3d75.chunk.js": "/static/js/455.795f3d75.chunk.js",
     "static/media/inverter__5kw_hybrid.png": "/static/media/inverter__5kw_hybrid.3bb50edf13d28d1fe814.png",
+    "static/media/langa.png": "/static/media/langa.f96efb5446e10b091dfe.png",
     "static/media/battery_bank_10_kwh.png": "/static/media/battery_bank_10_kwh.139199d8d645fe337ef5.png",
     "static/media/Slowed-GridX-Video.mp4": "/static/media/Slowed-GridX-Video.0d66115fdbda666d28c2.mp4",
     "static/media/solar_panel_350w.png": "/static/media/solar_panel_350w.9ae8261455dc4a9c682e.png",
@@ -17,13 +18,13 @@
     "static/media/gridx_background.jpg": "/static/media/gridx_background.4ba654c9611b82ee0ffa.jpg",
     "index.html": "/index.html",
     "main.dc252bd1.css.map": "/static/css/main.dc252bd1.css.map",
-    "main.bac71fbf.js.map": "/static/js/main.bac71fbf.js.map",
+    "main.2be6d4e4.js.map": "/static/js/main.2be6d4e4.js.map",
     "239.dfdb0d71.chunk.js.map": "/static/js/239.dfdb0d71.chunk.js.map",
     "977.2caed02d.chunk.js.map": "/static/js/977.2caed02d.chunk.js.map",
     "455.795f3d75.chunk.js.map": "/static/js/455.795f3d75.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.dc252bd1.css",
-    "static/js/main.bac71fbf.js"
+    "static/js/main.2be6d4e4.js"
   ]
 }

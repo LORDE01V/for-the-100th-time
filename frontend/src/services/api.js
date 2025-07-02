@@ -18,7 +18,6 @@ api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
         if (token) {
-            // Ensure token is properly formatted
             config.headers.Authorization = `Bearer ${token.trim()}`;
         }
         return config;
@@ -31,61 +30,40 @@ api.interceptors.request.use(
 // Add a response interceptor to handle common errors
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
-        console.error('API Error:', error);
-        if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.error('Error data:', error.response.data);
-            console.error('Error status:', error.response.status);
-        } else if (error.request) {
-            // The request was made but no response was received
-            console.error('No response received:', error.request);
-        } else {
-            // Something happened in setting up the request that triggered an Error
-            console.error('Error message:', error.message);
+    async (error) => {
+        if (error.response?.status === 401 && error.config && !error.config._retry) {
+            error.config._retry = true;
+            try {
+                const refreshResponse = await api.post('/api/auth/refresh');
+                const newToken = refreshResponse.data.token;
+                localStorage.setItem('token', newToken);
+                error.config.headers.Authorization = `Bearer ${newToken}`;
+                return api(error.config);
+            } catch (refreshError) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }
 );
 
-// Auth API calls with improved error handling
+// Auth API calls
 export const auth = {
     login: async (email, password) => {
-        try {
-            const response = await api.post('/api/auth/login', { email, password });
-            if (response.data.success) {
-                const token = String(response.data.token).trim();
-                localStorage.setItem('token', token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                // Removed redirection to let the component handle navigation
-                // window.location.href = '/dashboard';
-            }
-            return response.data;
-        } catch (error) {
-            if (error.response?.data?.message) {
-                throw new Error(error.response.data.message);
-            }
-            throw new Error('Failed to connect to the server');
+        const response = await api.post('/api/auth/login', { email, password });
+        if (response.data.success) {
+            const token = String(response.data.token).trim();
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
         }
+        return response.data;
     },
 
     register: async (userData) => {
-        try {
-            const response = await api.post('/api/auth/register', {
-                name: userData.name,
-                username: userData.username,
-                email: userData.email,
-                password: userData.password,
-                phone: userData.phone  // Changed from phone_number to phone
-            });
-            return response.data;
-        } catch (error) {
-            if (error.response?.data?.message) {
-                throw new Error(error.response.data.message);
-            }
-            throw new Error('Failed to connect to the server');
-        }
+        const response = await api.post('/api/auth/register', userData);
+        return response.data;
     },
 
     logout: () => {
@@ -96,42 +74,44 @@ export const auth = {
     getCurrentUser: () => {
         const user = localStorage.getItem('user');
         return user ? JSON.parse(user) : null;
-    },
-
-    getToken: () => {
-        const token = localStorage.getItem('token');
-        return token ? String(token).trim() : null;
     }
 };
 
-export const autoTopUp = {
-    getSettings: async () => {
-        try {
-            const response = await api.get('/api/auto-topup/settings');
-            return response.data;
-        } catch (error) {
-            throw new Error('Failed to get auto top-up settings');
-        }
-    },
-    saveSettings: async (settings) => {
-        try {
-            const response = await api.post('/api/auto-topup/settings', settings);
-            return response.data;
-        } catch (error) {
-            throw new Error('Failed to save auto top-up settings');
-        }
-    },
+// Top-Up API calls
+export const topUp = {
+    process: async (payload) => {
+        const response = await api.post('/api/topup', payload);
+        return response.data;
+    }
 };
 
-export const topUp = {
-    process: async (data) => {
-        try {
-            const response = await api.post('/api/topup/process', data);
-            return response.data;
-        } catch (error) {
-            throw new Error('Failed to process top-up');
-        }
+// Auto Top-Up API calls
+export const autoTopUp = {
+    getSettings: async () => {
+        const response = await api.get('/api/auto-topup/settings');
+        return response.data;
     },
+
+    saveSettings: async (settings) => {
+        const response = await api.post('/api/auto-topup/settings', settings);
+        return response.data;
+    }
 };
+
+// Mock sentiment analysis for local development
+if (window.location.hostname === 'localhost') {
+    const originalPost = api.post;
+    api.post = async function (url, data, ...args) {
+        if (url === '/api/ai/sentiment') {
+            await new Promise(res => setTimeout(res, 800));
+            const text = (data.text || '').toLowerCase();
+            let tone = 'neutral';
+            if (text.match(/happy|great|awesome|love|good|excellent/)) tone = 'positive';
+            else if (text.match(/sad|bad|terrible|hate|angry|awful/)) tone = 'negative';
+            return { data: { tone } };
+        }
+        return originalPost.call(this, url, data, ...args);
+    };
+}
 
 export default api;
