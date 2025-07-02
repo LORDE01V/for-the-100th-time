@@ -387,6 +387,7 @@ function HomePage() {
         backgroundRepeat="no-repeat"
         px={4}
         py={8}
+        overflow="auto"
       >
         {/* Video Background */}
         <Box
@@ -423,11 +424,12 @@ function HomePage() {
             width="100%"
             height="100%"
             bg="rgba(0, 0, 0, 0.5)"
+            zIndex="1"
           />
         </Box>
 
         {/* Main Content - Add relative positioning and z-index */}
-        <Box position="relative" zIndex="1">
+        <Box position="relative" zIndex="2" pb={20}>
           <Container maxW="container.xl" py={8}>
             {renderHeader()}
             {renderNavGrid()}
@@ -483,9 +485,11 @@ function HomePage() {
               </Button>
             </Box>
           </Container>
+          {/* Ensure Footer is rendered with proper styling */}
+          <Box mt={8} position="relative" zIndex="3" width="100%" bg="transparent">
+            <Footer />
+          </Box>
         </Box>
-
-        <Footer />
       </Box>
     </ErrorBoundary>
   );
