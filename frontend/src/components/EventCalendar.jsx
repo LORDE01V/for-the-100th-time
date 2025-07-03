@@ -14,7 +14,6 @@ import {
   ModalFooter,
   Button,
   Input,
-  Tooltip,
   Stack,
   Textarea,
   Select,
@@ -63,6 +62,13 @@ const EventCalendar = () => {
     reminder: useColorModeValue('purple.500', 'purple.300'),
     other: useColorModeValue('gray.500', 'gray.300')
   };
+
+  // Add state for hover tracking
+  const [hoveredDay, setHoveredDay] = useState(null);
+
+  // Add color mode values at the top with other style configs
+  const hoverCardBg = useColorModeValue('white', 'gray.700');
+  const hoverCardText = useColorModeValue('gray.800', 'whiteAlpha.900');
 
   const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
@@ -179,40 +185,78 @@ const EventCalendar = () => {
       if (!isEmpty) {
         const currentDay = dayCounter;
         weeks.push(
-          <Tooltip 
-            key={i} 
-            label={isEvent ? `
-              ${events[key].title}
-              Type: ${events[key].eventType}
-              Time: ${events[key].start}
-              Location: ${events[key].location}
-            ` : ''} 
-            hasArrow
+          <Box
+            key={i}
+            w="40px"
+            h="40px"
+            m="1"
+            borderRadius="md"
+            border="1px solid"
+            borderColor="gray.200"
+            boxShadow="sm"
+            transition="0.2s"
+            bg={isEvent ? eventTypeColors[events[key].eventType] : dateBg}
+            color={isEvent ? 'white' : dateColor}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            cursor="pointer"
+            onClick={() => handleDateClick(currentDay)}
+            onMouseEnter={() => isEvent && setHoveredDay(key)}
+            onMouseLeave={() => setHoveredDay(null)}
+            position="relative"
+            _hover={{
+              transform: 'scale(1.05)',
+              boxShadow: 'md'
+            }}
           >
-            <Box
-              w="40px"
-              h="40px"
-              m="1"
-              borderRadius="full"
-              bg={isEvent ? 
-                eventTypeColors[events[key].eventType] : 
-                dateBg
-              }
-              color={isEvent ? 'white' : dateColor}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              cursor="pointer"
-              onClick={() => handleDateClick(currentDay)}
-              _hover={{
-                transform: 'scale(1.1)',
-                shadow: 'md'
-              }}
-            >
-              {dayCounter++}
-            </Box>
-          </Tooltip>
+            {dayCounter}
+            {isEvent && (
+              <>
+                <Box 
+                  position="absolute" 
+                  bottom="1" 
+                  right="1" 
+                  bg="red.400" 
+                  w="2" 
+                  h="2" 
+                  borderRadius="full"
+                />
+                {hoveredDay === key && (
+                  <Box
+                    position="absolute"
+                    bottom="100%"
+                    left="50%"
+                    transform="translateX(-50%)"
+                    bg={hoverCardBg}
+                    p={2}
+                    boxShadow="xl"
+                    borderRadius="md"
+                    fontSize="xs"
+                    zIndex="tooltip"
+                    minWidth="120px"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                  >
+                    <Text fontWeight="bold" color={hoverCardText}>
+                      {events[key].title}
+                    </Text>
+                    <Text color={hoverCardText}>
+                      {new Date(events[key].start).toLocaleTimeString([], { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </Text>
+                    <Text color={hoverCardText} textTransform="capitalize">
+                      {events[key].eventType}
+                    </Text>
+                  </Box>
+                )}
+              </>
+            )}
+          </Box>
         );
+        dayCounter++;
       } else {
         weeks.push(
           <Box key={i} w="40px" h="40px" m="1" />
