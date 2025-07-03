@@ -19,6 +19,7 @@ import {
   Textarea,
   Select,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
 import {
   ChevronLeftIcon,
@@ -28,12 +29,14 @@ import {
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const EventCalendar = () => {
+  const toast = useToast();
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState({});
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [eventData, setEventData] = useState({
     title: '',
     start: '',
@@ -42,6 +45,7 @@ const EventCalendar = () => {
     location: '',
     eventType: 'meeting'
   });
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
 
   // Move color mode values to top level
   const dateBg = useColorModeValue('gray.100', 'gray.700');
@@ -102,6 +106,37 @@ const EventCalendar = () => {
     setEvents(updated);
     localStorage.setItem('calendarEvents', JSON.stringify(updated));
     onClose();
+    
+    toast({
+      title: 'Event created',
+      description: 'Your event has been successfully saved',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+      position: 'bottom',
+    });
+  };
+
+  const deleteEvent = () => {
+    if (deleteConfirmationText.toLowerCase() !== 'delete') return;
+
+    const updated = { ...events };
+    delete updated[selectedDate];
+    setEvents(updated);
+    localStorage.setItem('calendarEvents', JSON.stringify(updated));
+    
+    setDeleteConfirmationText('');
+    onDeleteClose();
+    onClose();
+    
+    toast({
+      title: 'Event deleted',
+      description: 'Your event has been successfully removed',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+      position: 'bottom',
+    });
   };
 
   const renderCalendar = (dateBg, dateColor) => {
@@ -256,8 +291,51 @@ const EventCalendar = () => {
             <Button variant="ghost" mr={3} onClick={onClose}>
               Cancel
             </Button>
+            {events[selectedDate] && (
+              <Button 
+                colorScheme="red" 
+                mr={3} 
+                onClick={onDeleteOpen}
+              >
+                Delete
+              </Button>
+            )}
             <Button colorScheme="blue" onClick={saveEvent}>
-              Save
+              {events[selectedDate] ? 'Update' : 'Save'}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Deletion</ModalHeader>
+          <ModalBody>
+            <Text mb={4}>
+              Type "DELETE" to confirm permanent removal of this event:
+            </Text>
+            <Input
+              value={deleteConfirmationText}
+              onChange={(e) => setDeleteConfirmationText(e.target.value)}
+              placeholder="Type DELETE here"
+              autoFocus
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={() => {
+              setDeleteConfirmationText('');
+              onDeleteClose();
+            }}>
+              Cancel
+            </Button>
+            <Button 
+              colorScheme="red" 
+              onClick={deleteEvent}
+              isDisabled={deleteConfirmationText.toLowerCase() !== 'delete'}
+            >
+              Confirm Delete
             </Button>
           </ModalFooter>
         </ModalContent>
