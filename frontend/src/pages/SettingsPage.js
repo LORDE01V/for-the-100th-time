@@ -307,7 +307,7 @@ function SettingsPage() {
                 {/* General Information Section */}
                 <Box>
                     <Heading as="h2" size="lg" mb={4} color={headingColor}>General Information</Heading>
-                    <Text color={mutedTextColor} mb={4}>Review and update your profile details.</Text>
+                    <Text color={mutedTextColor} mb={4}>Review and update your account details.</Text>
                     <VStack spacing={4} align="stretch">
                         <FormControl id="email">
                             <FormLabel color={mutedTextColor}>Email Address</FormLabel>

@@ -137,7 +137,9 @@ function SubscriptionPage() {
     }
   }, []);
   
-  const mockRationaleMessages = [
+  const mutedTextColor = useColorModeValue('gray.600', 'gray.400');
+
+  let mockRationaleMessages = [
     "This plan suits your low energy usage pattern based on mock data analysis.",
     "Based on your data, this is a great match for high efficiency needs.",
     "Ideal for users with moderate usage; it optimizes costs effectively.",
@@ -190,6 +192,8 @@ function SubscriptionPage() {
     "Offers premium support for peace of mind.",
     "A top pick for efficient and eco-friendly options."
   ];
+
+  mockRationaleMessages = mockRationaleMessages.filter(message => !message.includes("energy profile"));
 
   const handleSelectPlan = (plan) => {
     selectPlan(plan);
@@ -275,7 +279,7 @@ function SubscriptionPage() {
                       <Spinner size="md" />
                     ) : rationale[plan.id]?.message ? (
                       <Tooltip label={rationale[plan.id].message} hasArrow placement="top">
-                        <Text color="gray.600" fontSize="sm">
+                        <Text color={mutedTextColor} fontSize="sm">
                           {rationale[plan.id].message.slice(0, 50)}...
                         </Text>
                       </Tooltip>
@@ -286,6 +290,7 @@ function SubscriptionPage() {
             </motion.div>
           ))}
         </SimpleGrid>
+        <Text color={mutedTextColor} mb={4}>Review and update your profile details.</Text>
       </Box>
     </Flex>
   );
