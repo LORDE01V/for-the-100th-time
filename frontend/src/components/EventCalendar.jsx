@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Text,
@@ -69,6 +69,33 @@ const EventCalendar = () => {
   // Add color mode values at the top with other style configs
   const hoverCardBg = useColorModeValue('white', 'gray.700');
   const hoverCardText = useColorModeValue('gray.800', 'whiteAlpha.900');
+
+  // Add new state for search
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+  // Add new state for filters
+  const [activeFilters, setActiveFilters] = useState([]);
+
+  // Add filter toggle function
+  const toggleFilter = (eventType) => {
+    setActiveFilters(prev => 
+      prev.includes(eventType)
+        ? prev.filter(f => f !== eventType)
+        : [...prev, eventType]
+    );
+  };
+
+  // Add debounce effect
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery.toLowerCase());
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
 
   const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
@@ -150,8 +177,18 @@ const EventCalendar = () => {
     });
   };
 
+  // Add ref for tracking deleted event
+  const deletedEventRef = useRef(null);
+
+  // Modify deleteEvent function
   const deleteEvent = () => {
     if (deleteConfirmationText.toLowerCase() !== 'delete') return;
+
+    // Store deleted event before removal
+    deletedEventRef.current = {
+      key: selectedDate,
+      event: events[selectedDate]
+    };
 
     const updated = { ...events };
     delete updated[selectedDate];
@@ -164,11 +201,52 @@ const EventCalendar = () => {
     
     toast({
       title: 'Event deleted',
-      description: 'Your event has been successfully removed',
+      description: 'Click Undo to restore it',
       status: 'success',
-      duration: 3000,
+      duration: 5000,
       isClosable: true,
       position: 'bottom',
+      onCloseComplete: () => {
+        // Clear the ref when toast closes
+        deletedEventRef.current = null;
+      },
+      render: ({ onClose }) => (
+        <Box
+          color="white"
+          p={3}
+          bg="blue.500"
+          borderRadius="md"
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Text>Event deleted. Click Undo to restore it</Text>
+          <Button
+            size="sm"
+            colorScheme="blue"
+            variant="ghost"
+            onClick={() => {
+              if (deletedEventRef.current) {
+                const { key, event } = deletedEventRef.current;
+                setEvents(prev => ({
+                  ...prev,
+                  [key]: event
+                }));
+                localStorage.setItem('calendarEvents', 
+                  JSON.stringify({
+                    ...events,
+                    [key]: event
+                  })
+                );
+                deletedEventRef.current = null;
+                onClose();
+              }
+            }}
+          >
+            Undo
+          </Button>
+        </Box>
+      )
     });
   };
 
@@ -180,7 +258,10 @@ const EventCalendar = () => {
     for (let i = 0; i < totalCells; i++) {
       const isEmpty = i < startDay;
       const key = `${currentYear}-${currentMonth}-${dayCounter}`;
-      const isEvent = events[key];
+      const event = events[key];
+      const isEvent = event && 
+        event.title.toLowerCase().includes(debouncedSearchQuery) &&
+        (activeFilters.length === 0 || activeFilters.includes(event.eventType));
       
       if (!isEmpty) {
         const currentDay = dayCounter;
@@ -195,7 +276,7 @@ const EventCalendar = () => {
             borderColor="gray.200"
             boxShadow="sm"
             transition="0.2s"
-            bg={isEvent ? eventTypeColors[events[key].eventType] : dateBg}
+            bg={isEvent ? eventTypeColors[event.eventType] : dateBg}
             color={isEvent ? 'white' : dateColor}
             display="flex"
             alignItems="center"
@@ -210,7 +291,7 @@ const EventCalendar = () => {
               boxShadow: 'md'
             }}
           >
-            {dayCounter}
+            {currentDay}
             {isEvent && (
               <>
                 <Box 
@@ -239,16 +320,16 @@ const EventCalendar = () => {
                     borderColor="gray.200"
                   >
                     <Text fontWeight="bold" color={hoverCardText}>
-                      {events[key].title}
+                      {event.title}
                     </Text>
                     <Text color={hoverCardText}>
-                      {new Date(events[key].start).toLocaleTimeString([], { 
+                      {new Date(event.start).toLocaleTimeString([], { 
                         hour: '2-digit', 
                         minute: '2-digit' 
                       })}
                     </Text>
                     <Text color={hoverCardText} textTransform="capitalize">
-                      {events[key].eventType}
+                      {event.eventType}
                     </Text>
                   </Box>
                 )}
@@ -298,6 +379,37 @@ const EventCalendar = () => {
           variant="ghost"
         />
       </Flex>
+
+      {/* Add search input */}
+      <Input
+        placeholder="Search events..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        mb={4}
+        variant="filled"
+        _focus={{ borderColor: 'blue.300' }}
+      />
+
+      {/* Add filter section */}
+      <Box mb={4}>
+        <Text fontSize="sm" fontWeight="semibold" mb={2} color={dayColor}>
+          Filter by event type
+        </Text>
+        <Flex wrap="wrap" gap={2}>
+          {Object.keys(eventTypeColors).map((eventType) => (
+            <Button
+              key={eventType}
+              size="sm"
+              variant={activeFilters.includes(eventType) ? 'solid' : 'outline'}
+              colorScheme={eventTypeColors[eventType].split('.')[0]}
+              onClick={() => toggleFilter(eventType)}
+              textTransform="capitalize"
+            >
+              {eventType}
+            </Button>
+          ))}
+        </Flex>
+      </Box>
 
       <Grid templateColumns="repeat(7, 1fr)" gap={2} mb={2}>
         {days.map((day) => (
