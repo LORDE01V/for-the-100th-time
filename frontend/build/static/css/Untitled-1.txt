@@ -1,0 +1,10 @@
+<!-- Place inside <head> -->
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #00AEEF 0%, #0A1F44 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+</style>
