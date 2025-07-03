@@ -15,6 +15,9 @@ import {
   Button,
   Input,
   Tooltip,
+  Stack,
+  Textarea,
+  Select,
 } from '@chakra-ui/react';
 import {
   ChevronLeftIcon,
@@ -29,8 +32,15 @@ const EventCalendar = () => {
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState({});
-  const [eventTitle, setEventTitle] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [eventData, setEventData] = useState({
+    title: '',
+    start: '',
+    end: '',
+    description: '',
+    location: '',
+    eventType: 'meeting'
+  });
 
   const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
@@ -65,12 +75,22 @@ const EventCalendar = () => {
   const handleDateClick = (day) => {
     const key = `${currentYear}-${currentMonth}-${day}`;
     setSelectedDate(key);
-    setEventTitle(events[key] || '');
+    setEventData(events[key] || {
+      title: '',
+      start: '',
+      end: '',
+      description: '',
+      location: '',
+      eventType: 'meeting'
+    });
     onOpen();
   };
 
   const saveEvent = () => {
-    const updated = { ...events, [selectedDate]: eventTitle };
+    const updated = { 
+      ...events, 
+      [selectedDate]: eventData 
+    };
     setEvents(updated);
     localStorage.setItem('calendarEvents', JSON.stringify(updated));
     onClose();
@@ -89,7 +109,16 @@ const EventCalendar = () => {
       if (!isEmpty) {
         const currentDay = dayCounter;
         weeks.push(
-          <Tooltip key={i} label={isEvent ? events[key] : ''} hasArrow>
+          <Tooltip 
+            key={i} 
+            label={isEvent ? `
+              ${events[key].title}
+              Type: ${events[key].eventType}
+              Time: ${events[key].start}
+              Location: ${events[key].location}
+            ` : ''} 
+            hasArrow
+          >
             <Box
               w="40px"
               h="40px"
@@ -156,11 +185,46 @@ const EventCalendar = () => {
         <ModalContent>
           <ModalHeader>Add Event</ModalHeader>
           <ModalBody>
-            <Input
-              placeholder="Event title"
-              value={eventTitle}
-              onChange={(e) => setEventTitle(e.target.value)}
-            />
+            <Stack spacing={3}>
+              <Input
+                placeholder="Event Title *"
+                value={eventData.title}
+                onChange={(e) => setEventData({...eventData, title: e.target.value})}
+                isRequired
+              />
+              <Input
+                type="datetime-local"
+                value={eventData.start}
+                onChange={(e) => setEventData({...eventData, start: e.target.value})}
+                isRequired
+              />
+              <Input
+                type="datetime-local"
+                placeholder="End Date/Time"
+                value={eventData.end}
+                onChange={(e) => setEventData({...eventData, end: e.target.value})}
+              />
+              <Textarea
+                placeholder="Description"
+                value={eventData.description}
+                onChange={(e) => setEventData({...eventData, description: e.target.value})}
+              />
+              <Input
+                placeholder="Location"
+                value={eventData.location}
+                onChange={(e) => setEventData({...eventData, location: e.target.value})}
+              />
+              <Select 
+                value={eventData.eventType}
+                onChange={(e) => setEventData({...eventData, eventType: e.target.value})}
+              >
+                <option value="meeting">Meeting</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="appointment">Appointment</option>
+                <option value="reminder">Reminder</option>
+                <option value="other">Other</option>
+              </Select>
+            </Stack>
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={onClose}>
