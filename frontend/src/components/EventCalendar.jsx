@@ -18,6 +18,7 @@ import {
   Stack,
   Textarea,
   Select,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import {
   ChevronLeftIcon,
@@ -41,6 +42,13 @@ const EventCalendar = () => {
     location: '',
     eventType: 'meeting'
   });
+
+  // Move color mode values to top level
+  const dateBg = useColorModeValue('gray.100', 'gray.700');
+  const dateColor = useColorModeValue('gray.700', 'gray.200');
+  const monthColor = useColorModeValue('gray.800', 'whiteAlpha.900');
+  const dayColor = useColorModeValue('gray.600', 'gray.300');
+  const calendarBg = useColorModeValue('white', 'gray.800');
 
   const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
@@ -96,7 +104,7 @@ const EventCalendar = () => {
     onClose();
   };
 
-  const renderCalendar = () => {
+  const renderCalendar = (dateBg, dateColor) => {
     const totalCells = startDay + daysInMonth;
     const weeks = [];
     let dayCounter = 1;
@@ -124,13 +132,17 @@ const EventCalendar = () => {
               h="40px"
               m="1"
               borderRadius="full"
-              bg={isEvent ? 'purple.400' : 'gray.100'}
-              color={isEvent ? 'white' : 'gray.700'}
+              bg={isEvent ? 'purple.400' : dateBg}
+              color={isEvent ? 'white' : dateColor}
               display="flex"
               alignItems="center"
               justifyContent="center"
               cursor="pointer"
               onClick={() => handleDateClick(currentDay)}
+              _hover={{
+                transform: 'scale(1.1)',
+                shadow: 'md'
+              }}
             >
               {dayCounter++}
             </Box>
@@ -147,7 +159,15 @@ const EventCalendar = () => {
   };
 
   return (
-    <Box bg="white" p={6} rounded="lg" shadow="lg" maxW="400px" mx="auto">
+    <Box 
+      bg={calendarBg}
+      p={6} 
+      rounded="lg" 
+      shadow="lg" 
+      maxW="400px" 
+      mx="auto"
+      color={monthColor}
+    >
       <Flex justify="space-between" align="center" mb={4}>
         <IconButton
           icon={<ChevronLeftIcon />}
@@ -155,7 +175,7 @@ const EventCalendar = () => {
           aria-label="Previous month"
           variant="ghost"
         />
-        <Text fontSize="xl" fontWeight="bold">
+        <Text fontSize="xl" fontWeight="bold" color={monthColor}>
           {new Date(currentYear, currentMonth).toLocaleString('default', {
             month: 'long',
             year: 'numeric',
@@ -171,13 +191,19 @@ const EventCalendar = () => {
 
       <Grid templateColumns="repeat(7, 1fr)" gap={2} mb={2}>
         {days.map((day) => (
-          <Text key={day} fontSize="sm" textAlign="center" fontWeight="bold">
+          <Text 
+            key={day} 
+            fontSize="sm" 
+            textAlign="center" 
+            fontWeight="bold"
+            color={dayColor}
+          >
             {day}
           </Text>
         ))}
       </Grid>
 
-      <Grid templateColumns="repeat(7, 1fr)">{renderCalendar()}</Grid>
+      <Grid templateColumns="repeat(7, 1fr)">{renderCalendar(dateBg, dateColor)}</Grid>
 
       {/* Event Modal */}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
