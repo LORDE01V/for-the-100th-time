@@ -4,6 +4,8 @@ import { auth } from '../services/api'; // Assuming auth service is still used
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import ReactSlick from "react-slick";
+import ReactCalendar from "react-calendar";
 // eslint-disable-next-line no-unused-vars
 import Calendar from 'react-calendar';
 import {

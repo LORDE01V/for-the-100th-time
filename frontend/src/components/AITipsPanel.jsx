@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { FiChevronLeft, FiChevronRight, FiDollarSign, FiSun, FiBattery } from 'react-icons/fi';
 import PropTypes from 'prop-types';
+import ActivityReport from './widgets/ActivityReport';
 
 const AITipsPanel = ({ tips = [] }) => {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);

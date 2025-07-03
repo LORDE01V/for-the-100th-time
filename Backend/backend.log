@@ -110,3 +110,13 @@
 2025-07-02 15:24:01,129 - INFO - Attempting login for email: nathiunathi@gmail.com
 2025-07-02 15:24:01,188 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
 2025-07-02 15:24:01,392 - INFO - 127.0.0.1 - - [02/Jul/2025 15:24:01] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-03 12:08:21,890 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-03 12:08:21,892 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-03 12:34:53,183 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-03 12:34:53,184 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-03 12:35:09,181 - INFO - 127.0.0.1 - - [03/Jul/2025 12:35:09] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-03 12:35:09,505 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-03 12:35:09,604 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-03 12:35:09,756 - INFO - 127.0.0.1 - - [03/Jul/2025 12:35:09] "POST /api/auth/login HTTP/1.1" 200 -
