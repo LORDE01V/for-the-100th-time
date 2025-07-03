@@ -1,8 +1,0 @@
-.topup-background {
-    background-image: linear-gradient(to bottom, #00AEEF, #0A1F44);
-    background-color: #0A1F44; /* fallback for old browsers */
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    min-height: 100vh;
-}
