@@ -1,0 +1,51 @@
+@media print {
+  body {
+    background-color: white;
+    color: black;
+  }
+  .slick-slider, .slick-dots, button, .icon-button {
+    display: none !important;
+  }
+  h1, h2, h3 {
+    color: black;
+  }
+  .chakra-stack, .chakra-box {
+    page-break-inside: avoid;
+  }
+  .chakra-grid {
+    display: block;
+  }
+}
+
+.calendar-component {
+  width: 100%;
+  background-color: var(--chakra-colors-white);  /* Default to app's light mode */
+  color: var(--chakra-colors-gray-800);  /* Default text color */
+}
+
+.calendar-component .react-calendar__tile {
+  background-color: var(--chakra-colors-white);
+  color: var(--chakra-colors-gray-800);
+  border: 1px solid var(--chakra-colors-gray-200);
+}
+
+.calendar-component .react-calendar__tile--active {
+  background-color: var(--chakra-colors-teal-500);
+  color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  .calendar-component {
+    background-color: var(--chakra-colors-gray-700);
+    color: var(--chakra-colors-whiteAlpha-900);
+  }
+  .calendar-component .react-calendar__tile {
+    background-color: var(--chakra-colors-gray-700);
+    color: var(--chakra-colors-whiteAlpha-900);
+    border: 1px solid var(--chakra-colors-gray-600);
+  }
+  .calendar-component .react-calendar__tile--active {
+    background-color: var(--chakra-colors-teal-300);
+    color: black;
+  }
+} 

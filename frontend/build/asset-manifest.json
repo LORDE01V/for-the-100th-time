@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "/static/css/main.8798d0d3.css",
+    "main.js": "/static/js/main.e32c4cd9.js",
+    "static/js/239.dfdb0d71.chunk.js": "/static/js/239.dfdb0d71.chunk.js",
+    "static/js/977.2caed02d.chunk.js": "/static/js/977.2caed02d.chunk.js",
+    "static/js/455.795f3d75.chunk.js": "/static/js/455.795f3d75.chunk.js",
+    "static/media/inverter__5kw_hybrid.png": "/static/media/inverter__5kw_hybrid.3bb50edf13d28d1fe814.png",
+    "static/media/About_Page_IMG.png": "/static/media/About_Page_IMG.765ca35b432a4903de76.png",
+    "static/media/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.png": "/static/media/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.c12b84b456ca06063c19.png",
+    "static/media/langa.png": "/static/media/langa.f96efb5446e10b091dfe.png",
+    "static/media/battery_bank_10_kwh.png": "/static/media/battery_bank_10_kwh.139199d8d645fe337ef5.png",
+    "static/media/Terms_Page_And_Services.png": "/static/media/Terms_Page_And_Services.ce2677bfb05d8b94a407.png",
+    "static/media/Slowed-GridX-Video.mp4": "/static/media/Slowed-GridX-Video.0d66115fdbda666d28c2.mp4",
+    "static/media/solar_panel_350w.png": "/static/media/solar_panel_350w.9ae8261455dc4a9c682e.png",
+    "static/media/Mpho.png": "/static/media/Mpho.b072d4eefec10c36f4fc.png",
+    "static/media/Lihle.png": "/static/media/Lihle.a8d6a1d0ad4baa189910.png",
+    "static/media/GridX-IMG.jpg": "/static/media/GridX-IMG.0e3cb4e975f3cf6acc2a.jpg",
+    "static/media/sleigh.png": "/static/media/sleigh.a4e42119e13026cba2d4.png",
+    "static/media/kg_img.png": "/static/media/kg_img.52cdecb5807dd21b129e.png",
+    "static/media/gridx_background.jpg": "/static/media/gridx_background.4ba654c9611b82ee0ffa.jpg",
+    "static/media/slick.svg": "/static/media/slick.2630a3e3eab21c607e21.svg",
+    "static/media/slick.eot": "/static/media/slick.a4e97f5a2a64f0ab1323.eot",
+    "static/media/slick.ttf": "/static/media/slick.c94f7671dcc99dce43e2.ttf",
+    "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
+    "index.html": "/index.html",
+    "main.8798d0d3.css.map": "/static/css/main.8798d0d3.css.map",
+    "main.e32c4cd9.js.map": "/static/js/main.e32c4cd9.js.map",
+    "239.dfdb0d71.chunk.js.map": "/static/js/239.dfdb0d71.chunk.js.map",
+    "977.2caed02d.chunk.js.map": "/static/js/977.2caed02d.chunk.js.map",
+    "455.795f3d75.chunk.js.map": "/static/js/455.795f3d75.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8798d0d3.css",
+    "static/js/main.e32c4cd9.js"
+  ]
+}
