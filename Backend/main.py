@@ -12,6 +12,7 @@ from app.routes.auth import auth_bp
 from email_utils import send_welcome_email  # Assuming it's in email_utils.py
 from dotenv import load_dotenv
 from support import (
+    create_stories_table,
     get_user_balance,
     get_user_expenses,
     create_expense,
@@ -24,7 +25,8 @@ from support import (
     save_payment_method,
     fetch_user_payment_methods,
     remove_payment_method,
-    create_payment_methods_table
+    create_payment_methods_table,
+    create_stories_table
 )
 from werkzeug.utils import secure_filename
 

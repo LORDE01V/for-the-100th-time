@@ -36,7 +36,7 @@ import AISuggestions from './pages/AISuggestions';
 import PersonalUserPage from './pages/PersonalUserPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
-
+import FaultDetails from './pages/FaultDetails';
 // Protected Route component
 const ProtectedRoute = () => {
   const user = auth.getCurrentUser(); // Check if user data/token exists

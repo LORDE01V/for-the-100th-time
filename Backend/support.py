@@ -36,7 +36,7 @@ def get_db():
             host=os.getenv('DB_HOST', 'localhost'),
             database=os.getenv('DB_NAME', 'Fintech_Solar'),
             user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', 'your_password_here'),  # Ensure this is set in your .env
+            password=os.getenv('DB_PASSWORD', ''),  # Ensure this is set in your .env
             port=os.getenv('DB_PORT', '5432')
         )
         return conn
@@ -328,6 +328,21 @@ def get_payment_history(contract_id):
     """
     return execute_query('search', query, (contract_id,))
 
+def create_stories_table():
+    """Create the stories table in the database"""
+    query = """
+    CREATE TABLE IF NOT EXISTS stories (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        author_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE
+    )
+    """
+    execute_query('alter', query)
+
 # Initialize database tables when module loads
 def initialize_db():
     conn, cur = connect_db()
@@ -386,7 +401,16 @@ def initialize_db():
             description TEXT
         )
         """)
-        
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS stories (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(50) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            comment TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+        print("Database initialized!")
         conn.commit()
         print("✅ Database tables created successfully!")
         create_payment_methods_table()

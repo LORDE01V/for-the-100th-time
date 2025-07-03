@@ -110,3 +110,60 @@
 2025-07-02 15:24:01,129 - INFO - Attempting login for email: nathiunathi@gmail.com
 2025-07-02 15:24:01,188 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
 2025-07-02 15:24:01,392 - INFO - 127.0.0.1 - - [02/Jul/2025 15:24:01] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 18:05:17,491 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-02 18:05:17,492 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-02 18:13:48,318 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-02 18:13:48,319 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-02 18:22:19,390 - INFO - 127.0.0.1 - - [02/Jul/2025 18:22:19] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-02 18:22:19,711 - INFO - Attempting login for email: user1@gmail.com
+2025-07-02 18:22:19,965 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
+2025-07-02 18:22:20,610 - INFO - 127.0.0.1 - - [02/Jul/2025 18:22:20] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 18:23:09,324 - INFO - 127.0.0.1 - - [02/Jul/2025 18:23:09] "[33mOPTIONS /settings HTTP/1.1[0m" 404 -
+2025-07-02 18:23:09,633 - INFO - 127.0.0.1 - - [02/Jul/2025 18:23:09] "[33mOPTIONS /settings HTTP/1.1[0m" 404 -
+2025-07-02 18:25:44,354 - INFO - 127.0.0.1 - - [02/Jul/2025 18:25:44] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-02 18:25:45,665 - INFO - User registration for email: full@gmail.com - Plain password length: 8, Hashed password length: 162
+2025-07-02 18:25:45,944 - INFO - 127.0.0.1 - - [02/Jul/2025 18:25:45] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-07-02 18:25:52,112 - INFO - 127.0.0.1 - - [02/Jul/2025 18:25:52] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-02 18:25:52,136 - INFO - Attempting login for email: full@gmail.com
+2025-07-02 18:25:52,343 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-02 18:25:52,993 - INFO - 127.0.0.1 - - [02/Jul/2025 18:25:52] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-02 18:28:05,226 - INFO - 127.0.0.1 - - [02/Jul/2025 18:28:05] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-07-02 18:28:05,228 - INFO - 127.0.0.1 - - [02/Jul/2025 18:28:05] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-07-02 18:28:05,476 - INFO - 127.0.0.1 - - [02/Jul/2025 18:28:05] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-07-03 09:04:57,691 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-03 09:04:57,696 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-03 09:05:52,718 - INFO - 127.0.0.1 - - [03/Jul/2025 09:05:52] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-03 09:05:53,050 - INFO - Attempting login for email: full@gmail.com
+2025-07-03 09:05:53,246 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-03 09:05:53,767 - INFO - 127.0.0.1 - - [03/Jul/2025 09:05:53] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-03 10:17:18,145 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-03 10:17:18,146 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-03 10:17:49,608 - INFO - 127.0.0.1 - - [03/Jul/2025 10:17:49] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-03 10:17:49,929 - INFO - Attempting login for email: full@gmail.com
+2025-07-03 10:17:50,055 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-03 10:17:50,366 - INFO - 127.0.0.1 - - [03/Jul/2025 10:17:50] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-03 12:44:34,652 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-03 12:44:34,654 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-03 12:45:11,472 - INFO - 127.0.0.1 - - [03/Jul/2025 12:45:11] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-03 12:45:11,804 - INFO - Attempting login for email: full@gmail.com
+2025-07-03 12:45:12,100 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-03 12:45:12,887 - INFO - 127.0.0.1 - - [03/Jul/2025 12:45:12] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-03 12:48:20,134 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-03 12:48:20,135 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-03 12:49:51,080 - INFO - 127.0.0.1 - - [03/Jul/2025 12:49:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-03 12:49:51,409 - INFO - Attempting login for email: full@gmail.com
+2025-07-03 12:49:51,723 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-03 12:49:52,359 - INFO - 127.0.0.1 - - [03/Jul/2025 12:49:52] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-03 14:30:38,133 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-03 14:30:38,134 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-03 14:47:20,513 - INFO - 127.0.0.1 - - [03/Jul/2025 14:47:20] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-03 14:47:20,837 - INFO - Attempting login for email: full@gmail.com
+2025-07-03 14:47:21,069 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-03 14:47:21,721 - INFO - 127.0.0.1 - - [03/Jul/2025 14:47:21] "POST /api/auth/login HTTP/1.1" 200 -

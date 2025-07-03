@@ -366,7 +366,7 @@ const ForumPage = () => {
         'Post 15: Success stories from users.'
       ]
     }
-  ];
+  ]);
 
   const mockSummarize = (posts) => {
     // Simple mock function to generate a bullet-point summary from posts
