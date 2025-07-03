@@ -25,6 +25,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -53,6 +54,15 @@ const EventCalendar = () => {
   const monthColor = useColorModeValue('gray.800', 'whiteAlpha.900');
   const dayColor = useColorModeValue('gray.600', 'gray.300');
   const calendarBg = useColorModeValue('white', 'gray.800');
+
+  // Create color mode values for event types at top level
+  const eventTypeColors = {
+    meeting: useColorModeValue('blue.500', 'blue.300'),
+    maintenance: useColorModeValue('orange.500', 'orange.300'),
+    appointment: useColorModeValue('green.500', 'green.300'),
+    reminder: useColorModeValue('purple.500', 'purple.300'),
+    other: useColorModeValue('gray.500', 'gray.300')
+  };
 
   const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
@@ -99,6 +109,23 @@ const EventCalendar = () => {
   };
 
   const saveEvent = () => {
+    // Validate all required fields
+    if (!eventData.title.trim() || 
+        !eventData.start || 
+        !eventData.end || 
+        !eventData.description.trim() || 
+        !eventData.location.trim()) {
+      toast({
+        title: 'Missing required fields',
+        description: 'Please fill in all event details',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+      return;
+    }
+
     const updated = { 
       ...events, 
       [selectedDate]: eventData 
@@ -167,7 +194,10 @@ const EventCalendar = () => {
               h="40px"
               m="1"
               borderRadius="full"
-              bg={isEvent ? 'purple.400' : dateBg}
+              bg={isEvent ? 
+                eventTypeColors[events[key].eventType] : 
+                dateBg
+              }
               color={isEvent ? 'white' : dateColor}
               display="flex"
               alignItems="center"
@@ -196,12 +226,13 @@ const EventCalendar = () => {
   return (
     <Box 
       bg={calendarBg}
-      p={6} 
+      p={8}
       rounded="lg" 
       shadow="lg" 
-      maxW="400px" 
+      maxW="700px"
       mx="auto"
       color={monthColor}
+      position="relative"
     >
       <Flex justify="space-between" align="center" mb={4}>
         <IconButton
@@ -238,7 +269,19 @@ const EventCalendar = () => {
         ))}
       </Grid>
 
-      <Grid templateColumns="repeat(7, 1fr)">{renderCalendar(dateBg, dateColor)}</Grid>
+      <AnimatePresence mode='wait'>
+        <motion.div
+          key={`${currentYear}-${currentMonth}`}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Grid templateColumns="repeat(7, 1fr)">
+            {renderCalendar(dateBg, dateColor)}
+          </Grid>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Event Modal */}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -264,20 +307,24 @@ const EventCalendar = () => {
                 placeholder="End Date/Time"
                 value={eventData.end}
                 onChange={(e) => setEventData({...eventData, end: e.target.value})}
+                isRequired
               />
               <Textarea
                 placeholder="Description"
                 value={eventData.description}
                 onChange={(e) => setEventData({...eventData, description: e.target.value})}
+                isRequired
               />
               <Input
                 placeholder="Location"
                 value={eventData.location}
                 onChange={(e) => setEventData({...eventData, location: e.target.value})}
+                isRequired
               />
               <Select 
                 value={eventData.eventType}
                 onChange={(e) => setEventData({...eventData, eventType: e.target.value})}
+                isRequired
               >
                 <option value="meeting">Meeting</option>
                 <option value="maintenance">Maintenance</option>
