@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
@@ -12,15 +13,19 @@ import {
   Text,
   useColorModeValue,
   Avatar,
-  VStack,
+  IconButton,
   Image,
   Link,
   Divider,
+  VStack,
 } from '@chakra-ui/react';
 import {
   FaSolarPanel,
   FaChartLine,
   FaLeaf,
+  FaGithub,
+  FaLinkedin,
+  FaEnvelope,
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import nathiProfile from '../assets/images/IMG Nathii.jpg';
@@ -53,24 +58,6 @@ const textVariants = {
     y: -20,
     transition: {
       duration: 0.3,
-      ease: "easeInOut"
-    }
-  }
-};
-
-// Define animation variants for the Image container to perform the flip
-const imageContainerFlipVariants = {
-  animate: {
-    rotateY: 0, // Default state: no rotation
-    transition: {
-        duration: 0.3, // Base transition speed for unhover
-        ease: "easeInOut"
-    }
-  },
-  hover: {
-    rotateY: 180, // Flip 180 degrees around the Y-axis on hover
-    transition: {
-      duration: 0.6, // Duration for the flip
       ease: "easeInOut"
     }
   }
@@ -162,21 +149,189 @@ function RotatingGreetingsSection() {
   );
 }
 
+const MeetTheDevelopers = () => {
+  // Define the variants here to ensure it's in scope
+  const imageContainerFlipVariants = {
+    animate: {
+      rotateY: 0,
+      transition: { duration: 0.3, ease: "easeInOut" }
+    },
+    hover: {
+      rotateY: 180,
+      transition: { duration: 0.6, ease: "easeInOut" }
+    }
+  };
+
+  const containerBg = useColorModeValue('rgba(0, 0, 0, 0.3)', 'rgba(0, 0, 0, 0.8)');  // Existing
+  const greetingColor = useColorModeValue('black', 'white');  // Existing
+  const headingColor = useColorModeValue('black', 'white');  // Existing
+  const cardBorderColor = useColorModeValue('rgba(0, 0, 0, 0.1)', 'rgba(255, 255, 255, 0.1)');  // Existing
+  const cardBg = useColorModeValue('whiteAlpha.800', 'rgba(0, 0, 0, 0.8)');  // New: Moved here to fix the hook error
+
+  const developers = useMemo(() => [
+    {
+      name: 'Kgothatso Mokgashi',
+      role: 'Backend',
+      description: "Builds secure, scalable APIs that connect frontend brilliance to solid server logic."
+    },
+    {
+      name: 'Okuhle Gadla',
+      role: 'Backend',
+      description: "Builds secure, scalable APIs that connect frontend brilliance to solid server logic."
+    },
+    {
+      name: 'Thembelihle Zulu',
+      role: 'Database',
+      description: "Ensures reliable data structures and optimized queries that keep the app's engine running strong."
+    },
+    {
+      name: 'Mpho Ramokhoase',
+      role: 'Frontend',
+      description: "Crafts seamless, user-friendly interfaces with an eye for responsive design and smooth interactions."
+    },
+    {
+      name: 'Nkosinathi Radebe',
+      role: 'Frontend',
+      description: "Brings UI designs to life with pixel-perfect precision and a deep focus on performance."
+    }
+  ], []);
+
+  const getImageByName = (name) => {
+    switch (name) {
+      case 'Kgothatso Mokgashi':
+        return kgothatsoProfile;
+      case 'Okuhle Gadla':
+        return okuhleProfile;
+      case 'Thembelihle Zulu':
+        return LihleProfile;
+      case 'Mpho Ramokhoase':
+        return mphoProfile;
+      case 'Nkosinathi Radebe':
+        return nathiProfile;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Box bg={containerBg} py={20} px={4}>
+      <Container maxW="container.xl">
+        <Heading
+          as="h2"
+          size="xl"
+          textAlign="center"
+          mb={10}
+          color={headingColor}
+          textShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
+        >
+          Meet the Developers
+        </Heading>
+
+        <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={8}>
+          {developers.map((dev, index) => (
+            <VStack
+              key={index}
+              spacing={3}
+              p={4}
+              bg={cardBg}  // Updated: Using the variable instead of inline hook
+              borderRadius="lg"
+              boxShadow="lg"
+              borderWidth="1px"
+              borderColor={cardBorderColor}
+              textAlign="center"
+              width="100%"
+              backdropFilter="blur(10px)"
+              _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+              transition="all 0.3s ease"
+            >
+              <MotionBox
+                width="100%"
+                height="200px"
+                position="relative"
+                overflow="hidden"
+                borderRadius="lg"
+                mb={2}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                initial="animate"
+                whileHover="hover"
+                variants={imageContainerFlipVariants}
+              >
+                {getImageByName(dev.name) ? (
+                  <Image
+                    src={getImageByName(dev.name)}
+                    alt={dev.name}
+                    width="100%"
+                    height="100%"
+                    objectFit="cover"
+                    objectPosition="center"
+                    borderRadius="lg"
+                  />
+                ) : (
+                  <Avatar
+                    size="full"
+                    name={dev.name}
+                    width="100%"
+                    height="100%"
+                    borderRadius="lg"
+                  />
+                )}
+              </MotionBox>
+
+              <Box>
+                <Text
+                  fontWeight="bold"
+                  fontSize="lg"
+                  color={greetingColor}
+                  textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
+                >
+                  {dev.name}
+                </Text>
+                <Text
+                  fontSize="md"
+                  color={greetingColor}
+                  fontStyle="italic"
+                  textDecoration="underline"
+                >
+                  {dev.role}
+                </Text>
+                <Text
+                  fontSize="sm"
+                  color={greetingColor}
+                  px={2}
+                  textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
+                >
+                  {dev.description}
+                </Text>
+              </Box>
+            </VStack>
+          ))}
+        </SimpleGrid>
+      </Container>
+    </Box>
+  );
+};
+
 function LandingPage() {
   const navigate = useNavigate();
   
   // Keep these color mode values that are being used
   const containerBg = useColorModeValue('rgba(0, 0, 0, 0.7)', 'rgba(0, 0, 0, 0.8)');
-  const greetingColor = useColorModeValue('white', 'white');
+  const greetingColor = useColorModeValue('white', 'whiteAlpha.900');
   const bgGradient = useColorModeValue(
     'linear(to-b, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5))',
     'linear(to-b, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6))'
   );
   const textColor = useColorModeValue('white', 'white');
-  const headingColor = useColorModeValue('white', 'white');
+  const headingColor = useColorModeValue('white', 'whiteAlpha.900');
   const cardBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
   const developerSectionBg = useColorModeValue('rgba(0, 0, 0, 0.7)', 'rgba(0, 0, 0, 0.8)');
   const typingColor = useColorModeValue('white', 'whiteAlpha.900');
+  const cardBg = useColorModeValue('white', 'gray.700');
+  const developerHeadingColor = useColorModeValue('gray.800', 'gray.200');
+  const developerTextColor = useColorModeValue('gray.600', 'gray.400');
+  const sectionBg = useColorModeValue('gray.50', 'gray.800');
 
   // Define and memoize the rotating messages
   const messages = useMemo(() => [
@@ -247,35 +402,6 @@ function LandingPage() {
           }
         }
       }
-    },
-  ], []);
-
-  // Developer data
-  const developers = useMemo(() => [
-    { 
-      name: 'Kgothatso Mokgashi', 
-      role: 'Backend',
-      description: "Builds secure, scalable APIs that connect frontend brilliance to solid server logic."
-    },
-    { 
-      name: 'Okuhle Gadla', 
-      role: 'Backend',
-      description: "Builds secure, scalable APIs that connect frontend brilliance to solid server logic."
-    },
-    { 
-      name: 'Thembelihle Zulu', 
-      role: 'Database',
-      description: "Ensures reliable data structures and optimized queries that keep the app's engine running strong."
-    },
-    { 
-      name: 'Mpho Ramokhoase', 
-      role: 'Frontend',
-      description: "Crafts seamless, user-friendly interfaces with an eye for responsive design and smooth interactions."
-    },
-    { 
-      name: 'Nkosinathi Radebe', 
-      role: 'Frontend',
-      description: "Brings UI designs to life with pixel-perfect precision and a deep focus on performance."
     },
   ], []);
 
@@ -508,166 +634,7 @@ function LandingPage() {
       </Container>
 
       {/* Meet the Developers Section */}
-      <Box
-        bg={developerSectionBg}
-        py={20}
-        px={4}
-        position="relative"
-        zIndex="2"
-      >
-        <Container maxW="container.xl">
-          <Heading
-            as="h2"
-            size="xl"
-            textAlign="center"
-            mb={10}
-            color={headingColor}
-            textShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
-          >
-            Meet the Developers
-          </Heading>
-          <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={8}>
-            {developers.map((dev, index) => (
-              <VStack
-                key={index}
-                spacing={3}
-                p={4}
-                bg={containerBg}
-                borderRadius="lg"
-                boxShadow="lg"
-                borderWidth="1px"
-                borderColor={cardBorderColor}
-                textAlign="center"
-                width="100%"
-                backdropFilter="blur(10px)"
-                position="relative"
-                overflow="hidden"
-                _hover={{
-                   transform: 'translateY(-5px)',
-                   boxShadow: 'xl',
-                 }}
-                 transition="all 0.3s ease"
-              >
-                <MotionBox
-                  width="100%"
-                  height="200px"
-                  position="relative"
-                  overflow="hidden"
-                  borderRadius="lg"
-                  mb={2}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  initial="animate"
-                  whileHover="hover"
-                  variants={imageContainerFlipVariants}
-                >
-                  {dev.name === 'Nkosinathi Radebe' ? (
-                    <Image
-                      src={nathiProfile}
-                      alt={dev.name}
-                      width="100%"
-                      height="100%"
-                      objectFit="cover"
-                      objectPosition="center"
-                      display="block"
-                      margin="auto"
-                      borderRadius="lg"
-                    />
-                  ) : dev.name === 'Okuhle Gadla' ? (
-                    <Image
-                      src={okuhleProfile}
-                      alt={dev.name}
-                      width="100%"
-                      height="100%"
-                      objectFit="cover"
-                      objectPosition="center"
-                      display="block"
-                      margin="auto"
-                      borderRadius="lg"
-                    />
-                  ) : dev.name === 'Mpho Ramokhoase' ? (
-                    <Image
-                      src={mphoProfile}
-                      alt={dev.name}
-                      width="100%"
-                      height="100%"
-                      objectFit="cover"
-                      objectPosition="center"
-                      display="block"
-                      margin="auto"
-                      borderRadius="lg"
-                    />
-                  ) : dev.name === 'Thembelihle Zulu' ? (
-                    <Image
-                      src={LihleProfile}
-                      alt={dev.name}
-                      width="100%"
-                      height="100%"
-                      objectFit="cover"
-                      objectPosition="center"
-                      display="block"
-                      margin="auto"
-                      borderRadius="lg"
-                    />
-                  ) : dev.name === 'Kgothatso Mokgashi' ? (
-                    <Image
-                      src={kgothatsoProfile}
-                      alt={dev.name}
-                      width="100%"
-                      height="100%"
-                      objectFit="cover"
-                      objectPosition="center"
-                      display="block"
-                      margin="auto"
-                      borderRadius="lg"
-                    />
-                  ) : (
-                    <Avatar
-                      size="full"
-                      name={dev.name}
-                      width="100%"
-                      height="100%"
-                      display="block"
-                      margin="auto"
-                      borderRadius="lg"
-                    />
-                  )}
-                </MotionBox>
-
-                <Box>
-                  <Text
-                    fontWeight="bold"
-                    fontSize="lg"
-                    color={greetingColor}
-                    textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
-                  >
-                    {dev.name}
-                  </Text>
-                  <Text
-                    fontSize="md"
-                    color={greetingColor}
-                    textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
-                    textDecoration="underline"
-                    fontStyle="italic"
-                  >
-                    {dev.role}
-                  </Text>
-                  <Text
-                    fontSize="sm"
-                    color={greetingColor}
-                    textAlign="center"
-                    px={2}
-                    textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
-                  >
-                    {dev.description}
-                  </Text>
-                </Box>
-              </VStack>
-            ))}
-          </SimpleGrid>
-        </Container>
-      </Box>
+      <MeetTheDevelopers />
 
       {/* New Footer */}
       <Box
