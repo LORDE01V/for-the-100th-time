@@ -34,7 +34,6 @@ import mphoProfile from '../assets/images/Mpho.png';
 import LihleProfile from '../assets/images/Lihle.png';
 import kgothatsoProfile from '../assets/images/kg_img.png';
 import gridXBackground from '../assets/images/GridX-IMG.jpg';
-import HeroTypingTitle from '../components/HeroTypingTitle';
 
 // Create motion components
 const MotionBox = motion.create(Box);
@@ -66,16 +65,19 @@ const textVariants = {
 function RotatingGreetingsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Define greetings using useMemo with unique entries
+  // Define greetings using useMemo
   const southAfricanGreetings = useMemo(() => [
     'Hello',
     'Hallo',
     'Sawubona',
     'Molo',
     'Lotjhani',
+    'Sawubona',
+    'Dumela',
+    'Dumela',
+    'Dumela',
     'Avuxeni',
     'Ndaa',
-    'Dumela',  // Appears only once
   ], []);
 
   useEffect(() => {
@@ -150,23 +152,8 @@ function RotatingGreetingsSection() {
 }
 
 const MeetTheDevelopers = () => {
-  // Define the variants here to ensure it's in scope
-  const imageContainerFlipVariants = {
-    animate: {
-      rotateY: 0,
-      transition: { duration: 0.3, ease: "easeInOut" }
-    },
-    hover: {
-      rotateY: 180,
-      transition: { duration: 0.6, ease: "easeInOut" }
-    }
-  };
-
-  const containerBg = useColorModeValue('rgba(0, 0, 0, 0.3)', 'rgba(0, 0, 0, 0.8)');  // Existing
-  const greetingColor = useColorModeValue('black', 'white');  // Existing
-  const headingColor = useColorModeValue('black', 'white');  // Existing
-  const cardBorderColor = useColorModeValue('rgba(0, 0, 0, 0.1)', 'rgba(255, 255, 255, 0.1)');  // Existing
-  const cardBg = useColorModeValue('whiteAlpha.800', 'rgba(0, 0, 0, 0.8)');  // New: Moved here to fix the hook error
+  const headingColor = 'white';
+  const cardBorderColor = 'rgba(255,255,255,0.15)';
 
   const developers = useMemo(() => [
     {
@@ -213,16 +200,28 @@ const MeetTheDevelopers = () => {
     }
   };
 
+  // Define the variants here to ensure it's in scope
+  const imageContainerFlipVariants = {
+    animate: {
+      rotateY: 0,
+      transition: { duration: 0.3, ease: "easeInOut" }
+    },
+    hover: {
+      rotateY: 180,
+      transition: { duration: 0.6, ease: "easeInOut" }
+    }
+  };
+
   return (
-    <Box bg={containerBg} py={20} px={4}>
+    <Box py={20} px={4} position="relative" zIndex={3}>
       <Container maxW="container.xl">
         <Heading
           as="h2"
           size="xl"
           textAlign="center"
           mb={10}
-          color={headingColor}
-          textShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
+          color="white"
+          textShadow="2px 2px 4px rgba(0,0,0,0.7)"
         >
           Meet the Developers
         </Heading>
@@ -233,14 +232,13 @@ const MeetTheDevelopers = () => {
               key={index}
               spacing={3}
               p={4}
-              bg={cardBg}  // Updated: Using the variable instead of inline hook
               borderRadius="lg"
               boxShadow="lg"
               borderWidth="1px"
               borderColor={cardBorderColor}
               textAlign="center"
               width="100%"
-              backdropFilter="blur(10px)"
+              bg="rgba(20,20,20,0.95)"
               _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
               transition="all 0.3s ease"
             >
@@ -283,14 +281,16 @@ const MeetTheDevelopers = () => {
                 <Text
                   fontWeight="bold"
                   fontSize="lg"
-                  color={greetingColor}
-                  textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
+                  color="white"
+                  style={{ color: 'white' }}
+                  textShadow="1px 1px 2px rgba(0,0,0,0.7)"
                 >
                   {dev.name}
                 </Text>
                 <Text
                   fontSize="md"
-                  color={greetingColor}
+                  color="white"
+                  style={{ color: 'white' }}
                   fontStyle="italic"
                   textDecoration="underline"
                 >
@@ -298,9 +298,10 @@ const MeetTheDevelopers = () => {
                 </Text>
                 <Text
                   fontSize="sm"
-                  color={greetingColor}
+                  color="white"
+                  style={{ color: 'white' }}
                   px={2}
-                  textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
+                  textShadow="1px 1px 2px rgba(0,0,0,0.7)"
                 >
                   {dev.description}
                 </Text>
@@ -326,7 +327,6 @@ function LandingPage() {
   const textColor = useColorModeValue('white', 'white');
   const headingColor = useColorModeValue('white', 'whiteAlpha.900');
   const cardBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
-  const developerSectionBg = useColorModeValue('rgba(0, 0, 0, 0.7)', 'rgba(0, 0, 0, 0.8)');
   const typingColor = useColorModeValue('white', 'whiteAlpha.900');
   const cardBg = useColorModeValue('white', 'gray.700');
   const developerHeadingColor = useColorModeValue('gray.800', 'gray.200');
@@ -439,7 +439,15 @@ function LandingPage() {
             align="center"
             textAlign="center"
           >
-            <HeroTypingTitle color={typingColor} />
+            <Heading
+              as="h1"
+              size="2xl"
+              color={headingColor}
+              fontWeight="bold"
+              textShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
+            >
+              Welcome to GridX
+            </Heading>
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentMessageIndex}
@@ -634,7 +642,9 @@ function LandingPage() {
       </Container>
 
       {/* Meet the Developers Section */}
-      <MeetTheDevelopers />
+      <Box position="relative" zIndex="3">
+        <MeetTheDevelopers />
+      </Box>
 
       {/* New Footer */}
       <Box

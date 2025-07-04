@@ -1,7 +1,12 @@
 {
   "files": {
+<<<<<<< HEAD
     "main.css": "/static/css/main.507526f9.css",
     "main.js": "/static/js/main.15dbd3ff.js",
+=======
+    "main.css": "/static/css/main.8798d0d3.css",
+    "main.js": "/static/js/main.e32c4cd9.js",
+>>>>>>> parent of 4fba680 (Enhance LandingPage with HeroTypingTitle component for dynamic messaging)
     "static/js/239.dfdb0d71.chunk.js": "/static/js/239.dfdb0d71.chunk.js",
     "static/js/977.2caed02d.chunk.js": "/static/js/977.2caed02d.chunk.js",
     "static/js/455.795f3d75.chunk.js": "/static/js/455.795f3d75.chunk.js",
@@ -24,14 +29,24 @@
     "static/media/slick.ttf": "/static/media/slick.c94f7671dcc99dce43e2.ttf",
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/index.html",
+<<<<<<< HEAD
     "main.507526f9.css.map": "/static/css/main.507526f9.css.map",
     "main.15dbd3ff.js.map": "/static/js/main.15dbd3ff.js.map",
+=======
+    "main.8798d0d3.css.map": "/static/css/main.8798d0d3.css.map",
+    "main.e32c4cd9.js.map": "/static/js/main.e32c4cd9.js.map",
+>>>>>>> parent of 4fba680 (Enhance LandingPage with HeroTypingTitle component for dynamic messaging)
     "239.dfdb0d71.chunk.js.map": "/static/js/239.dfdb0d71.chunk.js.map",
     "977.2caed02d.chunk.js.map": "/static/js/977.2caed02d.chunk.js.map",
     "455.795f3d75.chunk.js.map": "/static/js/455.795f3d75.chunk.js.map"
   },
   "entrypoints": [
+<<<<<<< HEAD
     "static/css/main.507526f9.css",
     "static/js/main.15dbd3ff.js"
+=======
+    "static/css/main.8798d0d3.css",
+    "static/js/main.e32c4cd9.js"
+>>>>>>> parent of 4fba680 (Enhance LandingPage with HeroTypingTitle component for dynamic messaging)
   ]
 }
