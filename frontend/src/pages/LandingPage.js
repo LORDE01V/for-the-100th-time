@@ -29,6 +29,7 @@ import mphoProfile from '../assets/images/Mpho.png';
 import LihleProfile from '../assets/images/Lihle.png';
 import kgothatsoProfile from '../assets/images/kg_img.png';
 import gridXBackground from '../assets/images/GridX-IMG.jpg';
+import HeroTypingTitle from '../components/HeroTypingTitle';
 
 // Create motion components
 const MotionBox = motion.create(Box);
@@ -78,19 +79,16 @@ const imageContainerFlipVariants = {
 function RotatingGreetingsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Define greetings using useMemo
+  // Define greetings using useMemo with unique entries
   const southAfricanGreetings = useMemo(() => [
     'Hello',
     'Hallo',
     'Sawubona',
     'Molo',
     'Lotjhani',
-    'Sawubona',
-    'Dumela',
-    'Dumela',
-    'Dumela',
     'Avuxeni',
     'Ndaa',
+    'Dumela',  // Appears only once
   ], []);
 
   useEffect(() => {
@@ -178,6 +176,7 @@ function LandingPage() {
   const headingColor = useColorModeValue('white', 'white');
   const cardBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
   const developerSectionBg = useColorModeValue('rgba(0, 0, 0, 0.7)', 'rgba(0, 0, 0, 0.8)');
+  const typingColor = useColorModeValue('white', 'whiteAlpha.900');
 
   // Define and memoize the rotating messages
   const messages = useMemo(() => [
@@ -314,15 +313,7 @@ function LandingPage() {
             align="center"
             textAlign="center"
           >
-            <Heading
-              as="h1"
-              size="2xl"
-              color={headingColor}
-              fontWeight="bold"
-              textShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
-            >
-              Welcome to GridX
-            </Heading>
+            <HeroTypingTitle color={typingColor} />
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentMessageIndex}
