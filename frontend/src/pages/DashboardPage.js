@@ -430,8 +430,8 @@ function DashboardContent() {
           aria-label="Open Chatbot"
           icon={<FaComments />}
           position="fixed"
-          bottom="24px"
-          right="24px"
+          bottom="20px"
+          right="20px"
           {...bubbleButtonProps}
           // onClick={...} // your chatbot open handler
         />
@@ -443,7 +443,7 @@ function DashboardContent() {
           onClick={toggleColorMode}
           position="fixed"
           bottom="90px"   // 24px (chatbot) + 56px (button size) + 10px (gap)
-          right="24px"
+          right="20px"
           {...bubbleButtonProps}
         />
       </Box>
@@ -461,4 +461,3 @@ function DashboardPage() {
 }
 
 export default DashboardPage;
-

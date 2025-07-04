@@ -243,9 +243,31 @@ function ImpactPage() {
 
           <Divider />
 
-          <Box>
-            <Heading as="h2" size="lg" mb={4}>Upcoming Events Calendar</Heading>
-            <EventCalendar />
+          <Box textAlign="center" mt={10}>
+            <form onSubmit={handleSubmit}>
+              <Stack spacing={4} maxWidth="400px" mx="auto">
+                <Heading as="h2" size="md" mb={4}>Share Your Story</Heading>
+                <Input
+                  placeholder="Your Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  isRequired
+                />
+                <Input
+                  placeholder="Your Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                />
+                <Textarea
+                  placeholder="Share your story or testimonial"
+                  value={quote}
+                  onChange={(e) => setQuote(e.target.value)}
+                  isRequired
+                />
+                <Button type="submit" colorScheme="teal">Share Your Story</Button>
+              </Stack>
+            </form>
           </Box>
 
           <Divider />
@@ -292,38 +314,18 @@ function ImpactPage() {
 
           <Divider />
 
+          <Box>
+            <Heading as="h2" size="lg" mb={4}>Upcoming Events Calendar</Heading>
+            <EventCalendar />
+          </Box>
+
+          <Divider />
+
           <Box textAlign="center">
             <Heading as="h2" size="lg" mb={4}>Why Solar + Fintech Matters</Heading>
             <Text fontSize="lg" maxWidth="800px" mx="auto">
               Access to clean, affordable energy is transformative. By combining solar technology with accessible fintech solutions, we empower individuals and communities, drive economic growth, and build a sustainable future. Every watt saved and every household powered contributes to a brighter tomorrow.
             </Text>
-          </Box>
-
-          <Box textAlign="center" mt={10}>
-            <form onSubmit={handleSubmit}>
-              <Stack spacing={4} maxWidth="400px" mx="auto">
-                <Heading as="h2" size="md" mb={4}>Share Your Story</Heading>
-                <Input
-                  placeholder="Your Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  isRequired
-                />
-                <Input
-                  placeholder="Your Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  type="email"
-                />
-                <Textarea
-                  placeholder="Share your story or testimonial"
-                  value={quote}
-                  onChange={(e) => setQuote(e.target.value)}
-                  isRequired
-                />
-                <Button type="submit" colorScheme="teal">Share Your Story</Button>
-              </Stack>
-            </form>
           </Box>
 
           <Divider my={8} />
