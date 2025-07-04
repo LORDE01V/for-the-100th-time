@@ -34,6 +34,7 @@ import mphoProfile from '../assets/images/Mpho.png';
 import LihleProfile from '../assets/images/Lihle.png';
 import kgothatsoProfile from '../assets/images/kg_img.png';
 import gridXBackground from '../assets/images/GridX-IMG.jpg';
+import HeroTypingTitle from '../components/HeroTypingTitle';
 
 // Create motion components
 const MotionBox = motion.create(Box);
@@ -449,23 +450,7 @@ function LandingPage() {
               Welcome to GridX
             </Heading>
             <AnimatePresence mode="wait">
-              <motion.div
-                key={currentMessageIndex}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                variants={textVariants}
-              >
-                <Text
-                  fontSize="xl"
-                  color={textColor}
-                  maxW="2xl"
-                  minH="80px"
-                  textShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
-                >
-                  {messages[currentMessageIndex]}
-                </Text>
-              </motion.div>
+              <HeroTypingTitle color={headingColor} />
             </AnimatePresence>
             <Button
               size="lg"
