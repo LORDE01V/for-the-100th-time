@@ -36,6 +36,7 @@ import { jsPDF } from "jspdf";
 import { motion } from 'framer-motion';
 import './ImpactPage.css';  // Assuming we'll create a new CSS file for print styles, or add inline if needed
 import EventCalendar from '../components/EventCalendar';  // New import for the calendar component
+import ImpactMapPreview from '../components/ImpactMapPreview';
 
 function generateImpactReportPDF() {
   const doc = new jsPDF();
@@ -323,6 +324,13 @@ function ImpactPage() {
                 <Button type="submit" colorScheme="teal">Share Your Story</Button>
               </Stack>
             </form>
+          </Box>
+
+          <Divider my={8} />
+
+          <Box>
+            <Heading as="h2" size="lg" mb={4}>Communities We've Reached</Heading>
+            <ImpactMapPreview />
           </Box>
         </Stack>
       </Box>
