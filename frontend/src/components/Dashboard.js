@@ -55,6 +55,10 @@ function DashboardPage() { // Renamed component to DashboardPage
         navigate('/login');
     };
 
+    const handleBackClick = () => {
+        navigate('/'); // Redirects to the homepage
+    };
+
      const cardBg = useColorModeValue('white', 'gray.700'); // Card background based on color mode
      const textColor = useColorModeValue('gray.700', 'gray.200'); // Text color
      const bgColor = useColorModeValue('gray.50', 'gray.800'); // Overall background color
@@ -150,6 +154,13 @@ function DashboardPage() { // Renamed component to DashboardPage
             <Flex justify="center" mt={8}> {/* Use Flex to center the button horizontally */}
                 <Button colorScheme="red" onClick={handleLogout} size="sm" width="fit-content"> {/* size="sm" reduces size, width="fit-content" prevents full width */}
                     Logout
+                </Button>
+            </Flex>
+
+            {/* Back Button */}
+            <Flex justify="center" mt={8}>
+                <Button colorScheme="blue" onClick={handleBackClick} size="sm" width="fit-content">
+                    Back
                 </Button>
             </Flex>
 

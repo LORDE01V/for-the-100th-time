@@ -161,3 +161,10 @@
 2025-07-04 13:01:15,636 - INFO - Attempting login for email: jesicamcpho@gmail.com
 2025-07-04 13:01:15,849 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
 2025-07-04 13:01:16,251 - INFO - 127.0.0.1 - - [04/Jul/2025 13:01:16] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-07 14:19:42,398 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-07 14:19:42,399 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-07 14:21:42,122 - INFO - 127.0.0.1 - - [07/Jul/2025 14:21:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-07 14:21:42,448 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-07 14:21:42,548 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-07 14:21:42,738 - INFO - 127.0.0.1 - - [07/Jul/2025 14:21:42] "POST /api/auth/login HTTP/1.1" 200 -
