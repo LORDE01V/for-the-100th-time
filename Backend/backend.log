@@ -427,3 +427,7 @@
 2025-07-09 14:07:06,612 - INFO - Attempting login for email: kala2hip@gmail.com
 2025-07-09 14:07:06,954 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
 2025-07-09 14:07:07,692 - INFO - 127.0.0.1 - - [09/Jul/2025 14:07:07] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:43:50,209 - INFO - 127.0.0.1 - - [09/Jul/2025 14:43:50] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:43:50,527 - INFO - Attempting login for email: kala2hip@gmail.com
+2025-07-09 14:43:50,726 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 14:43:51,147 - INFO - 127.0.0.1 - - [09/Jul/2025 14:43:51] "POST /api/auth/login HTTP/1.1" 200 -
