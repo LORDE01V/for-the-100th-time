@@ -589,11 +589,8 @@ const ForumPage = () => {
   );
 
   return (
-    <Flex
+    <Box
       minH="100vh"
-      align="center"
-      justify="center"
-      p={4}
       backgroundImage={`url(${forumBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
@@ -637,7 +634,7 @@ const ForumPage = () => {
           {selectedTopic ? renderTopicDiscussion() : renderTopicsList()}
         </VStack>
     </Box>
-    </Flex>
+    </Box>
   );
 };
 
