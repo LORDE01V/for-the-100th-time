@@ -150,3 +150,280 @@
 2025-07-04 10:54:29,594 - INFO - Attempting login for email: nathiunathi@gmail.com
 2025-07-04 10:54:29,952 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
 2025-07-04 10:54:30,665 - INFO - 127.0.0.1 - - [04/Jul/2025 10:54:30] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-08 15:51:13,165 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 15:51:13,165 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 15:51:13,168 - INFO -  * Restarting with stat
+2025-07-08 15:51:22,346 - WARNING -  * Debugger is active!
+2025-07-08 15:51:22,350 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 15:55:54,041 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:54] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 15:55:54,351 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 15:55:54,441 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 15:55:54,442 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:54] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 15:55:54,618 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:54] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 15:55:56,507 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 15:55:56,589 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 15:55:56,590 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:56] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 15:55:56,912 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:56] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 15:55:58,590 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 15:55:58,646 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 15:55:58,647 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:58] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 15:55:58,958 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:58] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 15:56:00,983 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:00] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 15:56:00,986 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 15:56:01,036 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 15:56:01,037 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:01] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 15:56:01,358 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:01] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 15:56:26,066 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:26] "[31m[1mGET / HTTP/1.1[0m" 401 -
+2025-07-08 15:56:26,191 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:26] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-07-08 16:17:25,599 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 16:17:25,599 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:17:25,601 - INFO -  * Restarting with stat
+2025-07-08 16:17:34,719 - WARNING -  * Debugger is active!
+2025-07-08 16:17:34,721 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:17:47,386 - INFO - 127.0.0.1 - - [08/Jul/2025 16:17:47] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:17:47,701 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 16:17:47,759 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 16:17:47,760 - INFO - 127.0.0.1 - - [08/Jul/2025 16:17:47] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:17:47,952 - INFO - 127.0.0.1 - - [08/Jul/2025 16:17:47] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:19:00,135 - INFO - 127.0.0.1 - - [08/Jul/2025 16:19:00] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:19:00,654 - INFO - User registration for email: nkosi@gmail.com - Plain password length: 13, Hashed password length: 162
+2025-07-08 16:19:00,736 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:19:00,736 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: nkosi@gmail.com
+2025-07-08 16:19:00,737 - INFO - 127.0.0.1 - - [08/Jul/2025 16:19:00] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:19:49,133 - INFO - 127.0.0.1 - - [08/Jul/2025 16:19:49] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:19:49,631 - INFO - User registration for email: nkosi@gmail.com - Plain password length: 13, Hashed password length: 162
+2025-07-08 16:19:49,679 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:19:49,680 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: nkosi@gmail.com
+2025-07-08 16:19:49,680 - INFO - 127.0.0.1 - - [08/Jul/2025 16:19:49] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:22:43,636 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 16:22:43,636 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:22:43,637 - INFO -  * Restarting with stat
+2025-07-08 16:22:52,765 - WARNING -  * Debugger is active!
+2025-07-08 16:22:52,768 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:26:15,098 - INFO - 127.0.0.1 - - [08/Jul/2025 16:26:15] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:26:15,604 - INFO - User registration for email: nkosi@gmail.com - Plain password length: 13, Hashed password length: 162
+2025-07-08 16:26:15,654 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:26:15,654 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: nkosi@gmail.com
+2025-07-08 16:26:15,655 - INFO - 127.0.0.1 - - [08/Jul/2025 16:26:15] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:32:29,327 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 16:32:29,327 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:32:29,328 - INFO -  * Restarting with stat
+2025-07-08 16:32:39,056 - WARNING -  * Debugger is active!
+2025-07-08 16:32:39,061 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:33:03,532 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:03] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:33:03,842 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 16:33:03,903 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 16:33:03,904 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:03] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:33:04,110 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:04] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:33:11,719 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:11] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:33:11,722 - INFO - Attempting login for email: nkosi@gmail.com
+2025-07-08 16:33:11,771 - ERROR - User not found for email: nkosi@gmail.com
+2025-07-08 16:33:11,772 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:11] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:33:12,094 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:12] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:34:49,982 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\init_db.py', reloading
+2025-07-08 16:34:50,991 - INFO -  * Restarting with stat
+2025-07-08 16:35:02,220 - WARNING -  * Debugger is active!
+2025-07-08 16:35:02,229 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:36:48,478 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 16:36:48,479 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:36:48,480 - INFO -  * Restarting with stat
+2025-07-08 16:36:56,828 - WARNING -  * Debugger is active!
+2025-07-08 16:36:56,830 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:37:13,866 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:13] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:37:14,176 - INFO - Attempting login for email: nkosi@gmail.com
+2025-07-08 16:37:14,242 - ERROR - User not found for email: nkosi@gmail.com
+2025-07-08 16:37:14,243 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:14] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:37:14,443 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:14] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:37:16,872 - INFO - Attempting login for email: nkosi@gmail.com
+2025-07-08 16:37:16,932 - ERROR - User not found for email: nkosi@gmail.com
+2025-07-08 16:37:16,933 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:16] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:37:17,240 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:17] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:37:18,402 - INFO - Attempting login for email: nkosi@gmail.com
+2025-07-08 16:37:18,450 - ERROR - User not found for email: nkosi@gmail.com
+2025-07-08 16:37:18,451 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:18] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:37:18,766 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:18] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:37:57,303 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:57] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:37:57,557 - INFO - User registration for email: kala@gmail.com - Plain password length: 14, Hashed password length: 162
+2025-07-08 16:37:57,606 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:37:57,606 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala@gmail.com
+2025-07-08 16:37:57,607 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:57] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:39:50,563 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\init_db.py', reloading
+2025-07-08 16:39:51,600 - INFO -  * Restarting with stat
+2025-07-08 16:40:01,686 - WARNING -  * Debugger is active!
+2025-07-08 16:40:01,689 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:40:38,354 - INFO - 127.0.0.1 - - [08/Jul/2025 16:40:38] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:40:38,665 - INFO - Attempting login for email: nkosii@gmail.com
+2025-07-08 16:40:38,717 - ERROR - User not found for email: nkosii@gmail.com
+2025-07-08 16:40:38,718 - INFO - 127.0.0.1 - - [08/Jul/2025 16:40:38] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:40:38,931 - INFO - 127.0.0.1 - - [08/Jul/2025 16:40:38] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:43:18,777 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 16:43:18,777 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:43:18,778 - INFO -  * Restarting with stat
+2025-07-08 16:43:30,781 - WARNING -  * Debugger is active!
+2025-07-08 16:43:30,784 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:47:11,690 - INFO - 127.0.0.1 - - [08/Jul/2025 16:47:11] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:47:12,006 - INFO - 127.0.0.1 - - [08/Jul/2025 16:47:12] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 400 -
+2025-07-08 16:51:17,922 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 16:51:17,923 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:51:17,924 - INFO -  * Restarting with stat
+2025-07-08 16:51:26,939 - WARNING -  * Debugger is active!
+2025-07-08 16:51:26,942 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:54:22,454 - INFO - 127.0.0.1 - - [08/Jul/2025 16:54:22] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:54:22,967 - INFO - User registration for email: kala2hi@gmail.com - Plain password length: 21, Hashed password length: 162
+2025-07-08 16:54:23,013 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:54:23,013 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hi@gmail.com
+2025-07-08 16:54:23,014 - INFO - 127.0.0.1 - - [08/Jul/2025 16:54:23] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:54:57,078 - INFO - 127.0.0.1 - - [08/Jul/2025 16:54:57] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:54:57,270 - INFO - User registration for email: kala2hi@gmail.com - Plain password length: 9, Hashed password length: 162
+2025-07-08 16:54:57,317 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:54:57,318 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hi@gmail.com
+2025-07-08 16:54:57,318 - INFO - 127.0.0.1 - - [08/Jul/2025 16:54:57] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:55:49,570 - INFO - 127.0.0.1 - - [08/Jul/2025 16:55:49] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:55:50,083 - INFO - User registration for email: kala2hi@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 16:55:50,140 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:55:50,141 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hi@gmail.com
+2025-07-08 16:55:50,142 - INFO - 127.0.0.1 - - [08/Jul/2025 16:55:50] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:57:11,018 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 16:57:11,018 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:57:11,020 - INFO -  * Restarting with stat
+2025-07-08 16:57:51,573 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 16:57:51,573 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:57:51,575 - INFO -  * Restarting with stat
+2025-07-08 16:57:59,941 - WARNING -  * Debugger is active!
+2025-07-08 16:57:59,943 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:58:37,085 - INFO - 127.0.0.1 - - [08/Jul/2025 16:58:37] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:58:37,589 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 16:58:37,637 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:58:37,638 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 16:58:37,638 - INFO - 127.0.0.1 - - [08/Jul/2025 16:58:37] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:58:54,085 - INFO - 127.0.0.1 - - [08/Jul/2025 16:58:54] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:58:54,300 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 16:58:54,465 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:58:54,466 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 16:58:54,466 - INFO - 127.0.0.1 - - [08/Jul/2025 16:58:54] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:00:21,036 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 17:00:21,037 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 17:00:21,038 - INFO -  * Restarting with stat
+2025-07-08 17:00:30,653 - WARNING -  * Debugger is active!
+2025-07-08 17:00:30,656 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 17:01:01,102 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:01] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 17:01:01,604 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 17:01:01,653 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 17:01:01,654 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 17:01:01,654 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:01] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:01:11,355 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:11] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 17:01:11,565 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 17:01:11,616 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 17:01:11,616 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 17:01:11,617 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:11] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:01:12,872 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 17:01:12,930 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 17:01:12,931 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 17:01:12,931 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:12] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:01:22,846 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:22] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 17:01:23,053 - INFO - User registration for email: kala2hi@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 17:01:23,100 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 17:01:23,101 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hi@gmail.com
+2025-07-08 17:01:23,101 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:23] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:02:17,847 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\support.py', reloading
+2025-07-08 17:02:18,862 - INFO -  * Restarting with stat
+2025-07-08 17:02:27,386 - WARNING -  * Debugger is active!
+2025-07-08 17:02:27,389 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 17:03:05,653 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 17:03:05,653 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 17:03:05,655 - INFO -  * Restarting with stat
+2025-07-08 17:03:13,673 - WARNING -  * Debugger is active!
+2025-07-08 17:03:13,675 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 17:04:44,476 - INFO - 127.0.0.1 - - [08/Jul/2025 17:04:44] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 17:04:44,982 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 8, Hashed password length: 162
+2025-07-08 17:04:45,048 - INFO - 127.0.0.1 - - [08/Jul/2025 17:04:45] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-07-08 17:04:49,782 - INFO - 127.0.0.1 - - [08/Jul/2025 17:04:49] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 17:04:49,788 - INFO - Attempting login for email: kala2hip@gmail.com
+2025-07-08 17:04:49,839 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-08 17:04:49,983 - INFO - 127.0.0.1 - - [08/Jul/2025 17:04:49] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 09:05:27,279 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 09:05:27,279 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 09:05:27,282 - INFO -  * Restarting with stat
+2025-07-09 09:05:37,255 - WARNING -  * Debugger is active!
+2025-07-09 09:05:37,259 - INFO -  * Debugger PIN: 854-777-465
+2025-07-09 14:07:06,284 - INFO - 127.0.0.1 - - [09/Jul/2025 14:07:06] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:07:06,612 - INFO - Attempting login for email: kala2hip@gmail.com
+2025-07-09 14:07:06,954 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 14:07:07,692 - INFO - 127.0.0.1 - - [09/Jul/2025 14:07:07] "POST /api/auth/login HTTP/1.1" 200 -

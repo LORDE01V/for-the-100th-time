@@ -52,15 +52,23 @@ api.interceptors.response.use(
 export const auth = {
     login: async (email, password) => {
         try {
-            const response = await api.post('/api/auth/login', { email, password });
+            const response = await api.post('/api/auth/login', {
+                email: email.toLowerCase().trim(),  // Normalize email
+                password
+            });
             if (response.data.success) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                if (response.data.access_token) {
+                    localStorage.setItem('token', response.data.access_token);
+                }
+                if (response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
                 // Removed redirection to let the component handle navigation
                 // window.location.href = '/dashboard';
             }
             return response.data;
         } catch (error) {
+            console.error('Login error:', error.response?.data);
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
@@ -68,17 +76,20 @@ export const auth = {
         }
     },
 
-    register: async (userData) => {
+    register: async (userData) => {  // Updated to accept an object
         try {
-            const response = await api.post('/api/auth/register', {
-                name: userData.name,
-                username: userData.username,
-                email: userData.email,
-                password: userData.password,
-                phone: userData.phone  // Changed from phone_number to phone
-            });
+            const response = await api.post('/api/auth/register', userData);  // Pass the object directly
+            if (response.data.success) {
+                if (response.data.access_token) {
+                    localStorage.setItem('token', response.data.access_token);
+                }
+                if (response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+            }
             return response.data;
         } catch (error) {
+            console.error('Registration error:', error.response?.data);
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
