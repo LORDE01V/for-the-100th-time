@@ -173,7 +173,7 @@ def login():
             logging.error(f'Password mismatch for email: {email} - Hash verification failed')
             return create_response('Invalid credentials', 401)
         
-        access_token = create_access_token(identity=user['email'])
+        access_token = create_access_token(identity=user['id'])  # Updated to use user['id']
         return jsonify({
             'success': True,
             'token': access_token,

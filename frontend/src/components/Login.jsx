@@ -1,29 +1,32 @@
 const handleLogin = async (e) => {
   e.preventDefault();
   try {
-    const response = await fetch('http://localhost:5000/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    });
+    const response = await axios.post(
+      '/api/auth/login',
+      { email, password },
+      { withCredentials: true }
+    );
 
-    const data = await response.json();
-    
-    if (data.success) {
-      // Store the token
-      localStorage.setItem('token', data.token);
-      // Handle successful login
+    if (response.data && response.data.token) {
+      localStorage.setItem('token', response.data.token);
+      toast({
+        title: 'Login successful',
+        status: 'success',
+        isClosable: true,
+      });
+      window.location.href = response.data.redirect || '/home';
     } else {
-      // Handle error
-      console.error(data.message);
+      toast({
+        title: 'Unexpected response from server',
+        status: 'warning',
+        isClosable: true,
+      });
     }
   } catch (error) {
-    console.error('Login error:', error);
+    toast({
+      title: error.response?.data?.message || 'Login failed',
+      status: 'error',
+      isClosable: true,
+    });
   }
 }; 

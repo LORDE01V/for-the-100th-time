@@ -1,14 +1,18 @@
 from dotenv import load_dotenv
 import os
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, send_from_directory, session, redirect, url_for
 from flask_cors import CORS
 from hugging_services import HuggingFaceChatbot
 import logging
-from agent import EnergyUsageOptimizerAgent
+from Energy_optimizer.agent import EnergyUsageOptimizerAgent
 from sys import stdout  # Import for StreamHandler
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 import datetime
+from auth import auth_bp
+from routes.home import home_bp
+from routes.email import email_bp  # Import the email blueprint
+from support import initialize_db, get_db  # Import database utilities
 
 # Set up logging to console only
 logger = logging.getLogger(__name__)
@@ -26,7 +30,35 @@ CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://19
 
 # Add JWT configuration
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your_default_secret_key_here')  # Use an environment variable for security
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600  # 1 hour, for example
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 2592000  # 30 days, for example
 jwt = JWTManager(app)
+
+# Register blueprints
+app.register_blueprint(auth_bp)
+app.register_blueprint(home_bp)
+app.register_blueprint(email_bp)  # Register the email blueprint
+
+# Initialize database
+if not initialize_db():
+    raise Exception("Database initialization failed. Please check your database connection.")
+
+# Home route
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+# Serve static files
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
+
+# Error handling
+def handle_error(e):
+    return jsonify(error=str(e)), 500
+
+app.errorhandler(404)(handle_error)
+app.errorhandler(500)(handle_error)
 
 chatbot = HuggingFaceChatbot()
 
@@ -156,6 +188,19 @@ def log_message():
         return jsonify({'status': 'success'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# API routes
+@app.route('/api/data')
+def get_data():
+    # Example API endpoint
+    return jsonify({"message": "Data endpoint"})
+
+# Protected route example
+@app.route('/api/protected')
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
 
 if __name__ == '__main__':
     logger.info("Starting Flask app on port 5000")

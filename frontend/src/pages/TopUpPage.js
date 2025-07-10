@@ -31,6 +31,8 @@ import {
     ModalCloseButton,
     Select
 } from '@chakra-ui/react';
+import { useTransactions } from '../context/TransactionsContext'; // Import the hook
+import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs
 
 function TopUpPage() {
     const navigate = useNavigate();

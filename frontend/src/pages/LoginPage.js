@@ -80,7 +80,7 @@ function LoginPage() {
           duration: 5000,
           isClosable: true,
         });
-        navigate('/home');
+        navigate('/home');  // Updated to redirect to /home for HomePage
       } else {
         toast({
           title: 'Login Error',

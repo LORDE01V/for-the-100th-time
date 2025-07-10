@@ -34,6 +34,7 @@ import { jsPDF } from "jspdf";
 import { motion } from 'framer-motion';
 import './ImpactPage.css';  // Assuming we'll create a new CSS file for print styles, or add inline if needed
 import EventCalendar from '../components/EventCalendar';  // New import for the calendar component
+import api from '../services/api';
 
 function generateImpactReportPDF() {
   const doc = new jsPDF();
@@ -78,41 +79,46 @@ function ImpactPage() {
     ];
   });
 
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name) {
-      toast({ title: 'Error', description: 'Name is required.', status: 'error', duration: 3000, isClosable: true });
+    if (!name || !email || !quote) {
+      toast({
+        title: 'Error',
+        description: 'All fields are required.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
-    if (!email || !isValidEmail(email)) {
-      toast({ title: 'Error', description: 'A valid Email is required.', status: 'error', duration: 3000, isClosable: true });
-      return;
-    }
-    if (!quote) {
-      toast({ title: 'Error', description: 'Testimonial is required.', status: 'error', duration: 3000, isClosable: true });
-      return;
-    }
-    
-    const newTestimonial = {
-      name,
-      quote,
-      email,
-      rating,
-      avatar: 'https://via.placeholder.com/150',
-    };
+ 
     
     try {
-      const updatedTestimonials = [...testimonials, newTestimonial];
-      setTestimonials(updatedTestimonials);
-      localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
-      toast({ title: 'Story Submitted', description: 'Your story has been simulated successfully! (Not yet saved to database)', status: 'success', duration: 3000, isClosable: true });
+      const response = await api.post('/api/stories', { username: name, email, story: quote });
+      if (response.data.success) {
+        toast({
+          title: 'Story Submitted',
+          description: 'Your story has been saved successfully!',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        setName('');
+        setEmail('');
+        setQuote('');
+        setRating(0); // Reset rating if needed
+      } else {
+        throw new Error(response.data.message);
+      }
+       
     } catch (error) {
-      toast({ title: 'Error', description: 'Submission failed. Please try again later.', status: 'error', duration: 3000, isClosable: true });
+      toast({
+        title: 'Error',
+        description: 'Failed to submit your story. Please try again later.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
       console.error('Submission error:', error);
     }
     
