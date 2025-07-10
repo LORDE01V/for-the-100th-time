@@ -107,7 +107,8 @@ function RegisterPage() {
 
   const handleGoogleRegister = () => {
     const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
-    window.location.href = `${backendUrl}/api/auth/google?action=register`;
+    window.location.href = 
+    `${backendUrl}/api/auth/google?action=register`;
   };
 
   const checkPasswordStrengthLocally = (password) => {
@@ -130,7 +131,15 @@ function RegisterPage() {
     });
 
     if (score === 100) return { message: 'Strong - Good job!', score };
-    return { message: `Weak - ${criteria.find(c => !('condition' in c ? c.condition : c.regex && c.regex.test(password)))?.message || 'Improve your password.'}`, score };
+    const failedCriteria = criteria.find(c => {
+      if ('condition' in c) {
+        return !c.condition;
+      } else if ('regex' in c) {
+        return !c.regex.test(password);
+      }
+      return false;
+    });
+    return { message: `Weak - ${failedCriteria?.message || 'Improve your password.'}`, score };
   };
 
   const handlePasswordChange = (e) => {
@@ -284,4 +293,4 @@ function RegisterPage() {
   );
 }
 
-export default RegisterPage; 
+export default RegisterPage;

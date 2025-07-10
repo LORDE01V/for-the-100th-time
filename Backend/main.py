@@ -7,23 +7,40 @@ from psycopg2 import sql, OperationalError
 from datetime import timedelta, datetime
 import secrets
 import os
-from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional, List
-import threading
-import uvicorn
-from flask import Blueprint, url_for, session
-from email_utils import send_welcome_email
-from app import create_app
-from hugging_services import HuggingFaceChatbot
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
+from email_utils import send_welcome_email  # Assuming it's in email_utils.py
+from dotenv import load_dotenv
+from support import (
+    get_user_balance,
+    get_user_expenses,
+    create_expense,
+    process_top_up_transaction,
+    get_user_auto_top_up_settings,
+    save_user_auto_top_up_settings,
+    toggle_auto_top_up,
+    create_support_ticket,
+    add_energy_motto_column,
+    save_payment_method,
+    fetch_user_payment_methods,
+    remove_payment_method,
+    create_payment_methods_table,
+    add_story,
+    initialize_db,
+    get_user_by_email,
+    create_user,
+    update_user_by_id,
+    get_db
+)
+from werkzeug.utils import secure_filename
 
 # Load environment variables (same as support.py)
 load_dotenv()
+
+def create_app():
+    """Factory function to create and configure the Flask application."""
+    app = Flask(__name__)
+    return app
 
 # Configuration (use environment variables for secrets in production)
 SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
@@ -32,6 +49,7 @@ JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
 # ================= FLASK APP =================
 # Rename existing app to flask_app
 flask_app = create_app()  # Use factory app
+
 flask_app.config.update(
     SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev'),
     SESSION_COOKIE_NAME='session',
@@ -67,6 +85,21 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
     return response
 
+# Add these error handlers
+@jwt.invalid_token_loader
+def invalid_token_callback(error_string):
+    return jsonify({
+        'success': False,
+        'message': 'Invalid token. Please log in again.'
+    }), 401
+
+@jwt.unauthorized_loader
+def unauthorized_callback(error_string):
+    return jsonify({
+        'success': False,
+        'message': 'Missing token. Please log in.'
+    }), 401
+
 # Database connection helper (PostgreSQL)
 def get_db():
     try:
@@ -82,239 +115,150 @@ def get_db():
         print(f"🚨 Database connection failed: {e}")
         return None
 
+# Add these constants at the top of your file
+UPLOAD_FOLDER = 'uploads/profile_pictures'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+# Create the upload folder if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Add this near the top of your file, after imports
+create_payment_methods_table()
+
 # Auth routes (updated for PostgreSQL)
 @flask_app.route('/api/auth/register', methods=['POST'])
 def flask_register():
-    conn = None
-    try:
-        data = request.get_json()
-        
-        # Validate required fields
-        if not all(key in data for key in ['name', 'email', 'password']):
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-
-        # Get optional phone or set None
-        phone = data.get('phone', None)
-
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        with conn.cursor() as cur:
-            # Check existing user
-            cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
-            if cur.fetchone():
-                return jsonify({'success': False, 'message': 'Email already exists'}), 400
-
-            # Create user without phone
-            hashed_pw = generate_password_hash(data['password'])
-            cur.execute(
-                """INSERT INTO users (email, password_hash, full_name, phone)
-                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (data['email'], hashed_pw, data['name'], phone)
-            )
-            user_data = cur.fetchone()
-            conn.commit()
-
-        send_welcome_email(data['email'], data['name'])
-
-        return jsonify({
-            'success': True,
-            'user': {
-                'id': user_data[0],
-                'email': user_data[1],
-                'name': user_data[2]
-            }
-        }), 201
-
-    except Exception as e:
-        print(f"Registration Error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Registration failed'}), 500
-    finally:
-        if conn: conn.close()
+    pass  # Placeholder for registration logic
 
 @flask_app.route('/api/auth/login', methods=['POST'])
 def flask_login():
-    conn = None
+    pass  # Placeholder for login logic
+
+@flask_app.route('/api/auth/change-password', methods=['POST'])
+@jwt_required()
+def change_password():
+    pass  # Placeholder for password change logic
+
+# Settings routes
+@flask_app.route('/api/settings', methods=['GET'])
+@jwt_required()
+def get_user_settings():
+    pass  # Placeholder for getting user settings logic
+
+@flask_app.route('/api/settings', methods=['PUT'])
+@jwt_required()
+def modify_user_settings():
+    pass  # Placeholder for modifying user settings logic
+
+# Profile routes
+@flask_app.route('/api/profile', methods=['GET'])
+@jwt_required()
+def get_profile():
+    pass  # Placeholder for getting user profile logic
+
+@flask_app.route('/api/profile', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    pass  # Placeholder for updating user profile logic
+
+# Expenses routes
+@flask_app.route('/api/expenses', methods=['GET'])
+@jwt_required()
+def get_expenses():
+    pass  # Placeholder for getting expenses logic
+
+@flask_app.route('/api/expenses', methods=['POST'])
+@jwt_required()
+def create_expense():
+    pass  # Placeholder for creating expenses logic
+
+# Top-up routes
+@flask_app.route('/api/topup', methods=['POST'])
+@jwt_required()
+def process_top_up():
+    pass  # Placeholder for processing top-up logic
+
+@flask_app.route('/api/topup/balance', methods=['GET'])
+@jwt_required()
+def get_balance():
+    pass  # Placeholder for getting balance logic
+
+# Auto top-up routes
+@flask_app.route('/api/auto-topup/settings', methods=['GET'])
+@jwt_required()
+def get_auto_top_up_settings():
+    pass  # Placeholder for getting auto top-up settings logic
+
+@flask_app.route('/api/auto-topup/settings', methods=['POST'])
+@jwt_required()
+def save_auto_top_up_settings():
+    pass  # Placeholder for saving auto top-up settings logic
+
+@flask_app.route('/api/auto-topup/toggle', methods=['POST'])
+@jwt_required()
+def toggle_auto_top_up():
+    pass  # Placeholder for toggling auto top-up logic
+
+# Notifications routes
+@flask_app.route('/api/notifications', methods=['GET'])
+@jwt_required()
+def get_notifications():
+    pass  # Placeholder for getting notifications logic
+
+@flask_app.route('/api/notifications/<int:notification_id>/read', methods=['PUT'])
+@jwt_required()
+def mark_notification_read(notification_id):
+    pass  # Placeholder for marking notification as read logic
+
+# Profile picture upload route
+@flask_app.route('/api/profile/picture', methods=['POST'])
+@jwt_required()
+def upload_profile_picture():
+    pass  # Placeholder for uploading profile picture logic
+
+# Chat route
+@flask_app.route('/api/chat', methods=['POST'])
+def chat():
+    pass  # Placeholder for chat logic
+
+# Debug logging
+@flask_app.before_request
+def log_request_info():
+    print('Headers:', dict(request.headers))
+    print('Body:', request.get_data())
+    print('Method:', request.method)
+    print('URL:', request.url)
+
+@flask_app.after_request
+def after_request(response):
+    print('Response:', response.get_data())
+    return response
+
+# Entry point for the application
+if __name__ == "__main__":
     try:
-        data = request.get_json()
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        # Initialize the database (create tables if they don't exist)
+        print("Initializing the database...")
+        initialize_db()
+        print("Database initialized successfully!")
 
-        email = data.get('email')
-        password = data.get('password')
+        # Example usage of database functions
+        print("Creating a new user...")
+        user_id = create_user(email="test@example.com", password_hash="hashed_password", full_name="Test User")
+        print(f"User created with ID: {user_id}")
 
-        if not all([email, password]):
-            return jsonify({'success': False, 'message': 'Email and password required'}), 400
+        print("Fetching user by email...")
+        user = get_user_by_email(email="test@example.com")
+        print(f"User fetched: {user}")
 
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-
-        # Check credentials (PostgreSQL users table)
-        cur.execute('SELECT id, email, password_hash, full_name FROM users WHERE email = %s', (email,))
-        user = cur.fetchone()
-
-        if user and check_password_hash(user[2], password):  # user[2] = password_hash
-            access_token = create_access_token(identity=user[0])  # user[0] = id
-            return jsonify({
-                'success': True,
-                'token': access_token,
-                'user': {
-                    'id': user[0],
-                    'name': user[3],  # full_name
-                    'email': user[1]
-                },
-                'redirect': '/'  # Simple frontend route
-            })
-
-        return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+        print("Updating user details...")
+        update_success = update_user_by_id(user_id=user_id, full_name="Updated User", phone_number="1234567890")
+        print(f"User update successful: {update_success}")
 
     except Exception as e:
-        app.logger.error(f"Login error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Login failed'}), 500
-    finally:
-        if conn:
-            conn.close()
+        print(f"An error occurred: {e}")
 
-@flask_app.route('/api/solar/systems', methods=['POST'])
-@jwt_required()
-def flask_create_solar_system():
-    """Handle solar system installations"""
-    current_user = get_jwt_identity()
-    data = request.get_json()
-    # Add validation and call support.py's add_solar_system()
-    # ... implementation ...
-
-@flask_app.route('/api/contracts', methods=['POST'])
-@jwt_required()
-def flask_create_solar_contract():
-    """Handle contract creation"""
-    current_user = get_jwt_identity()
-    data = request.get_json()
-    # Add validation and call support.py's create_contract()
-    # ... implementation ...
-
-@flask_app.route('/api/payments', methods=['POST'])
-@jwt_required()
-def flask_record_payment():
-    """Handle payment processing"""
-    current_user = get_jwt_identity()
-    data = request.get_json()
-    # Add validation and call support.py's record_payment()
-    # ... implementation ...
-
-@flask_app.route('/api/contracts', methods=['GET'])
-@jwt_required()
-def flask_get_contracts():
-    """Get user's solar contracts"""
-    current_user = get_jwt_identity()
-    # Add authorization and call support.py's get_user_contracts()
-    # ... implementation ...
-
-@flask_app.errorhandler(404)
-def not_found(e):
-    return jsonify(error="Route not found"), 404
-
-# ================= FASTAPI APP =================
-app = FastAPI(title="Lumina Solar FastAPI")
-
-# Configure CORS for development
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# JWT (compatible with Flask's tokens)
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/fastapi/auth/login")
-
-# --- FastAPI Models ---
-class UserRegister(BaseModel):
-    name: str
-    email: str
-    password: str
-    phone: Optional[str] = None
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
-
-# --- FastAPI Routes ---
-@app.post("/fastapi/auth/register")
-async def fastapi_register(user: UserRegister):
-    """FastAPI version of /api/auth/register"""
-    conn = None
-    try:
-        conn = get_db()
-        with conn.cursor() as cur:
-            cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
-            if cur.fetchone():
-                raise HTTPException(status_code=400, detail="Email exists")
-
-            hashed_pw = generate_password_hash(user.password)
-            cur.execute(
-                """INSERT INTO users (email, password_hash, full_name, phone)
-                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (user.email, hashed_pw, user.name, user.phone)
-            )
-            user_data = cur.fetchone()
-            conn.commit()
-
-        return {
-            "success": True,
-            "user": {"id": user_data[0], "email": user_data[1], "name": user_data[2]}
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        if conn: conn.close()
-
-@app.post("/fastapi/auth/login")
-async def fastapi_login(user: UserLogin):
-    """FastAPI version of /api/auth/login"""
-    conn = None
-    try:
-        conn = get_db()
-        with conn.cursor() as cur:
-            cur.execute(
-                'SELECT id, email, password_hash, full_name FROM users WHERE email = %s',
-                (user.email,)
-            )
-            db_user = cur.fetchone()
-
-            if db_user and check_password_hash(db_user[2], user.password):
-                token = create_access_token(identity=db_user[0])
-                return {
-                    "success": True,
-                    "token": token,
-                    "user": {"id": db_user[0], "name": db_user[3], "email": db_user[1]}
-                }
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        if conn: conn.close()
-
-# Initialize chatbot
-chatbot = HuggingFaceChatbot()
-
-class ChatMessage(BaseModel):
-    message: str
-    history: List[dict]
-
-@app.post("/api/chat")
-async def chat_endpoint(chat_message: ChatMessage):
-    try:
-        response = chatbot.get_response(chat_message.message)
-        return {"response": response}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# ================= RUN BOTH APPS =================
-if __name__ == '__main__':
-    flask_app.run(port=5000)
+    flask_app.run(debug=True)  # Assuming flask_app is the app instance; adjust if needed

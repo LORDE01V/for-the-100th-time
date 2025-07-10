@@ -71,14 +71,14 @@
      <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
      <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
     </body>
-    <script type='text/javascript'>
-      var bar = {{bar | safe}};
-      var pie = {{pie | safe}};
-      var line_graph = {{line | safe}};
-      var scatter_graph = {{scatter | safe}};
-      var heat_graph = {{heat | safe}};
-      var month_graph = {{month_bar | safe}};
-      var sun_graph = {{sun | safe}};
+    <script type="text/javascript">
+        var bar = {{ bar | safe }};
+        var pie = {{ pie | safe }};
+        var line_graph = {{ line | safe }};
+        var scatter_graph = {{ scatter | safe }};
+        var heat_graph = {{ heat | safe }};
+        var month_graph = {{ month_bar | safe }};
+        var sun_graph = {{ sun | safe }};
 
 <!--Plotly.plot('div_id',data,{});-->
       Plotly.plot('pie',pie,{});

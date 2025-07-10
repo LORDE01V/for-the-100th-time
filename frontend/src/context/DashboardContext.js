@@ -15,6 +15,7 @@ import ActivityReport from '../components/widgets/ActivityReport';
 import WidgetLayout from '../components/widgets/WidgetLayout';
 import DashboardCard from '../components/DashboardCard';
 import ErrorBoundary from '../components/ErrorBoundary';
+import FaultDetection from '../components/FaultDetection';
 
 const DashboardContext = createContext();
 
@@ -69,7 +70,7 @@ export const DashboardProvider = ({ children }) => {
     }));
   };
 
-  const [enabledWidgets, setEnabledWidgets] = useState(['EnergyModeToggle', 'BudgetDial', 'ThemeSwitcher', 'SolarOutput', 'DailyForecast', 'WidgetLayout', 'EnergyAvatar', 'ActivityReport', 'AITipsPanel']);  // Initial default array
+  const [enabledWidgets, setEnabledWidgets] = useState(['EnergyModeToggle', 'BudgetDial', 'ThemeSwitcher', 'SolarOutput', 'DailyForecast', 'WidgetLayout', 'EnergyAvatar', 'ActivityReport', 'AITipsPanel','FaultDetection','FaultVisualization']);  // Initial default array
 
   const value = {
     energyMode,
@@ -226,6 +227,13 @@ const Dashboard = () => {
                 </Box>
               </ErrorBoundary>
             )}
+            {enabledWidgets.includes('FaultDetection') && (
+              <ErrorBoundary>
+               <Box bg={cardBg} p={6} borderRadius="2xl" boxShadow="md" _hover={{ boxShadow: "lg" }}>
+                  <FaultDetection />
+               </Box>
+              </ErrorBoundary>
+)}
           </SimpleGrid>
 
           {/* Full-width Energy Usage Chart at the Bottom */}

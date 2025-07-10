@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api';
@@ -41,7 +42,7 @@ function DashboardPage() { // Renamed component to DashboardPage
         batteryLevel: '85%',
         powerStatus: 'Stable',
         contract: {
-            id: 'CNT-2024-001',
+            id: 'CNT-2025-001',
             status: 'ACTIVE',
             progress: 33, // in percentage
             paymentsMade: 4,
@@ -49,6 +50,7 @@ function DashboardPage() { // Renamed component to DashboardPage
         }
     };
 
+    const headingColor = "#333"; // or whatever color you want
 
     const handleLogout = () => {
         auth.logout();

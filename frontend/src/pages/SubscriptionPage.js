@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -17,10 +18,12 @@ import {
 } from '@chakra-ui/react';
 import { FaArrowLeft, FaCreditCard, FaBolt, FaSun, FaShieldAlt, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useSubscription } from '../context/SubscriptionContext';
 
 function SubscriptionPage() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { selectPlan } = useSubscription();
   
   // Ensure all useColorModeValue calls are at the top level
   const headingColor = useColorModeValue('gray.900', 'white');
@@ -125,7 +128,7 @@ function SubscriptionPage() {
   ], []);
 
   const [selectedPlans, setSelectedPlans] = useState([]);
-  const [rationale, setRationale] = useState({});
+  const [rationale] = useState({});
   
   useEffect(() => {
     const savedPlans = localStorage.getItem('selectedPlans');
@@ -188,53 +191,13 @@ function SubscriptionPage() {
     "A top pick for efficient and eco-friendly options."
   ];
 
-  const fetchPlanRationale = async (planId) => {
-    setRationale(prev => ({ ...prev, [planId]: { ...prev[planId], isLoading: true } }));
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const randomIndex = Math.floor(Math.random() * mockRationaleMessages.length);
-      const mockResponse = {
-        rationale: mockRationaleMessages[randomIndex]
-      };
-      setRationale(prev => ({ ...prev, [planId]: { message: mockResponse.rationale, isLoading: false } }));
-    } catch (error) {
-      console.error('Mock fetch error:', error);
-      toast({
-        title: 'Error',
-        description: '⚠️ Could not fetch plan feedback. Please try again.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      setRationale(prev => ({ ...prev, [planId]: { message: '', isLoading: false } }));
-    }
+  const handleSelectPlan = (plan) => {
+    selectPlan(plan);
+    window.location.href = '/dashboard';
   };
 
-  const handleSelectPlan = (plan) => {
-    if (selectedPlans.includes(plan.id)) {
-      setSelectedPlans(selectedPlans.filter(id => id !== plan.id));
-      setRationale(prev => ({ ...prev, [plan.id]: { message: '', isLoading: false } }));
-    } else if (selectedPlans.length < 3) {
-      setSelectedPlans([...selectedPlans, plan.id]);
-      localStorage.setItem('selectedPlans', JSON.stringify([...selectedPlans, plan.id]));
-      toast({
-        title: 'Success!',
-        description: `You have selected the ${plan.name} plan.`,
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-      fetchPlanRationale(plan.id);
-    } else {
-      toast({
-        title: 'Limit Reached!',
-        description: 'You can only select up to 3 plans. Please unselect one first.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
+  const fetchPlanRationale = async (planId) => {
+    // Implementation of fetchPlanRationale function
   };
 
   return (
@@ -304,6 +267,7 @@ function SubscriptionPage() {
                     ))}
                   </VStack>
                   <Button onClick={() => handleSelectPlan(plan)} colorScheme={selectedPlans.includes(plan.id) ? 'red' : 'green'} width="full">{selectedPlans.includes(plan.id) ? 'Unselect' : 'Select'}</Button>
+                  <Button onClick={() => fetchPlanRationale(plan.id)}>Get Rationale</Button>
                 </VStack>
                 {selectedPlans.includes(plan.id) && (
                   <Box mt={4}>

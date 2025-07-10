@@ -254,3 +254,50 @@ button:disabled {
     color: #666;
     margin-top: 5px;
 }
+
+.chatbot-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    background: #38B2AC;
+    color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    border: 4px solid #fff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2xl;
+}
+
+/* Add or override styles to force visibility */
+body, html {
+  visibility: visible !important;
+  opacity: 1 !important;
+  background-color: white !important; /* Override any hidden backgrounds */
+  color: black !important; /* Set text color to black */
+}
+/* Ensure Chakra components can render properly */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure no styles are hiding content */
+* {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: white !important; /* Reset background */
+}
+
+/* Override any potential conflicting styles */
+.ChakraProvider * {
+  display: block !important; /* Force display for debugging */
+}

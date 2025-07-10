@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api';
+// eslint-disable-next-line no-unused-vars
 import { useDashboard } from '../context/DashboardContext';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { motion } from 'framer-motion';
 import { Bot } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 // Import the video
 import backgroundVideo from '../assets/videos/Slowed-GridX-Video.mp4';
@@ -24,7 +27,9 @@ import {
   useToast,
   IconButton,
   VStack,
-  Fade
+  Fade,
+  Input,
+  Grid
 } from '@chakra-ui/react';
 
 // Import Icons
@@ -42,11 +47,15 @@ import {
   FaRegLightbulb,
   FaRegSun,
   FaRegMoon,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaUser
 } from 'react-icons/fa';
 
 // Import useColorMode hook
 import { useColorMode } from '@chakra-ui/react';
+
+// Import the image
+import aboutBg from '../assets/images/About_Page_IMG.png';
 
 // Constants and utility functions
 const getTimeOfDay = () => {
@@ -74,30 +83,20 @@ function HomePage() {
   const navigate = useNavigate();
   const toast = useToast();
   const { colorMode, toggleColorMode } = useColorMode();
-  const user = auth.getCurrentUser();
-  console.log('HomePage rendering: User is', user ? 'logged in' : 'not logged in');
-  const { currentThemeConfig } = useDashboard();
-
-  const [isLoadingGreeting, setIsLoadingGreeting] = useState(true);
-  const [aiGreeting, setAiGreeting] = useState(null);
-  const [greetingError, setGreetingError] = useState(false);
-  const [currentTipIndex, setCurrentTipIndex] = useState(0);
-
-  // Color mode values (move these outside useMemo)
+  const newsletterBg = useColorModeValue('whiteAlpha.900', 'gray.800');
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const textColor = useColorModeValue('gray.800', 'gray.400');
   const headingColor = useColorModeValue('gray.900', 'white');
   const spinnerColor = useColorModeValue('blue.500', 'blue.300');
   const glassStyles = useColorModeValue(GLASS_STYLES.light, GLASS_STYLES.dark);
+  const user = auth.getCurrentUser();
+  console.log('HomePage rendering: User is', user ? 'logged in' : 'not logged in');
+  // const { currentThemeConfig } = useDashboard(); // Remove or comment out this line
 
-  // Then memoize the colors object
-  const colors = useMemo(() => ({
-    bg: bgColor,
-    text: textColor,
-    heading: headingColor,
-    spinner: spinnerColor,
-    glass: glassStyles
-  }), [bgColor, textColor, headingColor, spinnerColor, glassStyles]);
+  const [isLoadingGreeting, setIsLoadingGreeting] = useState(true);
+  const [aiGreeting, setAiGreeting] = useState(null);
+  const [greetingError, setGreetingError] = useState(false);
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
   // Memoized data configs
   const { navItems, solarTips } = useMemo(() => ({
@@ -192,6 +191,13 @@ function HomePage() {
       description: 'Get smart tips from our AI to save energy and manage finances',
       path: '/ai-suggestions',
       colorScheme: 'purple'
+    },
+    {
+      icon: FaUser,
+      title: 'Profile Details',
+      description: 'Update your personal information',
+      path: '/personal-user',
+      colorScheme: 'blue'
     }
     ],
     solarTips: [
@@ -264,14 +270,14 @@ function HomePage() {
   const renderHeader = () => (
           <Flex justify="space-between" align="flex-start" mb={8} direction={{ base: 'column', md: 'row' }} gap={4}>
             <Box flex="1">
-        <Heading as="h1" size="xl" color={colors.heading} mb={2}>
+        <Heading as="h1" size="xl" color={headingColor} mb={2}>
           Welcome, {user.name}! 
               </Heading>
               
               {isLoadingGreeting ? (
                 <Flex align="center" mt={2}>
-            <Spinner size="sm" mr={2} color={colors.spinner} />
-            <Text fontSize="sm" color={colors.text}>
+            <Spinner size="sm" mr={2} color={spinnerColor} />
+            <Text fontSize="sm" color={textColor}>
                     Crafting your energy insights...
                   </Text>
                 </Flex>
@@ -279,7 +285,7 @@ function HomePage() {
                 <Fade in={true} key={currentTipIndex}>
                   <Text 
                     fontSize="lg" 
-              color={colors.heading} 
+              color={headingColor} 
                     fontWeight="medium" 
                     mt={2}
                     transition="opacity 0.5s ease-in-out"
@@ -296,7 +302,7 @@ function HomePage() {
 
             <Flex align="center" gap={4} mt={{ base: 2, md: 0 }}>
               <VStack align="flex-end" spacing={1}>
-          <Text fontSize="sm" color={colors.text} textAlign="right">
+          <Text fontSize="sm" color={textColor} textAlign="right">
                   {new Date().toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     month: 'long', 
@@ -309,7 +315,7 @@ function HomePage() {
                   onClick={toggleColorMode}
                   variant="ghost"
                   size="sm"
-            color={colors.text}
+            color={textColor}
                 />
               </VStack>
             </Flex>
@@ -330,7 +336,7 @@ function HomePage() {
             p={6}
             borderWidth="1px"
             borderRadius="md"
-            bg={colors.glass.backgroundColor}
+            bg={glassStyles.backgroundColor}
             boxShadow="lg"
             _hover={{ boxShadow: 'xl' }}
             display="flex"
@@ -342,15 +348,18 @@ function HomePage() {
           >
             <Flex align="center" justify="center">
               <Icon as={item.icon} boxSize={8} color={item.colorScheme + '.500'} />
-              <Heading size="md" color={colors.heading} ml={2}>{item.title}</Heading>
+              <Heading size="md" color={headingColor} ml={2}>{item.title}</Heading>
             </Flex>
-            <Text color={colors.text} mt={2} textAlign="center">
+            <Text color={textColor} mt={2} textAlign="center">
               {item.description}
             </Text>
             <Button
               mt={4}
               colorScheme={item.colorScheme}
-              onClick={() => navigate(item.path)}
+              as={Link}
+              to={item.path}
+              size="md"
+              width="full"
             >
               Go to {item.title}
             </Button>
@@ -362,8 +371,8 @@ function HomePage() {
 
   if (!user) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg={colors.bg}>
-        <Spinner size="xl" color={colors.spinner} />
+      <Flex minH="100vh" align="center" justify="center" bg={bgColor}>
+        <Spinner size="xl" color={spinnerColor} />
       </Flex>
     );
   }
@@ -372,9 +381,13 @@ function HomePage() {
     <ErrorBoundary fallback={<Text>Error loading page. Please try refreshing. Check console for details.</Text>}>
       <Box
         minH="100vh"
-        bgGradient={currentThemeConfig.gradients.main}
-        position="relative"
-        overflow="hidden"
+        backgroundImage={`url(${aboutBg})`}
+        backgroundSize="cover"
+        backgroundPosition="center"
+        backgroundRepeat="no-repeat"
+        px={4}
+        py={8}
+        overflow="auto"
       >
         {/* Video Background */}
         <Box
@@ -411,15 +424,56 @@ function HomePage() {
             width="100%"
             height="100%"
             bg="rgba(0, 0, 0, 0.5)"
+            zIndex="1"
           />
         </Box>
 
         {/* Main Content - Add relative positioning and z-index */}
-        <Box position="relative" zIndex="1">
+        <Box position="relative" zIndex="2" pb={20}>
           <Container maxW="container.xl" py={8}>
             {renderHeader()}
             {renderNavGrid()}
             
+            {/* Newsletter Signup Section */}
+            <Box as="section" py={4} px={6} bg={newsletterBg} borderRadius="md" boxShadow="sm" mt={8} borderWidth="0">
+              <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4} justify="center" align="center">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  variant="outline"
+                  size="md"
+                  w="100%"
+                  id="newsletterEmail"
+                />
+                <Button 
+                  colorScheme="blue" 
+                  onClick={() => {
+                    const emailInput = document.getElementById('newsletterEmail');
+                    if (emailInput && emailInput.value.includes('@')) {
+                      toast({
+                        title: 'Subscription Successful!',
+                        description: 'You have been subscribed. Check your email for confirmation.',
+                        status: 'success',
+                        duration: 5000,
+                        isClosable: true
+                      });
+                    } else {
+                      toast({
+                        title: 'Error',
+                        description: 'Please enter a valid email address.',
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                      });
+                    }
+                  }}
+                >
+                  Subscribe
+                </Button>
+              </Grid>
+            </Box>
+            
+            {/* Moved Logout Button */}
             <Box textAlign="center" mt={8}>
               <Button
                 colorScheme="red"
@@ -431,6 +485,10 @@ function HomePage() {
               </Button>
             </Box>
           </Container>
+          {/* Ensure Footer is rendered with proper styling */}
+          <Box mt={8} position="relative" zIndex="3" width="100%" bg="transparent">
+            <Footer />
+          </Box>
         </Box>
       </Box>
     </ErrorBoundary>

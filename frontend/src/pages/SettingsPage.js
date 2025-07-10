@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api'; // Assuming auth service is still used
+import api from '../services/api'; // Assuming api service is still used
 
 // Import Chakra UI Components
 import {
@@ -34,7 +35,6 @@ import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 // Import icons - Added FaArrowLeft import here
 import { FaArrowLeft } from 'react-icons/fa';
 
-
 function SettingsPage() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -53,11 +53,16 @@ function SettingsPage() {
   const [preferencesSaving, setPreferencesSaving] = useState(false);
   const [preferencesStatus, setPreferencesStatus] = useState(null);
 
+  // Add these state variables after the existing state declarations
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileStatus, setProfileStatus] = useState(null);
 
   // State and hooks for Delete Account Modal
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(); // Ref for the cancel button
-
 
   const user = auth.getCurrentUser(); // Get current user data
 
@@ -73,12 +78,19 @@ function SettingsPage() {
   const glassBoxShadow = useColorModeValue('0 4px 6px rgba(0, 0, 0, 0.1)', '0 4px 6px rgba(0, 0, 0, 0.4)');
 
   // Define colors for conditionally rendered elements and input focus borders at the top level
-  const inputFocusBorderColor = useColorModeValue('blue.500', 'blue.300'); // For all inputs
-  const successIconColor = useColorModeValue('green.500', 'green.500'); // Assuming green is consistent
-  const warningIconColor = useColorModeValue('red.500', 'red.500'); // Assuming red is consistent
-  const successTextColor = useColorModeValue('green.500', 'green.500'); // Assuming green is consistent
-  const warningTextColor = useColorModeValue('red.500', 'red.500'); // Assuming red is consistent
+  const inputFocusBorderColor = useColorModeValue('blue.500', 'blue.300');
+  const successIconColor = useColorModeValue('green.500', 'green.500');
+  const warningIconColor = useColorModeValue('red.500', 'red.500');
+  const successTextColor = useColorModeValue('green.500', 'green.500');
+  const warningTextColor = useColorModeValue('red.500', 'red.500');
 
+  const [isLoading, setIsLoading] = useState(true); // Add this line
+
+  // Add this to your state declarations at the top of the component
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Add this to the state declarations at the top of the component
+  const [energyMotto, setEnergyMotto] = useState('');
 
   // Redirect if user is not logged in
   useEffect(() => {
@@ -110,8 +122,8 @@ function SettingsPage() {
   // Handle Password Change Submission (Mock API call)
   const handleChangePassword = async (e) => {
       e.preventDefault();
-      setPasswordErrors({}); // Clear previous errors
-      setPasswordChangeStatus(null); // Clear previous status
+      setPasswordErrors({});
+      setPasswordChangeStatus(null);
 
       // Basic validation
       const errors = {};
@@ -133,18 +145,16 @@ function SettingsPage() {
           return;
       }
 
-
       setPasswordChangeLoading(true);
 
       try {
-          // --- MOCK API CALL FOR CHANGE PASSWORD ---
-          console.log('Attempting to change password:', { oldPassword, newPassword });
-          await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
+          const response = await api.post('/auth/change-password', {
+              oldPassword: String(oldPassword),
+              newPassword: String(newPassword)
+          });
+          const data = response.data;
 
-          // Simulate success or failure
-          const success = true; // Change to false to test error
-
-          if (success) {
+          if (data.success) {
               toast({
                   title: 'Password Updated',
                   description: 'Your password has been updated successfully.',
@@ -152,100 +162,224 @@ function SettingsPage() {
                   duration: 3000,
                   isClosable: true,
               });
-              // Clear form fields on success
               setOldPassword('');
               setNewPassword('');
               setConfirmNewPassword('');
               setPasswordChangeStatus({ status: 'success', message: 'Password updated successfully' });
           } else {
-               toast({
-                  title: 'Password Change Failed',
-                  description: 'There was an error changing your password. Please try again later.',
-                  status: 'error',
-                  duration: 3000,
-                  isClosable: true,
-              });
-              setPasswordChangeStatus({ status: 'error', message: 'Password change failed' });
+              throw new Error(data.message || 'Failed to change password');
           }
-
       } catch (error) {
           console.error('Password change error:', error);
            toast({
-              title: 'Error Occurred',
-              description: error.message || 'Could not change password',
+              title: 'Password Change Failed',
+              description: error.response?.data?.message || 'There was an error changing your password. Please try again later.',
               status: 'error',
               duration: 5000,
               isClosable: true,
           });
-          setPasswordChangeStatus({ status: 'error', message: 'An error occurred' });
+          setPasswordChangeStatus({ status: 'error', message: 'Password change failed' });
       } finally {
           setPasswordChangeLoading(false);
-           // Hide status message after a few seconds
            setTimeout(() => setPasswordChangeStatus(null), 5000);
       }
   };
 
-  // Handle Preferences Save (Mock API call)
-   const handleSavePreferences = async () => {
-       setPreferencesSaving(true);
-       setPreferencesStatus(null); // Clear previous status
-       try {
-           // --- MOCK API CALL FOR SAVING PREFERENCES ---
-           console.log('Saving preferences:', { receiveSms, receiveEmail });
+  // Update handleSavePreferences
+  const handleSavePreferences = async () => {
+      setPreferencesSaving(true);
+      setPreferencesStatus(null);
+      try {
+          const preferencesData = {
+              receiveSms: Boolean(receiveSms),
+              receiveEmail: Boolean(receiveEmail)
+          };
 
-           await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+          console.log('Saving preferences:', preferencesData); // Debug log
+          const response = await api.put('/settings', preferencesData); // Remove /api prefix
+          console.log('Save preferences response:', response.data); // Debug log
 
-           toast({
-               title: 'Preferences Saved',
-               description: 'Your preferences have been saved successfully.',
-               status: 'success',
-               duration: 3000,
-               isClosable: true,
-           });
-            setPreferencesStatus({ status: 'success', message: 'Preferences saved successfully' });
+          if (response.data.success) {
+              toast({
+                  title: 'Preferences Saved',
+                  description: 'Your notification preferences have been saved successfully.',
+                  status: 'success',
+                  duration: 3000,
+                  isClosable: true,
+              });
+              setPreferencesStatus({ status: 'success', message: 'Preferences saved successfully' });
+          } else {
+              throw new Error(response.data.message || 'Failed to save preferences');
+          }
+      } catch (error) {
+          console.error('Preferences save error:', error);
+          console.error('Error details:', {
+              message: error.message,
+              response: error.response?.data,
+              status: error.response?.status
+          });
+          toast({
+              title: 'Error Occurred',
+              description: error.response?.data?.message || 'Could not save preferences. Please try again.',
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+          });
+          setPreferencesStatus({ status: 'error', message: 'Failed to save preferences' });
+      } finally {
+          setPreferencesSaving(false);
+          setTimeout(() => setPreferencesStatus(null), 5000);
+      }
+  };
 
-       } catch (error) {
-           console.error('Preferences save error:', error);
-            toast({
-               title: 'Error Occurred',
-               description: error.message || 'Could not save preferences',
-               status: 'error',
-               duration: 5000,
-               isClosable: true,
-           });
-            setPreferencesStatus({ status: 'error', message: 'Failed to save preferences' });
-       } finally {
-           setPreferencesSaving(false);
-           // Hide status message after a few seconds
-           setTimeout(() => setPreferencesStatus(null), 5000);
-       }
-   };
+  // Update the useEffect for loading user data
+  useEffect(() => {
+      const loadUserData = async () => {
+          if (!user || !isLoading) return; // Add this check
+          
+          try {
+              setIsLoading(true);
+              // Load settings
+              console.log('Fetching settings...');
+              const settingsResponse = await api.get('/settings');
+              console.log('Settings response:', settingsResponse.data);
+              
+              if (settingsResponse.data.success) {
+                  const settings = settingsResponse.data.settings;
+                  setReceiveSms(settings.receiveSms);
+                  setReceiveEmail(settings.receiveEmail);
+              }
 
+              // Load profile data
+              console.log('Fetching profile...');
+              const profileResponse = await api.get('/profile');
+              console.log('Profile response:', profileResponse.data);
+              
+              if (profileResponse.data.success) {
+                  const profile = profileResponse.data.profile;
+                  setFullName(profile.full_name || '');
+                  setPhone(profile.phone_number || '');
+                  setAddress(profile.address || '');
+                  setEnergyMotto(profile.energy_motto || '');
+              }
+          } catch (error) {
+              console.error('Error loading user data:', error);
+              console.error('Error details:', {
+                  message: error.message,
+                  response: error.response?.data,
+                  status: error.response?.status,
+                  headers: error.response?.headers
+              });
+              toast({
+                  title: 'Error Loading Data',
+                  description: 'Could not load your profile and preferences. Please try refreshing the page.',
+                  status: 'error',
+                  duration: 5000,
+                  isClosable: true,
+              });
+          } finally {
+              setIsLoading(false);
+          }
+      };
 
-  // Handle Delete Account
+      loadUserData();
+  }, [user, isLoading, toast]);
+
+  // Update handleSaveProfile
+  const handleSaveProfile = async () => {
+      setProfileSaving(true);
+      setProfileStatus(null);
+      try {
+          const profileData = {
+              full_name: fullName,
+              email_address: user.email,
+              phone_number: phone,
+              address: address,
+              energy_motto: energyMotto
+          };
+
+          console.log('Saving profile data:', profileData); // Debug log
+          const response = await api.put('/profile', profileData);
+          console.log('Save profile response:', response.data);
+          
+          if (response.data.success) {
+              toast({
+                  title: 'Profile Updated',
+                  description: 'Your profile has been updated successfully.',
+                  status: 'success',
+                  duration: 3000,
+                  isClosable: true,
+              });
+              setProfileStatus({ status: 'success', message: 'Profile updated successfully' });
+          } else {
+              throw new Error(response.data.message || 'Failed to update profile');
+          }
+      } catch (error) {
+          console.error('Profile update error:', error);
+          console.error('Error details:', {
+              message: error.message,
+              response: error.response?.data,
+              status: error.response?.status
+          });
+          toast({
+              title: 'Error Occurred',
+              description: error.response?.data?.message || 'Could not update profile. Please try again.',
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+          });
+          setProfileStatus({ status: 'error', message: 'Failed to update profile' });
+      } finally {
+          setProfileSaving(false);
+          setTimeout(() => setProfileStatus(null), 5000);
+      }
+  };
+
+  // Update handleDeleteAccount
   const handleDeleteAccount = async () => {
-      // --- MOCK DELETE ACCOUNT PROCESS ---
-      console.log('Deleting account for user:', user?.email);
-      // In a real app: Call delete API, then clear auth token and redirect
-
-      onClose(); // Close the confirmation modal
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-
-      auth.logout(); // Clear auth token (assuming this clears localStorage)
-       toast({
-           title: 'Account Deleted',
-           description: 'Your account has been deleted successfully.',
-           status: 'success',
-           duration: 3000,
-           isClosable: true,
-       });
-      navigate('/login'); // Redirect to login page
-      // --- END MOCK PROCESS ---
+      setIsDeleting(true);
+      try {
+          // Call the delete account API
+          const response = await api.post('/auth/delete-account');
+          
+          if (response.data.success) {
+              // Clear all local storage
+              localStorage.clear();
+              
+              // Show success message
+              toast({
+                  title: 'Account Deleted',
+                  description: 'Your account has been successfully deleted.',
+                  status: 'success',
+                  duration: 5000,
+                  isClosable: true,
+              });
+              
+              // Close the confirmation modal
+              onClose();
+              
+              // Redirect to landing page
+              navigate('/');
+          } else {
+              throw new Error(response.data.message || 'Failed to delete account');
+          }
+      } catch (error) {
+          console.error('Delete account error:', error);
+          toast({
+              title: 'Error',
+              description: error.response?.data?.message || 'Failed to delete account. Please try again.',
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+          });
+      } finally {
+          setIsDeleting(false);
+      }
   };
 
 
   // Render loading spinner while user is being checked or data is loading initially
-  if (!user) {
+  if (!user || isLoading) {
        return (
            <Flex minH="100vh" align="center" justify="center" bg={bgColor}>
                <Spinner size="xl" color={spinnerColor} />
@@ -311,16 +445,70 @@ function SettingsPage() {
                     <VStack spacing={4} align="stretch">
                         <FormControl id="email">
                             <FormLabel color={mutedTextColor}>Email Address</FormLabel>
-                            {/* Using the defined inputFocusBorderColor */}
-                            <Input type="email" value={user?.email} isReadOnly focusBorderColor={inputFocusBorderColor} /> {/* Email is usually not changeable here */}
+                            <Input type="email" value={user.email} isReadOnly borderColor={inputFocusBorderColor} />
                         </FormControl>
-                        {/* Display last login if available */}
+                        <FormControl id="fullName">
+                            <FormLabel color={mutedTextColor}>Full Name</FormLabel>
+                            <Input 
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
+                                focusBorderColor={inputFocusBorderColor}
+                            />
+                        </FormControl>
+                        <FormControl id="phone">
+                            <FormLabel color={mutedTextColor}>Phone Number</FormLabel>
+                            <Input 
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                focusBorderColor={inputFocusBorderColor}
+                            />
+                        </FormControl>
+                        <FormControl id="address">
+                            <FormLabel color={mutedTextColor}>Address</FormLabel>
+                            <Input 
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                focusBorderColor={inputFocusBorderColor}
+                            />
+                        </FormControl>
+                        <FormControl id="energyMotto">
+                            <FormLabel color={mutedTextColor}>Energy Motto</FormLabel>
+                            <Input 
+                                value={energyMotto}
+                                onChange={(e) => setEnergyMotto(e.target.value)}
+                                focusBorderColor={inputFocusBorderColor}
+                                placeholder="Enter your energy motto or goal"
+                            />
+                        </FormControl>
+                        <Button 
+                            onClick={handleSaveProfile} 
+                            isLoading={profileSaving} 
+                            colorScheme="blue" 
+                            alignSelf="flex-start"
+                        >
+                            Save Profile
+                        </Button>
+                        {profileStatus && (
+                            <HStack>
+                                <Icon
+                                    as={profileStatus.status === 'success' ? CheckCircleIcon : WarningIcon}
+                                    color={profileStatus.status === 'success' ? successIconColor : warningIconColor}
+                                />
+                                <Text 
+                                    color={profileStatus.status === 'success' ? successTextColor : warningTextColor} 
+                                    fontSize="sm"
+                                >
+                                    {profileStatus.message}
+                                </Text>
+                            </HStack>
+                        )}
                          {user?.lastLogin && (
                             <Box>
-                                <Text fontSize="sm" color={mutedTextColor}>Last Login: {formatLastLogin(user.lastLogin)}</Text>
+                                <Text fontSize="sm" color={mutedTextColor}>
+                                    Last Login: {formatLastLogin(user.lastLogin)}
+                                </Text>
                             </Box>
                          )}
-                        {/* You can add more general user info fields here if your user object has them */}
                     </VStack>
                 </Box>
 
@@ -390,36 +578,53 @@ function SettingsPage() {
                      <Heading as="h2" size="lg" mb={4} color={headingColor}>Notification Preferences</Heading>
                      <Text color={mutedTextColor} mb={4}>Choose how you want to receive notifications.</Text>
                      <VStack spacing={4} align="stretch">
-                         <HStack justify="space-between">
+                         <FormControl display="flex" alignItems="center" justifyContent="space-between">
                              <FormLabel htmlFor="receive-sms" mb="0" color={mutedTextColor}>
                                  Receive SMS Notifications
                              </FormLabel>
-                             <Switch id="receive-sms" isChecked={receiveSms} onChange={(e) => setReceiveSms(e.target.checked)} colorScheme="blue" />
-                         </HStack>
-                         <HStack justify="space-between">
+                             <Switch 
+                                 id="receive-sms" 
+                                 isChecked={receiveSms} 
+                                 onChange={(e) => setReceiveSms(e.target.checked)} 
+                                 colorScheme="blue"
+                             />
+                         </FormControl>
+                         <FormControl display="flex" alignItems="center" justifyContent="space-between">
                              <FormLabel htmlFor="receive-email" mb="0" color={mutedTextColor}>
                                  Receive Email Notifications
                              </FormLabel>
-                             <Switch id="receive-email" isChecked={receiveEmail} onChange={(e) => setReceiveEmail(e.target.checked)} colorScheme="blue" />
-                         </HStack>
-                         <Button onClick={handleSavePreferences} isLoading={preferencesSaving} colorScheme="blue" alignSelf="flex-start">
+                             <Switch 
+                                 id="receive-email" 
+                                 isChecked={receiveEmail} 
+                                 onChange={(e) => setReceiveEmail(e.target.checked)} 
+                                 colorScheme="blue"
+                             />
+                         </FormControl>
+                         <Button 
+                             onClick={handleSavePreferences} 
+                             isLoading={preferencesSaving} 
+                             colorScheme="blue" 
+                             alignSelf="flex-start"
+                             mt={4}
+                         >
                              Save Preferences
                          </Button>
-                     {preferencesStatus && (
-                              <HStack>
-                                   {/* Using the defined successIconColor and warningIconColor */}
-                            <Icon
-                                as={preferencesStatus.status === 'success' ? CheckCircleIcon : WarningIcon}
-                                       color={preferencesStatus.status === 'success' ? successIconColor : warningIconColor}
-                                  />
-                                   {/* Using the defined successTextColor and warningTextColor */}
-                                  <Text color={preferencesStatus.status === 'success' ? successTextColor : warningTextColor} fontSize="sm">
-                                      {preferencesStatus.message}
-                                  </Text>
-                              </HStack>
-                          )}
-                </VStack>
-            </Box>
+                         {preferencesStatus && (
+                             <HStack>
+                                 <Icon
+                                     as={preferencesStatus.status === 'success' ? CheckCircleIcon : WarningIcon}
+                                     color={preferencesStatus.status === 'success' ? successIconColor : warningIconColor}
+                                 />
+                                 <Text 
+                                     color={preferencesStatus.status === 'success' ? successTextColor : warningTextColor} 
+                                     fontSize="sm"
+                                 >
+                                     {preferencesStatus.message}
+                                 </Text>
+                             </HStack>
+                         )}
+                     </VStack>
+                 </Box>
 
 
                 <Divider borderColor={borderColor} /> {/* Add another divider */}
@@ -446,14 +651,20 @@ function SettingsPage() {
 
                     <AlertDialogBody>
                     Are you sure you want to delete your account? This action cannot be undone.
+                    All your data, including profile information, preferences, and transaction history will be permanently deleted.
                     </AlertDialogBody>
 
                     <AlertDialogFooter>
                     <Button ref={cancelRef} onClick={onClose}>
                         Cancel
                     </Button>
-                    <Button colorScheme="red" onClick={handleDeleteAccount} ml={3}>
-                        Delete
+                    <Button 
+                        colorScheme="red" 
+                        onClick={handleDeleteAccount} 
+                        ml={3}
+                        isLoading={isDeleting} // Add this state
+                    >
+                        Delete Account
                     </Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>

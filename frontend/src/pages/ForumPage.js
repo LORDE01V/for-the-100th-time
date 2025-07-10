@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-comment-textnodes */
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaPaperPlane, FaComments } from 'react-icons/fa';
 import {
@@ -10,6 +10,7 @@ import {
   Text,
   Textarea,
   VStack,
+  Spinner, // Ensure Spinner is imported only once
   useColorModeValue,
   useToast,
   Collapse,
@@ -17,7 +18,9 @@ import {
   ListItem,
   SimpleGrid,
   Icon,
+  Tooltip,
 } from '@chakra-ui/react';
+import api from '../services/api';
 
 const ForumPage = () => {
   const toast = useToast();
@@ -35,14 +38,16 @@ const ForumPage = () => {
   const [summary, setSummary] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [replies, setReplies] = useState({});
+  const [tone, setTone] = useState(null);
+  const [isCheckingTone, setIsCheckingTone] = useState(false);
 
-  // Mock data for forum topics
-  const topics = [
+  // Mock data for dummyTopics
+  const dummyTopics = useMemo(() => [
     {
       id: 1,
       title: 'Solar Panel Maintenance Tips',
       author: 'John Doe',
-      lastActivity: '2024-03-15',
+      lastActivity: '2025-03-15',
       replies: 5,
       posts: [
         'Post 1: Regular cleaning of panels is essential for efficiency.',
@@ -66,7 +71,7 @@ const ForumPage = () => {
       id: 2,
       title: 'Best Battery Storage Solutions',
       author: 'Jane Smith',
-      lastActivity: '2024-03-14',
+      lastActivity: '2025-03-14',
       replies: 3,
       posts: [
         'Post 1: Lithium-ion batteries are reliable for home use.',
@@ -95,7 +100,7 @@ const ForumPage = () => {
       id: 3,
       title: 'Energy Saving Strategies',
       author: 'Mike Johnson',
-      lastActivity: '2024-03-13',
+      lastActivity: '2025-03-13',
       replies: 7,
       posts: [
         'Post 1: Turn off lights when not in use.',
@@ -123,7 +128,7 @@ const ForumPage = () => {
       id: 4,
       title: 'Inverter Installation Guide',
       author: 'Emily Clark',
-      lastActivity: '2024-03-12',
+      lastActivity: '2025-03-12',
       replies: 4,
       posts: [
         'Post 1: Start with selecting the right inverter size.',
@@ -149,7 +154,7 @@ const ForumPage = () => {
       id: 5,
       title: 'Renewable Energy Grants',
       author: 'Alex Rivera',
-      lastActivity: '2024-03-11',
+      lastActivity: '2025-03-11',
       replies: 6,
       posts: [
         'Post 1: Government grants cover solar installations.',
@@ -173,7 +178,7 @@ const ForumPage = () => {
       id: 6,
       title: 'Solar vs. Wind Energy',
       author: 'Sarah Lee',
-      lastActivity: '2024-03-10',
+      lastActivity: '2025-03-10',
       replies: 8,
       posts: [
         'Post 1: Solar is ideal for sunny regions.',
@@ -197,7 +202,7 @@ const ForumPage = () => {
       id: 7,
       title: 'Home Battery Backup Systems',
       author: 'David Kim',
-      lastActivity: '2024-03-09',
+      lastActivity: '2025-03-09',
       replies: 2,
       posts: [
         'Post 1: Essential during power outages.',
@@ -221,7 +226,7 @@ const ForumPage = () => {
       id: 8,
       title: 'Eco-Friendly Appliances',
       author: 'Laura Chen',
-      lastActivity: '2024-03-08',
+      lastActivity: '2025-03-08',
       replies: 5,
       posts: [
         'Post 1: Energy-star fridges save power.',
@@ -245,7 +250,7 @@ const ForumPage = () => {
       id: 9,
       title: 'Grid Independence Tips',
       author: 'Robert Garcia',
-      lastActivity: '2024-03-07',
+      lastActivity: '2025-03-07',
       replies: 3,
       posts: [
         'Post 1: Start with solar panels installation.',
@@ -269,7 +274,7 @@ const ForumPage = () => {
       id: 10,
       title: 'Energy Monitoring Tools',
       author: 'Maria Lopez',
-      lastActivity: '2024-03-06',
+      lastActivity: '2025-03-06',
       replies: 7,
       posts: [
         'Post 1: Apps like Sense for real-time tracking.',
@@ -293,7 +298,7 @@ const ForumPage = () => {
       id: 11,
       title: 'Sustainable Home Design',
       author: 'James Patel',
-      lastActivity: '2024-03-05',
+      lastActivity: '2025-03-05',
       replies: 4,
       posts: [
         'Post 1: Passive solar design maximizes light.',
@@ -317,7 +322,7 @@ const ForumPage = () => {
       id: 12,
       title: 'EV Charging Solutions',
       author: 'Olivia Nguyen',
-      lastActivity: '2024-03-04',
+      lastActivity: '2025-03-04',
       replies: 6,
       posts: [
         'Post 1: Home chargers are convenient for daily use.',
@@ -361,7 +366,7 @@ const ForumPage = () => {
         'Post 15: Success stories from users.'
       ]
     }
-  ];
+  ]);
 
   const mockSummarize = (posts) => {
     // Simple mock function to generate a bullet-point summary from posts
@@ -383,7 +388,6 @@ const ForumPage = () => {
     const userName = localStorage.getItem('forumUserName') || 'You';
     const topicId = selectedTopic.id;
 
-    // Edit: Now that replies is defined, this will work correctly
     const newReplies = { ...replies };
     if (!newReplies[topicId]) newReplies[topicId] = [];
     newReplies[topicId].push({
@@ -392,7 +396,7 @@ const ForumPage = () => {
       timestamp: Date.now(),
     });
 
-    setReplies(newReplies);  // Now setReplies is defined and can be used
+    setReplies(newReplies);
 
     toast({
       title: 'Message Posted',
@@ -419,7 +423,7 @@ const ForumPage = () => {
 
     setIsLoading(true);
     try {
-      const mockedSummary = mockSummarize(selectedTopic.posts);  // Use mock function
+      const mockedSummary = mockSummarize(selectedTopic.posts);
       setSummary(mockedSummary);
     } catch (error) {
       toast({
@@ -434,9 +438,50 @@ const ForumPage = () => {
     }
   };
 
+  const handleCheckTone = async () => {
+    if (!newMessage.trim()) {
+      toast({
+        title: 'Please enter some text to check the tone.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    setIsCheckingTone(true);
+    setTone(null);
+    try {
+      const response = await api.post('/api/ai/sentiment', { text: newMessage });
+      setTone(response.data.tone);
+    } catch (error) {
+      toast({
+        title: 'Failed to check tone. Please try again.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsCheckingTone(false);
+    }
+  };
+
+  const renderTone = () => {
+    if (!tone) return null;
+    let color = 'gray.400', label = 'Neutral', emoji = '😐';
+    if (tone === 'positive') { color = 'green.400'; label = 'Positive'; emoji = '😊'; }
+    if (tone === 'negative') { color = 'red.400'; label = 'Negative'; emoji = '😞'; }
+    return (
+      <Tooltip label={label}>
+        <Text ml={2} color={color} fontWeight="bold" as="span" fontSize="lg">
+          {emoji}
+        </Text>
+      </Tooltip>
+    );
+  };
+
   const renderTopicsList = () => (
     <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w='full'>
-      {topics.map((topic) => (
+      {dummyTopics.map((topic) => (
         <Box
           key={topic.id}
           p={6}
@@ -515,10 +560,24 @@ const ForumPage = () => {
       <Box p={6} bg="white" borderRadius="lg" shadow="md">
         <Textarea
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Write your message..."
-          mb={4}
+          onChange={e => {
+            setNewMessage(e.target.value);
+            setTone(null); // Reset tone if user edits
+          }}
+          placeholder="Type your message..."
+          mb={2}
         />
+        <Flex align="center" mb={2}>
+          <Button
+            size="sm"
+            onClick={handleCheckTone}
+            isDisabled={isCheckingTone || !newMessage.trim()}
+            mr={2}
+          >
+            {isCheckingTone ? <Spinner size="xs" /> : 'Check Tone'}
+          </Button>
+          {renderTone()}
+        </Flex>
         <Button
           rightIcon={<FaPaperPlane />}
           colorScheme="blue"
@@ -575,7 +634,10 @@ const ForumPage = () => {
 
         <VStack spacing={8} align="stretch">
           <Heading size="xl">Community Forum</Heading>
-          {selectedTopic ? renderTopicDiscussion() : renderTopicsList()}
+          {selectedTopic 
+            ? renderTopicDiscussion() 
+            : renderTopicsList()
+          }
         </VStack>
     </Box>
     </Flex>

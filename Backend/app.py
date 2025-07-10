@@ -1,12 +1,18 @@
 from dotenv import load_dotenv
 import os
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, send_from_directory, session, redirect, url_for
 from flask_cors import CORS
 from hugging_services import HuggingFaceChatbot
 import logging
-from agent import EnergyUsageOptimizerAgent
+from Energy_optimizer.agent import EnergyUsageOptimizerAgent
 from sys import stdout  # Import for StreamHandler
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+import datetime
+from auth import auth_bp
+from routes.home import home_bp
+from routes.email import email_bp  # Import the email blueprint
+from support import initialize_db, get_db  # Import database utilities
 
 # Set up logging to console only
 logger = logging.getLogger(__name__)
@@ -20,7 +26,39 @@ load_dotenv()  # Load .env variables
 ESKOM_TOKEN = os.getenv("ESKOM_TOKEN")  # Added Eskom token loading
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://192.168.18.3:3000"]}})
+
+# Add JWT configuration
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your_default_secret_key_here')  # Use an environment variable for security
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600  # 1 hour, for example
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 2592000  # 30 days, for example
+jwt = JWTManager(app)
+
+# Register blueprints
+app.register_blueprint(auth_bp)
+app.register_blueprint(home_bp)
+app.register_blueprint(email_bp)  # Register the email blueprint
+
+# Initialize database
+if not initialize_db():
+    raise Exception("Database initialization failed. Please check your database connection.")
+
+# Home route
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+# Serve static files
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
+
+# Error handling
+def handle_error(e):
+    return jsonify(error=str(e)), 500
+
+app.errorhandler(404)(handle_error)
+app.errorhandler(500)(handle_error)
 
 chatbot = HuggingFaceChatbot()
 
@@ -31,7 +69,7 @@ def chat():
     Expects JSON with a 'message' field.
     """
     try:
-        data = request.json
+        data = request.get_json() or {}
         message = data.get('message', '')
         logger.info(f"Received message: {message}")
         response = chatbot.get_response(message)
@@ -125,6 +163,44 @@ def version():
     }
     logger.info(f"Version info requested: {version_info}")
     return jsonify(version_info)
+
+@app.route('/api/ai/suggest-plan', methods=['POST'])
+def suggest_plan():
+    try:
+        data = request.json  # Expecting JSON with usageHours, budget, deviceCount
+        logger.info(f"Received suggest-plan request: {data}")
+        # Simple mock logic: Based on input, return a plan (e.g., 'Pro Saver' if budget > 50)
+        if data and data.get('budget', 0) > 50:
+            return jsonify({'plan': 'Pro Saver'})
+        else:
+            return jsonify({'plan': 'Basic Plan'})
+    except Exception as e:
+        logger.error(f"Error in suggest-plan endpoint: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/log', methods=['POST'])
+def log_message():
+    try:
+        message = request.json.get('message', '')
+        log_file_path = os.path.abspath('../frontend/frontend.log')  # Path relative to backend
+        with open(log_file_path, 'a') as log_file:
+            log_file.write(f"{datetime.datetime.now()} - {message}\n")
+        return jsonify({'status': 'success'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# API routes
+@app.route('/api/data')
+def get_data():
+    # Example API endpoint
+    return jsonify({"message": "Data endpoint"})
+
+# Protected route example
+@app.route('/api/protected')
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
 
 if __name__ == '__main__':
     logger.info("Starting Flask app on port 5000")
