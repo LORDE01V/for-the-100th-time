@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Text,
@@ -14,7 +14,6 @@ import {
   ModalFooter,
   Button,
   Input,
-  Tooltip,
   Stack,
   Textarea,
   Select,
@@ -65,17 +64,50 @@ const EventCalendar = () => {
     other: useColorModeValue('gray.500', 'gray.300')
   };
 
+  // Add state for hover tracking
+  const [hoveredDay, setHoveredDay] = useState(null);
+
+  // Add color mode values at the top with other style configs
+  const hoverCardBg = useColorModeValue('white', 'gray.700');
+  const hoverCardText = useColorModeValue('gray.800', 'whiteAlpha.900');
+
+  // Add new state for search
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+  // Add new state for filters
+  const [activeFilters, setActiveFilters] = useState([]);
+
+  // Add filter toggle function
+  const toggleFilter = (eventType) => {
+    setActiveFilters(prev => 
+      prev.includes(eventType)
+        ? prev.filter(f => f !== eventType)
+        : [...prev, eventType]
+    );
+  };
+
+  // Add debounce effect
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery.toLowerCase());
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
   const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
   const startDay = new Date(currentYear, currentMonth, 1).getDay();
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
 
   useEffect(() => {
-    // Fetch events from the database when the component mounts
     const fetchEvents = async () => {
       try {
-        const response = await api.get('/api/events'); // Replace with your actual endpoint
-        setEvents(response.data); // Assuming the API returns events as an object
+        const response = await api.get('/api/events');
+        setEvents(response.data);
       } catch (error) {
         console.error('Error fetching events:', error);
         toast({
@@ -90,7 +122,7 @@ const EventCalendar = () => {
     };
 
     fetchEvents();
-  }, ['toast']);
+  }, [toast]);  // Added missing dependency
 
   const handlePrev = () => {
     if (currentMonth === 0) {
@@ -125,12 +157,7 @@ const EventCalendar = () => {
   };
 
   const saveEvent = async () => {
-    // Validate all required fields
-    if (!eventData.title.trim() || 
-        !eventData.start || 
-        !eventData.end || 
-        !eventData.description.trim() || 
-        !eventData.location.trim()) {
+    if (!eventData.title.trim() || !eventData.start || !eventData.end || !eventData.description.trim() || !eventData.location.trim()) {
       toast({
         title: 'Missing required fields',
         description: 'Please fill in all event details',
@@ -143,20 +170,18 @@ const EventCalendar = () => {
     }
 
     try {
-      const updated = { 
-        ...events, 
-        [selectedDate]: eventData 
-      };
-
-      // Save the event to the database
-      await api.post('/events', { date: selectedDate, ...eventData }); // Replace with your actual endpoint
-
-      setEvents(updated);
+      const updatedEvent = { ...eventData };
+      if (events[selectedDate]) {
+        await api.put(`/api/events/${selectedDate}`, updatedEvent);  // PUT for updates
+      } else {
+        await api.post('/api/events', updatedEvent);  // POST for new events
+      }
+      const response = await api.get('/api/events');  // Refetch to sync
+      setEvents(response.data);
       onClose();
-
       toast({
         title: 'Event saved',
-        description: 'Your event has been successfully saved to the database.',
+        description: 'Your event has been successfully saved to the server.',
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -175,26 +200,22 @@ const EventCalendar = () => {
     }
   };
 
+  // Modify deleteEvent function
   const deleteEvent = async () => {
     if (deleteConfirmationText.toLowerCase() !== 'delete') return;
 
     try {
-      const updated = { ...events };
-      delete updated[selectedDate];
-
-      // Delete the event from the database
-      await api.delete(`/events/${selectedDate}`); // Replace with your actual endpoint
-
-      setEvents(updated);
+      await api.delete(`/api/events/${selectedDate}`);  // DELETE from server
+      const response = await api.get('/api/events');  // Refetch to sync
+      setEvents(response.data);
       setDeleteConfirmationText('');
       onDeleteClose();
       onClose();
-
       toast({
         title: 'Event deleted',
-        description: 'Your event has been successfully removed from the database.',
+        description: 'The event has been removed from the server.',
         status: 'success',
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
         position: 'bottom',
       });
@@ -219,45 +240,86 @@ const EventCalendar = () => {
     for (let i = 0; i < totalCells; i++) {
       const isEmpty = i < startDay;
       const key = `${currentYear}-${currentMonth}-${dayCounter}`;
-      const isEvent = events[key];
+      const event = events[key];
+      const isEvent = event && 
+        event.title.toLowerCase().includes(debouncedSearchQuery) &&
+        (activeFilters.length === 0 || activeFilters.includes(event.eventType));
       
       if (!isEmpty) {
         const currentDay = dayCounter;
         weeks.push(
-          <Tooltip 
-            key={i} 
-            label={isEvent ? `
-              ${events[key].title}
-              Type: ${events[key].eventType}
-              Time: ${events[key].start}
-              Location: ${events[key].location}
-            ` : ''} 
-            hasArrow
+          <Box
+            key={i}
+            w="40px"
+            h="40px"
+            m="1"
+            borderRadius="md"
+            border="1px solid"
+            borderColor="gray.200"
+            boxShadow="sm"
+            transition="0.2s"
+            bg={isEvent ? eventTypeColors[event.eventType] : dateBg}
+            color={isEvent ? 'white' : dateColor}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            cursor="pointer"
+            onClick={() => handleDateClick(currentDay)}
+            onMouseEnter={() => isEvent && setHoveredDay(key)}
+            onMouseLeave={() => setHoveredDay(null)}
+            position="relative"
+            _hover={{
+              transform: 'scale(1.05)',
+              boxShadow: 'md'
+            }}
           >
-            <Box
-              w="40px"
-              h="40px"
-              m="1"
-              borderRadius="full"
-              bg={isEvent ? 
-                eventTypeColors[events[key].eventType] : 
-                dateBg
-              }
-              color={isEvent ? 'white' : dateColor}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              cursor="pointer"
-              onClick={() => handleDateClick(currentDay)}
-              _hover={{
-                transform: 'scale(1.1)',
-                shadow: 'md'
-              }}
-            >
-              {dayCounter++}
-            </Box>
-          </Tooltip>
+            {currentDay}
+            {isEvent && (
+              <>
+                <Box 
+                  position="absolute" 
+                  bottom="1" 
+                  right="1" 
+                  bg="red.400" 
+                  w="2" 
+                  h="2" 
+                  borderRadius="full"
+                />
+                {hoveredDay === key && (
+                  <Box
+                    position="absolute"
+                    bottom="100%"
+                    left="50%"
+                    transform="translateX(-50%)"
+                    bg={hoverCardBg}
+                    p={2}
+                    boxShadow="xl"
+                    borderRadius="md"
+                    fontSize="xs"
+                    zIndex="tooltip"
+                    minWidth="120px"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                  >
+                    <Text fontWeight="bold" color={hoverCardText}>
+                      {event.title}
+                    </Text>
+                    <Text color={hoverCardText}>
+                      {new Date(event.start).toLocaleTimeString([], { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </Text>
+                    <Text color={hoverCardText} textTransform="capitalize">
+                      {event.eventType}
+                    </Text>
+                  </Box>
+                )}
+              </>
+            )}
+          </Box>
         );
+        dayCounter++;
       } else {
         weeks.push(
           <Box key={i} w="40px" h="40px" m="1" />
@@ -299,6 +361,37 @@ const EventCalendar = () => {
           variant="ghost"
         />
       </Flex>
+
+      {/* Add search input */}
+      <Input
+        placeholder="Search events..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        mb={4}
+        variant="filled"
+        _focus={{ borderColor: 'blue.300' }}
+      />
+
+      {/* Add filter section */}
+      <Box mb={4}>
+        <Text fontSize="sm" fontWeight="semibold" mb={2} color={dayColor}>
+          Filter by event type
+        </Text>
+        <Flex wrap="wrap" gap={2}>
+          {Object.keys(eventTypeColors).map((eventType) => (
+            <Button
+              key={eventType}
+              size="sm"
+              variant={activeFilters.includes(eventType) ? 'solid' : 'outline'}
+              colorScheme={eventTypeColors[eventType].split('.')[0]}
+              onClick={() => toggleFilter(eventType)}
+              textTransform="capitalize"
+            >
+              {eventType}
+            </Button>
+          ))}
+        </Flex>
+      </Box>
 
       <Grid templateColumns="repeat(7, 1fr)" gap={2} mb={2}>
         {days.map((day) => (

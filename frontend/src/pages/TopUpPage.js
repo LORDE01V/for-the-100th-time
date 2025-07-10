@@ -34,6 +34,8 @@ import {
 import { useTransactions } from '../context/TransactionsContext'; // Import the hook
 import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs
 
+import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png';  // Import the new background image
+
 function TopUpPage() {
     const navigate = useNavigate();
     const toast = useToast();
@@ -217,49 +219,51 @@ function TopUpPage() {
         );
     }
 
-    return (
-        <Flex
-            minH="100vh"
-            align="center"
-            justify="center"
-            p={4}
-            backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
-            backgroundSize="cover"
-            backgroundPosition="center"
-            backgroundAttachment="fixed"
-            position="relative"
-            _before={{
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                bg: 'rgba(0, 0, 0, 0.5)',
-                zIndex: 1,
-            }}
-        >
-            <Box
-                maxW="md"
-                w="full"
-                {...glassmorphismBoxStyles}
-                boxShadow="md"
-                borderRadius="lg"
-                p={6}
-                textAlign="center"
-                position="relative"
-                zIndex={2}
-            >
-                <HStack justify="space-between" w="full" mb={8} align="center">
-                    <Button
-                        leftIcon={<FaArrowLeft />}
-                        variant="ghost"
-                        onClick={() => navigate('/home')}
-                        color={headingColor}
-                    >
-                        Back to Home
-                    </Button>
-                </HStack>
+  return (
+    <Flex
+      minH="100vh"
+      align="center"
+      justify="center"
+      p={4}
+      backgroundImage={`url(${topUpBackground})`}  // Replace gradient with the new image
+      backgroundSize="cover"
+      backgroundPosition="center"
+      backgroundAttachment="fixed"
+      position="relative"
+      _before={{
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          bg: 'rgba(0, 0, 0, 0.5)',  // Semi-transparent overlay for readability
+          zIndex: 1,
+      }}
+    >
+      <Box
+        maxW="md"
+        w="full"
+        {...glassmorphismBoxStyles}  // Existing glassmorphism styles
+        boxShadow="md"
+        borderRadius="lg"
+        p={6}
+        textAlign="center"
+        position="relative"
+        zIndex={2}
+        backdropFilter="blur(16px)"  // Increase blur for stronger glassmorphism effect
+      >
+         {/* Back to Home Button in HStack */}
+         <HStack justify="space-between" w="full" mb={8} align="center">
+             <Button
+               leftIcon={<FaArrowLeft />}
+               variant="ghost"
+               onClick={() => navigate('/home')}
+               color={headingColor}
+             >
+                Back to Home
+             </Button>
+         </HStack>
 
                 <Heading as="h2" size="xl" mb={6} color={headingColor} textAlign="center">
                     Top-Up / Recharge
@@ -272,14 +276,18 @@ function TopUpPage() {
                     </Text>
                 </Box>
 
-                <VStack as="form" spacing={4} onSubmit={handleTopUp} noValidate>
-                    <FormControl>
-                        <FormLabel>Transaction Type</FormLabel>
-                        <Select value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
-                            <option value="topup">Top-Up</option>
-                            <option value="recharge">Recharge</option>
-                        </Select>
-                    </FormControl>
+        <VStack as="form" spacing={4} onSubmit={handleTopUp} noValidate>
+          {/* Transaction Type Selection */}
+          <FormControl id="transaction-type">
+            <FormLabel>Transaction Type</FormLabel>
+            <Select
+              value={transactionType}
+              onChange={(e) => setTransactionType(e.target.value)}
+            >
+              <option value="topup">Top-Up</option>
+              <option value="recharge">Recharge</option>
+            </Select>
+          </FormControl>
 
                     <FormControl id="top-up-amount">
                         <FormLabel>Amount (ZAR)</FormLabel>
@@ -291,15 +299,16 @@ function TopUpPage() {
                         <Input type="text" placeholder="Enter promo code" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} />
                     </FormControl>
 
-                    <FormControl id="voucher-code">
-                        <FormLabel>Voucher Code (Optional)</FormLabel>
-                        <Input
-                            type="text"
-                            placeholder="Enter voucher code"
-                            value={voucherCode}
-                            onChange={(e) => setVoucherCode(e.target.value)}
-                        />
-                    </FormControl>
+           {/* Optional Voucher Code Input */}
+          <FormControl id="voucher-code">
+            <FormLabel>Voucher Code (Optional)</FormLabel>
+            <Input
+              type="text"
+              placeholder="Enter voucher code"
+              value={voucherCode}
+              onChange={(e) => setVoucherCode(e.target.value)}
+            />
+          </FormControl>
 
                     <Button
                         type="submit"
@@ -317,31 +326,27 @@ function TopUpPage() {
 
                 <Divider my={6} />
 
-                <Box>
-                    <Heading as="h3" size="md" mb={4} color={headingColor}>
-                        Auto Top-Up Settings
-                    </Heading>
-
-                    {isLoadingSettings ? (
-                        <Flex justify="center" align="center" p={4}>
-                            <Spinner size="sm" mr={2} />
-                            <Text>Loading settings...</Text>
-                        </Flex>
-                    ) : isAutoTopUpEnabled ? (
-                        <Alert status="success" mb={4}>
-                            <AlertIcon />
-                            <Box>
-                                <AlertTitle>Auto Top-Up is Active</AlertTitle>
-                                <AlertDescription>
-                                    Your account will be topped up with R{autoTopUpSettings?.top_up_amount} when balance falls below R{autoTopUpSettings?.min_balance}.
-                                </AlertDescription>
-                            </Box>
-                        </Alert>
-                    ) : (
-                        <Text color={textColor} mb={4}>
-                            Enable automatic top-ups to ensure you never run out of credit.
-                        </Text>
-                    )}
+        {/* Auto Top-Up Section */}
+        <Box>
+          <Heading as="h3" size="md" mb={4} color={headingColor}>
+            Auto Top-Up Settings
+          </Heading>
+          
+          {isAutoTopUpEnabled ? (
+            <Alert status="success" mb={4} bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(10px)" borderRadius="md">
+              <AlertIcon />
+              <Box>
+                <AlertTitle>Auto Top-Up is Active</AlertTitle>
+                <AlertDescription>
+                  Your account will be topped up with R{autoTopUpAmount} when balance falls below R{minBalance}.
+                </AlertDescription>
+              </Box>
+            </Alert>
+          ) : (
+            <Text color={textColor} mb={4}>
+              Enable automatic top-ups to ensure you never run out of credit.
+            </Text>
+          )}
 
                     <Button
                         colorScheme={isAutoTopUpEnabled ? "red" : "green"}
@@ -354,64 +359,65 @@ function TopUpPage() {
                     </Button>
                 </Box>
 
-                <Modal isOpen={isOpen} onClose={onClose}>
-                    <ModalOverlay />
-                    <ModalContent>
-                        <ModalHeader>Auto Top-Up Settings</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                            <VStack spacing={4}>
-                                <FormControl>
-                                    <FormLabel>Minimum Balance (R)</FormLabel>
-                                    <Input
-                                        type="number"
-                                        placeholder="e.g., 100"
-                                        value={minBalance}
-                                        onChange={(e) => setMinBalance(e.target.value)}
-                                    />
-                                </FormControl>
+        {/* Auto Top-Up Modal */}
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Auto Top-Up Settings</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl>
+                  <FormLabel>Minimum Balance (R)</FormLabel>
+                  <Input
+                    type="number"
+                    placeholder="e.g., 100"
+                    value={minBalance}
+                    onChange={(e) => setMinBalance(e.target.value)}
+                  />
+                </FormControl>
 
-                                <FormControl>
-                                    <FormLabel>Auto Top-Up Amount (R)</FormLabel>
-                                    <Input
-                                        type="number"
-                                        placeholder="e.g., 200"
-                                        value={autoTopUpAmount}
-                                        onChange={(e) => setAutoTopUpAmount(e.target.value)}
-                                    />
-                                </FormControl>
+                <FormControl>
+                  <FormLabel>Auto Top-Up Amount (R)</FormLabel>
+                  <Input
+                    type="number"
+                    placeholder="e.g., 200"
+                    value={autoTopUpAmount}
+                    onChange={(e) => setAutoTopUpAmount(e.target.value)}
+                  />
+                </FormControl>
 
-                                <FormControl>
-                                    <FormLabel>Frequency</FormLabel>
-                                    <Select
-                                        value={autoTopUpFrequency}
-                                        onChange={(e) => setAutoTopUpFrequency(e.target.value)}
-                                    >
-                                        <option value="weekly">Weekly</option>
-                                        <option value="monthly">Monthly</option>
-                                        <option value="quarterly">Quarterly</option>
-                                    </Select>
-                                </FormControl>
-                            </VStack>
-                        </ModalBody>
+                <FormControl>
+                  <FormLabel>Frequency</FormLabel>
+                  <Select
+                    value={autoTopUpFrequency}
+                    onChange={(e) => setAutoTopUpFrequency(e.target.value)}
+                  >
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                  </Select>
+                </FormControl>
+              </VStack>
+            </ModalBody>
 
-                        <ModalFooter>
-                            <Button variant="ghost" mr={3} onClick={onClose}>
-                                Cancel
-                            </Button>
-                            <Button
-                                colorScheme="green"
-                                onClick={handleAutoTopUpSave}
-                                isLoading={isProcessing}
-                            >
-                                Save Settings
-                            </Button>
-                        </ModalFooter>
-                    </ModalContent>
-                </Modal>
-            </Box>
-        </Flex>
-    );
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="green"
+                onClick={handleAutoTopUpSave}
+                isLoading={isProcessing}
+              >
+                Save Settings
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Box>
+    </Flex>
+  );
 }
 
 export default TopUpPage;

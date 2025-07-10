@@ -26,6 +26,8 @@ import {
 // Import Icons
 import { FaArrowLeft } from 'react-icons/fa';
 
+import notificationBackground from '../assets/images/notification.png';
+
 function NotificationsPage() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -104,7 +106,7 @@ function NotificationsPage() {
   return (
     <Box
       minH="100vh"
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundImage={`url(${notificationBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
@@ -137,38 +139,36 @@ function NotificationsPage() {
           Notifications
         </Heading>
 
-        {isLoading ? (
-          <Flex justify="center" align="center" minH="200px">
-            <Spinner size="xl" color="blue.500" />
-          </Flex>
-        ) : (
-          <Stack spacing={4}>
-            {activeNotifications.length > 0 ? (
-              activeNotifications.map((notif) => (
-                <Alert
-                  key={notif.id}
-                  status={notif.status}
-                  variant="left-accent"
-                  pr={10}
-                >
-                  <AlertIcon />
-                  <Box flex="1">
-                    <AlertTitle mt={-1} mb={1} fontSize="md">{notif.title}</AlertTitle>
-                    <AlertDescription display="block">{notif.description}</AlertDescription>
-                  </Box>
-                  <CloseButton
-                    position="absolute"
-                    right="8px"
-                    top="8px"
-                    onClick={() => handleDismissNotification(notif.id)}
-                  />
-                </Alert>
-              ))
-            ) : (
-              <Text textAlign="center" mt={8} color={textColor}>No new notifications.</Text>
-            )}
-          </Stack>
-        )}
+        <Stack spacing={4}>
+          {activeNotifications.length > 0 ? (
+            activeNotifications.map((notif) => (
+              <Alert
+                key={notif.id}
+                status={notif.status}
+                variant="left-accent"
+                bg="rgba(255, 255, 255, 0.1)"
+                backdropFilter="blur(10px)"
+                border="1px solid rgba(255, 255, 255, 0.2)"
+                pr={10} // Add padding to the right to make space for the close button
+              >
+                <AlertIcon />
+                <Box flex="1">
+                  <AlertTitle mt={-1} mb={1} fontSize="md">{notif.title}</AlertTitle>
+                  <AlertDescription display="block">{notif.description}</AlertDescription>
+                </Box>
+                <CloseButton
+                  position="absolute"
+                  right="8px"
+                  top="8px"
+                  onClick={() => handleDismissNotification(notif.id)}
+                />
+              </Alert>
+            ))
+          ) : (
+            <Text textAlign="center" mt={8} color={textColor}>No new notifications.</Text>
+          )}
+        </Stack>
+
       </Container>
     </Box>
   );

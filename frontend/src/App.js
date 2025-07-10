@@ -39,7 +39,7 @@ function App() {
           <Route path='/about' element={<AboutPage />} />
           <Route path='/auth/callback' element={<OAuthCallbackHandler />} />
           <Route path='/dashboard' element={<DashboardPage />} />
-          <Route path='/topup' element={<TopUpPage />} />
+          <Route path='/top-up' element={<TopUpPage />} />
           <Route path='/settings' element={<SettingsPage />} />
           <Route path='/impact' element={<ImpactPage />} />
           <Route path='/expenses' element={<ExpensesPage />} />

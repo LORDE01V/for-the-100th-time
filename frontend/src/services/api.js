@@ -55,18 +55,50 @@ api.interceptors.response.use(
 // Auth API calls
 export const auth = {
     login: async (email, password) => {
-        const response = await api.post('/api/auth/login', { email, password });
-        if (response.data.success) {
-            const token = String(response.data.token).trim();
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
+        try {
+            const response = await api.post('/api/auth/login', {
+                email: email.toLowerCase().trim(),  // Normalize email
+                password
+            });
+            if (response.data.success) {
+                if (response.data.access_token) {
+                    localStorage.setItem('token', response.data.access_token);
+                }
+                if (response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+                // Removed redirection to let the component handle navigation
+                // window.location.href = '/dashboard';
+            }
+            return response.data;
+        } catch (error) {
+            console.error('Login error:', error.response?.data);
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+            throw new Error('Failed to connect to the server');
         }
-        return response.data;
     },
 
-    register: async (userData) => {
-        const response = await api.post('/api/auth/register', userData);
-        return response.data;
+    register: async (userData) => {  // Updated to accept an object
+        try {
+            const response = await api.post('/api/auth/register', userData);  // Pass the object directly
+            if (response.data.success) {
+                if (response.data.access_token) {
+                    localStorage.setItem('token', response.data.access_token);
+                }
+                if (response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+            }
+            return response.data;
+        } catch (error) {
+            console.error('Registration error:', error.response?.data);
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+            throw new Error('Failed to connect to the server');
+        }
     },
 
     logout: () => {

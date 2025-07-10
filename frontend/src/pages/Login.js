@@ -12,7 +12,27 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // Implement login logic here
+    try {
+      const response = await axios.post('/api/auth/login', { email, password }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      // Handle successful login, e.g., redirect or store token
+      if (response.data.success) {
+        console.log('Login successful');
+        // Add navigation logic here, e.g., window.location.href = '/dashboard';
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      // Show error toast or message
+      toast({
+        title: 'Login failed',
+        description: error.response ? error.response.data.message : 'Failed to connect to the server',
+        status: 'error',
+        isClosable: true,
+      });
+    }
   };
 
   const handlePasswordReset = async (e) => {

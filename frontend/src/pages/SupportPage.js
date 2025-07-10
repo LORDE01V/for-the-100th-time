@@ -31,6 +31,7 @@ import {
 
 // Import Icons (for navigation and contact info)
 import { FaArrowLeft, FaPhone, FaEnvelope, FaExternalLinkAlt } from 'react-icons/fa';
+import supportBackground from '../assets/images/Support_page.png';
 
 
 function SupportPage() {
@@ -49,8 +50,6 @@ function SupportPage() {
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const textColor = useColorModeValue('gray.600', 'gray.400');
   const headingColor = useColorModeValue('gray.800', 'white');
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const cardBorderColor = useColorModeValue('gray.200', 'gray.700');
   const inputBorderColor = useColorModeValue('gray.300', 'gray.600');
   const linkColor = useColorModeValue('blue.500', 'blue.300');
   const spinnerColor = useColorModeValue('blue.500', 'blue.300');
@@ -185,9 +184,11 @@ function SupportPage() {
   return (
     <Box
       minH="100vh"
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      width="100vw"
+      backgroundImage={`url(${supportBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
+      backgroundRepeat="no-repeat"
       backgroundAttachment="fixed"
       position="relative"
       _before={{
@@ -220,11 +221,11 @@ function SupportPage() {
         {/* FAQ Section */}
         <Box
             p={6}
-            bg={cardBg}
+            bg="rgba(255, 255, 255, 0.1)"
+            backdropFilter="blur(10px)"
+            border="1px solid rgba(255, 255, 255, 0.2)"
             borderRadius="lg"
             boxShadow="md"
-            borderWidth="1px"
-            borderColor={cardBorderColor}
             mb={8}
         >
             <Heading as="h2" size="lg" mb={4} color={headingColor}>
@@ -252,11 +253,11 @@ function SupportPage() {
         {/* Contact Form Section */}
         <Box
             p={6}
-            bg={cardBg}
+            bg="rgba(255, 255, 255, 0.1)"
+            backdropFilter="blur(10px)"
+            border="1px solid rgba(255, 255, 255, 0.2)"
             borderRadius="lg"
             boxShadow="md"
-            borderWidth="1px"
-            borderColor={cardBorderColor}
             mb={8}
         >
              <Heading as="h2" size="lg" mb={4} color={headingColor}>
@@ -330,11 +331,11 @@ function SupportPage() {
         {/* Additional Resources Section */}
          <Box
             p={6}
-            bg={cardBg}
+            bg="rgba(255, 255, 255, 0.1)"
+            backdropFilter="blur(10px)"
+            border="1px solid rgba(255, 255, 255, 0.2)"
             borderRadius="lg"
             boxShadow="md"
-            borderWidth="1px"
-            borderColor={cardBorderColor}
             mb={8}
         >
             <Heading as="h2" size="lg" mb={4} color={headingColor}>
@@ -360,11 +361,11 @@ function SupportPage() {
          {/* Contact Information Section */}
         <Box
             p={6}
-            bg={cardBg}
+            bg="rgba(255, 255, 255, 0.1)"
+            backdropFilter="blur(10px)"
+            border="1px solid rgba(255, 255, 255, 0.2)"
             borderRadius="lg"
             boxShadow="md"
-            borderWidth="1px"
-            borderColor={cardBorderColor}
         >
             <Heading as="h2" size="lg" mb={4} color={headingColor}>
                 Contact Information

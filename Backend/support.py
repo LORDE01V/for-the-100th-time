@@ -1,345 +1,320 @@
-import os
 import psycopg2
-from psycopg2 import sql, OperationalError, extras
+from psycopg2 import OperationalError
+import os
 from dotenv import load_dotenv
-
+import pandas as pd
+import plotly.express as px
+import json
+import datetime
+import logging
+import sys
+ 
+# Load environment variables
 load_dotenv()
-
-def get_db():
-    """Get a new database connection."""
+ 
+# ================== DATABASE CONNECTION ==================
+def connect_db():
+    """Connect to PostgreSQL database"""
+    password = os.getenv('DB_PASSWORD')
+    if not password:
+        raise ValueError('DB_PASSWORD environment variable must be set.')
     try:
-        if not os.getenv('DB_PASSWORD'):
-            raise ValueError("DB_PASSWORD environment variable is not set")
         conn = psycopg2.connect(
             host=os.getenv('DB_HOST', 'localhost'),
             database=os.getenv('DB_NAME', 'Fintech_Solar'),
             user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD'),
+            password=password,
+            port=os.getenv('DB_PORT', '5432')
+        )
+        return conn, conn.cursor()
+    except OperationalError as e:
+        print(f'🚨 Database connection failed: {e}')
+        return None, None
+ 
+# Add the get_db function here, right after the connect_db function
+def get_db():
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv('DB_HOST', 'localhost'),
+            database=os.getenv('DB_NAME', 'Fintech_Solar'),
+            user=os.getenv('DB_USER', 'postgres'),
+            password=os.getenv('DB_PASSWORD', 'your_password_here'),  # Ensure this is set in your .env
             port=os.getenv('DB_PORT', '5432')
         )
         return conn
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
         return None
-    except ValueError as e:
-        print(f"🚨 Configuration error: {e}")
-        return None
-
-def initialize_db():
-    """Create tables if they don't exist."""
-    conn = get_db()
-    if not conn:
-        return False
+ 
+# ================== CORE FUNCTIONS ==================
+def execute_query(operation=None, query=None, params=None):
+    """Execute a database query"""
+    conn, cur = connect_db()
+    if not conn or not cur:
+        raise Exception("Database connection failed")
+ 
     try:
-        with conn.cursor() as cur:
-            # Example users table
-            cur.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                email TEXT UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL,
-                full_name TEXT,
-                phone_number TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-            """)
-            # Expenses table
-            cur.execute("""
-            CREATE TABLE IF NOT EXISTS expenses (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER REFERENCES users(id),
-                amount NUMERIC NOT NULL,
-                description TEXT,
-                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-            """)
-            # Payment methods table
-            cur.execute("""
-            CREATE TABLE IF NOT EXISTS payment_methods (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER REFERENCES users(id),
-                method_name TEXT NOT NULL,
-                details JSONB,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-            """)
-            # Auto top-up settings table (example)
-            cur.execute("""
-            CREATE TABLE IF NOT EXISTS auto_top_up_settings (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER REFERENCES users(id),
-                enabled BOOLEAN DEFAULT FALSE,
-                threshold NUMERIC DEFAULT 0,
-                amount NUMERIC DEFAULT 0
-            );
-            """)
+        if params:
+            cur.execute(query, params)
+        else:
+            cur.execute(query)
+ 
+        if operation == 'search':
+            return cur.fetchall()
+        elif operation == 'insert':
             conn.commit()
+            return cur.fetchone()[0] if cur.description else None
+    except Exception as e:
+        conn.rollback()
+        logging.error("Query failed: %s - Query: %s", str(e), query)
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+ 
+# ================== USER OPERATIONS ==================
+def create_user(email, password_hash, full_name=None):
+    """Create a new user account"""
+    query = """
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (email, password_hash, full_name))
+ 
+def get_user_by_email(email):
+    """Get user by email address"""
+    query = "SELECT id, email, password_hash, full_name FROM users WHERE email = %s"
+    result = execute_query('search', query, (email,))
+    if result:
+        columns = ['id', 'email', 'password_hash', 'full_name']
+        return dict(zip(columns, result[0]))
+    return None
+ 
+def update_user_by_id(user_id, email=None, full_name=None, surname=None, phone_number=None, address=None):
+    query = """
+    UPDATE users
+    SET email = COALESCE(%s, email),
+        full_name = COALESCE(%s, full_name),
+        surname = COALESCE(%s, surname),
+        phone_number = COALESCE(%s, phone_number),
+        address = COALESCE(%s, address)
+    WHERE id = %s RETURNING id
+    """
+    params = (email, full_name, surname, phone_number, address, user_id)
+    return execute_query('search', query, params) is not None
+ 
+def get_user_balance(user_id):
+    query = "SELECT balance FROM users WHERE id = %s;"  # Assuming a 'balance' column; adjust if needed
+    result = execute_query('search', query, (user_id,))
+    if result and len(result) > 0:
+        return result[0]['balance']  # Return the balance value
+    return 0.0  # Default to 0 if not found
+ 
+# ================== SOLAR SYSTEM OPERATIONS ==================
+def add_solar_system(installer_id, capacity_kw, components=None, installation_date=None):
+    """Add a new solar system installation"""
+    query = """
+    INSERT INTO solar_systems (installer_id, capacity_kw, components, installation_date)
+    VALUES (%s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (installer_id, capacity_kw, components, installation_date))
+ 
+# ================== CONTRACT OPERATIONS ==================
+def create_contract(user_id, system_id, monthly_payment, total_cost, start_date, end_date=None):
+    """Create a new solar contract"""
+    query = """
+    INSERT INTO solar_contracts
+    (user_id, system_id, monthly_payment, total_cost, start_date, end_date)
+    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query,
+                       (user_id, system_id, monthly_payment, total_cost, start_date, end_date))
+ 
+def get_user_contracts(user_id):
+    """Get all contracts for a user"""
+    query = """
+    SELECT sc.*, ss.capacity_kw, ss.components
+    FROM solar_contracts sc
+    JOIN solar_systems ss ON sc.system_id = ss.id
+    WHERE sc.user_id = %s
+    """
+    return execute_query('search', query, (user_id,))
+ 
+# ================== PAYMENT OPERATIONS ==================
+def record_payment(contract_id, amount, payment_method):
+    """Record a payment and update contract balance"""
+    conn, cur = connect_db()
+    try:
+        cur.execute("BEGIN")
+       
+        # Record payment
+        cur.execute("""
+        INSERT INTO payments (contract_id, amount, payment_method)
+        VALUES (%s, %s, %s)
+        """, (contract_id, amount, payment_method))
+       
+        # Update contract balance
+        cur.execute("""
+        UPDATE solar_contracts
+        SET payments_made = payments_made + %s
+        WHERE id = %s
+        """, (amount, contract_id))
+       
+        conn.commit()
         return True
     except Exception as e:
-        print(f"Error initializing DB: {e}")
+        conn.rollback()
+        print(f"🚨 Payment failed: {e}")
         return False
     finally:
-        conn.close()
-
-def create_user(email, password_hash, full_name=None, phone_number=None):
-    existing_user = get_user_by_email(email)
-    if existing_user:
-        print(f"User with email {email} already exists")
-        return None  # Or handle as needed, e.g., return the existing user ID
-    conn = get_db()
-    if not conn:
-        return None
-    try:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                INSERT INTO users (email, password_hash, full_name, phone_number)
-                VALUES (%s, %s, %s, %s) RETURNING id;
-                """,
-                (email, password_hash, full_name, phone_number)
-            )
-            user_id = cur.fetchone()[0]
-            conn.commit()
-            return user_id
-    except Exception as e:
-        print(f"Error creating user: {e}")
-        return None
-    finally:
-        conn.close()
-
-def get_user_by_email(email):
-    conn = get_db()
-    if not conn:
-        return None
-    try:
-        with conn.cursor(cursor_factory=extras.DictCursor) as cur:
-            cur.execute("SELECT * FROM users WHERE email = %s;", (email,))
-            user = cur.fetchone()
-            return dict(user) if user else None
-    except Exception as e:
-        print(f"Error fetching user by email: {e}")
-        return None
-    finally:
-        conn.close()
-
-def update_user_by_id(user_id, full_name=None, phone_number=None):
-    conn = get_db()
-    if not conn:
-        return False
-    try:
-        with conn.cursor() as cur:
-            updates = []
-            params = []
-            if full_name is not None:
-                updates.append("full_name = %s")
-                params.append(full_name)
-            if phone_number is not None:
-                updates.append("phone_number = %s")
-                params.append(phone_number)
-            if not updates:
-                return False
-            params.append(user_id)
-            query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
-            cur.execute(query, params)
-            conn.commit()
-            return True
-    except Exception as e:
-        print(f"Error updating user: {e}")
-        return False
-    finally:
-        conn.close()
-
-def get_user_balance(user_id):
-    # Placeholder example returning fixed value
-    # Replace with your real balance query
-    return 100.0
-
+        if cur: cur.close()
+        if conn: conn.close()
+ 
+def get_payment_history(contract_id):
+    """Get payment history for a contract"""
+    query = """
+    SELECT id, amount, payment_date, payment_method
+    FROM payments
+    WHERE contract_id = %s
+    ORDER BY payment_date DESC
+    """
+    return execute_query('search', query, (contract_id,))
+ 
 def get_user_expenses(user_id):
-    conn = get_db()
-    if not conn:
-        return []
-    try:
-        with conn.cursor(cursor_factory=extras.DictCursor) as cur:
-            cur.execute("""
-                SELECT id, amount, description, date FROM expenses
-                WHERE user_id = %s ORDER BY date DESC;
-            """, (user_id,))
-            expenses = cur.fetchall()
-            return [dict(expense) for expense in expenses]
-    except Exception as e:
-        print(f"Error fetching expenses: {e}")
-        return []
-    finally:
-        conn.close()
-
+    query = """
+        SELECT id, amount, description, date FROM expenses
+        WHERE user_id = %s ORDER BY date DESC;
+    """
+    result = execute_query('search', query, (user_id,))
+    if result:
+        return [dict(zip([column[0] for column in cur.description], row)) for row in result]  # Convert to dicts
+    return []
+ 
 def create_expense(user_id, amount, description):
-    conn = get_db()
-    if not conn:
-        return None
+    query = """
+        INSERT INTO expenses (user_id, amount, description)
+        VALUES (%s, %s, %s) RETURNING id;
+    """
     try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO expenses (user_id, amount, description)
-                VALUES (%s, %s, %s) RETURNING id;
-            """, (user_id, amount, description))
-            expense_id = cur.fetchone()[0]
-            conn.commit()
-            return expense_id
+        result = execute_query('insert', query, (user_id, amount, description))
+        return result  # Returns the new expense ID
     except Exception as e:
-        print(f"Error creating expense: {e}")
-        return None
-    finally:
-        conn.close()
-
+        return None  # Or handle error as needed
+ 
 def process_top_up_transaction(user_id, amount):
-    # Placeholder: process top-up logic
-    # Should update user's balance or create top-up record
-    print(f"Processing top-up for user {user_id} amount {amount}")
-    return True
-
+    query = """
+        UPDATE users SET balance = balance + %s WHERE id = %s RETURNING balance;  # Assuming a 'balance' column
+    """
+    try:
+        result = execute_query('search', query, (amount, user_id))  # Use execute_query for consistency
+        if result:
+            return {'success': True, 'new_balance': result[0]['balance']}
+        return {'success': False, 'message': 'Transaction failed'}
+    except Exception as e:
+        return {'success': False, 'message': str(e)}
+ 
 def get_user_auto_top_up_settings(user_id):
-    conn = get_db()
-    if not conn:
-        return None
+    query = "SELECT auto_top_up_amount, auto_top_up_threshold FROM users WHERE id = %s;"  # Assuming columns for auto top-up settings; adjust if needed
+    result = execute_query('search', query, (user_id,))
+    if result:
+        return result[0]  # Return the settings as a dictionary
+    return None
+
+def save_user_auto_top_up_settings(user_id, auto_top_up_amount, auto_top_up_threshold):
+    """Update auto-top-up settings for a user"""
+    query = "UPDATE users SET auto_top_up_amount = %s, auto_top_up_threshold = %s WHERE id = %s;"  # Assuming columns for auto top-up settings; adjust if needed
+    return execute_query('insert', query, (auto_top_up_amount, auto_top_up_threshold, user_id))
+
+def toggle_auto_top_up(user_id):
+    """Toggle auto-top-up settings for a user"""
+    # First, get the current state
+    settings = get_user_auto_top_up_settings(user_id)
+    if settings:
+        new_state = not settings.get('is_auto_top_up_enabled', False)  # Assuming a boolean column; adjust if needed
+        query = "UPDATE users SET is_auto_top_up_enabled = %s WHERE id = %s;"
+        return execute_query('insert', query, (new_state, user_id))
+    return False  # Return False if user not found or settings don't exist
+
+def create_support_ticket(user_id, issue_description):
+    """Create a new support ticket for a user"""
+    query = """
+    INSERT INTO support_tickets (user_id, issue_description, status)
+    VALUES (%s, %s, 'open') RETURNING id;  # Assuming a support_tickets table; adjust if needed
+    """
+    return execute_query('insert', query, (user_id, issue_description))
+ 
+# Initialize database tables when module loads
+def initialize_db():
+    conn, cur = connect_db()
     try:
-        with conn.cursor(cursor_factory=extras.DictCursor) as cur:
-            cur.execute("""
-                SELECT * FROM auto_top_up_settings WHERE user_id = %s;
-            """, (user_id,))
-            settings = cur.fetchone()
-            return dict(settings) if settings else None
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            full_name VARCHAR(100),
+            surname VARCHAR(100),
+            phone_number VARCHAR(20),
+            address TEXT,
+            is_installer BOOLEAN DEFAULT FALSE
+        )""")
+       
+        # Add this to ensure the column is altered if it exists with the wrong type
+        cur.execute("ALTER TABLE users ALTER COLUMN password_hash TYPE VARCHAR(255);")
+       
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS solar_systems (
+            id SERIAL PRIMARY KEY,
+            installer_id INTEGER REFERENCES users(id),
+            capacity_kw DECIMAL(5,2) NOT NULL,
+            components TEXT,
+            installation_date DATE
+        )""")
+       
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS solar_contracts (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            system_id INTEGER REFERENCES solar_systems(id),
+            monthly_payment DECIMAL(10,2) NOT NULL,
+            total_cost DECIMAL(10,2) NOT NULL,
+            payments_made DECIMAL(10,2) DEFAULT 0.0,
+            start_date DATE NOT NULL,
+            end_date DATE,
+            is_active BOOLEAN DEFAULT TRUE,
+            CONSTRAINT valid_payment CHECK (monthly_payment > 0 AND total_cost > monthly_payment)
+        )""")
+       
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS payments (
+            id SERIAL PRIMARY KEY,
+            contract_id INTEGER REFERENCES solar_contracts(id) ON DELETE CASCADE,
+            amount DECIMAL(10,2) NOT NULL,
+            payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            payment_method VARCHAR(50)
+        )""")
+       
+        conn.commit()
+        print("✅ Database tables initialized")
     except Exception as e:
-        print(f"Error fetching auto top-up settings: {e}")
-        return None
+        conn.rollback()
+        print(f"🚨 Database initialization failed: {e}")
+        raise
     finally:
-        conn.close()
-
-def save_user_auto_top_up_settings(user_id, enabled, threshold, amount):
-    conn = get_db()
-    if not conn:
-        return False
+        if cur: cur.close()
+        if conn: conn.close()
+ 
+# Initialize when imported
+initialize_db()
+ 
+# Temporarily add this test to support.py
+if __name__ == "__main__":
     try:
-        with conn.cursor() as cur:
-            # Upsert style: update if exists else insert
-            cur.execute("""
-                INSERT INTO auto_top_up_settings (user_id, enabled, threshold, amount)
-                VALUES (%s, %s, %s, %s)
-                ON CONFLICT (user_id) DO UPDATE
-                SET enabled = EXCLUDED.enabled,
-                    threshold = EXCLUDED.threshold,
-                    amount = EXCLUDED.amount;
-            """, (user_id, enabled, threshold, amount))
-            conn.commit()
-            return True
+        conn, cur = connect_db()
+        print("✅ Database connection successful!")
+        cur.execute("SELECT version()")
+        print("PostgreSQL version:", cur.fetchone()[0])
     except Exception as e:
-        print(f"Error saving auto top-up settings: {e}")
-        return False
+        print("🚨 Database connection failed:", e)
     finally:
-        conn.close()
-
-def toggle_auto_top_up(user_id, enable):
-    return save_user_auto_top_up_settings(user_id, enable, 0, 0)
-
-def create_support_ticket(user_id, subject, description):
-    # Placeholder for support ticket creation
-    print(f"Support ticket created for user {user_id}: {subject}")
-    return True
-
-def add_energy_motto_column():
-    conn = get_db()
-    if not conn:
-        return False
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                ALTER TABLE users
-                ADD COLUMN IF NOT EXISTS energy_motto TEXT;
-            """)
-            conn.commit()
-            return True
-    except Exception as e:
-        print(f"Error adding energy_motto column: {e}")
-        return False
-    finally:
-        conn.close()
-
-def save_payment_method(user_id, method_name, details):
-    conn = get_db()
-    if not conn:
-        return False
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO payment_methods (user_id, method_name, details)
-                VALUES (%s, %s, %s);
-            """, (user_id, method_name, psycopg2.extras.Json(details)))
-            conn.commit()
-            return True
-    except Exception as e:
-        print(f"Error saving payment method: {e}")
-        return False
-    finally:
-        conn.close()
-
-def fetch_user_payment_methods(user_id):
-    conn = get_db()
-    if not conn:
-        return []
-    try:
-        with conn.cursor(cursor_factory=extras.DictCursor) as cur:
-            cur.execute("""
-                SELECT id, method_name, details, created_at FROM payment_methods
-                WHERE user_id = %s;
-            """, (user_id,))
-            methods = cur.fetchall()
-            return [dict(method) for method in methods]
-    except Exception as e:
-        print(f"Error fetching payment methods: {e}")
-        return []
-    finally:
-        conn.close()
-
-def remove_payment_method(user_id, method_id):
-    conn = get_db()
-    if not conn:
-        return False
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                DELETE FROM payment_methods WHERE id = %s AND user_id = %s;
-            """, (method_id, user_id))
-            conn.commit()
-            return True
-    except Exception as e:
-        print(f"Error removing payment method: {e}")
-        return False
-    finally:
-        conn.close()
-
-def create_payment_methods_table():
-    conn = get_db()
-    if not conn:
-        return False
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS payment_methods (
-                    id SERIAL PRIMARY KEY,
-                    user_id INTEGER REFERENCES users(id),
-                    method_name TEXT NOT NULL,
-                    details JSONB,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                );
-            """)
-            conn.commit()
-            return True
-    except Exception as e:
-        print(f"Error creating payment_methods table: {e}")
-        return False
-    finally:
-        conn.close()
-
-def add_story(user_id, story_text):
-    # Placeholder for adding story (e.g., user testimonial)
-    print(f"User {user_id} added story: {story_text}")
-    return True
+        if conn: conn.close()

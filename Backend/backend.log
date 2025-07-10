@@ -124,475 +124,372 @@
 2025-07-03 14:35:23,017 - INFO - Attempting login for email: nathiunathi@gmail.com
 2025-07-03 14:35:23,240 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
 2025-07-03 14:35:23,764 - INFO - 127.0.0.1 - - [03/Jul/2025 14:35:23] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-03 15:24:17,456 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-03 15:12:28,195 - INFO - 127.0.0.1 - - [03/Jul/2025 15:12:28] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-03 15:12:28,530 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-03 15:12:28,812 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-03 15:12:29,580 - INFO - 127.0.0.1 - - [03/Jul/2025 15:12:29] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-03 16:09:01,292 - INFO - 127.0.0.1 - - [03/Jul/2025 16:09:01] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-03 16:09:01,632 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-03 16:09:01,822 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-03 16:09:02,298 - INFO - 127.0.0.1 - - [03/Jul/2025 16:09:02] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-03 18:06:33,843 - INFO - 127.0.0.1 - - [03/Jul/2025 18:06:33] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-03 18:06:34,170 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-03 18:06:34,359 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-03 18:06:34,807 - INFO - 127.0.0.1 - - [03/Jul/2025 18:06:34] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-04 09:10:08,099 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-03 15:24:17,457 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-03 15:24:58,836 - INFO - 127.0.0.1 - - [03/Jul/2025 15:24:58] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-03 15:24:59,157 - INFO - Attempting login for email: full@gmail.com
-2025-07-03 15:24:59,380 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-03 15:25:00,001 - INFO - 127.0.0.1 - - [03/Jul/2025 15:25:00] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-03 15:35:03,468 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-04 09:10:08,099 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-04 09:10:08,101 - INFO -  * Restarting with stat
+2025-07-04 09:10:19,115 - WARNING -  * Debugger is active!
+2025-07-04 09:10:19,120 - INFO -  * Debugger PIN: 240-196-647
+2025-07-04 09:10:20,856 - INFO - 127.0.0.1 - - [04/Jul/2025 09:10:20] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-04 09:10:21,166 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-04 09:10:21,225 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-04 09:10:21,397 - INFO - 127.0.0.1 - - [04/Jul/2025 09:10:21] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-04 10:54:29,264 - INFO - 127.0.0.1 - - [04/Jul/2025 10:54:29] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-04 10:54:29,594 - INFO - Attempting login for email: nathiunathi@gmail.com
+2025-07-04 10:54:29,952 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
+2025-07-04 10:54:30,665 - INFO - 127.0.0.1 - - [04/Jul/2025 10:54:30] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-08 15:51:13,165 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-03 15:35:03,468 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-03 15:35:20,689 - INFO - 127.0.0.1 - - [03/Jul/2025 15:35:20] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-03 15:35:21,004 - INFO - Attempting login for email: full@gmail.com
-2025-07-03 15:35:21,124 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-03 15:35:21,381 - INFO - 127.0.0.1 - - [03/Jul/2025 15:35:21] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-03 15:56:34,891 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 15:51:13,165 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 15:51:13,168 - INFO -  * Restarting with stat
+2025-07-08 15:51:22,346 - WARNING -  * Debugger is active!
+2025-07-08 15:51:22,350 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 15:55:54,041 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:54] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 15:55:54,351 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 15:55:54,441 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 15:55:54,442 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:54] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 15:55:54,618 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:54] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 15:55:56,507 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 15:55:56,589 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 15:55:56,590 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:56] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 15:55:56,912 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:56] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 15:55:58,590 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 15:55:58,646 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 15:55:58,647 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:58] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 15:55:58,958 - INFO - 127.0.0.1 - - [08/Jul/2025 15:55:58] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 15:56:00,983 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:00] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 15:56:00,986 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 15:56:01,036 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 15:56:01,037 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:01] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 15:56:01,358 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:01] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 15:56:26,066 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:26] "[31m[1mGET / HTTP/1.1[0m" 401 -
+2025-07-08 15:56:26,191 - INFO - 127.0.0.1 - - [08/Jul/2025 15:56:26] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-07-08 16:17:25,599 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-03 15:56:34,892 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-03 15:59:09,169 - INFO - 127.0.0.1 - - [03/Jul/2025 15:59:09] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-03 15:59:09,490 - INFO - Attempting login for email: full@gmail.com
-2025-07-03 15:59:09,619 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-03 15:59:09,910 - INFO - 127.0.0.1 - - [03/Jul/2025 15:59:09] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-03 16:54:49,314 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-03 16:54:49,315 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-03 16:55:15,569 - INFO - 127.0.0.1 - - [03/Jul/2025 16:55:15] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-03 16:55:15,897 - INFO - Attempting login for email: full@gmail.com
-2025-07-03 16:55:16,031 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-03 16:55:16,366 - INFO - 127.0.0.1 - - [03/Jul/2025 16:55:16] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-03 16:55:41,155 - INFO - 127.0.0.1 - - [03/Jul/2025 16:55:41] "OPTIONS /api/stories HTTP/1.1" 200 -
-2025-07-03 16:55:41,246 - INFO - 127.0.0.1 - - [03/Jul/2025 16:55:41] "[35m[1mPOST /api/stories HTTP/1.1[0m" 201 -
-2025-07-03 16:57:23,030 - INFO - 127.0.0.1 - - [03/Jul/2025 16:57:23] "OPTIONS /api/stories HTTP/1.1" 200 -
-2025-07-03 16:57:23,536 - INFO - 127.0.0.1 - - [03/Jul/2025 16:57:23] "[35m[1mPOST /api/stories HTTP/1.1[0m" 201 -
-2025-07-04 09:41:39,809 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-04 09:41:39,811 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-04 09:43:14,543 - INFO - 127.0.0.1 - - [04/Jul/2025 09:43:14] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-04 09:43:14,867 - INFO - Attempting login for email: full@gmail.com
-2025-07-04 09:43:15,115 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-04 09:43:15,880 - INFO - 127.0.0.1 - - [04/Jul/2025 09:43:15] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-04 10:09:59,965 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-04 10:09:59,967 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-04 10:10:29,303 - INFO - 127.0.0.1 - - [04/Jul/2025 10:10:29] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-04 10:10:29,633 - INFO - Attempting login for email: full@gmail.com
-2025-07-04 10:10:29,857 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-04 10:10:30,436 - INFO - 127.0.0.1 - - [04/Jul/2025 10:10:30] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-04 10:16:36,404 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-04 10:16:36,404 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-04 10:21:26,577 - INFO - 127.0.0.1 - - [04/Jul/2025 10:21:26] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-04 10:21:26,901 - INFO - Attempting login for email: full@gmail.com
-2025-07-04 10:21:27,126 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-04 10:21:27,722 - INFO - 127.0.0.1 - - [04/Jul/2025 10:21:27] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-04 10:35:31,633 - INFO - 127.0.0.1 - - [04/Jul/2025 10:35:31] "OPTIONS /api/stories HTTP/1.1" 200 -
-2025-07-04 10:35:32,115 - INFO - 127.0.0.1 - - [04/Jul/2025 10:35:32] "[35m[1mPOST /api/stories HTTP/1.1[0m" 201 -
-2025-07-04 10:55:28,788 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-04 10:55:28,791 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-04 10:56:28,394 - INFO - 127.0.0.1 - - [04/Jul/2025 10:56:28] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-04 10:56:28,723 - INFO - Attempting login for email: full@gmail.com
-2025-07-04 10:56:28,971 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-04 10:56:29,593 - INFO - 127.0.0.1 - - [04/Jul/2025 10:56:29] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-04 12:29:42,709 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-04 12:29:42,709 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-04 12:44:49,950 - INFO - 127.0.0.1 - - [04/Jul/2025 12:44:49] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-04 12:44:50,262 - INFO - Attempting login for email: full@gmail.com
-2025-07-04 12:44:50,379 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-04 12:44:50,614 - INFO - 127.0.0.1 - - [04/Jul/2025 12:44:50] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-04 12:44:53,574 - INFO - 127.0.0.1 - - [04/Jul/2025 12:44:53] "[33mOPTIONS /api/events HTTP/1.1[0m" 404 -
-2025-07-04 12:44:53,901 - INFO - 127.0.0.1 - - [04/Jul/2025 12:44:53] "[33mOPTIONS /api/events HTTP/1.1[0m" 404 -
-2025-07-04 12:50:10,380 - INFO - 127.0.0.1 - - [04/Jul/2025 12:50:10] "[33mOPTIONS /api/events HTTP/1.1[0m" 404 -
-2025-07-04 15:28:25,978 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-04 15:28:25,981 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-04 15:35:12,900 - INFO - 127.0.0.1 - - [04/Jul/2025 15:35:12] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-04 15:35:13,225 - INFO - Attempting login for email: full@gmail.com
-2025-07-04 15:35:13,444 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-04 15:35:14,070 - INFO - 127.0.0.1 - - [04/Jul/2025 15:35:14] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-04 15:35:19,681 - INFO - 127.0.0.1 - - [04/Jul/2025 15:35:19] "[33mOPTIONS /events HTTP/1.1[0m" 404 -
-2025-07-04 15:35:19,991 - INFO - 127.0.0.1 - - [04/Jul/2025 15:35:19] "[33mOPTIONS /events HTTP/1.1[0m" 404 -
-2025-07-04 15:41:18,897 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-04 15:41:18,898 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-04 15:43:51,669 - INFO - 127.0.0.1 - - [04/Jul/2025 15:43:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-04 15:43:51,999 - INFO - Attempting login for email: full@gmail.com
-2025-07-04 15:43:52,219 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
-2025-07-04 15:43:52,822 - INFO - 127.0.0.1 - - [04/Jul/2025 15:43:52] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-04 15:43:57,566 - INFO - 127.0.0.1 - - [04/Jul/2025 15:43:57] "[33mOPTIONS /events HTTP/1.1[0m" 404 -
-2025-07-04 15:43:57,834 - INFO - 127.0.0.1 - - [04/Jul/2025 15:43:57] "[33mOPTIONS /events HTTP/1.1[0m" 404 -
-2025-07-04 15:44:08,872 - INFO - 127.0.0.1 - - [04/Jul/2025 15:44:08] "[33mOPTIONS /events HTTP/1.1[0m" 404 -
-2025-07-04 15:44:09,115 - INFO - 127.0.0.1 - - [04/Jul/2025 15:44:09] "[33mOPTIONS /events HTTP/1.1[0m" 404 -
-2025-07-04 15:44:18,391 - INFO - 127.0.0.1 - - [04/Jul/2025 15:44:18] "[33mOPTIONS /events HTTP/1.1[0m" 404 -
-2025-07-04 15:44:18,685 - INFO - 127.0.0.1 - - [04/Jul/2025 15:44:18] "[33mOPTIONS /events HTTP/1.1[0m" 404 -
-2025-07-04 15:55:49,945 - INFO - 127.0.0.1 - - [04/Jul/2025 15:55:49] "[33mOPTIONS /events HTTP/1.1[0m" 404 -
-2025-07-04 15:59:14,469 - INFO - 127.0.0.1 - - [04/Jul/2025 15:59:14] "OPTIONS /api/events HTTP/1.1" 200 -
-2025-07-04 15:59:14,963 - INFO - 127.0.0.1 - - [04/Jul/2025 15:59:14] "[35m[1mGET /api/events HTTP/1.1[0m" 500 -
-2025-07-09 09:55:43,569 - ERROR - Failed to create user: Email test@example.com already exists in the database.
-2025-07-09 10:17:58,320 - ERROR - Query failed: duplicate key value violates unique constraint "users_email_key"
-DETAIL:  Key (email)=(test@example.com) already exists.
+2025-07-08 16:17:25,599 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:17:25,601 - INFO -  * Restarting with stat
+2025-07-08 16:17:34,719 - WARNING -  * Debugger is active!
+2025-07-08 16:17:34,721 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:17:47,386 - INFO - 127.0.0.1 - - [08/Jul/2025 16:17:47] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:17:47,701 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 16:17:47,759 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 16:17:47,760 - INFO - 127.0.0.1 - - [08/Jul/2025 16:17:47] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:17:47,952 - INFO - 127.0.0.1 - - [08/Jul/2025 16:17:47] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:19:00,135 - INFO - 127.0.0.1 - - [08/Jul/2025 16:19:00] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:19:00,654 - INFO - User registration for email: nkosi@gmail.com - Plain password length: 13, Hashed password length: 162
+2025-07-08 16:19:00,736 - ERROR - Query failed: value too long for type character varying(128)
  - Query: 
     INSERT INTO users (email, password_hash, full_name)
     VALUES (%s, %s, %s) RETURNING id
     
-2025-07-09 10:38:05,893 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 16:19:00,736 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: nkosi@gmail.com
+2025-07-08 16:19:00,737 - INFO - 127.0.0.1 - - [08/Jul/2025 16:19:00] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:19:49,133 - INFO - 127.0.0.1 - - [08/Jul/2025 16:19:49] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:19:49,631 - INFO - User registration for email: nkosi@gmail.com - Plain password length: 13, Hashed password length: 162
+2025-07-08 16:19:49,679 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:19:49,680 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: nkosi@gmail.com
+2025-07-08 16:19:49,680 - INFO - 127.0.0.1 - - [08/Jul/2025 16:19:49] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:22:43,636 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 10:38:05,894 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 10:38:05,895 - INFO -  * Restarting with stat
-2025-07-09 10:38:07,208 - WARNING -  * Debugger is active!
-2025-07-09 10:38:07,211 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 10:38:38,062 - INFO - 127.0.0.1 - - [09/Jul/2025 10:38:38] "[31m[1mGET / HTTP/1.1[0m" 401 -
-2025-07-09 10:38:38,216 - INFO - 127.0.0.1 - - [09/Jul/2025 10:38:38] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-2025-07-09 10:43:09,924 - INFO - 127.0.0.1 - - [09/Jul/2025 10:43:09] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 10:43:10,233 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 10:43:10,306 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 10:43:10,307 - INFO - 127.0.0.1 - - [09/Jul/2025 10:43:10] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 10:43:10,312 - INFO - 127.0.0.1 - - [09/Jul/2025 10:43:10] "[33mOPTIONS /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 10:43:22,793 - INFO - 127.0.0.1 - - [09/Jul/2025 10:43:22] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 10:43:22,796 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 10:43:22,876 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 10:43:22,877 - INFO - 127.0.0.1 - - [09/Jul/2025 10:43:22] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 10:43:23,197 - INFO - 127.0.0.1 - - [09/Jul/2025 10:43:23] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 10:45:38,754 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\support.py', reloading
-2025-07-09 10:45:38,905 - INFO -  * Restarting with stat
-2025-07-09 10:45:43,099 - WARNING -  * Debugger is active!
-2025-07-09 10:45:43,106 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 10:48:37,018 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 16:22:43,636 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:22:43,637 - INFO -  * Restarting with stat
+2025-07-08 16:22:52,765 - WARNING -  * Debugger is active!
+2025-07-08 16:22:52,768 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:26:15,098 - INFO - 127.0.0.1 - - [08/Jul/2025 16:26:15] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:26:15,604 - INFO - User registration for email: nkosi@gmail.com - Plain password length: 13, Hashed password length: 162
+2025-07-08 16:26:15,654 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:26:15,654 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: nkosi@gmail.com
+2025-07-08 16:26:15,655 - INFO - 127.0.0.1 - - [08/Jul/2025 16:26:15] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:32:29,327 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 10:48:37,019 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 10:48:37,020 - INFO -  * Restarting with stat
-2025-07-09 10:48:38,624 - WARNING -  * Debugger is active!
-2025-07-09 10:48:38,626 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 10:49:03,845 - INFO - 127.0.0.1 - - [09/Jul/2025 10:49:03] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 10:49:04,157 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 10:49:04,215 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 10:49:04,216 - INFO - 127.0.0.1 - - [09/Jul/2025 10:49:04] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 10:49:04,429 - INFO - 127.0.0.1 - - [09/Jul/2025 10:49:04] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 10:49:42,107 - INFO - 127.0.0.1 - - [09/Jul/2025 10:49:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 10:49:42,111 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 10:49:42,273 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 10:49:42,274 - INFO - 127.0.0.1 - - [09/Jul/2025 10:49:42] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 10:49:42,582 - INFO - 127.0.0.1 - - [09/Jul/2025 10:49:42] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 11:02:13,919 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 16:32:29,327 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:32:29,328 - INFO -  * Restarting with stat
+2025-07-08 16:32:39,056 - WARNING -  * Debugger is active!
+2025-07-08 16:32:39,061 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:33:03,532 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:03] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:33:03,842 - INFO - Attempting login for email: nathiunathii@gmail.com
+2025-07-08 16:33:03,903 - ERROR - User not found for email: nathiunathii@gmail.com
+2025-07-08 16:33:03,904 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:03] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:33:04,110 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:04] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:33:11,719 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:11] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:33:11,722 - INFO - Attempting login for email: nkosi@gmail.com
+2025-07-08 16:33:11,771 - ERROR - User not found for email: nkosi@gmail.com
+2025-07-08 16:33:11,772 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:11] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:33:12,094 - INFO - 127.0.0.1 - - [08/Jul/2025 16:33:12] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:34:49,982 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\init_db.py', reloading
+2025-07-08 16:34:50,991 - INFO -  * Restarting with stat
+2025-07-08 16:35:02,220 - WARNING -  * Debugger is active!
+2025-07-08 16:35:02,229 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:36:48,478 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 11:02:13,920 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 11:02:13,922 - INFO -  * Restarting with stat
-2025-07-09 11:02:15,312 - WARNING -  * Debugger is active!
-2025-07-09 11:02:15,315 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 11:03:18,530 - INFO - 127.0.0.1 - - [09/Jul/2025 11:03:18] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 11:03:18,838 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 11:03:18,896 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 11:03:18,896 - INFO - 127.0.0.1 - - [09/Jul/2025 11:03:18] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 11:03:19,103 - INFO - 127.0.0.1 - - [09/Jul/2025 11:03:19] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 11:03:22,261 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 11:03:22,440 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 11:03:22,441 - INFO - 127.0.0.1 - - [09/Jul/2025 11:03:22] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 11:03:22,762 - INFO - 127.0.0.1 - - [09/Jul/2025 11:03:22] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 11:05:32,423 - INFO - 127.0.0.1 - - [09/Jul/2025 11:05:32] "OPTIONS /api/auth/register HTTP/1.1" 200 -
-2025-07-09 11:05:33,072 - INFO - User registration for email: mbali.u11@gmail.com - Plain password length: 10, Hashed password length: 162
-2025-07-09 11:05:33,300 - INFO - 127.0.0.1 - - [09/Jul/2025 11:05:33] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
-2025-07-09 11:05:35,414 - INFO - 127.0.0.1 - - [09/Jul/2025 11:05:35] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 11:05:35,418 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 11:05:35,472 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 11:05:35,473 - INFO - 127.0.0.1 - - [09/Jul/2025 11:05:35] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 11:05:35,796 - INFO - 127.0.0.1 - - [09/Jul/2025 11:05:35] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 11:05:41,860 - INFO - 127.0.0.1 - - [09/Jul/2025 11:05:41] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 11:05:41,865 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 11:05:41,919 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 11:05:41,920 - INFO - 127.0.0.1 - - [09/Jul/2025 11:05:41] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 11:05:42,235 - INFO - 127.0.0.1 - - [09/Jul/2025 11:05:42] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 11:06:03,759 - INFO - 127.0.0.1 - - [09/Jul/2025 11:06:03] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 11:06:03,763 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 11:06:03,817 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 11:06:03,818 - INFO - 127.0.0.1 - - [09/Jul/2025 11:06:03] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 11:06:04,139 - INFO - 127.0.0.1 - - [09/Jul/2025 11:06:04] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 11:09:24,283 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 11:09:24,362 - INFO -  * Restarting with stat
-2025-07-09 11:09:25,608 - WARNING -  * Debugger is active!
-2025-07-09 11:09:25,610 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 11:17:39,494 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 16:36:48,479 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:36:48,480 - INFO -  * Restarting with stat
+2025-07-08 16:36:56,828 - WARNING -  * Debugger is active!
+2025-07-08 16:36:56,830 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:37:13,866 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:13] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:37:14,176 - INFO - Attempting login for email: nkosi@gmail.com
+2025-07-08 16:37:14,242 - ERROR - User not found for email: nkosi@gmail.com
+2025-07-08 16:37:14,243 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:14] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:37:14,443 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:14] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:37:16,872 - INFO - Attempting login for email: nkosi@gmail.com
+2025-07-08 16:37:16,932 - ERROR - User not found for email: nkosi@gmail.com
+2025-07-08 16:37:16,933 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:16] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:37:17,240 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:17] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:37:18,402 - INFO - Attempting login for email: nkosi@gmail.com
+2025-07-08 16:37:18,450 - ERROR - User not found for email: nkosi@gmail.com
+2025-07-08 16:37:18,451 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:18] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:37:18,766 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:18] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:37:57,303 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:57] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:37:57,557 - INFO - User registration for email: kala@gmail.com - Plain password length: 14, Hashed password length: 162
+2025-07-08 16:37:57,606 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:37:57,606 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala@gmail.com
+2025-07-08 16:37:57,607 - INFO - 127.0.0.1 - - [08/Jul/2025 16:37:57] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:39:50,563 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\init_db.py', reloading
+2025-07-08 16:39:51,600 - INFO -  * Restarting with stat
+2025-07-08 16:40:01,686 - WARNING -  * Debugger is active!
+2025-07-08 16:40:01,689 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:40:38,354 - INFO - 127.0.0.1 - - [08/Jul/2025 16:40:38] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 16:40:38,665 - INFO - Attempting login for email: nkosii@gmail.com
+2025-07-08 16:40:38,717 - ERROR - User not found for email: nkosii@gmail.com
+2025-07-08 16:40:38,718 - INFO - 127.0.0.1 - - [08/Jul/2025 16:40:38] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-08 16:40:38,931 - INFO - 127.0.0.1 - - [08/Jul/2025 16:40:38] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-08 16:43:18,777 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 11:17:39,495 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 11:17:39,496 - INFO -  * Restarting with stat
-2025-07-09 11:17:40,839 - WARNING -  * Debugger is active!
-2025-07-09 11:17:40,841 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 11:18:00,335 - INFO - 127.0.0.1 - - [09/Jul/2025 11:18:00] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 11:18:00,651 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 11:18:00,814 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 11:18:00,815 - INFO - 127.0.0.1 - - [09/Jul/2025 11:18:00] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 11:18:00,911 - INFO - 127.0.0.1 - - [09/Jul/2025 11:18:00] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 11:21:05,028 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 16:43:18,777 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:43:18,778 - INFO -  * Restarting with stat
+2025-07-08 16:43:30,781 - WARNING -  * Debugger is active!
+2025-07-08 16:43:30,784 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:47:11,690 - INFO - 127.0.0.1 - - [08/Jul/2025 16:47:11] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:47:12,006 - INFO - 127.0.0.1 - - [08/Jul/2025 16:47:12] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 400 -
+2025-07-08 16:51:17,922 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 11:21:05,029 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 11:21:05,030 - INFO -  * Restarting with stat
-2025-07-09 11:21:06,295 - WARNING -  * Debugger is active!
-2025-07-09 11:21:06,299 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 11:59:14,890 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 16:51:17,923 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:51:17,924 - INFO -  * Restarting with stat
+2025-07-08 16:51:26,939 - WARNING -  * Debugger is active!
+2025-07-08 16:51:26,942 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:54:22,454 - INFO - 127.0.0.1 - - [08/Jul/2025 16:54:22] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:54:22,967 - INFO - User registration for email: kala2hi@gmail.com - Plain password length: 21, Hashed password length: 162
+2025-07-08 16:54:23,013 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:54:23,013 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hi@gmail.com
+2025-07-08 16:54:23,014 - INFO - 127.0.0.1 - - [08/Jul/2025 16:54:23] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:54:57,078 - INFO - 127.0.0.1 - - [08/Jul/2025 16:54:57] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:54:57,270 - INFO - User registration for email: kala2hi@gmail.com - Plain password length: 9, Hashed password length: 162
+2025-07-08 16:54:57,317 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:54:57,318 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hi@gmail.com
+2025-07-08 16:54:57,318 - INFO - 127.0.0.1 - - [08/Jul/2025 16:54:57] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:55:49,570 - INFO - 127.0.0.1 - - [08/Jul/2025 16:55:49] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:55:50,083 - INFO - User registration for email: kala2hi@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 16:55:50,140 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:55:50,141 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hi@gmail.com
+2025-07-08 16:55:50,142 - INFO - 127.0.0.1 - - [08/Jul/2025 16:55:50] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:57:11,018 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 11:59:14,890 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 11:59:14,892 - INFO -  * Restarting with stat
-2025-07-09 11:59:16,548 - WARNING -  * Debugger is active!
-2025-07-09 11:59:16,550 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 12:01:23,031 - INFO - 127.0.0.1 - - [09/Jul/2025 12:01:23] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 12:01:23,343 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 12:01:23,409 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 12:01:23,411 - INFO - 127.0.0.1 - - [09/Jul/2025 12:01:23] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 12:01:23,606 - INFO - 127.0.0.1 - - [09/Jul/2025 12:01:23] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 13:01:24,252 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\support.py', reloading
-2025-07-09 13:01:24,352 - INFO -  * Restarting with stat
-2025-07-09 13:01:26,127 - WARNING -  * Debugger is active!
-2025-07-09 13:01:26,130 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:04:41,030 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 16:57:11,018 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:57:11,020 - INFO -  * Restarting with stat
+2025-07-08 16:57:51,573 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 13:04:41,031 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 13:04:41,032 - INFO -  * Restarting with stat
-2025-07-09 13:04:42,474 - WARNING -  * Debugger is active!
-2025-07-09 13:04:42,477 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:05:10,430 - INFO - 127.0.0.1 - - [09/Jul/2025 13:05:10] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 13:05:10,744 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 13:05:10,817 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 13:05:10,818 - INFO - 127.0.0.1 - - [09/Jul/2025 13:05:10] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 13:05:11,009 - INFO - 127.0.0.1 - - [09/Jul/2025 13:05:11] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 13:06:35,564 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 13:06:35,658 - INFO -  * Restarting with stat
-2025-07-09 13:06:37,108 - WARNING -  * Debugger is active!
-2025-07-09 13:06:37,110 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:06:50,005 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 16:57:51,573 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 16:57:51,575 - INFO -  * Restarting with stat
+2025-07-08 16:57:59,941 - WARNING -  * Debugger is active!
+2025-07-08 16:57:59,943 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 16:58:37,085 - INFO - 127.0.0.1 - - [08/Jul/2025 16:58:37] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:58:37,589 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 16:58:37,637 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:58:37,638 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 16:58:37,638 - INFO - 127.0.0.1 - - [08/Jul/2025 16:58:37] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 16:58:54,085 - INFO - 127.0.0.1 - - [08/Jul/2025 16:58:54] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 16:58:54,300 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 16:58:54,465 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 16:58:54,466 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 16:58:54,466 - INFO - 127.0.0.1 - - [08/Jul/2025 16:58:54] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:00:21,036 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 13:06:50,006 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 13:06:50,007 - INFO -  * Restarting with stat
-2025-07-09 13:06:51,496 - WARNING -  * Debugger is active!
-2025-07-09 13:06:51,498 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:07:09,404 - INFO - 127.0.0.1 - - [09/Jul/2025 13:07:09] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 13:07:09,716 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 13:07:09,769 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 13:07:09,770 - INFO - 127.0.0.1 - - [09/Jul/2025 13:07:09] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 13:07:09,982 - INFO - 127.0.0.1 - - [09/Jul/2025 13:07:09] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 13:07:12,436 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 13:07:12,491 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 13:07:12,492 - INFO - 127.0.0.1 - - [09/Jul/2025 13:07:12] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 13:07:12,803 - INFO - 127.0.0.1 - - [09/Jul/2025 13:07:12] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 13:07:14,162 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 13:07:14,217 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 13:07:14,218 - INFO - 127.0.0.1 - - [09/Jul/2025 13:07:14] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 13:07:14,524 - INFO - 127.0.0.1 - - [09/Jul/2025 13:07:14] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 13:38:53,855 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\app.py', reloading
-2025-07-09 13:38:53,955 - INFO -  * Restarting with stat
-2025-07-09 13:38:55,532 - WARNING -  * Debugger is active!
-2025-07-09 13:38:55,535 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:39:28,227 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 17:00:21,037 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 17:00:21,038 - INFO -  * Restarting with stat
+2025-07-08 17:00:30,653 - WARNING -  * Debugger is active!
+2025-07-08 17:00:30,656 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 17:01:01,102 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:01] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 17:01:01,604 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 17:01:01,653 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 17:01:01,654 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 17:01:01,654 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:01] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:01:11,355 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:11] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 17:01:11,565 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 17:01:11,616 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 17:01:11,616 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 17:01:11,617 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:11] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:01:12,872 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 17:01:12,930 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 17:01:12,931 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hip@gmail.com
+2025-07-08 17:01:12,931 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:12] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:01:22,846 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:22] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 17:01:23,053 - INFO - User registration for email: kala2hi@gmail.com - Plain password length: 10, Hashed password length: 162
+2025-07-08 17:01:23,100 - ERROR - Query failed: value too long for type character varying(128)
+ - Query: 
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
+    
+2025-07-08 17:01:23,101 - ERROR - Registration error: value too long for type character varying(128)
+ - Email: kala2hi@gmail.com
+2025-07-08 17:01:23,101 - INFO - 127.0.0.1 - - [08/Jul/2025 17:01:23] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-07-08 17:02:17,847 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\support.py', reloading
+2025-07-08 17:02:18,862 - INFO -  * Restarting with stat
+2025-07-08 17:02:27,386 - WARNING -  * Debugger is active!
+2025-07-08 17:02:27,389 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 17:03:05,653 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 13:39:28,227 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 13:39:28,228 - INFO -  * Restarting with stat
-2025-07-09 13:39:29,629 - WARNING -  * Debugger is active!
-2025-07-09 13:39:29,633 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:40:04,444 - INFO - 127.0.0.1 - - [09/Jul/2025 13:40:04] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 13:40:04,766 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 13:40:04,825 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 13:40:04,826 - INFO - 127.0.0.1 - - [09/Jul/2025 13:40:04] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 13:40:05,018 - INFO - 127.0.0.1 - - [09/Jul/2025 13:40:05] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 13:44:15,271 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 13:44:15,362 - INFO -  * Restarting with stat
-2025-07-09 13:44:17,161 - WARNING -  * Debugger is active!
-2025-07-09 13:44:17,163 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:45:14,292 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 13:45:14,501 - INFO -  * Restarting with stat
-2025-07-09 13:45:16,292 - WARNING -  * Debugger is active!
-2025-07-09 13:45:16,295 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:47:06,049 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-08 17:03:05,653 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 17:03:05,655 - INFO -  * Restarting with stat
+2025-07-08 17:03:13,673 - WARNING -  * Debugger is active!
+2025-07-08 17:03:13,675 - INFO -  * Debugger PIN: 111-391-588
+2025-07-08 17:04:44,476 - INFO - 127.0.0.1 - - [08/Jul/2025 17:04:44] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-08 17:04:44,982 - INFO - User registration for email: kala2hip@gmail.com - Plain password length: 8, Hashed password length: 162
+2025-07-08 17:04:45,048 - INFO - 127.0.0.1 - - [08/Jul/2025 17:04:45] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-07-08 17:04:49,782 - INFO - 127.0.0.1 - - [08/Jul/2025 17:04:49] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 17:04:49,788 - INFO - Attempting login for email: kala2hip@gmail.com
+2025-07-08 17:04:49,839 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-08 17:04:49,983 - INFO - 127.0.0.1 - - [08/Jul/2025 17:04:49] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 09:05:27,279 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 13:47:06,050 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 13:47:06,051 - INFO -  * Restarting with stat
-2025-07-09 13:47:07,407 - WARNING -  * Debugger is active!
-2025-07-09 13:47:07,409 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:47:28,540 - INFO - 127.0.0.1 - - [09/Jul/2025 13:47:28] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 13:47:28,849 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 13:47:29,010 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 13:47:29,011 - INFO - 127.0.0.1 - - [09/Jul/2025 13:47:29] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 13:47:29,112 - INFO - 127.0.0.1 - - [09/Jul/2025 13:47:29] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 13:54:06,000 - INFO - 127.0.0.1 - - [09/Jul/2025 13:54:06] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 13:56:48,723 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 13:56:48,818 - INFO -  * Restarting with stat
-2025-07-09 13:56:50,214 - WARNING -  * Debugger is active!
-2025-07-09 13:56:50,217 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 13:57:34,322 - INFO - 127.0.0.1 - - [09/Jul/2025 13:57:34] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 13:59:45,096 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\app.py', reloading
-2025-07-09 13:59:45,183 - INFO -  * Restarting with stat
-2025-07-09 13:59:46,540 - WARNING -  * Debugger is active!
-2025-07-09 13:59:46,543 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 14:03:49,675 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 14:03:49,761 - INFO -  * Restarting with stat
-2025-07-09 14:03:51,519 - WARNING -  * Debugger is active!
-2025-07-09 14:03:51,523 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 14:05:38,146 - INFO - 127.0.0.1 - - [09/Jul/2025 14:05:38] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 14:05:41,657 - INFO - 127.0.0.1 - - [09/Jul/2025 14:05:41] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 14:05:53,918 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-09 09:05:27,279 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 09:05:27,282 - INFO -  * Restarting with stat
+2025-07-09 09:05:37,255 - WARNING -  * Debugger is active!
+2025-07-09 09:05:37,259 - INFO -  * Debugger PIN: 854-777-465
+2025-07-09 14:07:06,284 - INFO - 127.0.0.1 - - [09/Jul/2025 14:07:06] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:07:06,612 - INFO - Attempting login for email: kala2hip@gmail.com
+2025-07-09 14:07:06,954 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 14:07:07,692 - INFO - 127.0.0.1 - - [09/Jul/2025 14:07:07] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:43:50,209 - INFO - 127.0.0.1 - - [09/Jul/2025 14:43:50] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:43:50,527 - INFO - Attempting login for email: kala2hip@gmail.com
+2025-07-09 14:43:50,726 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 14:43:51,147 - INFO - 127.0.0.1 - - [09/Jul/2025 14:43:51] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 15:56:11,715 - INFO - 127.0.0.1 - - [09/Jul/2025 15:56:11] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 15:56:12,035 - INFO - Attempting login for email: kala2hip@gmail.com
+2025-07-09 15:56:12,097 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 15:56:12,271 - INFO - 127.0.0.1 - - [09/Jul/2025 15:56:12] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:35:56,737 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 14:05:53,918 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 14:05:53,921 - INFO -  * Restarting with stat
-2025-07-09 14:05:55,215 - WARNING -  * Debugger is active!
-2025-07-09 14:05:55,217 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 14:05:57,723 - INFO - 127.0.0.1 - - [09/Jul/2025 14:05:57] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 14:08:58,429 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 14:08:58,537 - INFO -  * Restarting with stat
-2025-07-09 14:08:59,953 - WARNING -  * Debugger is active!
-2025-07-09 14:08:59,956 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 14:13:18,010 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-10 11:35:56,737 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 11:35:56,740 - INFO -  * Restarting with stat
+2025-07-10 11:35:58,497 - WARNING -  * Debugger is active!
+2025-07-10 11:35:58,499 - INFO -  * Debugger PIN: 118-877-436
+2025-07-10 11:37:21,109 - INFO - 127.0.0.1 - - [10/Jul/2025 11:37:21] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:38:52,228 - INFO - 127.0.0.1 - - [10/Jul/2025 11:38:52] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:40:32,786 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 14:13:18,010 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 14:13:18,011 - INFO -  * Restarting with stat
-2025-07-09 14:13:19,374 - WARNING -  * Debugger is active!
-2025-07-09 14:13:19,378 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 14:13:21,041 - INFO - 127.0.0.1 - - [09/Jul/2025 14:13:21] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 15:20:41,806 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 15:20:41,910 - INFO -  * Restarting with stat
-2025-07-09 15:20:44,995 - WARNING -  * Debugger is active!
-2025-07-09 15:20:44,998 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 15:22:38,654 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-07-10 11:40:32,786 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 11:40:32,788 - INFO -  * Restarting with stat
+2025-07-10 11:40:34,660 - WARNING -  * Debugger is active!
+2025-07-10 11:40:34,663 - INFO -  * Debugger PIN: 118-877-436
+2025-07-10 11:41:14,183 - INFO - 127.0.0.1 - - [10/Jul/2025 11:41:14] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:41:42,925 - INFO - 127.0.0.1 - - [10/Jul/2025 11:41:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:41:50,808 - INFO - 127.0.0.1 - - [10/Jul/2025 11:41:50] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:43:19,710 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-07-09 15:22:38,655 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 15:22:38,659 - INFO -  * Restarting with stat
-2025-07-09 15:22:40,268 - WARNING -  * Debugger is active!
-2025-07-09 15:22:40,270 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 15:22:45,632 - INFO - 127.0.0.1 - - [09/Jul/2025 15:22:45] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 15:23:16,668 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:16] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 15:23:42,070 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 15:23:42,387 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:42,578 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:42,579 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:42] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 15:23:42,652 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:42] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 15:23:46,971 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:47,042 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:47,043 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:47] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 15:23:47,362 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:47] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 15:23:49,721 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:49] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 15:23:49,727 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:49,795 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:49,797 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:49] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 15:23:50,116 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:50] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 15:23:52,376 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:52,450 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:52,451 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:52] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 15:23:52,762 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:52] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 15:23:56,249 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:56] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 15:23:56,258 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:56,349 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 15:23:56,350 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:56] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 15:23:56,666 - INFO - 127.0.0.1 - - [09/Jul/2025 15:23:56] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 15:24:02,312 - INFO - 127.0.0.1 - - [09/Jul/2025 15:24:02] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-09 15:24:02,319 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 15:24:02,396 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 15:24:02,398 - INFO - 127.0.0.1 - - [09/Jul/2025 15:24:02] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 15:24:02,716 - INFO - 127.0.0.1 - - [09/Jul/2025 15:24:02] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-09 15:25:28,726 - INFO - 127.0.0.1 - - [09/Jul/2025 15:25:28] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 415 -
-2025-07-09 15:27:02,964 - INFO - 127.0.0.1 - - [09/Jul/2025 15:27:02] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 15:28:32,918 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 15:28:33,038 - INFO -  * Restarting with stat
-2025-07-09 15:28:35,387 - WARNING -  * Debugger is active!
-2025-07-09 15:28:35,389 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 15:29:01,113 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-09 15:29:01,113 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 15:29:01,116 - INFO -  * Restarting with stat
-2025-07-09 15:29:03,015 - WARNING -  * Debugger is active!
-2025-07-09 15:29:03,019 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 15:29:06,515 - INFO - 127.0.0.1 - - [09/Jul/2025 15:29:06] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 15:34:40,031 - INFO - Attempting login for email: test@example.com
-2025-07-09 15:34:40,200 - INFO - Verifying password: Incoming password length 15, Stored hash length 15
-2025-07-09 15:34:40,200 - ERROR - Password mismatch for email: test@example.com - Hash verification failed
-2025-07-09 15:34:40,202 - INFO - 127.0.0.1 - - [09/Jul/2025 15:34:40] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 15:35:21,317 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-09 15:35:21,384 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-09 15:35:21,385 - INFO - 127.0.0.1 - - [09/Jul/2025 15:35:21] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-09 15:36:14,566 - INFO - 127.0.0.1 - - [09/Jul/2025 15:36:14] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 16:29:33,957 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-09 16:29:33,957 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 16:29:33,960 - INFO -  * Restarting with stat
-2025-07-09 16:29:35,957 - WARNING -  * Debugger is active!
-2025-07-09 16:29:35,964 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 16:29:55,447 - INFO - 127.0.0.1 - - [09/Jul/2025 16:29:55] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-09 16:30:44,630 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-09 16:30:44,779 - INFO -  * Restarting with stat
-2025-07-09 16:30:47,278 - WARNING -  * Debugger is active!
-2025-07-09 16:30:47,283 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 16:32:20,502 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-09 16:32:20,502 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-09 16:32:20,505 - INFO -  * Restarting with stat
-2025-07-09 16:32:23,767 - WARNING -  * Debugger is active!
-2025-07-09 16:32:23,773 - INFO -  * Debugger PIN: 118-877-436
-2025-07-09 16:32:27,673 - INFO - 127.0.0.1 - - [09/Jul/2025 16:32:27] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
-2025-07-10 09:08:44,678 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-10 09:08:44,679 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-10 09:08:44,683 - INFO -  * Restarting with stat
-2025-07-10 09:08:47,795 - WARNING -  * Debugger is active!
-2025-07-10 09:08:47,802 - INFO -  * Debugger PIN: 118-877-436
-2025-07-10 09:11:31,091 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-10 09:11:31,092 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-10 09:11:31,096 - INFO -  * Restarting with stat
-2025-07-10 09:11:33,097 - WARNING -  * Debugger is active!
-2025-07-10 09:11:33,099 - INFO -  * Debugger PIN: 118-877-436
-2025-07-10 09:12:00,025 - INFO - 127.0.0.1 - - [10/Jul/2025 09:12:00] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:12:00,334 - INFO - Attempting login for email: sleigh.ndo@gmail.com
-2025-07-10 09:12:00,412 - ERROR - User not found for email: sleigh.ndo@gmail.com
-2025-07-10 09:12:00,413 - INFO - 127.0.0.1 - - [10/Jul/2025 09:12:00] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
-2025-07-10 09:12:00,601 - INFO - 127.0.0.1 - - [10/Jul/2025 09:12:00] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-10 09:12:25,203 - INFO - 127.0.0.1 - - [10/Jul/2025 09:12:25] "OPTIONS /api/auth/register HTTP/1.1" 200 -
-2025-07-10 09:12:25,314 - INFO - 127.0.0.1 - - [10/Jul/2025 09:12:25] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 409 -
-2025-07-10 09:12:33,217 - INFO - 127.0.0.1 - - [10/Jul/2025 09:12:33] "OPTIONS /api/auth/register HTTP/1.1" 200 -
-2025-07-10 09:12:33,607 - INFO - 127.0.0.1 - - [10/Jul/2025 09:12:33] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 409 -
-2025-07-10 09:13:16,028 - INFO - 127.0.0.1 - - [10/Jul/2025 09:13:16] "OPTIONS /api/auth/register HTTP/1.1" 200 -
-2025-07-10 09:13:16,131 - INFO - 127.0.0.1 - - [10/Jul/2025 09:13:16] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 409 -
-2025-07-10 09:14:06,619 - INFO - 127.0.0.1 - - [10/Jul/2025 09:14:06] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:14:06,928 - INFO - Attempting login for email: mbali.u11@gmail.com
-2025-07-10 09:14:07,011 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
-2025-07-10 09:14:07,317 - INFO - 127.0.0.1 - - [10/Jul/2025 09:14:07] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:14:37,018 - INFO - 127.0.0.1 - - [10/Jul/2025 09:14:37] "OPTIONS /api/auto-topup/settings HTTP/1.1" 200 -
-2025-07-10 09:14:37,070 - INFO - 127.0.0.1 - - [10/Jul/2025 09:14:37] "[31m[1mGET /api/auto-topup/settings HTTP/1.1[0m" 401 -
-2025-07-10 09:14:37,327 - INFO - 127.0.0.1 - - [10/Jul/2025 09:14:37] "OPTIONS /api/auto-topup/settings HTTP/1.1" 200 -
-2025-07-10 09:14:37,390 - INFO - 127.0.0.1 - - [10/Jul/2025 09:14:37] "[33mOPTIONS /api/auth/refresh HTTP/1.1[0m" 404 -
-2025-07-10 09:14:37,637 - INFO - 127.0.0.1 - - [10/Jul/2025 09:14:37] "[31m[1mGET /api/auto-topup/settings HTTP/1.1[0m" 401 -
-2025-07-10 09:15:22,341 - INFO - 127.0.0.1 - - [10/Jul/2025 09:15:22] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:15:22,349 - INFO - Attempting login for email: mbali.u11@gmail.com
-2025-07-10 09:15:22,487 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
-2025-07-10 09:15:22,894 - INFO - 127.0.0.1 - - [10/Jul/2025 09:15:22] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:27:06,274 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-10 09:27:06,275 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-10 09:27:06,280 - INFO -  * Restarting with stat
-2025-07-10 09:27:09,492 - WARNING -  * Debugger is active!
-2025-07-10 09:27:09,497 - INFO -  * Debugger PIN: 118-877-436
-2025-07-10 09:36:08,340 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2025-07-10 09:36:08,340 - INFO - [33mPress CTRL+C to quit[0m
-2025-07-10 09:36:08,345 - INFO -  * Restarting with stat
-2025-07-10 09:36:10,625 - WARNING -  * Debugger is active!
-2025-07-10 09:36:10,628 - INFO -  * Debugger PIN: 118-877-436
-2025-07-10 09:36:44,614 - INFO - 127.0.0.1 - - [10/Jul/2025 09:36:44] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:36:44,925 - INFO - Attempting login for email: mbali.u11@gmail.com
-2025-07-10 09:36:45,047 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
-2025-07-10 09:36:45,432 - INFO - 127.0.0.1 - - [10/Jul/2025 09:36:45] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:36:59,370 - INFO - 127.0.0.1 - - [10/Jul/2025 09:36:59] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:36:59,376 - INFO - Attempting login for email: mbali.u11@gmail.com
-2025-07-10 09:36:59,456 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
-2025-07-10 09:36:59,830 - INFO - 127.0.0.1 - - [10/Jul/2025 09:36:59] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:38:52,545 - INFO - 127.0.0.1 - - [10/Jul/2025 09:38:52] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:38:52,855 - INFO - Attempting login for email: mbali.u11@gmail.com
-2025-07-10 09:38:52,985 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
-2025-07-10 09:38:53,424 - INFO - 127.0.0.1 - - [10/Jul/2025 09:38:53] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:44:58,493 - INFO - 127.0.0.1 - - [10/Jul/2025 09:44:58] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:44:58,805 - INFO - Attempting login for email: mbali.u11@gmail.com
-2025-07-10 09:44:58,944 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
-2025-07-10 09:44:59,345 - INFO - 127.0.0.1 - - [10/Jul/2025 09:44:59] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:45:51,448 - INFO - 127.0.0.1 - - [10/Jul/2025 09:45:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:45:51,458 - INFO - Attempting login for email: mbali.u11@gmail.com
-2025-07-10 09:45:51,563 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
-2025-07-10 09:45:51,939 - INFO - 127.0.0.1 - - [10/Jul/2025 09:45:51] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:46:16,120 - INFO - 127.0.0.1 - - [10/Jul/2025 09:46:16] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:46:16,431 - INFO - Attempting login for email: mbali.u11@gmail.com
-2025-07-10 09:46:16,555 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
-2025-07-10 09:46:16,926 - INFO - 127.0.0.1 - - [10/Jul/2025 09:46:16] "POST /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:56:44,809 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\auth.py', reloading
-2025-07-10 09:56:44,924 - INFO -  * Restarting with stat
-2025-07-10 09:56:47,468 - WARNING -  * Debugger is active!
-2025-07-10 09:56:47,475 - INFO -  * Debugger PIN: 118-877-436
-2025-07-10 09:57:07,203 - INFO - 127.0.0.1 - - [10/Jul/2025 09:57:07] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-2025-07-10 09:57:07,526 - INFO - Attempting login for email: mbali.u11@gmail.com
-2025-07-10 09:57:07,756 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
-2025-07-10 09:57:08,064 - INFO - 127.0.0.1 - - [10/Jul/2025 09:57:08] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:43:19,711 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 11:43:19,712 - INFO -  * Restarting with stat
+2025-07-10 11:43:21,771 - WARNING -  * Debugger is active!
+2025-07-10 11:43:21,773 - INFO -  * Debugger PIN: 118-877-436
+2025-07-10 11:43:55,127 - INFO - 127.0.0.1 - - [10/Jul/2025 11:43:55] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:44:19,328 - INFO - 127.0.0.1 - - [10/Jul/2025 11:44:19] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:46:21,941 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-07-10 11:46:22,197 - INFO -  * Restarting with stat
+2025-07-10 11:46:24,817 - WARNING -  * Debugger is active!
+2025-07-10 11:46:24,821 - INFO -  * Debugger PIN: 118-877-436
+2025-07-10 11:46:49,743 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\app\\__init__.py', reloading
+2025-07-10 11:46:49,946 - INFO -  * Restarting with stat
+2025-07-10 11:46:52,095 - WARNING -  * Debugger is active!
+2025-07-10 11:46:52,098 - INFO -  * Debugger PIN: 118-877-436
+2025-07-10 11:49:55,147 - INFO -  * Detected change in 'C:\\Users\\sleig\\GridX1\\GridX\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-07-10 11:49:55,354 - INFO -  * Restarting with stat
+2025-07-10 11:49:57,815 - WARNING -  * Debugger is active!
+2025-07-10 11:49:57,818 - INFO -  * Debugger PIN: 118-877-436
+2025-07-10 11:50:06,978 - INFO - 127.0.0.1 - - [10/Jul/2025 11:50:06] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:50:07,285 - INFO - Attempting login for email: mbali.u11@gmail.com
+2025-07-10 11:50:07,358 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
+2025-07-10 11:50:07,563 - INFO - 127.0.0.1 - - [10/Jul/2025 11:50:07] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:51:57,651 - INFO - 127.0.0.1 - - [10/Jul/2025 11:51:57] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:51:57,958 - INFO - Attempting login for email: mbali.u11@gmail.com
+2025-07-10 11:51:58,015 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
+2025-07-10 11:51:58,214 - INFO - 127.0.0.1 - - [10/Jul/2025 11:51:58] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:56:17,519 - INFO - 127.0.0.1 - - [10/Jul/2025 11:56:17] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:56:17,825 - INFO - Attempting login for email: mbali.u11@gmail.com
+2025-07-10 11:56:17,995 - INFO - Verifying password: Incoming password length 10, Stored hash length 162
+2025-07-10 11:56:18,180 - INFO - 127.0.0.1 - - [10/Jul/2025 11:56:18] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:58:26,171 - INFO - 127.0.0.1 - - [10/Jul/2025 11:58:26] "OPTIONS /api/auto-topup/settings HTTP/1.1" 200 -
+2025-07-10 11:58:26,175 - INFO - 127.0.0.1 - - [10/Jul/2025 11:58:26] "OPTIONS /api/auto-topup/settings HTTP/1.1" 200 -
+2025-07-10 11:58:36,959 - INFO - 127.0.0.1 - - [10/Jul/2025 11:58:36] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-07-10 11:58:37,263 - INFO - 127.0.0.1 - - [10/Jul/2025 11:58:37] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-07-10 11:58:37,279 - INFO - 127.0.0.1 - - [10/Jul/2025 11:58:37] "[33mOPTIONS /notifications HTTP/1.1[0m" 404 -
+2025-07-10 12:00:55,122 - INFO - 127.0.0.1 - - [10/Jul/2025 12:00:55] "[33mOPTIONS /api/events HTTP/1.1[0m" 404 -
+2025-07-10 12:00:55,124 - INFO - 127.0.0.1 - - [10/Jul/2025 12:00:55] "[33mOPTIONS /api/events HTTP/1.1[0m" 404 -
+2025-07-10 12:01:51,235 - INFO - 127.0.0.1 - - [10/Jul/2025 12:01:51] "[33mOPTIONS /api/events HTTP/1.1[0m" 404 -
+2025-07-10 12:01:51,535 - INFO - 127.0.0.1 - - [10/Jul/2025 12:01:51] "[33mOPTIONS /api/events HTTP/1.1[0m" 404 -

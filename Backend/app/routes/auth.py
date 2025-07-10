@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for, session, jsonify, request, current_app, render_template
+from flask import Blueprint, redirect, url_for, session, jsonify, request, current_app, render_template, make_response
 from app import oauth
 from support import get_user_by_email, create_user, update_user_by_id, get_db
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -10,7 +10,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from flask_cors import CORS
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
-CORS(auth_bp, origins=["http://localhost:3000", "http://192.168.18.3:3000"])
+CORS(auth_bp, origins=["http://localhost:3000", "http://192.168.18.3:3000"], supports_credentials=True)
 
 # Configure logging
 logging.basicConfig(
@@ -24,6 +24,14 @@ logging.basicConfig(
 
 def create_response(message=None, status=200):
     return jsonify({"message": message}), status
+
+@auth_bp.before_request
+def handle_options():
+    if request.method == "OPTIONS":
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+        return response
 
 @auth_bp.route('/google')
 def google_login():
@@ -163,7 +171,7 @@ def login():
             return create_response('Invalid credentials', 400)
         
         logging.info(f'Attempting login for email: {email}')
-        user = get_user_by_email(email)
+        user = get_user_by_email(email.lower())
         if not user:
             logging.error(f'User not found for email: {email}')
             return create_response('Invalid credentials', 401)
@@ -173,16 +181,19 @@ def login():
             logging.error(f'Password mismatch for email: {email} - Hash verification failed')
             return create_response('Invalid credentials', 401)
         
-        access_token = create_access_token(identity=user['id'])  # Updated to use user['id']
-        return jsonify({
+        access_token = create_access_token(identity=user['id'])  # Use ID instead of email
+        response = jsonify({
             'success': True,
-            'token': access_token,
             'user': {
                 'email': user['email'],
                 'name': user['full_name']
             },
             'redirect': url_for('home.home_page')
         })
+        # Assuming set_access_cookies is defined elsewhere or needs to be imported
+        # from flask_jwt_extended import set_access_cookies
+        # set_access_cookies(response, access_token) 
+        return response
     except Exception as e:
         logging.error(f'Login error: {str(e)} - Request data structure: {type(data)}')
         return create_response('Login failed', 500)

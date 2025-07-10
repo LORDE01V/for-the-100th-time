@@ -26,7 +26,7 @@ load_dotenv()  # Load .env variables
 ESKOM_TOKEN = os.getenv("ESKOM_TOKEN")  # Added Eskom token loading
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://192.168.18.3:3000"]}})
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://192.168.18.3:3000"], "supports_credentials": True}})
 
 # Add JWT configuration
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your_default_secret_key_here')  # Use an environment variable for security

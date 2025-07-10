@@ -14,7 +14,10 @@ oauth = OAuth()
 def create_app():
     app = Flask(__name__,
                 template_folder='templates')
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://192.168.18.3:3000"]}})
+    CORS(app, resources={r"/api/*": {
+        "origins": ["http://localhost:3000"],
+        "supports_credentials": True
+    }})
     
     # Configuration
     app.config.update(
