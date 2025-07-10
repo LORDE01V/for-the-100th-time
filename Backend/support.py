@@ -300,6 +300,7 @@ def add_energy_motto_column():
         VALUES (%s, %s, %s)
         """, (contract_id, amount, payment_method))
         
+        
         # Update contract balance
         cur.execute("""
         UPDATE solar_contracts 
@@ -318,6 +319,109 @@ def add_energy_motto_column():
         if cur: cur.close()
         if conn: conn.close()
 
+def add_story(username, email, story):
+    """Add a new story to the database"""
+    conn, cur = connect_db()
+    try:
+        if not conn or not cur:
+            raise Exception("Database connection failed")
+        
+        cur.execute("""
+        INSERT INTO stories (username, email, story)
+        VALUES (%s, %s, %s) RETURNING id
+        """, (username, email, story))
+        
+        result = cur.fetchone()
+        if result is None:  # Check if no rows were returned
+            raise Exception("Failed to insert story: No rows returned.")
+        
+        conn.commit()
+        return result[0]  # Return the ID of the inserted story
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(f"🚨 Failed to add story: {e}")
+        return None
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()       
+
+# ... existing code ...
+
+def fetch_all_events(conn):
+    """
+    Fetch all events from the database.
+    """
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT date, title, start, end, description, location, event_type FROM events")
+        events = cur.fetchall()
+        return {
+            event[0]: {
+                "title": event[1],
+                "start": event[2],
+                "end": event[3],
+                "description": event[4],
+                "location": event[5],
+                "eventType": event[6]
+            }
+            for event in events
+        }
+    except Exception as e:
+        print(f"Error fetching events: {str(e)}")
+        raise
+
+def save_event_to_db(conn, event_data):
+    """
+    Save or update an event in the database.
+    """
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO events (date, title, start, end, description, location, event_type)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (date) DO UPDATE
+            SET title = EXCLUDED.title,
+                start = EXCLUDED.start,
+                end = EXCLUDED.end,
+                description = EXCLUDED.description,
+                location = EXCLUDED.location,
+                event_type = EXCLUDED.event_type
+            """,
+            (
+                event_data['date'],
+                event_data['title'],
+                event_data['start'],
+                event_data['end'],
+                event_data['description'],
+                event_data['location'],
+                event_data['eventType']
+            )
+        )
+        conn.commit()
+    except Exception as e:
+        print(f"Error saving event: {str(e)}")
+        raise
+
+def delete_event_from_db(conn, date):
+    """
+    Delete an event from the database by date.
+    """
+    try:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM events WHERE date = %s", (date,))
+        if cur.rowcount == 0:
+            raise ValueError("Event not found")
+        conn.commit()
+    except Exception as e:
+        print(f"Error deleting event: {str(e)}")
+        raise
+
+
+
+
+
 def get_payment_history(contract_id):
     """Get payment history for a contract"""
     query = """
@@ -328,20 +432,6 @@ def get_payment_history(contract_id):
     """
     return execute_query('search', query, (contract_id,))
 
-def create_stories_table():
-    """Create the stories table in the database"""
-    query = """
-    CREATE TABLE IF NOT EXISTS stories (
-        id SERIAL PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        content TEXT NOT NULL,
-        author_id INT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE
-    )
-    """
-    execute_query('alter', query)
 
 # Initialize database tables when module loads
 def initialize_db():
@@ -401,15 +491,7 @@ def initialize_db():
             description TEXT
         )
         """)
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS stories (
-            id SERIAL PRIMARY KEY,
-            username VARCHAR(50) NOT NULL,
-            email VARCHAR(100) NOT NULL,
-            comment TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        """)
+       
         print("Database initialized!")
         conn.commit()
         print("✅ Database tables created successfully!")

@@ -12,7 +12,6 @@ from app.routes.auth import auth_bp
 from email_utils import send_welcome_email  # Assuming it's in email_utils.py
 from dotenv import load_dotenv
 from support import (
-    create_stories_table,
     get_user_balance,
     get_user_expenses,
     create_expense,
@@ -26,7 +25,9 @@ from support import (
     fetch_user_payment_methods,
     remove_payment_method,
     create_payment_methods_table,
-    create_stories_table
+    add_story,
+
+   
 )
 from werkzeug.utils import secure_filename
 
@@ -980,6 +981,33 @@ def get_forum_topics():
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
+
+@flask_app.route('/api/stories', methods=['POST'])
+@jwt_required()
+def submit_story():
+    """API endpoint to submit a story"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not all(key in data for key in ['username', 'email', 'story']):
+            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+        
+        username = data['username']
+        email = data['email']
+        story = data['story']
+        
+        # Add story to the database
+        story_id = add_story(username, email, story)
+        if not story_id:
+            return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
+        
+        return jsonify({'success': True, 'story_id': story_id}), 201
+    
+    except Exception as e:
+        print(f"Error submitting story: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
+
 @flask_app.route('/api/forum/topics', methods=['POST'])
 @jwt_required()
 def create_forum_topic():
@@ -1189,6 +1217,108 @@ def create_forum_reply(topic_id):
             if 'cur' in locals(): cur.close()
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
+
+
+# GET /api/events - Fetch all events
+@flask_app.route('/api/events', methods=['GET'])
+@jwt_required()
+def get_events():
+    try:
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute("SELECT date, title, start, end, description, location, event_type FROM events")
+        events = cur.fetchall()
+
+        # Convert events to a dictionary
+        events_dict = {
+            event[0]: {
+                "title": event[1],
+                "start": event[2],
+                "end": event[3],
+                "description": event[4],
+                "location": event[5],
+                "eventType": event[6]
+            }
+            for event in events
+        }
+
+        return jsonify(events_dict), 200
+    except Exception as e:
+        print(f"Error fetching events: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to fetch events'}), 500
+
+# POST /api/events - Save a new event
+@flask_app.route('/api/events', methods=['POST'])
+@jwt_required()
+def save_event():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        # Extract event details
+        date = data.get('date')
+        title = data.get('title')
+        start = data.get('start')
+        end = data.get('end')
+        description = data.get('description')
+        location = data.get('location')
+        event_type = data.get('eventType')
+
+        # Validate required fields
+        if not all([date, title, start, end, description, location, event_type]):
+            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO events (date, title, start, end, description, location, event_type)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (date) DO UPDATE
+            SET title = EXCLUDED.title,
+                start = EXCLUDED.start,
+                end = EXCLUDED.end,
+                description = EXCLUDED.description,
+                location = EXCLUDED.location,
+                event_type = EXCLUDED.event_type
+            """,
+            (date, title, start, end, description, location, event_type)
+        )
+        conn.commit()
+
+        return jsonify({'success': True, 'message': 'Event saved successfully'}), 201
+    except Exception as e:
+        print(f"Error saving event: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to save event'}), 500
+
+# DELETE /api/events/<date> - Delete an event for a specific date
+@flask_app.route('/api/events/<date>', methods=['DELETE'])
+@jwt_required()
+def delete_event(date):
+    try:
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute("DELETE FROM events WHERE date = %s", (date,))
+        if cur.rowcount == 0:
+            return jsonify({'success': False, 'message': 'Event not found'}), 404
+
+        conn.commit()
+        return jsonify({'success': True, 'message': 'Event deleted successfully'}), 200
+    except Exception as e:
+        print(f"Error deleting event: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to delete event'}), 500
+
+
 
 @flask_app.route('/api/support/ticket', methods=['POST', 'OPTIONS'])
 @jwt_required()
