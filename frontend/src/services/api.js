@@ -5,12 +5,12 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 // Create an axios instance with default config
 const api = axios.create({
     baseURL: API_URL,
-    withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
     timeout: 20000, // 20 second timeout
+    withCredentials: true, // Added for JWT cookies
 });
 
 // Add a request interceptor to add the auth token to requests
@@ -18,7 +18,7 @@ api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
         if (token) {
-            config.headers.Authorization = `Bearer ${token.trim()}`;
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
@@ -52,13 +52,21 @@ api.interceptors.response.use(
 // Auth API calls
 export const auth = {
     login: async (email, password) => {
-        const response = await api.post('/api/auth/login', { email, password });
-        if (response.data.success) {
-            const token = String(response.data.token).trim();
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
+        try {
+            const response = await api.post('/api/auth/login', { email, password });
+            if (response.data.success) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                // Removed redirection to let the component handle navigation
+                // window.location.href = '/dashboard';
+            }
+            return response.data;
+        } catch (error) {
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+            throw new Error('Failed to connect to the server');
         }
-        return response.data;
     },
 
     register: async (userData) => {
@@ -77,28 +85,7 @@ export const auth = {
     }
 };
 
-// Top-Up API calls
-export const topUp = {
-    process: async (payload) => {
-        const response = await api.post('/api/topup', payload);
-        return response.data;
-    }
-};
-
-// Auto Top-Up API calls
-export const autoTopUp = {
-    getSettings: async () => {
-        const response = await api.get('/api/auto-topup/settings');
-        return response.data;
-    },
-
-    saveSettings: async (settings) => {
-        const response = await api.post('/api/auto-topup/settings', settings);
-        return response.data;
-    }
-};
-
-// Mock sentiment analysis for local development
+// MOCK: Intercept /api/ai/sentiment for local dev/demo
 if (window.location.hostname === 'localhost') {
     const originalPost = api.post;
     api.post = async function (url, data, ...args) {

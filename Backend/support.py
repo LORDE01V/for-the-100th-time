@@ -45,43 +45,30 @@ def get_db():
         return None
 
 # ================== CORE FUNCTIONS ==================
-def execute_query(query_type, query, params=None):
+def execute_query(operation=None, query=None, params=None):
     """Execute a database query"""
-    conn = None
+    conn, cur = connect_db()
+    if not conn or not cur:
+        raise Exception("Database connection failed")
+
     try:
-        conn = connect_db()[0]
-        if not conn:
-            raise Exception("Database connection failed")
-        
-        cur = conn.cursor()
-        
-        if query_type == 'alter':
-            # For ALTER TABLE commands, we need to execute them directly
+        if params:
+            cur.execute(query, params)
+        else:
             cur.execute(query)
-        else:
-            # For other query types, use parameterized queries
-            if params:
-                cur.execute(query, params)
-            else:
-                cur.execute(query)
-        
-        if query_type in ['insert', 'update', 'delete']:
+
+        if operation == 'search':
+            return cur.fetchall()
+        elif operation == 'insert':
             conn.commit()
-            result = cur.fetchone() if cur.description else None
-        else:
-            result = cur.fetchall() if cur.description else None
-            
-        return result
-        
+            return cur.fetchone()[0] if cur.description else None
     except Exception as e:
-        if conn:
-           conn.rollback()
+        conn.rollback()
         logging.error("Query failed: %s - Query: %s", str(e), query)
         raise
     finally:
-        if conn:
-            cur.close()
-            conn.close()
+        if cur: cur.close()
+        if conn: conn.close()
 
 # ================== USER OPERATIONS ==================
 def create_user(email, password_hash, full_name=None):
@@ -436,9 +423,6 @@ def get_payment_history(contract_id):
 # Initialize database tables when module loads
 def initialize_db():
     conn, cur = connect_db()
-    if not conn or not cur:
-        raise Exception("Database connection failed")
-
     try:
         cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -484,385 +468,26 @@ def initialize_db():
             payment_method VARCHAR(50)
         )""")
         
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS payment_methods (
-            id SERIAL PRIMARY KEY,
-            method_name VARCHAR(50) NOT NULL UNIQUE,  -- e.g., 'credit_card', 'bank_transfer'
-            description TEXT
-        )
-        """)
-       
-        print("Database initialized!")
         conn.commit()
-        print("✅ Database tables created successfully!")
-        create_payment_methods_table()
+        print("✅ Database tables initialized")
     except Exception as e:
         conn.rollback()
-        print(f"🚨 Error creating tables: {e}")
+        print(f"🚨 Database initialization failed: {e}")
         raise
     finally:
         if cur: cur.close()
         if conn: conn.close()
 
-# ... existing code ...
+# Initialize when imported
+initialize_db()
 
-def create_payment_methods_table():
-    conn, cur = connect_db()
-    if not conn or not cur:
-        print("Database connection failed")
-        raise Exception("Database connection failed")
-
+# Temporarily add this test to support.py
+if __name__ == "__main__":
     try:
-        # Initialize user_id (replace with actual logic to fetch user_id)
-        user_id = 1  # Example: Replace with dynamic user ID retrieval logic
-
-        # Start transaction
-        cur.execute("BEGIN")
-        print("Transaction started")
-
-        # Validate user exists
-        cur.execute("SELECT id FROM users WHERE id = %s", (user_id,))
-        user = cur.fetchone()
-        if not user:
-            print(f"User {user_id} not found")
-            raise Exception(f"User {user_id} not found")
-
-        # Insert expense record
-        cur.execute("""
-        INSERT INTO expenses (user_id, amount, purpose, type)
-        VALUES (%s, %s, %s, %s)
-        RETURNING id
-        """, (user_id, 100, "Example Purpose", "Example Type"))
-        result = cur.fetchone()
-        if result is None:
-            raise Exception("Failed to create expense record: No rows returned.")
-        expense_id = result[0]
-        print(f"Expense record created with ID: {expense_id}")
-
-        # Commit transaction
-        conn.commit()
-        print("Transaction committed successfully")
-        
-        return expense_id
-
-    except Exception as e:
-        print(f"Error creating expense: {str(e)}")
-        conn.rollback()
-        print("Transaction rolled back")
-        raise
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
-        print("Database connection closed")
-
-
-
-def get_user_expenses(user_id):
-    """Get all expenses for a user"""
-    print(f"=== Fetching expenses for user {user_id} ===")
-    
-    conn, cur = connect_db()
-    if not conn or not cur:
-        print("Database connection failed")
-        raise Exception("Database connection failed")
-
-    try:
-        # Get expenses with proper date formatting
-        cur.execute("""
-        SELECT 
-            id,
-            amount,
-            purpose,
-            type,
-            date,
-            created_at
-        FROM expenses 
-        WHERE user_id = %s 
-        ORDER BY date DESC
-        """, (user_id,))
-        
-        expenses = cur.fetchall()
-        print(f"Found {len(expenses)} expenses")
-        
-        # Convert to list of dictionaries with proper formatting
-        formatted_expenses = [{
-            'id': exp[0],
-            'amount': float(exp[1]),  # Convert Decimal to float
-            'purpose': exp[2],
-            'type': exp[3],
-            'date': exp[4].isoformat() if exp[4] else None,
-            'created_at': exp[5].isoformat() if exp[5] else None
-        } for exp in expenses]
-        
-        return formatted_expenses
-
-    except Exception as e:
-        print(f"Error fetching expenses: {str(e)}")
-        raise
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
-
-def process_top_up_transaction(user_id, amount, type, promo_code=None, voucher_code=None):
-    """Process a top-up transaction"""
-    print(f"=== Starting process_top_up_transaction ===")
-    print(f"User ID: {user_id}, Amount: {amount}, Type: {type}")
-    
-    conn, cur = connect_db()
-    if not conn or not cur:
-        print("Database connection failed")
-        raise Exception("Database connection failed")
-
-    try:
-        # Start transaction
-        cur.execute("BEGIN")
-        print("Transaction started")
-
-        # Validate user exists
-        cur.execute("SELECT id FROM users WHERE id = %s", (user_id,))
-        user = cur.fetchone()
-        if not user:
-            print(f"User {user_id} not found")
-            raise Exception(f"User {user_id} not found")
-        print(f"User {user_id} validated")
-
-        # Insert top-up record
-        cur.execute("""
-        INSERT INTO top_ups (user_id, amount, type, promo_code, voucher_code)
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING id
-        """, (user_id, amount, type, promo_code, voucher_code))
-        result = cur.fetchone()
-        if not result:  # Ensure the query returned a result
-            raise Exception("Failed to create top-up record")
-        top_up_id = result[0]
-        print(f"Top-up record created with ID: {top_up_id}")
-
-        # Create expense record
-        cur.execute("""
-        INSERT INTO expenses (user_id, amount, purpose, type)
-        VALUES (%s, %s, %s, %s)
-        RETURNING id
-        """, (user_id, amount, f"{type} - Energy Credit", 'Spend'))
-        result = cur.fetchone()
-        if result is None:
-            raise Exception("Failed to create expense record: No rows returned.")
-        expense_id = result[0]
-        print(f"Expense record created with ID: {expense_id}")
-
-        # Create notification
-        notification_title = f"{type.title()} Successful"
-        notification_message = f"Your {type} of R{amount:.2f} was successful. Your new balance is R{amount:.2f}."
-        cur.execute("""
-        INSERT INTO notifications (user_id, title, message, type)
-        VALUES (%s, %s, %s, %s)
-        RETURNING id
-        """, (user_id, notification_title, notification_message, 'success'))
-        result = cur.fetchone()
-        if not result:  # Ensure the query returned a result
-            raise Exception("Failed to create notification")
-        notification_id = result[0]
-        print(f"Notification created with ID: {notification_id}")
-
-        # Update user balance
-        cur.execute("""
-        INSERT INTO user_balances (user_id, balance)
-        VALUES (%s, %s)
-        ON CONFLICT (user_id) DO UPDATE
-        SET balance = user_balances.balance + EXCLUDED.balance,
-            updated_at = CURRENT_TIMESTAMP
-        RETURNING balance
-        """, (user_id, amount))
-        result = cur.fetchone()
-        if result is None:
-            raise Exception("Failed to update balance: No rows returned.")
-        new_balance = result[0]
-        print(f"Balance updated to: {new_balance}")
-
-        # Commit transaction
-        conn.commit()
-        print("Transaction committed successfully")
-        
-        # Ensure we return the correct data structure
-        return {
-            'top_up_id': top_up_id,
-            'expense_id': expense_id,
-            'notification_id': notification_id,
-            'new_balance': float(new_balance)  # Convert to float to ensure JSON serialization
-        }
-
-    except Exception as e:
-        print(f"Error in process_top_up_transaction: {str(e)}")
-        conn.rollback()
-        print("Transaction rolled back")
-        raise
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
-        print("Database connection closed")
-
-def get_user_balance(user_id):
-    """Get current balance for a user"""
-    query = """
-    SELECT balance
-    FROM user_balances
-    WHERE user_id = %s
-    """
-    result = execute_query('search', query, (user_id,))
-    return result[0][0] if result else 0.00
-
-def save_user_auto_top_up_settings(user_id, min_balance, top_up_amount, frequency):
-    """Save or update auto top-up settings for a user"""
-    print(f"=== Saving auto top-up settings for user {user_id} ===")
-    print(f"Settings: min_balance={min_balance}, top_up_amount={top_up_amount}, frequency={frequency}")
-    
-    conn, cur = connect_db()
-    if not conn or not cur:
-        print("Database connection failed")
-        raise Exception("Database connection failed")
-
-    try:
-        # First check if the table exists
-        cur.execute("""
-        SELECT EXISTS (
-            SELECT FROM information_schema.tables 
-            WHERE table_name = 'auto_top_up_settings'
-        )
-        """)
-        table_exists_result = cur.fetchone()
-        if not table_exists_result:  # Ensure the query returned a result
-            raise Exception("Failed to check if table exists")
-        table_exists = table_exists_result[0]
-        
-        if not table_exists:
-            print("Creating auto_top_up_settings table")
-            cur.execute("""
-            CREATE TABLE IF NOT EXISTS auto_top_up_settings (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER REFERENCES users(id),
-                min_balance DECIMAL(10,2) NOT NULL,
-                top_up_amount DECIMAL(10,2) NOT NULL,
-                frequency VARCHAR(20) NOT NULL,
-                is_enabled BOOLEAN DEFAULT true,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(user_id)
-            )
-            """)
-            conn.commit()
-
-        # Insert or update settings
-        cur.execute("""
-        INSERT INTO auto_top_up_settings 
-            (user_id, min_balance, top_up_amount, frequency, is_enabled)
-        VALUES (%s, %s, %s, %s, true)
-        ON CONFLICT (user_id) DO UPDATE
-        SET min_balance = EXCLUDED.min_balance,
-            top_up_amount = EXCLUDED.top_up_amount,
-            frequency = EXCLUDED.frequency,
-            is_enabled = true,
-            updated_at = CURRENT_TIMESTAMP
-        RETURNING id, min_balance, top_up_amount, frequency, is_enabled
-        """, (user_id, min_balance, top_up_amount, frequency))
-        
-        result = cur.fetchone()
-        conn.commit()
-        
-        print(f"Settings saved successfully: {result}")
-        
-        if not result:  # Ensure the query returned a result
-            return None
-        return {
-            'id': result[0],
-            'min_balance': float(result[1]),
-            'top_up_amount': float(result[2]),
-            'frequency': result[3],
-            'is_enabled': result[4]
-        }
-
-    except Exception as e:
-        print(f'🚨 Failed to create payment methods table: {e}')
-        if conn:
-            conn.rollback()
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
-
-def get_user_auto_top_up_settings(user_id):
-    """Get auto top-up settings for a user"""
-    print(f"=== Getting auto top-up settings for user {user_id} ===")
-    
-    conn, cur = connect_db()
-    if not conn or not cur:
-        print("Database connection failed")
-        raise Exception("Database connection failed")
-
-    try:
-        # First check if the table exists
-        cur.execute("""
-        SELECT EXISTS (
-            SELECT FROM information_schema.tables 
-            WHERE table_name = 'auto_top_up_settings'
-        )
-        """)
-        table_exists_result = cur.fetchone()
-        if not table_exists_result:  # Ensure the query returned a result
-            raise Exception("Failed to check if table exists")
-        table_exists = table_exists_result[0]
-        
-        if not table_exists:
-            print("Auto top-up settings table does not exist")
-            return None
-
-        # Get settings
-        cur.execute("""
-        SELECT id, min_balance, top_up_amount, frequency, is_enabled
-        FROM auto_top_up_settings
-        WHERE user_id = %s
-        """, (user_id,))
-        
-        result = cur.fetchone()
-        print(f"Query result: {result}")
-        
-        if not result:  # Ensure the query returned a result
-            return None
-        return {
-            'id': result[0],
-            'min_balance': float(result[1]),
-            'top_up_amount': float(result[2]),
-            'frequency': result[3],
-            'is_enabled': result[4]
-        }
-
-    except Exception as e:
-        print(f"Error getting auto top-up settings: {str(e)}")
-        raise
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
-
-def toggle_auto_top_up(user_id, is_enabled):
-    """Enable or disable auto top-up for a user"""
-    print(f"=== Toggling auto top-up for user {user_id} to {is_enabled} ===")
-    
-    conn, cur = connect_db()
-    if not conn or not cur:
-        raise Exception("Database connection failed")
-
-    try:
-        cur.execute("""
-        UPDATE auto_top_up_settings
-        SET is_enabled = %s,
-            updated_at = CURRENT_TIMESTAMP
-        WHERE user_id = %s
-        RETURNING id
-        """, (is_enabled, user_id))
-        
-        result = cur.fetchone()
-        conn.commit()
-        
-        return result is not None
-
+        conn, cur = connect_db()
+        print("✅ Database connection successful!")
+        cur.execute("SELECT version()")
+        print("PostgreSQL version:", cur.fetchone()[0])
     except Exception as e:
         print("🚨 Database connection failed:", e)
     finally:

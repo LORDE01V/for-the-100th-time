@@ -48,4 +48,26 @@
     background-color: var(--chakra-colors-teal-300);
     color: black;
   }
+}
+
+.leaflet-container {
+  height: 500px !important;
+  width: 100% !important;
+  z-index: 0;
+  background-color: var(--chakra-colors-chakra-body-bg) !important;
+}
+
+.leaflet-control-attribution {
+  font-size: 0.75rem;
+  background-color: var(--chakra-colors-chakra-subtle-bg) !important;
+  color: var(--chakra-colors-chakra-body-text) !important;
+}
+
+.leaflet-popup-content {
+  color: var(--chakra-colors-chakra-body-text) !important;
+  background-color: var(--chakra-colors-chakra-body-bg) !important;
+}
+
+.leaflet-popup-tip {
+  background-color: var(--chakra-colors-chakra-body-bg) !important;
 } 

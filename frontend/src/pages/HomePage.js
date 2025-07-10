@@ -109,14 +109,14 @@ function HomePage() {
       colorScheme: 'blue'
     },
     {
-      icon: FaBatteryFull,
-      title: 'Profile',
-      description: 'Manage your personal information',
-      path: '/profile',
-      colorScheme: 'teal'
+      icon: FaUser,
+      title: 'Profile Details',
+      description: 'Update your personal information',
+      path: '/personal-user',
+      colorScheme: 'blue'
     },
     {
-      icon: FaPlug,
+      icon: FaBatteryFull,
       title: 'Top Up',
       description: 'Add credit to your power account',
       path: '/top-up',
@@ -191,13 +191,6 @@ function HomePage() {
       description: 'Get smart tips from our AI to save energy and manage finances',
       path: '/ai-suggestions',
       colorScheme: 'purple'
-    },
-    {
-      icon: FaUser,
-      title: 'Profile Details',
-      description: 'Update your personal information',
-      path: '/personal-user',
-      colorScheme: 'blue'
     }
     ],
     solarTips: [

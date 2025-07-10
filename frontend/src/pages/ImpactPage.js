@@ -4,6 +4,8 @@ import { auth } from '../services/api'; // Assuming auth service is still used
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import ReactSlick from "react-slick";
+import ReactCalendar from "react-calendar";
 // eslint-disable-next-line no-unused-vars
 import Calendar from 'react-calendar';
 import {
@@ -34,7 +36,7 @@ import { jsPDF } from "jspdf";
 import { motion } from 'framer-motion';
 import './ImpactPage.css';  // Assuming we'll create a new CSS file for print styles, or add inline if needed
 import EventCalendar from '../components/EventCalendar';  // New import for the calendar component
-import api from '../services/api';
+import ImpactMapPreview from '../components/ImpactMapPreview';
 
 function generateImpactReportPDF() {
   const doc = new jsPDF();
@@ -259,9 +261,31 @@ function ImpactPage() {
 
           <Divider />
 
-          <Box>
-            <Heading as="h2" size="lg" mb={4}>Upcoming Events Calendar</Heading>
-            <EventCalendar />
+          <Box textAlign="center" mt={10}>
+            <form onSubmit={handleSubmit}>
+              <Stack spacing={4} maxWidth="400px" mx="auto">
+                <Heading as="h2" size="md" mb={4}>Share Your Story</Heading>
+                <Input
+                  placeholder="Your Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  isRequired
+                />
+                <Input
+                  placeholder="Your Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                />
+                <Textarea
+                  placeholder="Share your story or testimonial"
+                  value={quote}
+                  onChange={(e) => setQuote(e.target.value)}
+                  isRequired
+                />
+                <Button type="submit" colorScheme="teal">Share Your Story</Button>
+              </Stack>
+            </form>
           </Box>
 
           <Divider />
@@ -308,6 +332,13 @@ function ImpactPage() {
 
           <Divider />
 
+          <Box>
+            <Heading as="h2" size="lg" mb={4}>Upcoming Events Calendar</Heading>
+            <EventCalendar />
+          </Box>
+
+          <Divider />
+
           <Box textAlign="center">
             <Heading as="h2" size="lg" mb={4}>Why Solar + Fintech Matters</Heading>
             <Text fontSize="lg" maxWidth="800px" mx="auto">
@@ -315,31 +346,11 @@ function ImpactPage() {
             </Text>
           </Box>
 
-          <Box textAlign="center" mt={10}>
-            <form onSubmit={handleSubmit}>
-              <Stack spacing={4} maxWidth="400px" mx="auto">
-                <Heading as="h2" size="md" mb={4}>Share Your Story</Heading>
-                <Input
-                  placeholder="Your Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  isRequired
-                />
-                <Input
-                  placeholder="Your Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  type="email"
-                />
-                <Textarea
-                  placeholder="Share your story or testimonial"
-                  value={quote}
-                  onChange={(e) => setQuote(e.target.value)}
-                  isRequired
-                />
-                <Button type="submit" colorScheme="teal">Share Your Story</Button>
-              </Stack>
-            </form>
+          <Divider my={8} />
+
+          <Box>
+            <Heading as="h2" size="lg" mb={4}>Communities We've Reached</Heading>
+            <ImpactMapPreview />
           </Box>
         </Stack>
       </Box>

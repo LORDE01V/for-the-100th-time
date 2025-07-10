@@ -1,35 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth, expenses } from '../services/api';
-import { useToast, useColorModeValue } from '@chakra-ui/react';
-
-// Import Chakra UI Components
+import React, { useState } from 'react';
 import {
   Box,
   Container,
   Heading,
   Button,
   VStack,
+  useColorModeValue,
   Flex,
   Icon,
   Text,
   SimpleGrid,
   Badge,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaMoneyBill, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
 
 const ExpensesPage = () => {
   const navigate = useNavigate();
-  const toast = useToast();
-  const user = auth.getCurrentUser();
-  const [expensesList, setExpensesList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const cardBg = useColorModeValue('white', 'gray.800');
+  
+  // Move all useColorModeValue hooks to the top level
+  const cardBg = useColorModeValue('white', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'white');
-  const itemBg = useColorModeValue('gray.100', 'gray.700');
-  const subTextColor = useColorModeValue('gray.500', 'gray.400');
+  const itemBg = useColorModeValue('gray.50', 'gray.600');
+  const subTextColor = useColorModeValue('gray.600', 'gray.300');
 
   // Mock data for expenses
   const [expenses] = useState([

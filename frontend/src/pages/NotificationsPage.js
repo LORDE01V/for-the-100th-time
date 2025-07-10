@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api';
-import api from '../services/api';
 
 // Import Chakra UI Components
 import {
@@ -36,59 +35,32 @@ function NotificationsPage() {
   const headingColor = useColorModeValue('gray.800', 'white');
   const textColor = useColorModeValue('gray.600', 'gray.400');
 
-  // State for notifications
-  const [notifications, setNotifications] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Dummy notification data
+  const [notifications, setNotifications] = useState([
+    { id: 1, status: 'warning', title: 'Low Balance', description: 'Your energy credit is running low. Top up soon!', isDismissed: false },
+    { id: 2, status: 'info', title: 'System Update', description: 'Scheduled maintenance tonight at 2 AM.', isDismissed: false },
+    { id: 3, status: 'success', title: 'Top-Up Successful', description: 'Your R200 top-up was successful.', isDismissed: false },
+    { id: 4, status: 'error', title: 'Payment Failed', description: 'Your recent payment failed. Please check your details.', isDismissed: false },
+  ]);
 
-  // Fetch notifications
+  // Redirect if not authenticated
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const response = await api.get('/notifications');
-        if (response.data.success) {
-          setNotifications(response.data.notifications.map(notif => ({
-            id: notif.id,
-            status: notif.type,
-            title: notif.title,
-            description: notif.message,
-            isDismissed: notif.is_read
-          })));
-        }
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to fetch notifications',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (user) {
-      fetchNotifications();
-    }
-  }, [user, toast]);
-
-  const handleDismissNotification = async (id) => {
-    try {
-      await api.put(`/notifications/${id}/read`);
-      setNotifications(notifications.map(notif =>
-        notif.id === id ? { ...notif, isDismissed: true } : notif
-      ));
-    } catch (error) {
-      console.error('Error dismissing notification:', error);
+    if (!user) {
+      navigate('/login');
       toast({
-        title: 'Error',
-        description: 'Failed to dismiss notification',
-        status: 'error',
+        title: 'Authentication required',
+        description: 'Please log in to access this page',
+        status: 'warning',
         duration: 3000,
         isClosable: true,
       });
     }
+  }, [user, navigate, toast]);
+
+  const handleDismissNotification = (id) => {
+    setNotifications(notifications.map(notif =>
+      notif.id === id ? { ...notif, isDismissed: true } : notif
+    ));
   };
 
   const activeNotifications = notifications.filter(notif => !notif.isDismissed);
@@ -110,20 +82,20 @@ function NotificationsPage() {
       backgroundAttachment="fixed"
       position="relative"
       _before={{
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        bg: 'rgba(0, 0, 0, 0.5)',
-        zIndex: 1,
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          bg: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1,
       }}
     >
-      <Container maxW="container.md" position="relative" zIndex={2} py={8}>
+      <Container maxW="container.xl" py={8} position="relative" zIndex={2}>
         {/* Header with Back to Home button */}
         <HStack justify="space-between" align="center" mb={8}>
-          <Button
+           <Button
             leftIcon={<FaArrowLeft />}
             variant="ghost"
             onClick={() => navigate('/home')}
@@ -137,38 +109,33 @@ function NotificationsPage() {
           Notifications
         </Heading>
 
-        {isLoading ? (
-          <Flex justify="center" align="center" minH="200px">
-            <Spinner size="xl" color="blue.500" />
-          </Flex>
-        ) : (
-          <Stack spacing={4}>
-            {activeNotifications.length > 0 ? (
-              activeNotifications.map((notif) => (
-                <Alert
-                  key={notif.id}
-                  status={notif.status}
-                  variant="left-accent"
-                  pr={10}
-                >
-                  <AlertIcon />
-                  <Box flex="1">
-                    <AlertTitle mt={-1} mb={1} fontSize="md">{notif.title}</AlertTitle>
-                    <AlertDescription display="block">{notif.description}</AlertDescription>
-                  </Box>
-                  <CloseButton
-                    position="absolute"
-                    right="8px"
-                    top="8px"
-                    onClick={() => handleDismissNotification(notif.id)}
-                  />
-                </Alert>
-              ))
-            ) : (
-              <Text textAlign="center" mt={8} color={textColor}>No new notifications.</Text>
-            )}
-          </Stack>
-        )}
+        <Stack spacing={4}>
+          {activeNotifications.length > 0 ? (
+            activeNotifications.map((notif) => (
+              <Alert
+                key={notif.id}
+                status={notif.status}
+                variant="left-accent"
+                pr={10} // Add padding to the right to make space for the close button
+              >
+                <AlertIcon />
+                <Box flex="1">
+                  <AlertTitle mt={-1} mb={1} fontSize="md">{notif.title}</AlertTitle>
+                  <AlertDescription display="block">{notif.description}</AlertDescription>
+                </Box>
+                <CloseButton
+                  position="absolute"
+                  right="8px"
+                  top="8px"
+                  onClick={() => handleDismissNotification(notif.id)}
+                />
+              </Alert>
+            ))
+          ) : (
+            <Text textAlign="center" mt={8} color={textColor}>No new notifications.</Text>
+          )}
+        </Stack>
+
       </Container>
     </Box>
   );

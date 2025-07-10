@@ -50,11 +50,14 @@ function DashboardPage() { // Renamed component to DashboardPage
         }
     };
 
-    const headingColor = "#333"; // or whatever color you want
 
     const handleLogout = () => {
         auth.logout();
         navigate('/login');
+    };
+
+    const handleBackClick = () => {
+        navigate('/'); // Redirects to the homepage
     };
 
      const cardBg = useColorModeValue('white', 'gray.700'); // Card background based on color mode
@@ -152,6 +155,13 @@ function DashboardPage() { // Renamed component to DashboardPage
             <Flex justify="center" mt={8}> {/* Use Flex to center the button horizontally */}
                 <Button colorScheme="red" onClick={handleLogout} size="sm" width="fit-content"> {/* size="sm" reduces size, width="fit-content" prevents full width */}
                     Logout
+                </Button>
+            </Flex>
+
+            {/* Back Button */}
+            <Flex justify="center" mt={8}>
+                <Button colorScheme="blue" onClick={handleBackClick} size="sm" width="fit-content">
+                    Back
                 </Button>
             </Flex>
 

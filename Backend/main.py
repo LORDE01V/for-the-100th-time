@@ -83,21 +83,6 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
     return response
 
-# Add these error handlers
-@jwt.invalid_token_loader
-def invalid_token_callback(error_string):
-    return jsonify({
-        'success': False,
-        'message': 'Invalid token. Please log in again.'
-    }), 401
-
-@jwt.unauthorized_loader
-def unauthorized_callback(error_string):
-    return jsonify({
-        'success': False,
-        'message': 'Missing token. Please log in.'
-    }), 401
-
 # Database connection helper (PostgreSQL)
 def get_db():
     try:
@@ -112,19 +97,6 @@ def get_db():
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
         return None
-
-# Add these constants at the top of your file
-UPLOAD_FOLDER = 'uploads/profile_pictures'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-# Create the upload folder if it doesn't exist
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# Add this near the top of your file, after imports
-create_payment_methods_table()
 
 # Auth routes (updated for PostgreSQL)
 @flask_app.route('/api/auth/register', methods=['POST'])
@@ -205,19 +177,18 @@ def flask_login():
 
         cur = conn.cursor()
 
-        # Check credentials
+        # Check credentials (PostgreSQL users table)
         cur.execute('SELECT id, email, password_hash, full_name FROM users WHERE email = %s', (email,))
         user = cur.fetchone()
 
-        if user and check_password_hash(user[2], password):
-            # Create token with user ID as string
-            access_token = create_access_token(identity=str(user[0]))
+        if user and check_password_hash(user[2], password):  # user[2] = password_hash
+            access_token = create_access_token(identity=user[0])  # user[0] = id
             return jsonify({
                 'success': True,
                 'token': access_token,
                 'user': {
                     'id': user[0],
-                    'name': user[3],
+                    'name': user[3],  # full_name
                     'email': user[1]
                 },
                 'redirect': '/'  # Simple frontend route

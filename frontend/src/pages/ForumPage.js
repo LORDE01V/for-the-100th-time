@@ -41,8 +41,8 @@ const ForumPage = () => {
   const [tone, setTone] = useState(null);
   const [isCheckingTone, setIsCheckingTone] = useState(false);
 
-  // Mock data for dummyTopics
-  const dummyTopics = useMemo(() => [
+  // Mock data for forum topics
+  const topics = [
     {
       id: 1,
       title: 'Solar Panel Maintenance Tips',
@@ -366,7 +366,7 @@ const ForumPage = () => {
         'Post 15: Success stories from users.'
       ]
     }
-  ]);
+  ];
 
   const mockSummarize = (posts) => {
     // Simple mock function to generate a bullet-point summary from posts
@@ -634,10 +634,7 @@ const ForumPage = () => {
 
         <VStack spacing={8} align="stretch">
           <Heading size="xl">Community Forum</Heading>
-          {selectedTopic 
-            ? renderTopicDiscussion() 
-            : renderTopicsList()
-          }
+          {selectedTopic ? renderTopicDiscussion() : renderTopicsList()}
         </VStack>
     </Box>
     </Flex>
