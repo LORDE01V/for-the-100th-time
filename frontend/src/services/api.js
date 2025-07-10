@@ -114,4 +114,16 @@ if (window.location.hostname === 'localhost') {
   };
 }
 
+export const fetchAISuggestions = async () => {
+  try {
+    const response = await api.get('/api/ai-suggestions', {
+      withCredentials: true, // Include cookies for authentication
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching AI suggestions:', error);
+    return { success: false };
+  }
+};
+
 export default api;

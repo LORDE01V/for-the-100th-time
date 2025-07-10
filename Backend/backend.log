@@ -168,3 +168,63 @@
 2025-07-07 14:21:42,448 - INFO - Attempting login for email: jesicamcpho@gmail.com
 2025-07-07 14:21:42,548 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
 2025-07-07 14:21:42,738 - INFO - 127.0.0.1 - - [07/Jul/2025 14:21:42] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-08 11:00:18,873 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 11:00:18,875 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 11:01:36,348 - INFO - 127.0.0.1 - - [08/Jul/2025 11:01:36] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 11:01:36,675 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-08 11:01:36,869 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-08 11:01:37,199 - INFO - 127.0.0.1 - - [08/Jul/2025 11:01:37] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-08 12:23:12,847 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 12:23:12,848 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 12:23:20,724 - INFO - 127.0.0.1 - - [08/Jul/2025 12:23:20] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 12:23:21,035 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-08 12:23:21,208 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-08 12:23:21,406 - INFO - 127.0.0.1 - - [08/Jul/2025 12:23:21] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-08 12:29:52,220 - INFO - 127.0.0.1 - - [08/Jul/2025 12:29:52] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 12:29:52,533 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-08 12:29:52,647 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-08 12:29:52,849 - INFO - 127.0.0.1 - - [08/Jul/2025 12:29:52] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-08 12:31:10,384 - INFO - 127.0.0.1 - - [08/Jul/2025 12:31:10] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 12:31:10,697 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-08 12:31:10,797 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-08 12:31:11,009 - INFO - 127.0.0.1 - - [08/Jul/2025 12:31:11] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-08 15:00:47,817 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-08 15:00:47,818 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-08 15:06:10,402 - INFO - 127.0.0.1 - - [08/Jul/2025 15:06:10] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-08 15:06:10,717 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-08 15:06:10,831 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-08 15:06:11,024 - INFO - 127.0.0.1 - - [08/Jul/2025 15:06:11] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 09:22:03,043 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 09:22:03,046 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 09:22:25,531 - INFO - 127.0.0.1 - - [09/Jul/2025 09:22:25] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 09:22:25,848 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-09 09:22:26,027 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 09:22:26,420 - INFO - 127.0.0.1 - - [09/Jul/2025 09:22:26] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 11:18:27,022 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 11:18:27,022 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 11:18:46,225 - INFO - 127.0.0.1 - - [09/Jul/2025 11:18:46] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 11:18:46,537 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-09 11:18:46,686 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 11:18:46,929 - INFO - 127.0.0.1 - - [09/Jul/2025 11:18:46] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 11:18:49,593 - INFO - 127.0.0.1 - - [09/Jul/2025 11:18:49] "[33mOPTIONS /api/ai-suggestions HTTP/1.1[0m" 404 -
+2025-07-09 13:55:42,951 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 13:55:42,952 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 13:57:21,658 - INFO - 127.0.0.1 - - [09/Jul/2025 13:57:21] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 13:57:21,982 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-09 13:57:22,157 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 13:57:22,478 - INFO - 127.0.0.1 - - [09/Jul/2025 13:57:22] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 13:57:38,771 - INFO - 127.0.0.1 - - [09/Jul/2025 13:57:38] "[33mOPTIONS /api/ai-suggestions HTTP/1.1[0m" 404 -
+2025-07-09 13:57:42,638 - INFO - 127.0.0.1 - - [09/Jul/2025 13:57:42] "[33mOPTIONS /api/ai-suggestions HTTP/1.1[0m" 404 -
+2025-07-09 15:42:38,010 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 15:42:38,011 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 16:57:22,818 - INFO - 127.0.0.1 - - [09/Jul/2025 16:57:22] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 16:57:23,129 - INFO - Attempting login for email: jesicamcpho@gmail.com
+2025-07-09 16:57:23,215 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 16:57:23,425 - INFO - 127.0.0.1 - - [09/Jul/2025 16:57:23] "POST /api/auth/login HTTP/1.1" 200 -
