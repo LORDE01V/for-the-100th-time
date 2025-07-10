@@ -117,6 +117,8 @@ function SupportPage() {
     }, 2000); // Simulate a 2-second delay for submission
   };
 
+  // Filter out the question about updating profile information
+  const filteredFaqItems = faqItems.filter(item => item.question !== 'How do I update my profile information?');
 
   if (!user) {
     return (
@@ -177,7 +179,7 @@ function SupportPage() {
                 Frequently Asked Questions
             </Heading>
              <Accordion allowMultiple>
-                {faqItems.map((item, index) => (
+                {filteredFaqItems.map((item, index) => (
                 <AccordionItem key={index}>
                     <h2>
                         <AccordionButton>

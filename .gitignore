@@ -1,15 +1,38 @@
-# Python
+# Ignore environment files
+*.env
+
+# Ignore Python cache files
 __pycache__/
+
+# Ignore Node.js modules
+node_modules/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp
+
+# Ignore compiled files
 *.pyc
 *.pyo
-*.pyd
-.env
-venv/
 
-# Node
-node_modules/
+# Ignore frontend build artifacts (if applicable)
 dist/
+build/
 
-# Editor
+# Ignore IDE-specific files
 .vscode/
 .idea/
+*.iml
+
+# Ignore any other untracked files
+Backend/__pycache__/
+Backend/.env
+frontend/.env
+frontend/node_modules/
