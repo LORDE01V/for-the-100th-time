@@ -25,6 +25,8 @@ import {
 // Import Icons
 import { FaArrowLeft } from 'react-icons/fa';
 
+import notificationBackground from '../assets/images/notification.png';
+
 function NotificationsPage() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -76,7 +78,7 @@ function NotificationsPage() {
   return (
     <Box
       minH="100vh"
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundImage={`url(${notificationBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
@@ -116,6 +118,9 @@ function NotificationsPage() {
                 key={notif.id}
                 status={notif.status}
                 variant="left-accent"
+                bg="rgba(255, 255, 255, 0.1)"
+                backdropFilter="blur(10px)"
+                border="1px solid rgba(255, 255, 255, 0.2)"
                 pr={10} // Add padding to the right to make space for the close button
               >
                 <AlertIcon />

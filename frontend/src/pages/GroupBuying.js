@@ -41,6 +41,7 @@ import { useNavigate } from 'react-router-dom';
 import batteryBankImage from '../assets/images/battery_bank_10_kwh.png';
 import inverterImage from '../assets/images/inverter__5kw_hybrid.png';
 import solarPanelImage from '../assets/images/solar_panel_350w.png';
+import groupBuyingBackground from '../assets/images/group_buying.png';  // Import the background image
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Create a motion component for Text
@@ -258,10 +259,11 @@ function GroupBuying() {
   return (
     <Box
       minH="100vh"
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundImage={`url(${groupBuyingBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
+      backgroundRepeat="no-repeat"  // Added to prevent repetition
       position="relative"
       _before={{
           content: '""',

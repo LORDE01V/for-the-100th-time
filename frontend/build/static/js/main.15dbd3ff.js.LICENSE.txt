@@ -1,0 +1,713 @@
+/*!
+	Copyright (c) 2018 Jed Watson.
+	Licensed under the MIT License (MIT), see
+	http://jedwatson.github.io/classnames
+*/
+
+/*! decimal.js-light v2.5.1 https://github.com/MikeMcl/decimal.js-light/LICENCE */
+
+/**
+ * @license
+  Copyright (c) 2008, Adobe Systems Incorporated
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are
+  met:
+
+  * Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+  
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the 
+    documentation and/or other materials provided with the distribution.
+  
+  * Neither the name of Adobe Systems Incorporated nor the names of its 
+    contributors may be used to endorse or promote products derived from 
+    this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+  IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/**
+ * @license
+ *
+ * Copyright (c) 2014 James Robb, https://github.com/jamesbrobb
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * ====================================================================
+ */
+
+/**
+ * @license
+ *
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+
+/**
+ * @license
+ * (c) Dean McNamee <dean@gmail.com>, 2013.
+ *
+ * https://github.com/deanm/omggif
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * omggif is a JavaScript implementation of a GIF 89a encoder and decoder,
+ * including animation and compression.  It does not rely on any specific
+ * underlying system, so should run in the browser, Node, or Plask.
+ */
+
+/**
+ * @license
+ * Copyright (c) 2014 Steven Spungin (TwelveTone LLC)  steven@twelvetone.tv
+ *
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+
+/**
+ * @license
+ * Copyright (c) 2017 Aras Abbasi
+ *
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+
+/**
+ * @license
+ * Copyright (c) 2018 Aras Abbasi
+ *
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+
+/**
+ * @license
+ * Copyright (c) 2019 Aras Abbasi
+ *
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+
+/**
+ * @license
+ * FPDF is released under a permissive license: there is no usage restriction.
+ * You may embed it freely in your application (commercial or not), with or
+ * without modifications.
+ *
+ * Reference: http://www.fpdf.org/en/script/script37.php
+ */
+
+/**
+ * @license
+ * Joseph Myers does not specify a particular license for his work.
+ *
+ * Author: Joseph Myers
+ * Accessed from: http://www.myersdaily.org/joseph/javascript/md5.js
+ *
+ * Modified by: Owen Leong
+ */
+
+/**
+ * @license
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ * Author: Owen Leong (@owenl131)
+ * Date: 15 Oct 2020
+ * References:
+ * https://www.cs.cmu.edu/~dst/Adobe/Gallery/anon21jul01-pdf-encryption.txt
+ * https://github.com/foliojs/pdfkit/blob/master/lib/security.js
+ * http://www.fpdf.org/en/script/script37.php
+ */
+
+/**
+ * @license
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+
+/**
+ * @license
+ * Unicode Bidi Engine based on the work of Alex Shensis (@asthensis)
+ * MIT License
+ */
+
+/**
+ * @license
+ * jsPDF fileloading PlugIn
+ * Copyright (c) 2018 Aras Abbasi (aras.abbasi@gmail.com)
+ *
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+
+/**
+ * @license
+ * jsPDF filters PlugIn
+ * Copyright (c) 2014 Aras Abbasi
+ *
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+
+/**
+ * @license
+ * jsPDF virtual FileSystem functionality
+ *
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+
+/**
+ * @license React
+ * react-dom.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * react-is.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * react-jsx-runtime.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * react.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * scheduler.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @remix-run/router v1.23.0
+ *
+ * Copyright (c) Remix Software Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+
+/**
+ * A class to parse color values
+ * @author Stoyan Stefanov <sstoo@gmail.com>
+ * {@link   http://www.phpied.com/rgb-color-parser-in-javascript/}
+ * @license Use it if you like it
+ */
+
+/**
+ * CanvasRecorder is a standalone class used by {@link RecordRTC} to bring HTML5-Canvas recording into video WebM. It uses HTML2Canvas library and runs top over {@link Whammy}.
+ * @summary HTML2Canvas recording into video WebM.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef CanvasRecorder
+ * @class
+ * @example
+ * var recorder = new CanvasRecorder(htmlElement, { disableLogs: true, useWhammyRecorder: true });
+ * recorder.record();
+ * recorder.stop(function(blob) {
+ *     video.src = URL.createObjectURL(blob);
+ * });
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {HTMLElement} htmlElement - querySelector/getElementById/getElementsByTagName[0]/etc.
+ * @param {object} config - {disableLogs:true, initCallback: function}
+ */
+
+/**
+ * DiskStorage is a standalone object used by {@link RecordRTC} to store recorded blobs in IndexedDB storage.
+ * @summary Writing blobs into IndexedDB.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @example
+ * DiskStorage.Store({
+ *     audioBlob: yourAudioBlob,
+ *     videoBlob: yourVideoBlob,
+ *     gifBlob  : yourGifBlob
+ * });
+ * DiskStorage.Fetch(function(dataURL, type) {
+ *     if(type === 'audioBlob') { }
+ *     if(type === 'videoBlob') { }
+ *     if(type === 'gifBlob')   { }
+ * });
+ * // DiskStorage.dataStoreName = 'recordRTC';
+ * // DiskStorage.onError = function(error) { };
+ * @property {function} init - This method must be called once to initialize IndexedDB ObjectStore. Though, it is auto-used internally.
+ * @property {function} Fetch - This method fetches stored blobs from IndexedDB.
+ * @property {function} Store - This method stores blobs in IndexedDB.
+ * @property {function} onError - This function is invoked for any known/unknown error.
+ * @property {string} dataStoreName - Name of the ObjectStore created in IndexedDB storage.
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ */
+
+/**
+ * GifRecorder is standalone calss used by {@link RecordRTC} to record video or canvas into animated gif.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef GifRecorder
+ * @class
+ * @example
+ * var recorder = new GifRecorder(mediaStream || canvas || context, { onGifPreview: function, onGifRecordingStarted: function, width: 1280, height: 720, frameRate: 200, quality: 10 });
+ * recorder.record();
+ * recorder.stop(function(blob) {
+ *     img.src = URL.createObjectURL(blob);
+ * });
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStream} mediaStream - MediaStream object or HTMLCanvasElement or CanvasRenderingContext2D.
+ * @param {object} config - {disableLogs:true, initCallback: function, width: 320, height: 240, frameRate: 200, quality: 10}
+ */
+
+/**
+ * MRecordRTC runs on top of {@link RecordRTC} to bring multiple recordings in a single place, by providing simple API.
+ * @summary MRecordRTC stands for "Multiple-RecordRTC".
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef MRecordRTC
+ * @class
+ * @example
+ * var recorder = new MRecordRTC();
+ * recorder.addStream(MediaStream);
+ * recorder.mediaType = {
+ *     audio: true, // or StereoAudioRecorder or MediaStreamRecorder
+ *     video: true, // or WhammyRecorder or MediaStreamRecorder or WebAssemblyRecorder or CanvasRecorder
+ *     gif: true    // or GifRecorder
+ * };
+ * // mimeType is optional and should be set only in advance cases.
+ * recorder.mimeType = {
+ *     audio: 'audio/wav',
+ *     video: 'video/webm',
+ *     gif:   'image/gif'
+ * };
+ * recorder.startRecording();
+ * @see For further information:
+ * @see {@link https://github.com/muaz-khan/RecordRTC/tree/master/MRecordRTC|MRecordRTC Source Code}
+ * @param {MediaStream} mediaStream - MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.
+ * @requires {@link RecordRTC}
+ */
+
+/**
+ * MediaStreamRecorder is an abstraction layer for {@link https://w3c.github.io/mediacapture-record/MediaRecorder.html|MediaRecorder API}. It is used by {@link RecordRTC} to record MediaStream(s) in both Chrome and Firefox.
+ * @summary Runs top over {@link https://w3c.github.io/mediacapture-record/MediaRecorder.html|MediaRecorder API}.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://github.com/muaz-khan|Muaz Khan}
+ * @typedef MediaStreamRecorder
+ * @class
+ * @example
+ * var config = {
+ *     mimeType: 'video/webm', // vp8, vp9, h264, mkv, opus/vorbis
+ *     audioBitsPerSecond : 256 * 8 * 1024,
+ *     videoBitsPerSecond : 256 * 8 * 1024,
+ *     bitsPerSecond: 256 * 8 * 1024,  // if this is provided, skip above two
+ *     checkForInactiveTracks: true,
+ *     timeSlice: 1000, // concatenate intervals based blobs
+ *     ondataavailable: function() {} // get intervals based blobs
+ * }
+ * var recorder = new MediaStreamRecorder(mediaStream, config);
+ * recorder.record();
+ * recorder.stop(function(blob) {
+ *     video.src = URL.createObjectURL(blob);
+ *
+ *     // or
+ *     var blob = recorder.blob;
+ * });
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStream} mediaStream - MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.
+ * @param {object} config - {disableLogs:true, initCallback: function, mimeType: "video/webm", timeSlice: 1000}
+ * @throws Will throw an error if first argument "MediaStream" is missing. Also throws error if "MediaRecorder API" are not supported by the browser.
+ */
+
+/**
+ * MultiStreamRecorder can record multiple videos in single container.
+ * @summary Multi-videos recorder.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef MultiStreamRecorder
+ * @class
+ * @example
+ * var options = {
+ *     mimeType: 'video/webm'
+ * }
+ * var recorder = new MultiStreamRecorder(ArrayOfMediaStreams, options);
+ * recorder.record();
+ * recorder.stop(function(blob) {
+ *     video.src = URL.createObjectURL(blob);
+ *
+ *     // or
+ *     var blob = recorder.blob;
+ * });
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStreams} mediaStreams - Array of MediaStreams.
+ * @param {object} config - {disableLogs:true, frameInterval: 1, mimeType: "video/webm"}
+ */
+
+/**
+ * React Router DOM v6.30.1
+ *
+ * Copyright (c) Remix Software Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+
+/**
+ * React Router v6.30.1
+ *
+ * Copyright (c) Remix Software Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+
+/**
+ * RecordRTCPromisesHandler adds promises support in {@link RecordRTC}. Try a {@link https://github.com/muaz-khan/RecordRTC/blob/master/simple-demos/RecordRTCPromisesHandler.html|demo here}
+ * @summary Promises for {@link RecordRTC}
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef RecordRTCPromisesHandler
+ * @class
+ * @example
+ * var recorder = new RecordRTCPromisesHandler(mediaStream, options);
+ * recorder.startRecording()
+ *         .then(successCB)
+ *         .catch(errorCB);
+ * // Note: You can access all RecordRTC API using "recorder.recordRTC" e.g. 
+ * recorder.recordRTC.onStateChanged = function(state) {};
+ * recorder.recordRTC.setRecordingDuration(5000);
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStream} mediaStream - Single media-stream object, array of media-streams, html-canvas-element, etc.
+ * @param {object} config - {type:"video", recorderType: MediaStreamRecorder, disableLogs: true, numberOfAudioChannels: 1, bufferSize: 0, sampleRate: 0, video: HTMLVideoElement, etc.}
+ * @throws Will throw an error if "new" keyword is not used to initiate "RecordRTCPromisesHandler". Also throws error if first argument "MediaStream" is missing.
+ * @requires {@link RecordRTC}
+ */
+
+/**
+ * StereoAudioRecorder is a standalone class used by {@link RecordRTC} to bring "stereo" audio-recording in chrome.
+ * @summary JavaScript standalone object for stereo audio recording.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef StereoAudioRecorder
+ * @class
+ * @example
+ * var recorder = new StereoAudioRecorder(MediaStream, {
+ *     sampleRate: 44100,
+ *     bufferSize: 4096
+ * });
+ * recorder.record();
+ * recorder.stop(function(blob) {
+ *     video.src = URL.createObjectURL(blob);
+ * });
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStream} mediaStream - MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.
+ * @param {object} config - {sampleRate: 44100, bufferSize: 4096, numberOfAudioChannels: 1, etc.}
+ */
+
+/**
+ * Storage is a standalone object used by {@link RecordRTC} to store reusable objects e.g. "new AudioContext".
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @example
+ * Storage.AudioContext === webkitAudioContext
+ * @property {webkitAudioContext} AudioContext - Keeps a reference to AudioContext object.
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ */
+
+/**
+ * WebAssemblyRecorder lets you create webm videos in JavaScript via WebAssembly. The library consumes raw RGBA32 buffers (4 bytes per pixel) and turns them into a webm video with the given framerate and quality. This makes it compatible out-of-the-box with ImageData from a CANVAS. With realtime mode you can also use webm-wasm for streaming webm videos.
+ * @summary Video recording feature in Chrome, Firefox and maybe Edge.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef WebAssemblyRecorder
+ * @class
+ * @example
+ * var recorder = new WebAssemblyRecorder(mediaStream);
+ * recorder.record();
+ * recorder.stop(function(blob) {
+ *     video.src = URL.createObjectURL(blob);
+ * });
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStream} mediaStream - MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.
+ * @param {object} config - {webAssemblyPath:'webm-wasm.wasm',workerPath: 'webm-worker.js', frameRate: 30, width: 1920, height: 1080, bitrate: 1024, realtime: true}
+ */
+
+/**
+ * Whammy is a standalone class used by {@link RecordRTC} to bring video recording in Chrome. It is written by {@link https://github.com/antimatter15|antimatter15}
+ * @summary A real time javascript webm encoder based on a canvas hack.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef Whammy
+ * @class
+ * @example
+ * var recorder = new Whammy().Video(15);
+ * recorder.add(context || canvas || dataURL);
+ * var output = recorder.compile();
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ */
+
+/**
+ * WhammyRecorder is a standalone class used by {@link RecordRTC} to bring video recording in Chrome. It runs top over {@link Whammy}.
+ * @summary Video recording feature in Chrome.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef WhammyRecorder
+ * @class
+ * @example
+ * var recorder = new WhammyRecorder(mediaStream);
+ * recorder.record();
+ * recorder.stop(function(blob) {
+ *     video.src = URL.createObjectURL(blob);
+ * });
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStream} mediaStream - MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.
+ * @param {object} config - {disableLogs: true, initCallback: function, video: HTMLVideoElement, etc.}
+ */
+
+/**
+ * {@link GetRecorderType} is an inner/private helper for {@link RecordRTC}.
+ * @summary It returns best recorder-type available for your browser.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef GetRecorderType
+ * @class
+ * @example
+ * var RecorderType = GetRecorderType(options);
+ * var recorder = new RecorderType(options);
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStream} mediaStream - MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.
+ * @param {object} config - {type:"video", disableLogs: true, numberOfAudioChannels: 1, bufferSize: 0, sampleRate: 0, video: HTMLVideoElement, etc.}
+ */
+
+/**
+ * {@link RecordRTCConfiguration} is an inner/private helper for {@link RecordRTC}.
+ * @summary It configures the 2nd parameter passed over {@link RecordRTC} and returns a valid "config" object.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef RecordRTCConfiguration
+ * @class
+ * @example
+ * var options = RecordRTCConfiguration(mediaStream, options);
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStream} mediaStream - MediaStream object fetched using getUserMedia API or generated using captureStreamUntilEnded or WebAudio API.
+ * @param {object} config - {type:"video", disableLogs: true, numberOfAudioChannels: 1, bufferSize: 0, sampleRate: 0, video: HTMLVideoElement, getNativeBlob:true, etc.}
+ */
+
+/**
+ * {@link https://github.com/muaz-khan/RecordRTC|RecordRTC} is a WebRTC JavaScript library for audio/video as well as screen activity recording. It supports Chrome, Firefox, Opera, Android, and Microsoft Edge. Platforms: Linux, Mac and Windows. 
+ * @summary Record audio, video or screen inside the browser.
+ * @license {@link https://github.com/muaz-khan/RecordRTC/blob/master/LICENSE|MIT}
+ * @author {@link https://MuazKhan.com|Muaz Khan}
+ * @typedef RecordRTC
+ * @class
+ * @example
+ * var recorder = RecordRTC(mediaStream or [arrayOfMediaStream], {
+ *     type: 'video', // audio or video or gif or canvas
+ *     recorderType: MediaStreamRecorder || CanvasRecorder || StereoAudioRecorder || Etc
+ * });
+ * recorder.startRecording();
+ * @see For further information:
+ * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
+ * @param {MediaStream} mediaStream - Single media-stream object, array of media-streams, html-canvas-element, etc.
+ * @param {object} config - {type:"video", recorderType: MediaStreamRecorder, disableLogs: true, numberOfAudioChannels: 1, bufferSize: 0, sampleRate: 0, desiredSampRate: 16000, video: HTMLVideoElement, etc.}
+ */
+
+/** ====================================================================
+ * @license
+ * jsPDF XMP metadata plugin
+ * Copyright (c) 2016 Jussi Utunen, u-jussi@suomi24.fi
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * ====================================================================
+ */
+
+/** @license
+         * Copyright (c) 2017 Dominik Homberger
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+        https://webpjs.appspot.com
+        WebPRiffParser dominikhlbg@gmail.com
+        */
+
+/** @license
+ *
+ * jsPDF - PDF Document creation from JavaScript
+ * Version 3.0.1 Built on 2025-03-17T14:19:36.873Z
+ *                      CommitID 00000000
+ *
+ * Copyright (c) 2010-2021 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
+ *               2015-2021 yWorks GmbH, http://www.yworks.com
+ *               2015-2021 Lukas Holländer <lukas.hollaender@yworks.com>, https://github.com/HackbrettXXX
+ *               2016-2018 Aras Abbasi <aras.abbasi@gmail.com>
+ *               2010 Aaron Spike, https://github.com/acspike
+ *               2012 Willow Systems Corporation, https://github.com/willowsystems
+ *               2012 Pablo Hess, https://github.com/pablohess
+ *               2012 Florian Jenett, https://github.com/fjenett
+ *               2013 Warren Weckesser, https://github.com/warrenweckesser
+ *               2013 Youssef Beddad, https://github.com/lifof
+ *               2013 Lee Driscoll, https://github.com/lsdriscoll
+ *               2013 Stefan Slonevskiy, https://github.com/stefslon
+ *               2013 Jeremy Morel, https://github.com/jmorel
+ *               2013 Christoph Hartmann, https://github.com/chris-rock
+ *               2014 Juan Pablo Gaviria, https://github.com/juanpgaviria
+ *               2014 James Makes, https://github.com/dollaruw
+ *               2014 Diego Casorran, https://github.com/diegocr
+ *               2014 Steven Spungin, https://github.com/Flamenco
+ *               2014 Kenneth Glassey, https://github.com/Gavvers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Contributor(s):
+ *    siefkenj, ahwolf, rickygu, Midnith, saintclair, eaparango,
+ *    kim3er, mfo, alnorth, Flamenco
+ */
+
+/** @license
+ * Copyright (c) 2012 Willow Systems Corporation, https://github.com/willowsystems
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * ====================================================================
+ */
+
+/** @license React v16.13.1
+ * react-is.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */

@@ -22,6 +22,7 @@ import liheImg from '../assets/images/Lihle.png';        // Thembelihle Zulu
 import nathiImg from '../assets/images/IMG Nathii.jpg';  // Nkosinathi Radebe
 import okuhleImg from '../assets/images/sleigh.png';     // Okuhle Gadla
 import aboutBg from '../assets/images/About_Page_IMG.png';
+import gridxBackground from '../assets/images/gridx_background.jpg';  // Import the new background image
 
 function AboutPage() {
   const navigate = useNavigate();
@@ -33,6 +34,11 @@ function AboutPage() {
 
   // Call useColorModeValue for the developer card background outside the loop
   const developerCardBg = useColorModeValue('gray.100', 'gray.700');
+
+  // At the top of the component, after the existing useColorModeValue calls
+  const glassCoreBg = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(26, 32, 44, 0.2)');
+  const glassCoreBorder = useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.1)');
+  const glassTeamBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(26, 32, 44, 0.15)');
 
   // Developer data
   const team = [
@@ -71,7 +77,7 @@ function AboutPage() {
   return (
     <Box
       minH="100vh"
-      backgroundImage={`url(${aboutBg})`}
+      backgroundImage={`url(${gridxBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundRepeat="no-repeat"
@@ -106,10 +112,23 @@ function AboutPage() {
         <Box mb={8}>
           <Heading as="h3" size="md" color="white" mb={2} textAlign="center">Our Core Values</Heading>
           <Flex justify="center" wrap="wrap" gap={6}>
-            <Box bg="gray.600" borderRadius="md" p={4} minW="150px" textAlign="center" color="white">Sustainability</Box>
-            <Box bg="gray.600" borderRadius="md" p={4} minW="150px" textAlign="center" color="white">Community</Box>
-            <Box bg="gray.600" borderRadius="md" p={4} minW="150px" textAlign="center" color="white">Innovation</Box>
-            <Box bg="gray.600" borderRadius="md" p={4} minW="150px" textAlign="center" color="white">Transparency</Box>
+            {['Sustainability', 'Community', 'Innovation', 'Transparency'].map((value) => (
+              <Box
+                key={value}
+                bg={glassCoreBg}
+                backdropFilter="blur(15px)"  // Increased blur for stronger effect
+                border="1px solid"
+                borderColor={glassCoreBorder}
+                borderRadius="md"
+                p={4}
+                minW="150px"
+                textAlign="center"
+                color="white"
+                boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"  // Added subtle shadow for depth
+              >
+                {value}
+              </Box>
+            ))}
           </Flex>
         </Box>
         {/* Team Streamline */}
@@ -127,7 +146,8 @@ function AboutPage() {
           {team.map((member) => (
             <Box
               key={member.name}
-              bg="gray.700"
+              bg={glassTeamBg}
+              backdropFilter="blur(15px)"  // Increased blur for stronger effect
               borderRadius="2xl"
               boxShadow="lg"
               p={6}
@@ -141,6 +161,8 @@ function AboutPage() {
               mb={4}
               transition="transform 0.2s"
               _hover={{ transform: 'translateY(-6px) scale(1.04)', boxShadow: '2xl' }}
+              border="1px solid"
+              borderColor={glassCoreBorder}  // Using existing border color for consistency
             >
               {/* Full-size square profile picture */}
               <Box

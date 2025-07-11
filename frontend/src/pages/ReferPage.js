@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { FaCopy, FaWhatsapp, FaFacebook, FaEnvelope, FaUserPlus, FaGift, FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import referBackground from '../assets/images/Refer_and_earn_page.png';
 
 function ReferPage() {
   const toast = useToast();
@@ -57,10 +58,9 @@ function ReferPage() {
   ], []);
 
   // Color mode values
-  const cardBg = useColorModeValue('white', 'gray.700');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
   const textColor = useColorModeValue('gray.600', 'gray.400');
   const headingColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.300', 'gray.600');  // Added to fix undefined variable
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(referralLink);
@@ -99,9 +99,10 @@ function ReferPage() {
   return (
     <Box
       minH="100vh"
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundImage={`url(${referBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
+      backgroundRepeat="no-repeat"
       backgroundAttachment="fixed"
       position="relative"
       _before={{
@@ -139,7 +140,13 @@ function ReferPage() {
           </Box>
 
           {/* Referral Link Section */}
-          <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+          <Card
+            bg="rgba(255, 255, 255, 0.1)"
+            backdropFilter="blur(10px)"
+            border="1px solid rgba(255, 255, 255, 0.2)"
+            borderRadius="lg"
+            boxShadow="md"
+          >
             <CardHeader>
               <Heading size="md">Your Referral Link</Heading>
             </CardHeader>
@@ -192,7 +199,13 @@ function ReferPage() {
           </Card>
 
           {/* Rewards Section */}
-          <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+          <Card
+            bg="rgba(255, 255, 255, 0.1)"
+            backdropFilter="blur(10px)"
+            border="1px solid rgba(255, 255, 255, 0.2)"
+            borderRadius="lg"
+            boxShadow="md"
+          >
             <CardHeader>
               <Heading size="md">Your Rewards</Heading>
             </CardHeader>
@@ -221,7 +234,13 @@ function ReferPage() {
           </Card>
 
           {/* Referral History Section */}
-          <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+          <Card
+            bg="rgba(255, 255, 255, 0.1)"
+            backdropFilter="blur(10px)"
+            border="1px solid rgba(255, 255, 255, 0.2)"
+            borderRadius="lg"
+            boxShadow="md"
+          >
             <CardHeader>
               <Heading size="md">Referral History</Heading>
             </CardHeader>
@@ -231,9 +250,10 @@ function ReferPage() {
                   <Box
                     key={referral.id}
                     p={4}
-                    borderWidth="1px"
+                    bg="rgba(255, 255, 255, 0.08)"
+                    backdropFilter="blur(6px)"
+                    border="1px solid rgba(255, 255, 255, 0.15)"
                     borderRadius="lg"
-                    borderColor={borderColor}
                   >
                     <HStack justify="space-between">
                       <VStack align="start" spacing={1}>

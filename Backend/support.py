@@ -7,6 +7,7 @@ import plotly.express as px
 import json
 import datetime
 import logging
+import sys
 
 # Load environment variables
 load_dotenv()
@@ -187,6 +188,9 @@ def initialize_db():
             address TEXT,
             is_installer BOOLEAN DEFAULT FALSE
         )""")
+        
+        # Add this to ensure the column is altered if it exists with the wrong type
+        cur.execute("ALTER TABLE users ALTER COLUMN password_hash TYPE VARCHAR(255);")
         
         cur.execute("""
         CREATE TABLE IF NOT EXISTS solar_systems (

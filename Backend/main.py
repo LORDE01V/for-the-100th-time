@@ -106,12 +106,12 @@ def flask_register():
             if cur.fetchone():
                 return jsonify({'success': False, 'message': 'Email already exists'}), 400
 
-            # Create user without phone
-            hashed_pw = generate_password_hash(data['password'])
+            # Create user with proper hash length
+            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
             cur.execute(
                 """INSERT INTO users (email, password_hash, full_name, phone)
                 VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (data['email'], hashed_pw, data['name'], phone)
+                (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
             )
             user_data = cur.fetchone()
             conn.commit()
@@ -135,40 +135,34 @@ def flask_register():
 
 @flask_app.route('/api/auth/login', methods=['POST'])
 def flask_login():
-    conn = None
     try:
         data = request.get_json()
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        email = data.get('email')
+        email = data.get('email', '').lower()  # Force lowercase
         password = data.get('password')
 
-        if not all([email, password]):
-            return jsonify({'success': False, 'message': 'Email and password required'}), 400
+        if not email or not password:
+            return jsonify({'success': False, 'message': 'Missing credentials'}), 400
 
         conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+        with conn.cursor() as cur:
+            cur.execute('''
+                SELECT id, password_hash, full_name 
+                FROM users 
+                WHERE email = %s
+            ''', (email,))
+            user = cur.fetchone()
 
-        cur = conn.cursor()
-
-        # Check credentials (PostgreSQL users table)
-        cur.execute('SELECT id, email, password_hash, full_name FROM users WHERE email = %s', (email,))
-        user = cur.fetchone()
-
-        if user and check_password_hash(user[2], password):  # user[2] = password_hash
-            access_token = create_access_token(identity=user[0])  # user[0] = id
-            return jsonify({
-                'success': True,
-                'token': access_token,
-                'user': {
-                    'id': user[0],
-                    'name': user[3],  # full_name
-                    'email': user[1]
-                },
-                'redirect': '/'  # Simple frontend route
-            })
+            if user and check_password_hash(user[1], password):
+                access_token = create_access_token(identity=user[0])
+                return jsonify({
+                    'success': True,
+                    'token': access_token,
+                    'user': {
+                        'id': user[0],
+                        'name': user[2],
+                        'email': email
+                    }
+                }), 200
 
         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 

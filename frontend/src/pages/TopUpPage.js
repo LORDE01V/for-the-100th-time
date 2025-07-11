@@ -34,6 +34,8 @@ import {
   Select
 } from '@chakra-ui/react';
 
+import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png';  // Import the new background image
+
 function TopUpPage() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -172,32 +174,33 @@ function TopUpPage() {
       align="center"
       justify="center"
       p={4}
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)" // Your gradient
+      backgroundImage={`url(${topUpBackground})`}  // Replace gradient with the new image
       backgroundSize="cover"
       backgroundPosition="center"
-      backgroundAttachment="fixed" // Fix background during scroll
-      position="relative" // Needed for the pseudo-element overlay
-      _before={{ // Semi-transparent overlay for readability
+      backgroundAttachment="fixed"
+      position="relative"
+      _before={{
           content: '""',
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          bg: 'rgba(0, 0, 0, 0.5)', // Dark overlay (adjust opacity as needed)
-          zIndex: 1, // Ensure overlay is behind content
+          bg: 'rgba(0, 0, 0, 0.5)',  // Semi-transparent overlay for readability
+          zIndex: 1,
       }}
     >
       <Box
         maxW="md"
         w="full"
-        {...glassmorphismBoxStyles} // Apply glassmorphism styles here
-        boxShadow="md" // Keep or adjust shadow as needed
-        borderRadius="lg" // Keep or adjust border radius
+        {...glassmorphismBoxStyles}  // Existing glassmorphism styles
+        boxShadow="md"
+        borderRadius="lg"
         p={6}
         textAlign="center"
-        position="relative" // Needed for zIndex
-        zIndex={2} // Ensure content is above overlay
+        position="relative"
+        zIndex={2}
+        backdropFilter="blur(16px)"  // Increase blur for stronger glassmorphism effect
       >
          {/* Back to Home Button in HStack */}
          <HStack justify="space-between" w="full" mb={8} align="center">
@@ -299,7 +302,7 @@ function TopUpPage() {
           </Heading>
           
           {isAutoTopUpEnabled ? (
-            <Alert status="success" mb={4}>
+            <Alert status="success" mb={4} bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(10px)" borderRadius="md">
               <AlertIcon />
               <Box>
                 <AlertTitle>Auto Top-Up is Active</AlertTitle>
