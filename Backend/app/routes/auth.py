@@ -7,10 +7,10 @@ import time
 import logging
 from datetime import datetime
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
-CORS(auth_bp, origins=["http://localhost:3000", "http://192.168.18.3:3000"])
+CORS(auth_bp, origins=["*"], supports_credentials=True)  # Remove strict CORS here
 
 # Configure logging
 logging.basicConfig(
@@ -135,8 +135,11 @@ def logout():
     session.clear()
     return create_response("Logged out successfully")
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:3000', supports_credentials=True)
 def login():
+    if request.method == 'OPTIONS':
+        return create_response("OK", 200)
     try:
         data = request.get_json()
         if not data or not isinstance(data, dict):

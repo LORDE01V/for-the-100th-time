@@ -1,15 +1,20 @@
 import axios from 'axios';
 
+// eslint-disable-next-line no-unused-vars
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 // Create an axios instance with default config
 const api = axios.create({
-    baseURL: API_URL,
+    baseURL: process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000',  // Remove /api from default
     headers: {
         'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Access-Control-Allow-Origin': 'http://localhost:3000'
     },
-    timeout: 20000, // 20 second timeout
-    withCredentials: true, // Added for JWT cookies
+    timeout: 10000, // 10-second timeout
+    withCredentials: true, // Include cookies in requests
+    xsrfCookieName: 'csrftoken',  // Add CSRF protection
+    xsrfHeaderName: 'X-CSRFToken'
 });
 
 // Add a request interceptor to add the auth token to requests
@@ -26,26 +31,18 @@ api.interceptors.request.use(
     }
 );
 
-// Add a response interceptor to handle common errors
+// Add response interceptor for better error handling
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (error.response?.status === 401 && error.config && !error.config._retry) {  // Check if it's a 401 and not already retried
-            error.config._retry = true;
-            try {
-                const refreshResponse = await api.post('/api/auth/refresh');  // Assume a refresh endpoint exists
-                const newToken = refreshResponse.data.token;  // Get the new token from response
-                localStorage.setItem('token', newToken);  // Update the token
-                error.config.headers.Authorization = `Bearer ${newToken}`;  // Retry with new token
-                return api(error.config);  // Retry the original request
-            } catch (refreshError) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/login';  // Redirect if refresh fails
-            }
-        }
-        return Promise.reject(error);
+  response => response,
+  error => {
+    if (error.code === 'ECONNABORTED') {
+      return Promise.reject(new Error('Connection timeout. Please check your internet'));
     }
+    if (!error.response) {
+      return Promise.reject(new Error('Server unavailable. Please try again later'));
+    }
+    return Promise.reject(error);
+  }
 );
 
 // Auth API calls with improved error handling
@@ -78,7 +75,7 @@ export const auth = {
 
     register: async (userData) => {  // Updated to accept an object
         try {
-            const response = await api.post('/api/auth/register', userData);  // Pass the object directly
+            const response = await api.post('/auth/register', userData);  // Pass the object directly
             if (response.data.success) {
                 if (response.data.access_token) {
                     localStorage.setItem('token', response.data.access_token);

@@ -463,3 +463,134 @@
 2025-07-10 12:40:06,524 - INFO - Attempting login for email: kala2hip@gmail.com
 2025-07-10 12:40:06,593 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
 2025-07-10 12:40:06,860 - INFO - 127.0.0.1 - - [10/Jul/2025 12:40:06] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-10 13:02:02,151 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-10 13:02:02,152 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:02:02,153 - INFO -  * Restarting with stat
+2025-07-10 13:02:11,488 - WARNING -  * Debugger is active!
+2025-07-10 13:02:11,491 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:04:19,050 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\app\\routes\\topup.py', reloading
+2025-07-10 13:04:20,079 - INFO -  * Restarting with stat
+2025-07-10 13:04:32,135 - WARNING -  * Debugger is active!
+2025-07-10 13:04:32,138 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:04:40,852 - INFO - 127.0.0.1 - - [10/Jul/2025 13:04:40] "[33mOPTIONS /api/topup HTTP/1.1[0m" 404 -
+2025-07-10 13:04:43,542 - INFO - 127.0.0.1 - - [10/Jul/2025 13:04:43] "[33mOPTIONS /api/topup HTTP/1.1[0m" 404 -
+2025-07-10 13:04:44,385 - INFO - 127.0.0.1 - - [10/Jul/2025 13:04:44] "[33mOPTIONS /api/topup HTTP/1.1[0m" 404 -
+2025-07-10 13:05:28,271 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\app\\__init__.py', reloading
+2025-07-10 13:05:29,370 - INFO -  * Restarting with stat
+2025-07-10 13:06:29,595 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-10 13:06:29,596 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:06:29,598 - INFO -  * Restarting with stat
+2025-07-10 13:06:40,712 - WARNING -  * Debugger is active!
+2025-07-10 13:06:40,718 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:06:42,670 - INFO - 127.0.0.1 - - [10/Jul/2025 13:06:42] "[33mOPTIONS /topup HTTP/1.1[0m" 404 -
+2025-07-10 13:07:21,470 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\app\\routes\\topup.py', reloading
+2025-07-10 13:07:23,081 - INFO -  * Restarting with stat
+2025-07-10 13:07:36,900 - WARNING -  * Debugger is active!
+2025-07-10 13:07:36,904 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:08:48,023 - INFO - 127.0.0.1 - - [10/Jul/2025 13:08:48] "[33mOPTIONS /api/topup HTTP/1.1[0m" 404 -
+2025-07-10 13:09:48,748 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\app\\routes\\topup.py', reloading
+2025-07-10 13:09:49,906 - INFO -  * Restarting with stat
+2025-07-10 13:10:03,808 - WARNING -  * Debugger is active!
+2025-07-10 13:10:03,811 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:10:43,510 - INFO - 127.0.0.1 - - [10/Jul/2025 13:10:43] "[33mOPTIONS /api/topup HTTP/1.1[0m" 404 -
+2025-07-10 13:11:16,682 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\app\\routes\\topup.py', reloading
+2025-07-10 13:11:17,764 - INFO -  * Restarting with stat
+2025-07-10 13:11:33,744 - WARNING -  * Debugger is active!
+2025-07-10 13:11:33,752 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:11:49,237 - INFO - 127.0.0.1 - - [10/Jul/2025 13:11:49] "[33mOPTIONS /api/topup HTTP/1.1[0m" 404 -
+2025-07-10 13:12:53,345 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\app\\routes\\topup.py', reloading
+2025-07-10 13:12:54,307 - INFO -  * Restarting with stat
+2025-07-10 13:13:06,439 - WARNING -  * Debugger is active!
+2025-07-10 13:13:06,443 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:14:16,487 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-10 13:14:16,487 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:14:16,489 - INFO -  * Restarting with stat
+2025-07-10 13:14:28,019 - WARNING -  * Debugger is active!
+2025-07-10 13:14:28,024 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:14:31,684 - INFO - 127.0.0.1 - - [10/Jul/2025 13:14:31] "OPTIONS /api/topup HTTP/1.1" 200 -
+2025-07-10 13:14:40,832 - INFO - 127.0.0.1 - - [10/Jul/2025 13:14:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 13:14:43,031 - INFO - 127.0.0.1 - - [10/Jul/2025 13:14:43] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 13:15:38,080 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\app\\__init__.py', reloading
+2025-07-10 13:15:39,084 - INFO -  * Restarting with stat
+2025-07-10 13:15:50,065 - WARNING -  * Debugger is active!
+2025-07-10 13:15:50,069 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:16:07,168 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\app.py', reloading
+2025-07-10 13:16:08,185 - INFO -  * Restarting with stat
+2025-07-10 13:16:18,680 - WARNING -  * Debugger is active!
+2025-07-10 13:16:18,683 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:16:24,516 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\GriddX\\for-the-100th-time\\Backend\\main.py', reloading
+2025-07-10 13:16:25,550 - INFO -  * Restarting with stat
+2025-07-10 13:16:48,949 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-10 13:16:48,950 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:16:48,951 - INFO -  * Restarting with stat
+2025-07-10 13:16:58,194 - WARNING -  * Debugger is active!
+2025-07-10 13:16:58,196 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:17:24,282 - INFO - 127.0.0.1 - - [10/Jul/2025 13:17:24] "OPTIONS /api/topup HTTP/1.1" 200 -
+2025-07-10 13:17:30,605 - INFO - 127.0.0.1 - - [10/Jul/2025 13:17:30] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 13:17:31,984 - INFO - 127.0.0.1 - - [10/Jul/2025 13:17:31] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 13:17:44,520 - INFO - 127.0.0.1 - - [10/Jul/2025 13:17:44] "OPTIONS /api/topup HTTP/1.1" 200 -
+2025-07-10 13:18:55,325 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-10 13:18:55,325 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:18:55,327 - INFO -  * Restarting with stat
+2025-07-10 13:19:04,147 - WARNING -  * Debugger is active!
+2025-07-10 13:19:04,150 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:19:39,584 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-10 13:19:39,586 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:19:39,588 - INFO -  * Restarting with stat
+2025-07-10 13:19:54,299 - WARNING -  * Debugger is active!
+2025-07-10 13:19:54,303 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:19:56,152 - INFO - 127.0.0.1 - - [10/Jul/2025 13:19:56] "OPTIONS /api/topup HTTP/1.1" 200 -
+2025-07-10 13:20:03,595 - INFO - 127.0.0.1 - - [10/Jul/2025 13:20:03] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 13:21:53,653 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-10 13:21:53,659 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:21:53,665 - INFO -  * Restarting with stat
+2025-07-10 13:22:08,428 - WARNING -  * Debugger is active!
+2025-07-10 13:22:08,432 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:22:15,127 - INFO - 127.0.0.1 - - [10/Jul/2025 13:22:15] "[33mOPTIONS /auth/login HTTP/1.1[0m" 404 -
+2025-07-10 13:24:47,714 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-10 13:24:47,714 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:24:47,716 - INFO -  * Restarting with stat
+2025-07-10 13:24:57,768 - WARNING -  * Debugger is active!
+2025-07-10 13:24:57,776 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:24:59,358 - INFO - 127.0.0.1 - - [10/Jul/2025 13:24:59] "[33mOPTIONS /auth/login HTTP/1.1[0m" 404 -
+2025-07-10 13:25:07,020 - INFO - 127.0.0.1 - - [10/Jul/2025 13:25:07] "[33mOPTIONS /auth/login HTTP/1.1[0m" 404 -
+2025-07-10 13:27:08,399 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-10 13:27:08,400 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:27:08,403 - INFO -  * Restarting with stat
+2025-07-10 13:27:22,134 - WARNING -  * Debugger is active!
+2025-07-10 13:27:22,139 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:27:23,755 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-10 13:27:23,757 - INFO - 127.0.0.1 - - [10/Jul/2025 13:27:23] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 13:28:33,855 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-10 13:28:33,856 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 13:28:33,858 - INFO -  * Restarting with stat
+2025-07-10 13:28:42,371 - WARNING -  * Debugger is active!
+2025-07-10 13:28:42,374 - INFO -  * Debugger PIN: 854-777-465
+2025-07-10 13:28:50,415 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-10 13:28:50,416 - INFO - 127.0.0.1 - - [10/Jul/2025 13:28:50] "OPTIONS /api/auth/login HTTP/1.1" 200 -

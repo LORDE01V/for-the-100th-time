@@ -9,6 +9,8 @@ from agent import EnergyUsageOptimizerAgent
 from sys import stdout  # Import for StreamHandler
 from flask_jwt_extended import JWTManager
 import datetime
+from db_utils import create_topup_table  # Import the new function
+from app.routes.topup import topup_bp  # Add this import
 
 # Set up logging to console only
 logger = logging.getLogger(__name__)
@@ -22,10 +24,10 @@ load_dotenv()  # Load .env variables
 ESKOM_TOKEN = os.getenv("ESKOM_TOKEN")  # Added Eskom token loading
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://192.168.18.3:3000"]}})
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://localhost:5000"]}})
 
 # Add JWT configuration
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your_default_secret_key_here')  # Use an environment variable for security
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')  # Remove hardcoded fallback
 jwt = JWTManager(app)
 
 chatbot = HuggingFaceChatbot()
@@ -158,5 +160,8 @@ def log_message():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+    # Call the table creation function here to ensure the table exists before the app starts
+    create_topup_table()
+    
     logger.info("Starting Flask app on port 5000")
     app.run(debug=True, port=5000)
