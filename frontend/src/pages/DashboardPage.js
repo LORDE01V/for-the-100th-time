@@ -36,6 +36,7 @@ import ThemeSwitcher from '../components/widgets/ThemeSwitcher';
 import { auth } from '../services/api';  // Keep if used elsewhere
 import { useSubscription } from '../context/SubscriptionContext';
 import dashboardBg from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.png';
+import NavigationPanel from '../components/NavigationPanel';
 
 // Add missing variable declarations at the top
 
@@ -455,6 +456,7 @@ function DashboardPage() {
   return (
     <DashboardProvider>
       <ColorModeScript initialColorMode="dark" />
+      <NavigationPanel /> {/* Add the navigation panel */}
       <DashboardContent />
     </DashboardProvider>
   );
