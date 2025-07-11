@@ -122,20 +122,15 @@ def flask_register():
             if cur.fetchone():
                 return jsonify({'success': False, 'message': 'Email already exists'}), 400
 
-        # Hash password and insert (using users table from support.py)
-        email = data['email']
-        password = data['password']
-        name = data['name']
-        hashed_password = generate_password_hash(password)
-        cur.execute(
-            'INSERT INTO users (email, password_hash, full_name) VALUES (%s, %s, %s) RETURNING id',
-            (email, hashed_password, name)
-        )
-        result = cur.fetchone()
-        if result is None:
-            raise Exception("Failed to retrieve user ID: No rows returned.")
-        user_id = result[0]
-        conn.commit()
+            # Create user with proper hash length
+            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
+            cur.execute(
+                """INSERT INTO users (email, password_hash, full_name, phone)
+                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+                (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
+            )
+            user_data = cur.fetchone()
+            conn.commit()
 
         send_welcome_email(data['email'], data['name'])
 
@@ -159,45 +154,39 @@ def flask_register():
 
 @flask_app.route('/api/auth/login', methods=['POST'])
 def flask_login():
-    conn = None
     try:
         data = request.get_json()
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        email = data.get('email')
+        email = data.get('email', '').lower()  # Force lowercase
         password = data.get('password')
 
-        if not all([email, password]):
-            return jsonify({'success': False, 'message': 'Email and password required'}), 400
+        if not email or not password:
+            return jsonify({'success': False, 'message': 'Missing credentials'}), 400
 
         conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+        with conn.cursor() as cur:
+            cur.execute('''
+                SELECT id, password_hash, full_name 
+                FROM users 
+                WHERE email = %s
+            ''', (email,))
+            user = cur.fetchone()
 
-        cur = conn.cursor()
-
-        # Check credentials (PostgreSQL users table)
-        cur.execute('SELECT id, email, password_hash, full_name FROM users WHERE email = %s', (email,))
-        user = cur.fetchone()
-
-        if user and check_password_hash(user[2], password):  # user[2] = password_hash
-            access_token = create_access_token(identity=user[0])  # user[0] = id
-            return jsonify({
-                'success': True,
-                'token': access_token,
-                'user': {
-                    'id': user[0],
-                    'name': user[3],  # full_name
-                    'email': user[1]
-                },
-                'redirect': '/'  # Simple frontend route
-            })
+            if user and check_password_hash(user[1], password):
+                access_token = create_access_token(identity=user[0])
+                return jsonify({
+                    'success': True,
+                    'token': access_token,
+                    'user': {
+                        'id': user[0],
+                        'name': user[2],
+                        'email': email
+                    }
+                }), 200
 
         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
     except Exception as e:
-        flask_app.logger.error(f"Login error: {str(e)}")
+        app.logger.error(f"Login error: {str(e)}")
         return jsonify({'success': False, 'message': 'Login failed'}), 500
     finally:
         if 'conn' in locals():
@@ -205,612 +194,77 @@ def flask_login():
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
 
-@flask_app.route('/api/auth/change-password', methods=['POST'])
+@flask_app.route('/api/solar/systems', methods=['POST'])
 @jwt_required()
-def change_password():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
+def flask_create_solar_system():
+    """Handle solar system installations"""
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    # Add validation and call support.py's add_solar_system()
+    # ... implementation ...
 
-        old_password = str(data.get('oldPassword', ''))
-        new_password = str(data.get('newPassword', ''))
-
-        if not old_password or not new_password:
-            return jsonify({'success': False, 'message': 'Both old and new passwords are required'}), 400
-
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-
-        # Get current password hash
-        cur.execute('SELECT password_hash FROM users WHERE id = %s', (user_id,))
-        result = cur.fetchone()
-        
-        if not result:
-            return jsonify({'success': False, 'message': 'User not found'}), 404
-
-        current_hash = result[0]
-
-        # Verify old password
-        if not check_password_hash(current_hash, old_password):
-            return jsonify({'success': False, 'message': 'Current password is incorrect'}), 401
-
-        # Hash and update new password
-        new_hash = generate_password_hash(new_password)
-        cur.execute('UPDATE users SET password_hash = %s WHERE id = %s', (new_hash, user_id))
-        conn.commit()
-
-        return jsonify({'success': True, 'message': 'Password updated successfully'})
-
-    except Exception as e:
-        print(f"Password change error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to change password'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
-
-# Settings routes
-@flask_app.route('/api/settings', methods=['GET'])
+@flask_app.route('/api/contracts', methods=['POST'])
 @jwt_required()
-def get_user_settings():
-    try:
-        user_id = get_jwt_identity()
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+def flask_create_solar_contract():
+    """Handle contract creation"""
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    # Add validation and call support.py's create_contract()
+    # ... implementation ...
 
-        cur = conn.cursor()
-        
-        # Get user settings or create default if not exists
-        cur.execute('''
-            INSERT INTO user_settings (user_id)
-            VALUES (%s)
-            ON CONFLICT (user_id) DO NOTHING
-            RETURNING receive_sms, receive_email, language
-        ''', (user_id,))
-        
-        if cur.rowcount == 0:
-            # If no insert happened, get existing settings
-            cur.execute('''
-                SELECT receive_sms, receive_email, language
-                FROM user_settings
-                WHERE user_id = %s
-            ''', (user_id,))
-        
-        settings = cur.fetchone()
-        conn.commit()
-        
-        if not settings:  # Ensure the query returned a result
-            return jsonify({'success': False, 'message': 'Failed to retrieve settings'}), 500
-        
-        return jsonify({
-            'success': True,
-            'settings': {
-                'receiveSms': settings[0],
-                'receiveEmail': settings[1],
-                'language': settings[2]
-            }
-        })
-
-    except Exception as e:
-        print(f"Get settings error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to get settings'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
-
-@flask_app.route('/api/settings', methods=['PUT'])
+@flask_app.route('/api/payments', methods=['POST'])
 @jwt_required()
-def modify_user_settings():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
+def flask_record_payment():
+    """Handle payment processing"""
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    # Add validation and call support.py's record_payment()
+    # ... implementation ...
 
-        # Extract and validate settings
-        receive_sms = bool(data.get('receiveSms', False))
-        receive_email = bool(data.get('receiveEmail', False))
-        language = str(data.get('language', 'en'))
-
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Update or insert settings
-        cur.execute('''
-            INSERT INTO user_settings (user_id, receive_sms, receive_email, language)
-            VALUES (%s, %s, %s, %s)
-            ON CONFLICT (user_id) DO UPDATE
-            SET receive_sms = EXCLUDED.receive_sms,
-                receive_email = EXCLUDED.receive_email,
-                language = EXCLUDED.language,
-                updated_at = CURRENT_TIMESTAMP
-            RETURNING receive_sms, receive_email, language
-        ''', (user_id, receive_sms, receive_email, language))
-        
-        settings = cur.fetchone()
-        conn.commit()
-        
-        if not settings:  # Ensure the query returned a result
-            return jsonify({'success': False, 'message': 'Failed to retrieve settings'}), 500
-        
-        return jsonify({
-            'success': True,
-            'settings': {
-                'receiveSms': settings[0],
-                'receiveEmail': settings[1],
-                'language': settings[2]
-            }
-        })
-
-    except Exception as e:
-        print(f"Update settings error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to update settings'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
-
-# Add these profile endpoints
-@flask_app.route('/api/profile', methods=['GET'])
+@flask_app.route('/api/contracts', methods=['GET'])
 @jwt_required()
-def get_profile():
+def flask_get_contracts():
+    """Get user's solar contracts"""
+    current_user = get_jwt_identity()
+    # Add authorization and call support.py's get_user_contracts()
+    # ... implementation ...
+
+@flask_app.errorhandler(404)
+def not_found(e):
+    return jsonify(error="Route not found"), 404
+
+# ================= FASTAPI APP =================
+app = FastAPI(title="Lumina Solar FastAPI")
+
+# Configure CORS for development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# JWT (compatible with Flask's tokens)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/fastapi/auth/login")
+
+# --- FastAPI Models ---
+class UserRegister(BaseModel):
+    name: str
+    email: str
+    password: str
+    phone: Optional[str] = None
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+# --- FastAPI Routes ---
+@app.post("/fastapi/auth/register")
+async def fastapi_register(user: UserRegister):
+    """FastAPI version of /api/auth/register"""
+    conn = None
     try:
-        user_id = get_jwt_identity()
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        try:
-            # Get user profile data
-            cur.execute('''
-                SELECT p.full_name, p.email_address, p.phone_number, p.address, p.energy_motto,
-                       p.profile_picture_url,
-                       s.facebook_profile_url, s.twitter_profile_url, s.instagram_profile_url
-                FROM user_profiles p
-                LEFT JOIN social_links s ON p.user_id = s.user_id
-                WHERE p.user_id = %s
-            ''', (user_id,))
-            
-            profile = cur.fetchone()
-            
-            if profile:
-                return jsonify({
-                    'success': True,
-                    'profile': {
-                        'full_name': profile[0],
-                        'email_address': profile[1],
-                        'phone_number': profile[2],
-                        'address': profile[3],
-                        'energy_motto': profile[4] if profile[4] is not None else '',
-                        'profilePictureUrl': profile[5],
-                        'social_accounts': {
-                            'facebook_profile_url': profile[6],
-                            'twitter_profile_url': profile[7],
-                            'instagram_profile_url': profile[8]
-                        }
-                    }
-                })
-            else:
-                # If no profile exists, return empty values
-                return jsonify({
-                    'success': True,
-                    'profile': {
-                        'full_name': '',
-                        'email_address': '',
-                        'phone_number': '',
-                        'address': '',
-                        'energy_motto': '',
-                        'profilePictureUrl': None,
-                        'social_accounts': {
-                            'facebook_profile_url': None,
-                            'twitter_profile_url': None,
-                            'instagram_profile_url': None
-                        }
-                    }
-                })
-
-        except Exception as e:
-            print(f"Database error in get_profile: {str(e)}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Get profile error: {str(e)}")
-        return jsonify({'success': False, 'message': f'Failed to get profile: {str(e)}'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
-
-# Update the profile endpoint to match frontend expectations
-@flask_app.route('/api/profile', methods=['PUT'])
-@jwt_required()
-def update_profile():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        # Extract and validate profile data
-        full_name = str(data.get('full_name', ''))
-        email_address = str(data.get('email_address', ''))
-        phone = str(data.get('phone_number', ''))
-        address = str(data.get('address', ''))
-        energy_motto = str(data.get('energy_motto', ''))
-        
-        # Extract social accounts data
-        social_accounts = data.get('social_accounts', {})
-        facebook_url = social_accounts.get('facebook_profile_url')
-        twitter_url = social_accounts.get('twitter_profile_url')
-        instagram_url = social_accounts.get('instagram_profile_url')
-
-        if not email_address:
-            return jsonify({'success': False, 'message': 'Email address is required'}), 400
-
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        try:
-            # Update profile data
-            cur.execute('''
-                INSERT INTO user_profiles (user_id, full_name, email_address, phone_number, address, energy_motto)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                ON CONFLICT (user_id) DO UPDATE
-                SET full_name = EXCLUDED.full_name,
-                    email_address = EXCLUDED.email_address,
-                    phone_number = EXCLUDED.phone_number,
-                    address = EXCLUDED.address,
-                    energy_motto = EXCLUDED.energy_motto,
-                    updated_at = CURRENT_TIMESTAMP
-                RETURNING full_name, email_address, phone_number, address, energy_motto
-            ''', (user_id, full_name, email_address, phone, address, energy_motto))
-            
-            profile = cur.fetchone()
-            
-            # Update social links
-            cur.execute('''
-                INSERT INTO social_links (user_id, facebook_profile_url, twitter_profile_url, instagram_profile_url)
-                VALUES (%s, %s, %s, %s)
-                ON CONFLICT (user_id) DO UPDATE
-                SET facebook_profile_url = EXCLUDED.facebook_profile_url,
-                    twitter_profile_url = EXCLUDED.twitter_profile_url,
-                    instagram_profile_url = EXCLUDED.instagram_profile_url
-            ''', (user_id, facebook_url, twitter_url, instagram_url))
-            
-            conn.commit()
-            
-            if not profile:
-                return jsonify({'success': False, 'message': 'Failed to update profile'}), 500
-
-            return jsonify({
-                'success': True,
-                'profile': {
-                    'full_name': profile[0],
-                    'email_address': profile[1],
-                    'phone_number': profile[2],
-                    'address': profile[3],
-                    'energy_motto': profile[4],
-                    'social_accounts': {
-                        'facebook_profile_url': facebook_url,
-                        'twitter_profile_url': twitter_url,
-                        'instagram_profile_url': instagram_url
-                    }
-                }
-            })
-
-        except Exception as e:
-            if conn:  # Ensure conn is not None before rollback
-                conn.rollback()
-            raise e
-        finally:
-            if 'conn' in locals():
-                if 'cur' in locals(): cur.close()
-                if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                    conn.close()
-
-    except Exception as e:
-        print(f"Update profile error: {str(e)}")
-        return jsonify({'success': False, 'message': f'Failed to update profile: {str(e)}'}), 500
-
-# Add these new routes to main.py
-
-@flask_app.route('/api/expenses', methods=['GET'])
-@jwt_required()
-def get_expenses():
-    try:
-        user_id = get_jwt_identity()
-        print(f"=== Fetching expenses for user {user_id} ===")
-
-        try:
-            expenses_list = get_user_expenses(user_id)
-            print(f"Successfully fetched {len(expenses_list)} expenses")
-            
-            return jsonify({
-                'success': True,
-                'expenses': expenses_list
-            })
-
-        except Exception as e:
-            print(f"Error fetching expenses: {str(e)}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Unexpected error in expenses endpoint: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': 'Internal server error'}), 500
-
-@flask_app.route('/api/expenses', methods=['POST'])
-@jwt_required()
-def create_expense():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-
-        # Debug logging
-        print("=== Expense Creation Request Debug ===")
-        print(f"User ID: {user_id}")
-        print(f"Request Data: {data}")
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        amount = data.get('amount')
-        purpose = data.get('purpose')
-        type = data.get('type')
-
-        # Validate required fields
-        if not all([amount, purpose, type]):
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-
-        # Validate amount
-        try:
-            amount = float(amount)
-            if amount <= 0:
-                return jsonify({'success': False, 'message': 'Amount must be greater than 0'}), 400
-        except (TypeError, ValueError) as e:
-            print(f"Amount validation error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Invalid amount format'}), 400
-
-        try:
-            expense_id = create_expense(user_id, amount, purpose, type)
-            print(f"Expense created successfully with ID: {expense_id}")
-            
-            return jsonify({
-                'success': True,
-                'expense_id': expense_id
-            }), 201
-
-        except Exception as e:
-            print(f"Error creating expense: {str(e)}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Unexpected error in expense creation: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': 'Internal server error'}), 500
-
-@flask_app.route('/api/topup', methods=['POST'])
-@jwt_required()
-def process_top_up():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-
-        # Debug logging
-        print("=== Top-up Request Debug ===")
-        print(f"User ID: {user_id}")
-        print(f"Request Data: {data}")
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        amount = data.get('amount')
-        type = data.get('type')
-        promo_code = data.get('promoCode')
-        voucher_code = data.get('voucherCode')
-
-        # Debug logging
-        print(f"Parsed data - Amount: {amount}, Type: {type}")
-        print(f"Promo Code: {promo_code}, Voucher Code: {voucher_code}")
-
-        # Validate amount
-        try:
-            amount = float(amount)
-            if amount <= 0:
-                return jsonify({'success': False, 'message': 'Amount must be greater than 0'}), 400
-        except (TypeError, ValueError) as e:
-            print(f"Amount validation error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Invalid amount format'}), 400
-
-        if not type:
-            return jsonify({'success': False, 'message': 'Transaction type is required'}), 400
-
-        try:
-            result = process_top_up_transaction(user_id, amount, type, promo_code, voucher_code)
-            print(f"Top-up successful - Result: {result}")
-            
-            # Ensure we're sending the correct property names
-            return jsonify({
-                'success': True,
-                'top_up_id': result['top_up_id'],
-                'new_balance': float(result['new_balance'])  # Make sure this matches the frontend expectation
-            }), 201
-
-        except Exception as e:
-            print(f"Error in process_top_up_transaction: {str(e)}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Unexpected error in top-up endpoint: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': 'Internal server error'}), 500
-
-@flask_app.route('/api/topup/balance', methods=['GET'])
-@jwt_required()
-def get_balance():
-    try:
-        user_id = get_jwt_identity()
-        balance = get_user_balance(user_id)
-        
-        return jsonify({
-            'success': True,
-            'balance': float(balance)
-        })
-
-    except Exception as e:
-        print(f"Error fetching balance: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to fetch balance'}), 500
-
-@flask_app.route('/api/auto-topup/settings', methods=['GET'])
-@jwt_required()
-def get_auto_top_up_settings():
-    try:
-        user_id = get_jwt_identity()
-        print(f"=== Getting auto top-up settings for user {user_id} ===")
-        
-        # Debug log the user_id
-        print(f"User ID from JWT: {user_id}")
-        
-        # Use the renamed function
-        settings = get_user_auto_top_up_settings(user_id)
-        print(f"Settings found: {settings}")
-        
-        # If no settings exist, return empty settings instead of None
-        if settings is None:
-            return jsonify({
-                'success': True,
-                'settings': {
-                    'min_balance': 0,
-                    'top_up_amount': 0,
-                    'frequency': 'weekly',
-                    'is_enabled': False
-                }
-            })
-        
-        return jsonify({
-            'success': True,
-            'settings': settings
-        })
-
-    except Exception as e:
-        print(f"Error getting auto top-up settings: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': f'Failed to get auto top-up settings: {str(e)}'}), 500
-
-@flask_app.route('/api/auto-topup/settings', methods=['POST'])
-@jwt_required()
-def save_auto_top_up_settings():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-
-        print(f"=== Saving auto top-up settings for user {user_id} ===")
-        print(f"Request data: {data}")
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        # Extract and validate the data
-        try:
-            min_balance = float(data.get('minBalance'))
-            top_up_amount = float(data.get('autoTopUpAmount'))
-            frequency = data.get('autoTopUpFrequency')
-        except (TypeError, ValueError) as e:
-            print(f"Data validation error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Invalid data format'}), 400
-
-        if not all([min_balance, top_up_amount, frequency]):
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-
-        if min_balance <= 0 or top_up_amount <= 0:
-            return jsonify({'success': False, 'message': 'Amounts must be greater than 0'}), 400
-
-        if frequency not in ['weekly', 'monthly', 'quarterly']:
-            return jsonify({'success': False, 'message': 'Invalid frequency'}), 400
-
-        try:
-            settings = save_user_auto_top_up_settings(user_id, min_balance, top_up_amount, frequency)
-            print(f"Settings saved successfully: {settings}")
-            
-            return jsonify({
-                'success': True,
-                'settings': settings
-            })
-
-        except Exception as e:
-            print(f"Error saving settings: {str(e)}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Unexpected error in save settings endpoint: {str(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': 'Internal server error'}), 500
-
-@flask_app.route('/api/auto-topup/toggle', methods=['POST'])
-@jwt_required()
-def toggle_auto_top_up():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        is_enabled = data.get('isEnabled')
-        if is_enabled is None:
-            return jsonify({'success': False, 'message': 'Missing isEnabled field'}), 400
-
-        success = toggle_auto_top_up(user_id, is_enabled)
-        
-        return jsonify({
-            'success': True,
-            'isEnabled': is_enabled
-        })
-
-    except Exception as e:
-        print(f"Error toggling auto top-up: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to toggle auto top-up'}), 500
-
-@flask_app.route('/api/auth/delete-account', methods=['POST'])
-@jwt_required()
-def delete_account():
-    try:
-        user_id = get_jwt_identity()
         conn = get_db()
         if not conn:
             return jsonify({'success': False, 'message': 'Database error'}), 500

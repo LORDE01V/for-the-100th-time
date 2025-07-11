@@ -19,6 +19,7 @@ import {
 import { FaArrowLeft, FaCreditCard, FaBolt, FaSun, FaShieldAlt, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useSubscription } from '../context/SubscriptionContext';
+import subscriptionsBackground from '../assets/images/subscriptions_page.png';  // Import the background image
 
 function SubscriptionPage() {
   const navigate = useNavigate();
@@ -29,6 +30,8 @@ function SubscriptionPage() {
   const headingColor = useColorModeValue('gray.900', 'white');
   const newCardBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(17, 25, 40, 0.75)');
   const newBorderColor = useColorModeValue('gray.300', 'gray.700');
+  const glassCardBg = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(17, 25, 40, 0.2)');
+  const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.1)');
   
   const subscriptionPlans = useMemo(() => [
     {
@@ -210,10 +213,11 @@ function SubscriptionPage() {
       align="center"
       justify="center"
       p={4}
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundImage={`url(${subscriptionsBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
+      backgroundRepeat="no-repeat"  // Added to prevent repetition
       position="relative"
       _before={{
         content: '""',
@@ -253,7 +257,24 @@ function SubscriptionPage() {
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8}>
           {subscriptionPlans.map((plan) => (
             <motion.div key={plan.id} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} whileHover={{ scale: 1.05, boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.1)' }} style={{ height: '100%' }}>
-              <Box p={6} borderWidth="1px" borderRadius="md" bg={newCardBg} boxShadow="lg" _hover={{ boxShadow: 'xl' }} display="flex" flexDirection="column" alignItems="center" justifyContent="flex-start" height="100%" minH="340px" maxW="320px" mx="auto" backdropFilter="blur(10px)" borderColor={selectedPlans.includes(plan.id) ? 'green.500' : newBorderColor}>
+              <Box
+                p={6}
+                borderWidth="1px"
+                borderRadius="md"
+                bg={glassCardBg}
+                boxShadow="lg"
+                _hover={{ boxShadow: 'xl' }}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="flex-start"
+                height="100%"
+                minH="340px"
+                maxW="320px"
+                mx="auto"
+                backdropFilter="blur(15px)"  // Increased blur for better effect
+                borderColor={selectedPlans.includes(plan.id) ? 'green.500' : glassBorderColor}
+              >
                 <VStack spacing={4} align="stretch" height="100%">
                   <Flex align="center" justify="center">
                     {plan.id.includes('basic') && <FaBolt size="24px" color="blue" />}

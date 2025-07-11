@@ -53,15 +53,23 @@ api.interceptors.response.use(
 export const auth = {
     login: async (email, password) => {
         try {
-            const response = await api.post('/api/auth/login', { email, password });
+            const response = await api.post('/api/auth/login', {
+                email: email.toLowerCase().trim(),  // Normalize email
+                password
+            });
             if (response.data.success) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                if (response.data.access_token) {
+                    localStorage.setItem('token', response.data.access_token);
+                }
+                if (response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
                 // Removed redirection to let the component handle navigation
                 // window.location.href = '/dashboard';
             }
             return response.data;
         } catch (error) {
+            console.error('Login error:', error.response?.data);
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
@@ -69,9 +77,25 @@ export const auth = {
         }
     },
 
-    register: async (userData) => {
-        const response = await api.post('/api/auth/register', userData);
-        return response.data;
+    register: async (userData) => {  // Updated to accept an object
+        try {
+            const response = await api.post('/api/auth/register', userData);  // Pass the object directly
+            if (response.data.success) {
+                if (response.data.access_token) {
+                    localStorage.setItem('token', response.data.access_token);
+                }
+                if (response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+            }
+            return response.data;
+        } catch (error) {
+            console.error('Registration error:', error.response?.data);
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+            throw new Error('Failed to connect to the server');
+        }
     },
 
     logout: () => {
@@ -100,5 +124,17 @@ if (window.location.hostname === 'localhost') {
         return originalPost.call(this, url, data, ...args);
     };
 }
+
+export const fetchAISuggestions = async () => {
+  try {
+    const response = await api.get('/api/ai-suggestions', {
+      withCredentials: true, // Include cookies for authentication
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching AI suggestions:', error);
+    return { success: false };
+  }
+};
 
 export default api;

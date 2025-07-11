@@ -34,6 +34,8 @@ import {
     Select
 } from '@chakra-ui/react';
 
+import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png';  // Import the new background image
+
 function TopUpPage() {
     const navigate = useNavigate();
     const toast = useToast();
@@ -162,49 +164,51 @@ function TopUpPage() {
         );
     }
 
-    return (
-        <Flex
-            minH="100vh"
-            align="center"
-            justify="center"
-            p={4}
-            backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
-            backgroundSize="cover"
-            backgroundPosition="center"
-            backgroundAttachment="fixed"
-            position="relative"
-            _before={{
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                bg: 'rgba(0, 0, 0, 0.5)',
-                zIndex: 1,
-            }}
-        >
-            <Box
-                maxW="md"
-                w="full"
-                {...glassmorphismBoxStyles}
-                boxShadow="md"
-                borderRadius="lg"
-                p={6}
-                textAlign="center"
-                position="relative"
-                zIndex={2}
-            >
-                <HStack justify="space-between" w="full" mb={8} align="center">
-                    <Button
-                        leftIcon={<FaArrowLeft />}
-                        variant="ghost"
-                        onClick={() => navigate('/home')}
-                        color={headingColor}
-                    >
-                        Back to Home
-                    </Button>
-                </HStack>
+  return (
+    <Flex
+      minH="100vh"
+      align="center"
+      justify="center"
+      p={4}
+      backgroundImage={`url(${topUpBackground})`}  // Replace gradient with the new image
+      backgroundSize="cover"
+      backgroundPosition="center"
+      backgroundAttachment="fixed"
+      position="relative"
+      _before={{
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          bg: 'rgba(0, 0, 0, 0.5)',  // Semi-transparent overlay for readability
+          zIndex: 1,
+      }}
+    >
+      <Box
+        maxW="md"
+        w="full"
+        {...glassmorphismBoxStyles}  // Existing glassmorphism styles
+        boxShadow="md"
+        borderRadius="lg"
+        p={6}
+        textAlign="center"
+        position="relative"
+        zIndex={2}
+        backdropFilter="blur(16px)"  // Increase blur for stronger glassmorphism effect
+      >
+         {/* Back to Home Button in HStack */}
+         <HStack justify="space-between" w="full" mb={8} align="center">
+             <Button
+               leftIcon={<FaArrowLeft />}
+               variant="ghost"
+               onClick={() => navigate('/home')}
+               color={headingColor}
+             >
+                Back to Home
+             </Button>
+         </HStack>
 
                 <Heading as="h2" size="xl" mb={6} color={headingColor} textAlign="center">
                     Top-Up / Recharge
@@ -289,7 +293,7 @@ function TopUpPage() {
           </Heading>
           
           {isAutoTopUpEnabled ? (
-            <Alert status="success" mb={4}>
+            <Alert status="success" mb={4} bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(10px)" borderRadius="md">
               <AlertIcon />
               <Box>
                 <AlertTitle>Auto Top-Up is Active</AlertTitle>

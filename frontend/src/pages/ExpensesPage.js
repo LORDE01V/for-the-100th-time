@@ -5,7 +5,6 @@ import {
   Heading,
   Button,
   VStack,
-  useColorModeValue,
   Flex,
   Icon,
   Text,
@@ -14,16 +13,11 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaMoneyBill, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
+import backgroundImageUrl from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_c2363fd3-711f-41c0-b272-af8fbfd0298c.png';
 
 const ExpensesPage = () => {
   const navigate = useNavigate();
   
-  // Move all useColorModeValue hooks to the top level
-  const cardBg = useColorModeValue('white', 'gray.700');
-  const textColor = useColorModeValue('gray.800', 'white');
-  const itemBg = useColorModeValue('gray.50', 'gray.600');
-  const subTextColor = useColorModeValue('gray.600', 'gray.300');
-
   // Mock data for expenses
   const [expenses] = useState([
     {
@@ -52,7 +46,7 @@ const ExpensesPage = () => {
   return (
     <Box
       minH="100vh"
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundImage={`url(${backgroundImageUrl})`}
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
@@ -85,30 +79,51 @@ const ExpensesPage = () => {
 
           {/* Summary Cards */}
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-            <Box p={6} bg={cardBg} borderRadius="lg" shadow="md">
+            <Box
+              p={6}
+              bg="rgba(255, 255, 255, 0.1)"
+              backdropFilter="blur(10px)"
+              border="1px solid rgba(255, 255, 255, 0.2)"
+              borderRadius="lg"
+              shadow="md"
+            >
               <Flex align="center" mb={4}>
                 <Icon as={FaMoneyBill} w={6} h={6} color="green.500" mr={3} />
-                <Text fontSize="lg" fontWeight="bold" color={textColor}>Total Expenses</Text>
+                <Text fontSize="lg" fontWeight="bold" color="gray.800">Total Expenses</Text>
               </Flex>
               <Text fontSize="2xl" fontWeight="bold" color="green.500">
                 R{expenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}
               </Text>
             </Box>
 
-            <Box p={6} bg={cardBg} borderRadius="lg" shadow="md">
+            <Box
+              p={6}
+              bg="rgba(255, 255, 255, 0.1)"
+              backdropFilter="blur(10px)"
+              border="1px solid rgba(255, 255, 255, 0.2)"
+              borderRadius="lg"
+              shadow="md"
+            >
               <Flex align="center" mb={4}>
                 <Icon as={FaChartLine} w={6} h={6} color="blue.500" mr={3} />
-                <Text fontSize="lg" fontWeight="bold" color={textColor}>Monthly Average</Text>
+                <Text fontSize="lg" fontWeight="bold" color="gray.800">Monthly Average</Text>
               </Flex>
               <Text fontSize="2xl" fontWeight="bold" color="blue.500">
                 R{(expenses.reduce((sum, exp) => sum + exp.amount, 0) / expenses.length).toFixed(2)}
               </Text>
             </Box>
 
-            <Box p={6} bg={cardBg} borderRadius="lg" shadow="md">
+            <Box
+              p={6}
+              bg="rgba(255, 255, 255, 0.1)"
+              backdropFilter="blur(10px)"
+              border="1px solid rgba(255, 255, 255, 0.2)"
+              borderRadius="lg"
+              shadow="md"
+            >
               <Flex align="center" mb={4}>
                 <Icon as={FaCalendarAlt} w={6} h={6} color="purple.500" mr={3} />
-                <Text fontSize="lg" fontWeight="bold" color={textColor}>Last Payment</Text>
+                <Text fontSize="lg" fontWeight="bold" color="gray.800">Last Payment</Text>
               </Flex>
               <Text fontSize="2xl" fontWeight="bold" color="purple.500">
                 {expenses[0].date}
@@ -117,8 +132,15 @@ const ExpensesPage = () => {
           </SimpleGrid>
 
           {/* Expenses List */}
-          <Box p={6} bg={cardBg} borderRadius="lg" shadow="md">
-            <Heading size="md" mb={4} color={textColor}>Recent Expenses</Heading>
+          <Box
+            p={6}
+            bg="rgba(255, 255, 255, 0.1)"
+            backdropFilter="blur(10px)"
+            border="1px solid rgba(255, 255, 255, 0.2)"
+            borderRadius="lg"
+            shadow="md"
+          >
+            <Heading size="md" mb={4} color="gray.800">Recent Expenses</Heading>
             <VStack spacing={4} align="stretch">
               {expenses.map((expense) => (
                 <Flex
@@ -126,17 +148,17 @@ const ExpensesPage = () => {
                   justify="space-between"
                   align="center"
                   p={4}
-                  bg={itemBg}
+                  bg="rgba(255, 255, 255, 0.05)"
                   borderRadius="md"
                 >
                   <Box>
-                    <Text fontWeight="bold" color={textColor}>{expense.category}</Text>
-                    <Text fontSize="sm" color={subTextColor}>
+                    <Text fontWeight="bold" color="gray.800">{expense.category}</Text>
+                    <Text fontSize="sm" color="gray.600">
                       {expense.date}
                     </Text>
                   </Box>
                   <Box textAlign="right">
-                    <Text fontWeight="bold" color={textColor}>R{expense.amount.toFixed(2)}</Text>
+                    <Text fontWeight="bold" color="gray.800">R{expense.amount.toFixed(2)}</Text>
                     <Badge
                       colorScheme={expense.status === 'Paid' ? 'green' : 'yellow'}
                     >
