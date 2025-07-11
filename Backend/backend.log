@@ -124,3 +124,452 @@
 2025-07-03 14:35:23,017 - INFO - Attempting login for email: nathiunathi@gmail.com
 2025-07-03 14:35:23,240 - INFO - Verifying password: Incoming password length 13, Stored hash length 162
 2025-07-03 14:35:23,764 - INFO - 127.0.0.1 - - [03/Jul/2025 14:35:23] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 09:36:21,549 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 09:36:21,550 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 09:37:54,682 - INFO - 127.0.0.1 - - [09/Jul/2025 09:37:54] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 09:37:55,000 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 09:37:55,380 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 09:37:56,129 - INFO - 127.0.0.1 - - [09/Jul/2025 09:37:56] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 09:38:00,159 - INFO - 127.0.0.1 - - [09/Jul/2025 09:38:00] "OPTIONS /api/auto-topup/settings HTTP/1.1" 200 -
+2025-07-09 09:38:00,387 - INFO - 127.0.0.1 - - [09/Jul/2025 09:38:00] "[35m[1mGET /api/auto-topup/settings HTTP/1.1[0m" 500 -
+2025-07-09 09:38:00,472 - INFO - 127.0.0.1 - - [09/Jul/2025 09:38:00] "OPTIONS /api/auto-topup/settings HTTP/1.1" 200 -
+2025-07-09 09:38:01,030 - INFO - 127.0.0.1 - - [09/Jul/2025 09:38:01] "[35m[1mGET /api/auto-topup/settings HTTP/1.1[0m" 500 -
+2025-07-09 09:38:10,404 - INFO - 127.0.0.1 - - [09/Jul/2025 09:38:10] "OPTIONS /api/auto-topup/settings HTTP/1.1" 200 -
+2025-07-09 09:38:10,410 - INFO - 127.0.0.1 - - [09/Jul/2025 09:38:10] "OPTIONS /api/auto-topup/settings HTTP/1.1" 200 -
+2025-07-09 09:38:10,670 - INFO - 127.0.0.1 - - [09/Jul/2025 09:38:10] "[35m[1mGET /api/auto-topup/settings HTTP/1.1[0m" 500 -
+2025-07-09 09:38:11,233 - INFO - 127.0.0.1 - - [09/Jul/2025 09:38:11] "[35m[1mGET /api/auto-topup/settings HTTP/1.1[0m" 500 -
+2025-07-09 09:40:12,142 - INFO - 127.0.0.1 - - [09/Jul/2025 09:40:12] "[33mOPTIONS /support/ticket HTTP/1.1[0m" 404 -
+2025-07-09 10:47:33,713 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 10:47:33,714 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 10:58:43,565 - INFO - 127.0.0.1 - - [09/Jul/2025 10:58:43] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 10:58:43,895 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 10:58:44,127 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 10:58:44,752 - INFO - 127.0.0.1 - - [09/Jul/2025 10:58:44] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 10:59:05,463 - INFO - 127.0.0.1 - - [09/Jul/2025 10:59:05] "[33mOPTIONS /support/ticket HTTP/1.1[0m" 404 -
+2025-07-09 11:02:00,278 - INFO - 127.0.0.1 - - [09/Jul/2025 11:02:00] "OPTIONS /api/support/ticket HTTP/1.1" 200 -
+2025-07-09 11:02:00,877 - ERROR - Query failed: relation "support_tickets" does not exist
+LINE 2:     INSERT INTO support_tickets (user_id, subject, descripti...
+                        ^
+ - Query: 
+    INSERT INTO support_tickets (user_id, subject, description, priority, status, created_at)
+    VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP) RETURNING id
+    
+2025-07-09 11:02:00,883 - INFO - 127.0.0.1 - - [09/Jul/2025 11:02:00] "[35m[1mPOST /api/support/ticket HTTP/1.1[0m" 500 -
+2025-07-09 11:02:36,374 - INFO - 127.0.0.1 - - [09/Jul/2025 11:02:36] "OPTIONS /api/support/ticket HTTP/1.1" 200 -
+2025-07-09 11:02:36,889 - ERROR - Query failed: relation "support_tickets" does not exist
+LINE 2:     INSERT INTO support_tickets (user_id, subject, descripti...
+                        ^
+ - Query: 
+    INSERT INTO support_tickets (user_id, subject, description, priority, status, created_at)
+    VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP) RETURNING id
+    
+2025-07-09 11:02:36,891 - INFO - 127.0.0.1 - - [09/Jul/2025 11:02:36] "[35m[1mPOST /api/support/ticket HTTP/1.1[0m" 500 -
+2025-07-09 11:08:18,014 - INFO - 127.0.0.1 - - [09/Jul/2025 11:08:18] "OPTIONS /api/support/ticket HTTP/1.1" 200 -
+2025-07-09 11:08:18,649 - ERROR - Query failed: relation "support_tickets" does not exist
+LINE 2:     INSERT INTO support_tickets (user_id, subject, descripti...
+                        ^
+ - Query: 
+    INSERT INTO support_tickets (user_id, subject, description, priority, status, created_at)
+    VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP) RETURNING id
+    
+2025-07-09 11:08:18,703 - INFO - 127.0.0.1 - - [09/Jul/2025 11:08:18] "[35m[1mPOST /api/support/ticket HTTP/1.1[0m" 500 -
+2025-07-09 11:12:26,734 - INFO - 127.0.0.1 - - [09/Jul/2025 11:12:26] "OPTIONS /api/support/ticket HTTP/1.1" 200 -
+2025-07-09 11:12:27,313 - ERROR - Query failed: relation "support_tickets" does not exist
+LINE 2:     INSERT INTO support_tickets (user_id, subject, descripti...
+                        ^
+ - Query: 
+    INSERT INTO support_tickets (user_id, subject, description, priority, status, created_at)
+    VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP) RETURNING id
+    
+2025-07-09 11:12:27,316 - INFO - 127.0.0.1 - - [09/Jul/2025 11:12:27] "[35m[1mPOST /api/support/ticket HTTP/1.1[0m" 500 -
+2025-07-09 11:21:18,404 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 11:21:18,404 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 11:21:23,038 - INFO - 127.0.0.1 - - [09/Jul/2025 11:21:23] "OPTIONS /api/support/ticket HTTP/1.1" 200 -
+2025-07-09 11:21:23,481 - INFO - 127.0.0.1 - - [09/Jul/2025 11:21:23] "[35m[1mPOST /api/support/ticket HTTP/1.1[0m" 201 -
+2025-07-09 11:24:41,824 - INFO - 127.0.0.1 - - [09/Jul/2025 11:24:41] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 11:24:42,138 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 11:24:42,373 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 11:24:42,591 - INFO - 127.0.0.1 - - [09/Jul/2025 11:24:42] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 11:40:45,700 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 11:40:45,701 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 11:41:11,874 - INFO - 127.0.0.1 - - [09/Jul/2025 11:41:11] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 11:41:12,186 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 11:41:12,297 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 11:41:12,527 - INFO - 127.0.0.1 - - [09/Jul/2025 11:41:12] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 12:32:15,344 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 12:32:15,347 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 12:33:51,088 - INFO - 127.0.0.1 - - [09/Jul/2025 12:33:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 12:33:51,403 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 12:33:51,588 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 12:33:51,738 - INFO - 127.0.0.1 - - [09/Jul/2025 12:33:51] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 12:54:09,371 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 12:54:09,371 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 12:54:35,411 - INFO - 127.0.0.1 - - [09/Jul/2025 12:54:35] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 12:54:35,720 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 12:54:35,816 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 12:54:36,054 - INFO - 127.0.0.1 - - [09/Jul/2025 12:54:36] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:00:08,791 - INFO - 127.0.0.1 - - [09/Jul/2025 14:00:08] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:00:08,792 - INFO - 127.0.0.1 - - [09/Jul/2025 14:00:08] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:00:09,116 - ERROR - Exception on /api/testimonials [GET]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 33, in get_testimonials
+    conn = get_db_connection()
+           ^^^^^^^^^^^^^^^^^
+NameError: name 'get_db_connection' is not defined
+2025-07-09 14:00:09,320 - INFO - 127.0.0.1 - - [09/Jul/2025 14:00:09] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:00:09,382 - ERROR - Exception on /api/testimonials [GET]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 33, in get_testimonials
+    conn = get_db_connection()
+           ^^^^^^^^^^^^^^^^^
+NameError: name 'get_db_connection' is not defined
+2025-07-09 14:00:09,390 - INFO - 127.0.0.1 - - [09/Jul/2025 14:00:09] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:00:22,335 - INFO - 127.0.0.1 - - [09/Jul/2025 14:00:22] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:00:22,377 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 14:00:22,646 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 14:00:23,443 - INFO - 127.0.0.1 - - [09/Jul/2025 14:00:23] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:00:56,947 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 14:00:56,948 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 14:10:13,944 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:13] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:10:14,267 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 14:10:14,588 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 14:10:15,337 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:15] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:10:20,451 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:20] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:10:20,464 - ERROR - Exception on /api/testimonials [GET]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 33, in get_testimonials
+    conn = get_db_connection()
+           ^^^^^^^^^^^^^^^^^
+NameError: name 'get_db_connection' is not defined
+2025-07-09 14:10:20,483 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:20] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:10:20,760 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:20] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:10:21,095 - ERROR - Exception on /api/testimonials [GET]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 33, in get_testimonials
+    conn = get_db_connection()
+           ^^^^^^^^^^^^^^^^^
+NameError: name 'get_db_connection' is not defined
+2025-07-09 14:10:21,102 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:21] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:10:29,600 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:29] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:10:29,894 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:29] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:10:40,771 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:40] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:10:41,346 - INFO - 127.0.0.1 - - [09/Jul/2025 14:10:41] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:13:34,411 - INFO - 127.0.0.1 - - [09/Jul/2025 14:13:34] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:13:34,972 - INFO - 127.0.0.1 - - [09/Jul/2025 14:13:34] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:17:00,949 - INFO - 127.0.0.1 - - [09/Jul/2025 14:17:00] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:17:00,953 - INFO - 127.0.0.1 - - [09/Jul/2025 14:17:00] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:17:01,270 - ERROR - Exception on /api/testimonials [GET]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 33, in get_testimonials
+    conn = get_db()
+NameError: name 'get_db_connection' is not defined
+2025-07-09 14:17:01,280 - INFO - 127.0.0.1 - - [09/Jul/2025 14:17:01] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:17:01,537 - ERROR - Exception on /api/testimonials [GET]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 33, in get_testimonials
+    conn = get_db()
+NameError: name 'get_db_connection' is not defined
+2025-07-09 14:17:01,546 - INFO - 127.0.0.1 - - [09/Jul/2025 14:17:01] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:17:07,811 - INFO - 127.0.0.1 - - [09/Jul/2025 14:17:07] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:17:08,053 - INFO - 127.0.0.1 - - [09/Jul/2025 14:17:08] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:23:34,624 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 14:23:34,625 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 14:24:08,961 - INFO - 127.0.0.1 - - [09/Jul/2025 14:24:08] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:24:09,281 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 14:24:09,511 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 14:24:10,152 - INFO - 127.0.0.1 - - [09/Jul/2025 14:24:10] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 14:24:14,898 - INFO - 127.0.0.1 - - [09/Jul/2025 14:24:14] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:24:15,113 - INFO - 127.0.0.1 - - [09/Jul/2025 14:24:15] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:24:15,207 - INFO - 127.0.0.1 - - [09/Jul/2025 14:24:15] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:24:15,650 - INFO - 127.0.0.1 - - [09/Jul/2025 14:24:15] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:24:24,505 - INFO - 127.0.0.1 - - [09/Jul/2025 14:24:24] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:24:24,774 - INFO - 127.0.0.1 - - [09/Jul/2025 14:24:24] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:25:04,979 - INFO - 127.0.0.1 - - [09/Jul/2025 14:25:04] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:25:05,294 - INFO - 127.0.0.1 - - [09/Jul/2025 14:25:05] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:25:05,410 - INFO - 127.0.0.1 - - [09/Jul/2025 14:25:05] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:25:05,693 - INFO - 127.0.0.1 - - [09/Jul/2025 14:25:05] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 14:26:13,039 - INFO - 127.0.0.1 - - [09/Jul/2025 14:26:13] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 14:26:13,590 - INFO - 127.0.0.1 - - [09/Jul/2025 14:26:13] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 15:50:34,208 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 15:50:34,210 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 15:51:13,533 - INFO - 127.0.0.1 - - [09/Jul/2025 15:51:13] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 15:51:13,865 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 15:51:14,103 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 15:51:14,717 - INFO - 127.0.0.1 - - [09/Jul/2025 15:51:14] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 15:51:18,092 - INFO - 127.0.0.1 - - [09/Jul/2025 15:51:18] "OPTIONS /api/stories HTTP/1.1" 200 -
+2025-07-09 15:51:18,306 - INFO - 127.0.0.1 - - [09/Jul/2025 15:51:18] "[35m[1mGET /api/stories HTTP/1.1[0m" 500 -
+2025-07-09 15:51:18,396 - INFO - 127.0.0.1 - - [09/Jul/2025 15:51:18] "OPTIONS /api/stories HTTP/1.1" 200 -
+2025-07-09 15:51:18,883 - INFO - 127.0.0.1 - - [09/Jul/2025 15:51:18] "[35m[1mGET /api/stories HTTP/1.1[0m" 500 -
+2025-07-09 15:51:28,365 - INFO - 127.0.0.1 - - [09/Jul/2025 15:51:28] "OPTIONS /api/stories HTTP/1.1" 200 -
+2025-07-09 15:51:28,550 - INFO - 127.0.0.1 - - [09/Jul/2025 15:51:28] "[35m[1mPOST /api/stories HTTP/1.1[0m" 500 -
+2025-07-09 15:52:23,763 - INFO - 127.0.0.1 - - [09/Jul/2025 15:52:23] "[33mOPTIONS /api/testimonials HTTP/1.1[0m" 404 -
+2025-07-09 15:52:49,899 - INFO - 127.0.0.1 - - [09/Jul/2025 15:52:49] "[33mOPTIONS /api/testimonials HTTP/1.1[0m" 404 -
+2025-07-09 16:03:24,145 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 16:03:24,146 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 16:06:46,870 - INFO - 127.0.0.1 - - [09/Jul/2025 16:06:46] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-09 16:06:47,203 - INFO - Attempting login for email: full@gmail.com
+2025-07-09 16:06:47,611 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-09 16:06:48,369 - INFO - 127.0.0.1 - - [09/Jul/2025 16:06:48] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-09 16:06:51,336 - INFO - 127.0.0.1 - - [09/Jul/2025 16:06:51] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 16:06:51,507 - INFO - 127.0.0.1 - - [09/Jul/2025 16:06:51] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 16:06:51,642 - INFO - 127.0.0.1 - - [09/Jul/2025 16:06:51] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 16:06:52,116 - INFO - 127.0.0.1 - - [09/Jul/2025 16:06:52] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 16:06:58,977 - INFO - 127.0.0.1 - - [09/Jul/2025 16:06:58] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 16:06:59,195 - INFO - 127.0.0.1 - - [09/Jul/2025 16:06:59] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 16:15:43,884 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 16:15:43,885 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 16:15:57,204 - INFO - 127.0.0.1 - - [09/Jul/2025 16:15:57] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 16:15:57,784 - INFO - 127.0.0.1 - - [09/Jul/2025 16:15:57] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-09 16:22:51,237 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-09 16:22:51,238 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-09 16:24:29,924 - INFO - 127.0.0.1 - - [09/Jul/2025 16:24:29] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-09 16:24:30,481 - INFO - 127.0.0.1 - - [09/Jul/2025 16:24:30] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-10 09:21:11,222 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-10 09:21:11,224 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 09:21:52,313 - INFO - 127.0.0.1 - - [10/Jul/2025 09:21:52] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 09:21:52,644 - INFO - Attempting login for email: full@gmail.com
+2025-07-10 09:21:53,042 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-10 09:21:53,891 - INFO - 127.0.0.1 - - [10/Jul/2025 09:21:53] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-10 09:22:15,717 - INFO - 127.0.0.1 - - [10/Jul/2025 09:22:15] "OPTIONS /api/support/ticket HTTP/1.1" 200 -
+2025-07-10 09:22:16,190 - INFO - 127.0.0.1 - - [10/Jul/2025 09:22:16] "[35m[1mPOST /api/support/ticket HTTP/1.1[0m" 201 -
+2025-07-10 11:09:26,698 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-10 11:09:26,699 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 11:11:18,645 - INFO - 127.0.0.1 - - [10/Jul/2025 11:11:18] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:11:18,972 - INFO - Attempting login for email: full@gmail.com
+2025-07-10 11:11:19,224 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-10 11:11:19,874 - INFO - 127.0.0.1 - - [10/Jul/2025 11:11:19] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-10 11:11:23,968 - INFO - 127.0.0.1 - - [10/Jul/2025 11:11:23] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-10 11:11:24,154 - ERROR - Exception on /api/testimonials [GET]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 51, in get_testimonials
+    conn.close()
+    ^^^^^^^^^^
+AttributeError: 'tuple' object has no attribute 'close'
+2025-07-10 11:11:24,223 - INFO - 127.0.0.1 - - [10/Jul/2025 11:11:24] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-10 11:11:24,282 - INFO - 127.0.0.1 - - [10/Jul/2025 11:11:24] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-10 11:11:24,804 - ERROR - Exception on /api/testimonials [GET]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 51, in get_testimonials
+    conn.close()
+    ^^^^^^^^^^
+AttributeError: 'tuple' object has no attribute 'close'
+2025-07-10 11:11:24,807 - INFO - 127.0.0.1 - - [10/Jul/2025 11:11:24] "[35m[1mGET /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-10 11:11:39,346 - INFO - 127.0.0.1 - - [10/Jul/2025 11:11:39] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-10 11:11:39,562 - ERROR - Exception on /api/testimonials [POST]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 29, in create_testimonial
+    conn.close()
+    ^^^^^^^^^^
+AttributeError: 'tuple' object has no attribute 'close'
+2025-07-10 11:11:39,566 - INFO - 127.0.0.1 - - [10/Jul/2025 11:11:39] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-10 11:12:00,492 - INFO - 127.0.0.1 - - [10/Jul/2025 11:12:00] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-10 11:12:01,038 - ERROR - Exception on /api/testimonials [POST]
+Traceback (most recent call last):
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Thembelihle Zulu\AppData\Roaming\Python\Python313\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Thembelihle Zulu\Videos\GridX2\for-the-100th-time\Backend\app\routes\testimonials.py", line 29, in create_testimonial
+    conn.close()
+    ^^^^^^^^^^
+AttributeError: 'tuple' object has no attribute 'close'
+2025-07-10 11:12:01,044 - INFO - 127.0.0.1 - - [10/Jul/2025 11:12:01] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 500 -
+2025-07-10 11:22:20,934 - ERROR - Query failed: 'psycopg2.extensions.connection' object is not subscriptable - Query: 
+    CREATE TABLE IF NOT EXISTS stories (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(225) NOT NULL,
+        email VARCHAR(225) NOT NULL,
+        story TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+2025-07-11 09:38:06,138 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-11 09:38:06,139 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-11 09:38:53,476 - INFO - 127.0.0.1 - - [11/Jul/2025 09:38:53] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-11 09:38:53,811 - INFO - Attempting login for email: full@gmail.com
+2025-07-11 09:38:54,121 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-11 09:38:54,935 - INFO - 127.0.0.1 - - [11/Jul/2025 09:38:54] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-11 09:40:42,025 - INFO - 127.0.0.1 - - [11/Jul/2025 09:40:42] "OPTIONS /api/support/ticket HTTP/1.1" 200 -
+2025-07-11 09:40:42,891 - INFO - 127.0.0.1 - - [11/Jul/2025 09:40:42] "[35m[1mPOST /api/support/ticket HTTP/1.1[0m" 201 -
+2025-07-11 09:41:40,550 - INFO - 127.0.0.1 - - [11/Jul/2025 09:41:40] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:41:40,805 - INFO - 127.0.0.1 - - [11/Jul/2025 09:41:40] "GET /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:41:40,866 - INFO - 127.0.0.1 - - [11/Jul/2025 09:41:40] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:41:41,419 - INFO - 127.0.0.1 - - [11/Jul/2025 09:41:41] "GET /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:41:49,765 - INFO - 127.0.0.1 - - [11/Jul/2025 09:41:49] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:41:50,082 - INFO - 127.0.0.1 - - [11/Jul/2025 09:41:50] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 201 -
+2025-07-11 09:41:50,674 - INFO - 127.0.0.1 - - [11/Jul/2025 09:41:50] "GET /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:43:37,332 - INFO - 127.0.0.1 - - [11/Jul/2025 09:43:37] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:43:37,842 - INFO - 127.0.0.1 - - [11/Jul/2025 09:43:37] "[35m[1mPOST /api/testimonials HTTP/1.1[0m" 201 -
+2025-07-11 09:43:38,073 - INFO - 127.0.0.1 - - [11/Jul/2025 09:43:38] "GET /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:54:18,931 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-11 09:54:18,932 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-11 09:55:00,946 - INFO - 127.0.0.1 - - [11/Jul/2025 09:55:00] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-11 09:55:01,275 - INFO - Attempting login for email: full@gmail.com
+2025-07-11 09:55:01,523 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-11 09:55:02,201 - INFO - 127.0.0.1 - - [11/Jul/2025 09:55:02] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-11 09:55:20,007 - INFO - 127.0.0.1 - - [11/Jul/2025 09:55:20] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:55:20,223 - INFO - 127.0.0.1 - - [11/Jul/2025 09:55:20] "GET /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:55:20,321 - INFO - 127.0.0.1 - - [11/Jul/2025 09:55:20] "OPTIONS /api/testimonials HTTP/1.1" 200 -
+2025-07-11 09:55:20,857 - INFO - 127.0.0.1 - - [11/Jul/2025 09:55:20] "GET /api/testimonials HTTP/1.1" 200 -
+2025-07-11 10:23:29,994 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-11 10:23:29,995 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-11 14:28:42,742 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-11 14:28:42,743 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-11 15:05:40,416 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-11 15:05:40,417 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-11 15:07:01,083 - INFO - 127.0.0.1 - - [11/Jul/2025 15:07:01] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-11 15:07:01,417 - INFO - Attempting login for email: full@gmail.com
+2025-07-11 15:07:01,637 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-11 15:07:02,057 - INFO - 127.0.0.1 - - [11/Jul/2025 15:07:02] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-11 16:46:35,095 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-11 16:46:35,097 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-11 16:47:47,792 - INFO - 127.0.0.1 - - [11/Jul/2025 16:47:47] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-11 16:47:48,121 - INFO - Attempting login for email: t@gmail.com
+2025-07-11 16:47:48,461 - ERROR - User not found for email: t@gmail.com
+2025-07-11 16:47:48,465 - INFO - 127.0.0.1 - - [11/Jul/2025 16:47:48] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-11 16:47:48,496 - INFO - 127.0.0.1 - - [11/Jul/2025 16:47:48] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-11 16:47:51,192 - INFO - Attempting login for email: t@gmail.com
+2025-07-11 16:47:51,444 - ERROR - User not found for email: t@gmail.com
+2025-07-11 16:47:51,446 - INFO - 127.0.0.1 - - [11/Jul/2025 16:47:51] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-11 16:47:51,459 - INFO - 127.0.0.1 - - [11/Jul/2025 16:47:51] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-11 16:48:49,904 - INFO - 127.0.0.1 - - [11/Jul/2025 16:48:49] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-11 16:48:50,228 - INFO - Attempting login for email: full@gmail.com
+2025-07-11 16:48:50,491 - INFO - Verifying password: Incoming password length 8, Stored hash length 162
+2025-07-11 16:48:51,142 - INFO - 127.0.0.1 - - [11/Jul/2025 16:48:51] "POST /api/auth/login HTTP/1.1" 200 -

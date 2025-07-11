@@ -9,6 +9,9 @@ import secrets
 import os
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
+from app.routes.comsupport import support_bp
+from app.routes.events import events_bp
+from app.routes.testimonials import testimonials_bp
 from email_utils import send_welcome_email  # Assuming it's in email_utils.py
 from dotenv import load_dotenv
 from support import (
@@ -26,10 +29,10 @@ from support import (
     fetch_user_payment_methods,
     remove_payment_method,
     create_payment_methods_table,
-    create_stories_table
+    
 )
 from werkzeug.utils import secure_filename
-
+create_stories_table()
 # Load environment variables (same as support.py)
 load_dotenv()
 
@@ -72,6 +75,9 @@ jwt = JWTManager(flask_app)
 # Register blueprints
 flask_app.register_blueprint(home_bp)
 flask_app.register_blueprint(auth_bp, name='auth_bp')
+flask_app.register_blueprint(support_bp)
+flask_app.register_blueprint(events_bp)
+flask_app.register_blueprint(testimonials_bp)
 
 # Add after request handler
 @flask_app.after_request
@@ -1189,46 +1195,6 @@ def create_forum_reply(topic_id):
             if 'cur' in locals(): cur.close()
             if 'conn' in locals() and conn:  # Ensure conn is valid before closing
                 conn.close()
-
-@flask_app.route('/api/support/ticket', methods=['POST', 'OPTIONS'])
-@jwt_required()
-def handle_support_ticket():
-    if request.method == 'OPTIONS':
-        return '', 200
-        
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-        
-        print("=== Support Ticket Creation Debug ===")
-        print(f"User ID: {user_id}")
-        print(f"Request Data: {data}")
-        
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        subject = data.get('subject')
-        message = data.get('message')
-
-        if not all([subject, message]):
-            return jsonify({'success': False, 'message': 'Subject and message are required'}), 400
-
-        try:
-            priority = data.get('priority', 'low')
-            ticket_id = create_support_ticket(user_id, subject, message, priority)
-            return jsonify({
-                'success': True,
-                'message': 'Support ticket created successfully',
-                'ticket_id': ticket_id
-            }), 201
-
-        except Exception as e:
-            print(f"Database error: {str(e)}")
-            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
-
-    except Exception as e:
-        print(f"Create support ticket error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to create support ticket'}), 500
 
 @flask_app.route('/api/payment-methods', methods=['POST'])
 @jwt_required()

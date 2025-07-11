@@ -1,9 +1,12 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api'; // Assuming auth service is still used
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
+// Removed unused imports: ReactSlick and ReactCalendar
 // eslint-disable-next-line no-unused-vars
 import Calendar from 'react-calendar';
 import {
@@ -26,7 +29,6 @@ import {
   HStack,
   IconButton,
   Input,
-  Textarea,
   VStack
 } from '@chakra-ui/react';
 import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload, FaStar } from 'react-icons/fa';
@@ -34,6 +36,8 @@ import { jsPDF } from "jspdf";
 import { motion } from 'framer-motion';
 import './ImpactPage.css';  // Assuming we'll create a new CSS file for print styles, or add inline if needed
 import EventCalendar from '../components/EventCalendar';  // New import for the calendar component
+import ImpactMapPreview from '../components/ImpactMapPreview';
+import impactBackground from '../assets/images/page_impact.jpg';
 
 function generateImpactReportPDF() {
   const doc = new jsPDF();
@@ -125,7 +129,6 @@ function ImpactPage() {
   const bgColor = useColorModeValue('gray.50', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'whiteAlpha.900');
   const statColor = useColorModeValue('teal.500', 'teal.300');
-  const testimonialBg = useColorModeValue('white', 'gray.800');
   const testimonialBorderColor = useColorModeValue('gray.200', 'gray.600');
   const headingColor = useColorModeValue('gray.800', 'white');
   const subTextColor = useColorModeValue('gray.600', 'whiteAlpha.700');
@@ -173,9 +176,11 @@ function ImpactPage() {
   return (
     <Box
       minH="100vh"
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      width="100vw"
+      backgroundImage={`url(${impactBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
+      backgroundRepeat="no-repeat"
       backgroundAttachment="fixed"
       position="relative"
       _before={{
@@ -187,8 +192,9 @@ function ImpactPage() {
         bottom: 0,
         bg: 'rgba(0, 0, 0, 0.5)',
         zIndex: 1,
-      }}
-    >
+  }}  
+>
+    
       <Box p={[4, 6, 8]} maxWidth="1200px" mx="auto" color={textColor} position="relative" zIndex={2}>
         <HStack justify="space-between" align="center" mb={8}>
           <Button
@@ -220,9 +226,11 @@ function ImpactPage() {
                 <Box
                   key={index}
                   p={6}
+                  bg="rgba(255, 255, 255, 0.1)"
+                  backdropFilter="blur(10px)"
+                  border="1px solid rgba(255, 255, 255, 0.2)"
                   boxShadow="md"
                   borderRadius="lg"
-                  bg={testimonialBg}
                   borderColor={testimonialBorderColor}
                   borderWidth="1px"
                 >
@@ -240,7 +248,7 @@ function ImpactPage() {
 
           <Divider />
 
-          <Box>
+          <Box bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)">
             <Heading as="h2" size="lg" mb={4}>Upcoming Events Calendar</Heading>
             <EventCalendar />
           </Box>
@@ -260,7 +268,7 @@ function ImpactPage() {
               accessibility={true}
             >
               {testimonials.map((testimonial, index) => (
-                <Box key={testimonial.name} p={6} bg={testimonialBg} borderWidth="1px" borderColor={testimonialBorderColor} borderRadius="lg" boxShadow="md">
+                <Box key={testimonial.name} p={6} bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)" borderWidth="1px" borderColor={testimonialBorderColor} borderRadius="lg" boxShadow="md">
                   <Flex align="center" mb={4}>
                     <Avatar src={testimonial.avatar} name={testimonial.name} size="xl" mr={4} />
                     <VStack align="start" flex="1">
@@ -289,6 +297,13 @@ function ImpactPage() {
 
           <Divider />
 
+          <Box>
+            <Heading as="h2" size="lg" mb={4}>Upcoming Events Calendar</Heading>
+            <EventCalendar />
+          </Box>
+
+          <Divider />
+
           <Box textAlign="center">
             <Heading as="h2" size="lg" mb={4}>Why Solar + Fintech Matters</Heading>
             <Text fontSize="lg" maxWidth="800px" mx="auto">
@@ -296,31 +311,11 @@ function ImpactPage() {
             </Text>
           </Box>
 
-          <Box textAlign="center" mt={10}>
-            <form onSubmit={handleSubmit}>
-              <Stack spacing={4} maxWidth="400px" mx="auto">
-                <Heading as="h2" size="md" mb={4}>Share Your Story</Heading>
-                <Input
-                  placeholder="Your Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  isRequired
-                />
-                <Input
-                  placeholder="Your Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  type="email"
-                />
-                <Textarea
-                  placeholder="Share your story or testimonial"
-                  value={quote}
-                  onChange={(e) => setQuote(e.target.value)}
-                  isRequired
-                />
-                <Button type="submit" colorScheme="teal">Share Your Story</Button>
-              </Stack>
-            </form>
+          <Divider my={8} />
+
+          <Box bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)">
+            <Heading as="h2" size="lg" mb={4}>Communities We've Reached</Heading>
+            <ImpactMapPreview />
           </Box>
         </Stack>
       </Box>
@@ -354,4 +349,4 @@ function ImpactPage() {
   );
 }
 
-export default ImpactPage; 
+export default ImpactPage;

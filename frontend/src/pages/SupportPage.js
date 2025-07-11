@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api'; // Assuming auth service is still used
@@ -118,7 +119,9 @@ function SupportPage() {
             message
         });
 
-        const response = await api.post('support/ticket', {
+        const response = await api.post('/api/support/ticket', {
+            name,
+            email,
             subject,
             message
         });

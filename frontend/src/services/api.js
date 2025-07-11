@@ -98,6 +98,7 @@ export const autoTopUp = {
     }
 };
 
+
 // Mock sentiment analysis for local development
 if (window.location.hostname === 'localhost') {
     const originalPost = api.post;
@@ -113,5 +114,15 @@ if (window.location.hostname === 'localhost') {
         return originalPost.call(this, url, data, ...args);
     };
 }
+export const testimonials = {
+    create: async (testimonial) => {
+      const response = await api.post('/api/testimonials', testimonial);
+      return response.data;
+    },
+    getAll: async () => {
+      const response = await api.get('/api/testimonials');
+      return response.data;
+    }
+  };
 
 export default api;

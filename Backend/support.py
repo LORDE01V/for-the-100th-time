@@ -1,3 +1,4 @@
+from sqlite3.dbapi2 import connect
 import psycopg2
 from psycopg2 import OperationalError
 import os
@@ -11,7 +12,6 @@ import logging
 # Load environment variables
 load_dotenv()
 
-# ================== DATABASE CONNECTION ==================
 def connect_db():
     """Connect to PostgreSQL database"""
     password = os.getenv('DB_PASSWORD', '')
@@ -25,10 +25,10 @@ def connect_db():
             password=password,
             port=os.getenv('DB_PORT', '5432')
         )
-        return conn, conn.cursor()
+        return conn  # Return only the connection object
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
-        return None, None
+        return None
 
 def get_db():
     try:
@@ -49,11 +49,11 @@ def execute_query(query_type, query, params=None):
     """Execute a database query"""
     conn = None
     try:
-        conn = connect_db()[0]
+        conn = connect_db()
         if not conn:
             raise Exception("Database connection failed")
         
-        cur = conn.cursor()
+        cur = conn.cursor()  # Use conn.cursor() directly
         
         if query_type == 'alter':
             # For ALTER TABLE commands, we need to execute them directly
@@ -235,13 +235,12 @@ def remove_payment_method(payment_method_id):
     return {"error": "Payment method not found or could not be removed."}
 
 # ================== SUPPORT OPERATIONS ==================
-def create_support_ticket(user_id, subject, description, priority, status="open"):
-    """Create a new support ticket"""
+def create_support_ticket(name, email, subject, message):
     query = """
-    INSERT INTO support_tickets (user_id, subject, description, priority, status, created_at)
-    VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP) RETURNING id
+    INSERT INTO support (name, email, subject, message)
+    VALUES (%s, %s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (user_id, subject, description, priority, status))
+    return execute_query('insert', query, (name, email, subject, message))
 
 # ================== NOTIFICATION OPERATIONS ==================
 def create_notification(user_id, title, message, type):
@@ -318,30 +317,19 @@ def add_energy_motto_column():
         if cur: cur.close()
         if conn: conn.close()
 
-def get_payment_history(contract_id):
-    """Get payment history for a contract"""
-    query = """
-    SELECT id, amount, payment_date, payment_method 
-    FROM payments 
-    WHERE contract_id = %s
-    ORDER BY payment_date DESC
-    """
-    return execute_query('search', query, (contract_id,))
-
 def create_stories_table():
-    """Create the stories table in the database"""
     query = """
-    CREATE TABLE IF NOT EXISTS stories (
+    CREATE TABLE IF NOT EXISTS stories ( 
         id SERIAL PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        content TEXT NOT NULL,
-        author_id INT NOT NULL,
+        name VARCHAR(225) NOT NULL,      
+        email VARCHAR(225) NOT NULL,     
+        story TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE
-    )
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
     """
     execute_query('alter', query)
+    print("create_stories_table executed successfully.")
 
 # Initialize database tables when module loads
 def initialize_db():
@@ -401,15 +389,6 @@ def initialize_db():
             description TEXT
         )
         """)
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS stories (
-            id SERIAL PRIMARY KEY,
-            username VARCHAR(50) NOT NULL,
-            email VARCHAR(100) NOT NULL,
-            comment TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        """)
         print("Database initialized!")
         conn.commit()
         print("✅ Database tables created successfully!")
@@ -422,55 +401,44 @@ def initialize_db():
         if cur: cur.close()
         if conn: conn.close()
 
-# ... existing code ...
+
 
 def create_payment_methods_table():
-    conn, cur = connect_db()
-    if not conn or not cur:
+    """Create the payment_methods table if it doesn't exist."""
+    query = """
+    CREATE TABLE IF NOT EXISTS payment_methods (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL,
+        payment_type VARCHAR(50) NOT NULL,
+        card_number VARCHAR(20),
+        expiry_date DATE,
+        card_holder_name VARCHAR(100),
+        is_default BOOLEAN DEFAULT FALSE,
+        ewallet_provider VARCHAR(50),
+        ewallet_identifier VARCHAR(100),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """
+    conn = connect_db()
+    if not conn:
         print("Database connection failed")
         raise Exception("Database connection failed")
 
     try:
-        # Initialize user_id (replace with actual logic to fetch user_id)
-        user_id = 1  # Example: Replace with dynamic user ID retrieval logic
+        with conn.cursor() as cur:  # Create a cursor object
+            cur.execute("BEGIN")  # Start transaction using the cursor
+            print("Transaction started")
 
-        # Start transaction
-        cur.execute("BEGIN")
-        print("Transaction started")
-
-        # Validate user exists
-        cur.execute("SELECT id FROM users WHERE id = %s", (user_id,))
-        user = cur.fetchone()
-        if not user:
-            print(f"User {user_id} not found")
-            raise Exception(f"User {user_id} not found")
-
-        # Insert expense record
-        cur.execute("""
-        INSERT INTO expenses (user_id, amount, purpose, type)
-        VALUES (%s, %s, %s, %s)
-        RETURNING id
-        """, (user_id, 100, "Example Purpose", "Example Type"))
-        result = cur.fetchone()
-        if result is None:
-            raise Exception("Failed to create expense record: No rows returned.")
-        expense_id = result[0]
-        print(f"Expense record created with ID: {expense_id}")
-
-        # Commit transaction
-        conn.commit()
-        print("Transaction committed successfully")
-        
-        return expense_id
-
+            # Execute the table creation query
+            cur.execute(query)
+            conn.commit()  # Commit the transaction
+            print("Transaction committed successfully")
     except Exception as e:
-        print(f"Error creating expense: {str(e)}")
-        conn.rollback()
-        print("Transaction rolled back")
+        conn.rollback()  # Rollback the transaction in case of an error
+        print(f"Error creating payment_methods table: {str(e)}")
         raise
     finally:
-        if cur: cur.close()
-        if conn: conn.close()
+        conn.close()  # Close the connection
         print("Database connection closed")
 
 
