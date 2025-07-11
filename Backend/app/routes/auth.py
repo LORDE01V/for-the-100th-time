@@ -7,10 +7,10 @@ import time
 import logging
 from datetime import datetime
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
-CORS(auth_bp, origins=["http://localhost:3000", "http://192.168.18.3:3000"])
+CORS(auth_bp, origins=["*"], supports_credentials=True)  # Remove strict CORS here
 
 # Configure logging
 logging.basicConfig(
@@ -135,8 +135,11 @@ def logout():
     session.clear()
     return create_response("Logged out successfully")
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:3000', supports_credentials=True)
 def login():
+    if request.method == 'OPTIONS':
+        return create_response("OK", 200)
     try:
         data = request.get_json()
         if not data or not isinstance(data, dict):
@@ -163,7 +166,7 @@ def login():
             return create_response('Invalid credentials', 400)
         
         logging.info(f'Attempting login for email: {email}')
-        user = get_user_by_email(email)
+        user = get_user_by_email(email.lower())
         if not user:
             logging.error(f'User not found for email: {email}')
             return create_response('Invalid credentials', 401)
@@ -173,16 +176,19 @@ def login():
             logging.error(f'Password mismatch for email: {email} - Hash verification failed')
             return create_response('Invalid credentials', 401)
         
-        access_token = create_access_token(identity=user['email'])
-        return jsonify({
+        access_token = create_access_token(identity=user['id'])  # Use ID instead of email
+        response = jsonify({
             'success': True,
-            'token': access_token,
             'user': {
                 'email': user['email'],
                 'name': user['full_name']
             },
             'redirect': url_for('home.home_page')
         })
+        # Assuming set_access_cookies is defined elsewhere or needs to be imported
+        # from flask_jwt_extended import set_access_cookies
+        # set_access_cookies(response, access_token) 
+        return response
     except Exception as e:
         logging.error(f'Login error: {str(e)} - Request data structure: {type(data)}')
         return create_response('Login failed', 500)

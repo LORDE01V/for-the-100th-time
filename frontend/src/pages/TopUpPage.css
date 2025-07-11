@@ -1,0 +1,9 @@
+/* TopUpPage.css */
+.top-up-page {
+    background-image: url('../assets/images/background -bg.png'); /* Adjust path if necessary */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh; /* Full viewport height */
+    width: 100%; /* Full viewport width */
+  }

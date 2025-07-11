@@ -5,7 +5,6 @@ import { auth } from '../services/api'; // Assuming auth service is still used
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
 // Removed unused imports: ReactSlick and ReactCalendar
 // eslint-disable-next-line no-unused-vars
 import Calendar from 'react-calendar';
@@ -37,7 +36,7 @@ import { motion } from 'framer-motion';
 import './ImpactPage.css';  // Assuming we'll create a new CSS file for print styles, or add inline if needed
 import EventCalendar from '../components/EventCalendar';  // New import for the calendar component
 import ImpactMapPreview from '../components/ImpactMapPreview';
-import impactBackground from '../assets/images/page_impact.jpg';
+import impactBackground from '../assets/images/page_impact.png';
 
 function generateImpactReportPDF() {
   const doc = new jsPDF();

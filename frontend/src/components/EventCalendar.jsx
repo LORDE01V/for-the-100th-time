@@ -427,7 +427,7 @@ const EventCalendar = () => {
 
       <AnimatePresence mode='wait'>
         <motion.div
-         key={`${currentYear}-${currentMonth}`}
+          key={`${currentYear}-${currentMonth}`}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}

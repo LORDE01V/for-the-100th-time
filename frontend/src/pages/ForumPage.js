@@ -21,6 +21,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import api from '../services/api';
+import forumBackground from '../assets/images/Forum_page.png';
 
 const ForumPage = () => {
   const toast = useToast();
@@ -30,9 +31,6 @@ const ForumPage = () => {
   const subTextColor = useColorModeValue('gray.600', 'gray.300');
   const metaTextColor = useColorModeValue('gray.500', 'gray.400');
   
-  const glassBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(17, 25, 40, 0.75)');
-  const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)');
-  
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [summary, setSummary] = useState(null);
@@ -41,8 +39,8 @@ const ForumPage = () => {
   const [tone, setTone] = useState(null);
   const [isCheckingTone, setIsCheckingTone] = useState(false);
 
-  // Mock data for dummyTopics
-  const dummyTopics = useMemo(() => [
+  // Mock data for forum topics
+  const topics = [
     {
       id: 1,
       title: 'Solar Panel Maintenance Tips',
@@ -366,7 +364,7 @@ const ForumPage = () => {
         'Post 15: Success stories from users.'
       ]
     }
-  ]);
+  ];
 
   const mockSummarize = (posts) => {
     // Simple mock function to generate a bullet-point summary from posts
@@ -485,12 +483,11 @@ const ForumPage = () => {
         <Box
           key={topic.id}
           p={6}
-          bg={glassBg}
-          backdropFilter='blur(10px)'
-          borderWidth='1px'
-          borderRadius='lg'
-          boxShadow='lg'
-          borderColor={glassBorderColor}
+          bg="rgba(255, 255, 255, 0.1)"
+          backdropFilter="blur(10px)"
+          border="1px solid rgba(255, 255, 255, 0.2)"
+          borderRadius="lg"
+          boxShadow="md"
           transition='all 0.3s ease-in-out'
           _hover={{ boxShadow: 'xl', transform: 'translateY(-5px)' }}
         >
@@ -590,14 +587,12 @@ const ForumPage = () => {
   );
 
   return (
-    <Flex
+    <Box
       minH="100vh"
-      align="center"
-      justify="center"
-      p={4}
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundImage={`url(${forumBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
+      backgroundRepeat="no-repeat"
       backgroundAttachment="fixed"
       position="relative"
       _before={{
@@ -634,13 +629,10 @@ const ForumPage = () => {
 
         <VStack spacing={8} align="stretch">
           <Heading size="xl">Community Forum</Heading>
-          {selectedTopic 
-            ? renderTopicDiscussion() 
-            : renderTopicsList()
-          }
+          {selectedTopic ? renderTopicDiscussion() : renderTopicsList()}
         </VStack>
     </Box>
-    </Flex>
+    </Box>
   );
 };
 
