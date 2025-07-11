@@ -12,19 +12,19 @@ from app.routes.auth import auth_bp
 from email_utils import send_welcome_email  # Assuming it's in email_utils.py
 from dotenv import load_dotenv
 from support import (
-    get_user_balance,
-    get_user_expenses,
+   # get_user_balance,
+    #get_user_expenses,
     create_expense,
-    process_top_up_transaction,
-    get_user_auto_top_up_settings,
-    save_user_auto_top_up_settings,
-    toggle_auto_top_up,
+   # process_top_up_transaction,
+   # get_user_auto_top_up_settings,
+  #  save_user_auto_top_up_settings,
+  #  toggle_auto_top_up,
     create_support_ticket,
     add_energy_motto_column,
     save_payment_method,
     fetch_user_payment_methods,
     remove_payment_method,
-    create_payment_methods_table,
+    #create_payment_methods_table,
     add_story,
 
    

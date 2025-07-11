@@ -7,7 +7,11 @@ import "slick-carousel/slick/slick-theme.css";
 import ReactSlick from "react-slick";
 import ReactCalendar from "react-calendar";
 // eslint-disable-next-line no-unused-vars
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import Calendar from 'react-calendar';
+import api from '../services/api';
 import {
   Box,
   Flex,
