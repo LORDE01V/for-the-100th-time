@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './NavigationPanel.css'; // Import the CSS file for styling
-import { FiHome, FiSettings, FiUser, FiHelpCircle } from 'react-icons/fi'; // Feather icons
+import { FiHome } from 'react-icons/fi'; // Keeping FiHome for Home
+import { FaSolarPanel, FaUser, FaBatteryFull, FaCoins, FaRegLightbulb, FaTools, FaTree, FaLightbulb, FaRegSun, FaUsers, FaHandshake, FaCreditCard } from 'react-icons/fa';
+import { Bot } from 'lucide-react'; // For AI Suggestions
 
 const NavigationPanel = () => {
   const navigate = useNavigate();
@@ -15,29 +17,22 @@ const NavigationPanel = () => {
 
   // List of all pages with their names, paths, and icons
   const pages = [
-    { name: 'Home', path: '/', icon: <FiHome /> },
-    { name: 'Dashboard', path: '/dashboard', icon: <FiHome /> },
-    { name: 'Profile', path: '/profile', icon: <FiUser /> },
-    { name: 'Settings', path: '/settings', icon: <FiSettings /> },
-    { name: 'Support', path: '/support', icon: <FiHelpCircle /> },
-    { name: 'About', path: '/about', icon: <FiHelpCircle /> },
-    { name: 'AI Suggestions', path: '/ai-suggestions', icon: <FiHelpCircle /> },
-    { name: 'Expenses', path: '/expenses', icon: <FiHelpCircle /> },
-    { name: 'Fault Details', path: '/fault-details', icon: <FiHelpCircle /> },
-    { name: 'Forum', path: '/forum', icon: <FiHelpCircle /> },
-    { name: 'Group Buying', path: '/group-buying', icon: <FiHelpCircle /> },
-    { name: 'Impact', path: '/impact', icon: <FiHelpCircle /> },
-    { name: 'Landing', path: '/landing', icon: <FiHelpCircle /> },
-    { name: 'Notifications', path: '/notifications', icon: <FiHelpCircle /> },
-    { name: 'OAuth Callback', path: '/oauth-callback', icon: <FiHelpCircle /> },
-    { name: 'Personal User', path: '/personal-user', icon: <FiHelpCircle /> },
-    { name: 'Privacy Policy', path: '/privacy-policy', icon: <FiHelpCircle /> },
-    { name: 'Refer', path: '/refer', icon: <FiHelpCircle /> },
-    { name: 'Register', path: '/register', icon: <FiHelpCircle /> },
-    { name: 'Subscription', path: '/subscription', icon: <FiHelpCircle /> },
-    { name: 'Terms of Service', path: '/terms-of-service', icon: <FiHelpCircle /> },
-    { name: 'Top Up', path: '/top-up', icon: <FiHelpCircle /> },
-    { name: 'Login', path: '/login', icon: <FiHelpCircle /> }, // Moved under Top Up
+    { name: 'Home', path: '/', icon: <FiHome /> },  // Keeping FiHome as it's appropriate
+    { name: 'Dashboard', path: '/dashboard', icon: <FaSolarPanel /> },
+    { name: 'Profile', path: '/profile', icon: <FaUser /> },
+    { name: 'Settings', path: '/settings', icon: <FaTools /> },
+    { name: 'Support', path: '/support', icon: <FaLightbulb /> },
+    { name: 'About', path: '/about', icon: <FaUsers /> },  // Using FaUsers as a placeholder
+    { name: 'AI Suggestions', path: '/ai-suggestions', icon: <Bot /> },
+    { name: 'Expenses', path: '/expenses', icon: <FaCoins /> },
+    { name: 'Forum', path: '/forum', icon: <FaRegSun /> },
+    { name: 'Group Buying', path: '/group-buying', icon: <FaUsers /> },
+    { name: 'Impact', path: '/impact', icon: <FaTree /> },
+    { name: 'Notifications', path: '/notifications', icon: <FaRegLightbulb /> },
+    { name: 'Personal User', path: '/personal-user', icon: <FaUser /> },  // Using FaUser as it's similar to Profile
+    { name: 'Refer', path: '/refer', icon: <FaHandshake /> },
+    { name: 'Subscription', path: '/subscription', icon: <FaCreditCard /> },
+    { name: 'Top Up', path: '/top-up', icon: <FaBatteryFull /> },
   ];
 
   // Drag-and-drop functionality
