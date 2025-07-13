@@ -25,7 +25,8 @@ import {
   Link,
   Textarea,
   Select,
-  VStack
+  VStack,
+  Progress
 } from '@chakra-ui/react';
 import { 
   WarningTwoIcon, 
@@ -56,6 +57,48 @@ const AISuggestions = () => {
   const [trendDays, setTrendDays] = useState(7);
   const [feedbackComment, setFeedbackComment] = useState("");
   
+  // --- ADVANCED FEATURE STATE MANAGEMENT ---
+  // User Comments
+  const [comments, setComments] = useState(() => {
+    return JSON.parse(localStorage.getItem("ai_comments")) || {};
+  });
+  const handleComment = (id, comment) => {
+    const newComments = { ...comments, [id]: [...(comments[id] || []), comment] };
+    setComments(newComments);
+    localStorage.setItem("ai_comments", JSON.stringify(newComments));
+  };
+
+  // User Goal Tracking
+  const [goal, setGoal] = useState(() => {
+    return Number(localStorage.getItem("ai_goal")) || 0;
+  });
+  const handleGoalChange = (value) => {
+    setGoal(value);
+    localStorage.setItem("ai_goal", value);
+  };
+
+  // Favorites
+  const [favorites, setFavorites] = useState(() => {
+    return JSON.parse(localStorage.getItem("favorites")) || [];
+  });
+  const toggleFavorite = (id) => {
+    const updated = new Set(favorites);
+    updated.has(id) ? updated.delete(id) : updated.add(id);
+    const arr = Array.from(updated);
+    setFavorites(arr);
+    localStorage.setItem("favorites", JSON.stringify(arr));
+  };
+
+  // User Notes
+  const [userNotes, setUserNotes] = useState(() => {
+    return JSON.parse(localStorage.getItem("ai_notes")) || {};
+  });
+  const handleNoteChange = (id, note) => {
+    const newNotes = { ...userNotes, [id]: note };
+    setUserNotes(newNotes);
+    localStorage.setItem("ai_notes", JSON.stringify(newNotes));
+  };
+
   const toast = useToast();
 
   // Mock data for suggestions with enhanced properties
@@ -297,6 +340,8 @@ const AISuggestions = () => {
     setActiveCategory(category);
     if (category === "All") {
       setFilteredSuggestions(suggestions);
+    } else if (category === "Favorites") {
+      setFilteredSuggestions(suggestions.filter(s => favorites.includes(s.id)));
     } else {
       const filtered = suggestions.filter((s) => s.category === category);
       setFilteredSuggestions(filtered);
@@ -323,6 +368,37 @@ const AISuggestions = () => {
   return (
     <Container maxW="5xl" py={8} style={{ background: '#181A20', minHeight: '100vh', borderRadius: '16px', boxShadow: '0 4px 32px rgba(0,0,0,0.2)' }}>
       <h1 style={{ color: '#F7FAFC', textAlign: 'center', marginBottom: '30px' }}>AI Suggestions</h1>
+      {/* Goal Tracking Section */}
+      <Box mb={6} p={4} bg="#23272F" borderRadius="md" border="1px solid #38B2AC" color="#F7FAFC">
+        <HStack spacing={4} align="center">
+          <Text fontWeight="bold">Monthly Savings Goal:</Text>
+          <input
+            type="number"
+            min="0"
+            value={goal}
+            onChange={e => handleGoalChange(Number(e.target.value))}
+            style={{
+              width: '100px',
+              padding: '6px',
+              borderRadius: '6px',
+              border: '1px solid #38B2AC',
+              background: '#181A20',
+              color: '#F7FAFC',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              marginRight: '10px'
+            }}
+            placeholder="R100"
+          />
+          <Text fontSize="sm" color="#38B2AC">Set your target for the month</Text>
+        </HStack>
+        <Box mt={3}>
+          <Progress value={goal ? (suggestions.reduce((acc, s) => acc + (s.estimated_savings || 0), 0) / goal) * 100 : 0} colorScheme="green" borderRadius="md" height="18px" />
+          <Text mt={2} fontWeight="bold" color="#48BB78">
+            {goal ? `You’ve reached R${suggestions.reduce((acc, s) => acc + (s.estimated_savings || 0), 0).toFixed(2)} of R${goal}` : 'Set a goal to start tracking your savings!'}
+          </Text>
+        </Box>
+      </Box>
       
       {/* Enhanced Daily AI Tip with Notifications & Sharing */}
       {dailyTip && (
@@ -402,7 +478,7 @@ const AISuggestions = () => {
       </div>
 
       <div className="categories" style={{ marginBottom: '20px' }}>
-        {["All", "Energy Saving", "Maintenance", "Upgrades"].map((category) => (
+        {["All", "Energy Saving", "Maintenance", "Upgrades", "Favorites"].map((category) => (
           <button
             key={category}
             className={activeCategory === category ? "active" : ""}
@@ -494,6 +570,21 @@ const AISuggestions = () => {
             onClick={() => setSelectedSuggestion(suggestion)}
             _hover={{ transform: 'translateY(-2px)' }}
           >
+            {/* Favorites Star Icon */}
+            <Button
+              size="xs"
+              variant="ghost"
+              colorScheme={favorites.includes(suggestion.id) ? 'yellow' : 'gray'}
+              onClick={e => {
+                e.stopPropagation();
+                toggleFavorite(suggestion.id);
+              }}
+              style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 2 }}
+              aria-label={favorites.includes(suggestion.id) ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              {favorites.includes(suggestion.id) ? '★' : '☆'}
+            </Button>
+
             {/* Enhanced Priority Badge */}
             <PriorityBadge priority={suggestion.priority} />
 
@@ -562,6 +653,69 @@ const AISuggestions = () => {
                 </Button>
               </Tooltip>
             </div>
+            {/* User Comments Section */}
+            <Box mt={3}>
+              <Text fontSize="sm" color="#38B2AC" fontWeight="bold">
+                Comments ({(comments[suggestion.id]?.length || 0)})
+              </Text>
+              <VStack align="stretch" spacing={2} mt={1} mb={2} maxH="100px" overflowY="auto">
+                {(comments[suggestion.id] || []).map((c, idx) => (
+                  <Box key={idx} bg="#20232A" p={2} borderRadius="md" color="#F7FAFC" fontSize="sm">
+                    {c}
+                  </Box>
+                ))}
+              </VStack>
+              <HStack>
+                <Textarea
+                  size="sm"
+                  placeholder="Add a comment..."
+                  bg="#181A20"
+                  color="#F7FAFC"
+                  borderColor="#38B2AC"
+                  _placeholder={{ color: 'gray.400' }}
+                  value={comments[`draft_${suggestion.id}`] || ''}
+                  onChange={e => {
+                    setComments(prev => ({ ...prev, [`draft_${suggestion.id}`]: e.target.value }));
+                  }}
+                  minH="32px"
+                  maxH="60px"
+                  resize="vertical"
+                />
+                <Button
+                  size="sm"
+                  colorScheme="teal"
+                  onClick={e => {
+                    e.stopPropagation();
+                    const val = comments[`draft_${suggestion.id}`]?.trim();
+                    if (val) {
+                      handleComment(suggestion.id, val);
+                      setComments(prev => ({ ...prev, [`draft_${suggestion.id}`]: '' }));
+                    }
+                  }}
+                  isDisabled={!(comments[`draft_${suggestion.id}`]?.trim())}
+                >
+                  Post
+                </Button>
+              </HStack>
+            </Box>
+            {/* User Notes Section */}
+            <Box mt={2}>
+              <Text fontSize="sm" color="#38B2AC" fontWeight="bold">Personal Note</Text>
+              <Textarea
+                size="sm"
+                placeholder="Your note... (only you can see this)"
+                bg="#181A20"
+                color="#F7FAFC"
+                borderColor="#38B2AC"
+                _placeholder={{ color: 'gray.400' }}
+                value={userNotes[suggestion.id] || ''}
+                onChange={e => handleNoteChange(suggestion.id, e.target.value)}
+                minH="32px"
+                maxH="60px"
+                resize="vertical"
+                mt={1}
+              />
+            </Box>
           </Box>
         ))}
       </div>

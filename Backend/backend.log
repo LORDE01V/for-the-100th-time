@@ -734,3 +734,7 @@
 2025-07-13 08:58:26,031 - INFO - 127.0.0.1 - - [13/Jul/2025 08:58:26] "OPTIONS /api/auth/login HTTP/1.1" 200 -
 2025-07-13 08:58:26,344 - WARNING - Unknown option passed to Flask-CORS: origin
 2025-07-13 08:58:26,605 - INFO - 127.0.0.1 - - [13/Jul/2025 08:58:26] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-13 09:13:51,068 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-13 09:13:51,068 - INFO - 127.0.0.1 - - [13/Jul/2025 09:13:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-13 09:13:51,380 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-13 09:13:51,676 - INFO - 127.0.0.1 - - [13/Jul/2025 09:13:51] "POST /api/auth/login HTTP/1.1" 200 -
