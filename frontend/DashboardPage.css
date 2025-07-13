@@ -1,0 +1,18 @@
+/* frontend/src/pages/DashboardPage.css */
+.dashboard-container {
+  display: flex; /* Flexbox layout for side-by-side positioning */
+  align-items: flex-start; /* Align items at the top */
+  height: 100vh; /* Full viewport height */
+}
+
+.navigation-panel {
+  flex: 0 0 200px; /* Fixed width for the navigation panel */
+}
+
+.content-container {
+  flex: 1; /* Take up the remaining space */
+  padding: 20px; /* Add some padding around the content */
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+  gap: 20px; /* Add spacing between items */
+}

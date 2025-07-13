@@ -33,6 +33,7 @@ import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 
 // Import icons - Added FaArrowLeft import here
 import { FaArrowLeft } from 'react-icons/fa';
+import settingsBackground from '../assets/images/Settings_page.png';  // Added: Import the image for proper bundling
 
 
 function SettingsPage() {
@@ -257,12 +258,12 @@ function SettingsPage() {
     // Applied background gradient and overlay to the outermost Box
     <Box
       minH="100vh" // Ensure this Box takes the full viewport height
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)" // Gradient matching login page
+      backgroundImage={`url(${settingsBackground})`}  // Updated: Use the imported image
       backgroundSize="cover"
       backgroundPosition="center"
-      backgroundAttachment="fixed" // Fixed background
-      position="relative" // Needed for absolute positioning of overlay
-      _before={{ // Add an overlay for readability
+      backgroundAttachment="fixed"
+      position="relative"
+      _before={{
           content: '""',
           position: 'absolute',
           top: 0,
@@ -305,7 +306,15 @@ function SettingsPage() {
             <VStack spacing={8} align="stretch">
 
                 {/* General Information Section */}
-                <Box>
+                <Box
+                    p={4}
+                    borderRadius="lg"
+                    bg={glassBgColor}  // Enhanced: Ensure glassmorphism is applied
+                    backdropFilter="blur(10px)"  // Enhanced: Add blur for glassmorphism effect
+                    borderWidth="1px"
+                    borderColor={glassBorderColor}
+                    boxShadow={glassBoxShadow}
+                >
                     <Heading as="h2" size="lg" mb={4} color={headingColor}>General Information</Heading>
                     <Text color={mutedTextColor} mb={4}>Review and update your account details.</Text>
                     <VStack spacing={4} align="stretch">
@@ -327,7 +336,15 @@ function SettingsPage() {
                 <Divider borderColor={borderColor} /> {/* Add a divider */}
 
                 {/* Change Password Section */}
-                <Box>
+                <Box
+                    p={4}
+                    borderRadius="lg"
+                    bg={glassBgColor}  // Enhanced: Ensure glassmorphism is applied
+                    backdropFilter="blur(10px)"  // Enhanced: Add blur for glassmorphism effect
+                    borderWidth="1px"
+                    borderColor={glassBorderColor}
+                    boxShadow={glassBoxShadow}
+                >
                     <Heading as="h2" size="lg" mb={4} color={headingColor}>Change Password</Heading>
                     <Text color={mutedTextColor} mb={4}>Update your account password.</Text>
                     <VStack spacing={4} as="form" onSubmit={handleChangePassword}>
@@ -386,7 +403,15 @@ function SettingsPage() {
                  <Divider borderColor={borderColor} /> {/* Add another divider */}
 
                  {/* Notification Preferences Section */}
-                 <Box>
+                 <Box
+                    p={4}
+                    borderRadius="lg"
+                    bg={glassBgColor}  // Enhanced: Ensure glassmorphism is applied
+                    backdropFilter="blur(10px)"  // Enhanced: Add blur for glassmorphism effect
+                    borderWidth="1px"
+                    borderColor={glassBorderColor}
+                    boxShadow={glassBoxShadow}
+                 >
                      <Heading as="h2" size="lg" mb={4} color={headingColor}>Notification Preferences</Heading>
                      <Text color={mutedTextColor} mb={4}>Choose how you want to receive notifications.</Text>
                      <VStack spacing={4} align="stretch">
@@ -425,7 +450,15 @@ function SettingsPage() {
                 <Divider borderColor={borderColor} /> {/* Add another divider */}
 
                 {/* Delete Account Section */}
-                <Box>
+                <Box
+                    p={4}
+                    borderRadius="lg"
+                    bg={glassBgColor}  // Enhanced: Ensure glassmorphism is applied
+                    backdropFilter="blur(10px)"  // Enhanced: Add blur for glassmorphism effect
+                    borderWidth="1px"
+                    borderColor={glassBorderColor}
+                    boxShadow={glassBoxShadow}
+                >
                     <Heading as="h2" size="lg" mb={4} color={headingColor}>Danger Zone</Heading>
                     <Text color="red.400" mb={4}>Deleting your account is irreversible.</Text>
                     <Button colorScheme="red" onClick={onOpen}>

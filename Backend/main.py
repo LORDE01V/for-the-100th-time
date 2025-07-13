@@ -61,25 +61,30 @@ flask_app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
 flask_app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
 flask_app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
-# Initialize extensions
+# Initialize CORS properly in one place
 CORS(flask_app, 
-     resources={r"/api/*": {"origins": ["http://localhost:3000", "http://localhost:5000"]}},
-     expose_headers=["Authorization"],
-     supports_credentials=True)
+     resources={r"/api/*": {
+         "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000"],
+         "supports_credentials": True,
+         "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
+         "expose_headers": ["Authorization"],
+         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+     }}
+)
 jwt = JWTManager(flask_app)
 
 # Register blueprints
 flask_app.register_blueprint(home_bp)
 flask_app.register_blueprint(auth_bp, name='auth_bp')
 
-# Add after request handler
-@flask_app.after_request
-def add_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-    return response
+# Remove the after_request handler entirely to avoid conflicts
+# @flask_app.after_request
+# def add_cors_headers(response):
+#     response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+#     response.headers['Access-Control-Allow-Credentials'] = 'true'
+#     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+#     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+#     return response
 
 # Database connection helper (PostgreSQL)
 def get_db():
