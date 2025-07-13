@@ -17,7 +17,7 @@ import {
   Progress
 } from '@chakra-ui/react';
 import { auth } from '../services/api';
-import gridXBackground from '../assets/images/gridx_background.jpg';
+import registerBackground from '../assets/images/register.png';
 
 function RegisterPage() {
   const [name, setName] = useState('');
@@ -148,7 +148,7 @@ function RegisterPage() {
       justify="center"
       p={4}
       position="relative"
-      backgroundImage={`url(${gridXBackground})`}
+      backgroundImage={`url(${registerBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
     >

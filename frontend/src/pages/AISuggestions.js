@@ -52,7 +52,7 @@ const AISuggestions = () => {
   };
 
   return (
-    <div className="ai-suggestions">
+    <div style={{ backgroundImage: `url('/src/assets/images/AI-suggestions.png')`, backgroundSize: 'cover', height: '100vh' }}>{/* Set background for the main container */}
       <h1>AI Suggestions</h1>
       <div className="search-bar">
         <input
@@ -75,7 +75,18 @@ const AISuggestions = () => {
       </div>
       <div className="suggestions-list">
         {filteredSuggestions.map((suggestion) => (
-          <div key={suggestion.id} className="suggestion-card">
+          <div 
+            key={suggestion.id} 
+            className="suggestion-card" 
+            style={{ 
+              backdropFilter: 'blur(10px)', 
+              background: 'rgba(255, 255, 255, 0.2)', 
+              borderRadius: '10px', 
+              border: '1px solid rgba(255, 255, 255, 0.18)', 
+              padding: '20px', 
+              margin: '10px'
+            }}
+          >
             <h3>{suggestion.title}</h3>
             <p>{suggestion.description}</p>
             <div className="votes">

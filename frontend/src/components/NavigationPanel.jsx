@@ -4,6 +4,7 @@ import './NavigationPanel.css'; // Import the CSS file for styling
 import { FiHome, FiArrowLeft } from 'react-icons/fi'; // Keeping FiHome for Home
 import { FaSolarPanel, FaUser, FaBatteryFull, FaCoins, FaRegLightbulb, FaTools, FaTree, FaLightbulb, FaRegSun, FaUsers, FaHandshake, FaCreditCard } from 'react-icons/fa';
 import { Bot } from 'lucide-react'; // For AI Suggestions
+import { useColorModeValue } from '@chakra-ui/react';  // Already present, but confirming it's used
 
 const NavigationPanel = () => {
   const navigate = useNavigate();
@@ -42,22 +43,25 @@ const NavigationPanel = () => {
 
   return (
     <>
-      {/* Always-visible trigger button */}
+      {/* Trigger Button */}
       <div
         style={{
           position: 'fixed',
-          top: '20px',  // Adjust position as needed
+          top: '20px',
           left: '10px',
-          zIndex: '1000',  // Ensure it's on top
+          zIndex: '1000',
           cursor: 'pointer',
           padding: '10px',
-          background: 'rgba(0, 0, 0, 0.7)',
+          background: useColorModeValue('white', 'rgba(0, 0, 0, 0.6)'),  // Updated for frosted glass effect
+          backdropFilter: 'blur(16px)',
+          border: '1px solid',
+          borderColor: useColorModeValue('gray.200', 'gray.600'),
           borderRadius: '50%',
           color: 'white',
         }}
         onMouseEnter={() => setIsVisible(true)}
       >
-        ☰  {/* Hamburger icon; you can replace with an actual icon component */}
+        ☰
       </div>
 
       <div
@@ -72,7 +76,12 @@ const NavigationPanel = () => {
           left: 0,
           top: 0,
           height: '100vh',
-          // ... existing code ...
+          zIndex: 1000,
+          padding: '16px',
+          background: useColorModeValue('white', 'rgba(0, 0, 0, 0.6)'),  // Updated for frosted glass effect
+          backdropFilter: 'blur(16px)',
+          border: '1px solid',
+          borderColor: useColorModeValue('gray.200', 'gray.600'),
         }}
       >
         <div className="navigation-header">
@@ -83,7 +92,7 @@ const NavigationPanel = () => {
             <button
               key={page.name}
               className="navigation-item"
-              onClick={() => navigate(page.path)}  // Clicks on 'Home' will call navigate('/')
+              onClick={() => navigate(page.path)}
             >
               <span className="icon">{page.icon}</span>
               <span className="label">{page.name}</span>
