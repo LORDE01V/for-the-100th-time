@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './NavigationPanel.css'; // Import the CSS file for styling
 import { FiHome, FiSettings, FiUser, FiHelpCircle } from 'react-icons/fi'; // Feather icons
@@ -6,6 +6,12 @@ import { FiHome, FiSettings, FiUser, FiHelpCircle } from 'react-icons/fi'; // Fe
 const NavigationPanel = () => {
   const navigate = useNavigate();
   const panelRef = useRef(null);
+
+  // Add state for hover visibility
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Function to toggle visibility via trigger
+  const togglePanel = () => setIsVisible(true);
 
   // List of all pages with their names, paths, and icons
   const pages = [
@@ -52,29 +58,61 @@ const NavigationPanel = () => {
   };
 
   return (
-    <div
-      className="navigation-panel"
-      ref={panelRef}
-      draggable="true"
-      onDragStart={handleDragStart}
-      onDrag={handleDrag}
-    >
-      <div className="navigation-header">
-        <h2>Energy Dashboard</h2>
+    <>
+      {/* Always-visible trigger button */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '20px',  // Adjust position as needed
+          left: '10px',
+          zIndex: '1000',  // Ensure it's on top
+          cursor: 'pointer',
+          padding: '10px',
+          background: 'rgba(0, 0, 0, 0.7)',
+          borderRadius: '50%',
+          color: 'white',
+        }}
+        onMouseEnter={togglePanel}  // Show panel on hover over trigger
+        onMouseLeave={() => {}}  // Do nothing on leave from trigger
+      >
+        ☰  {/* Hamburger icon; you can replace with an actual icon component */}
       </div>
-      <div className="navigation-menu">
-        {pages.map((page) => (
-          <button
-            key={page.name}
-            className="navigation-item"
-            onClick={() => navigate(page.path)}
-          >
-            <span className="icon">{page.icon}</span>
-            <span className="label">{page.name}</span>
-          </button>
-        ))}
+
+      <div
+        className="navigation-panel"
+        ref={panelRef}
+        draggable="true"
+        onDragStart={handleDragStart}
+        onDrag={handleDrag}
+        onMouseEnter={() => setIsVisible(true)}  // Keep panel open on hover
+        onMouseLeave={() => setIsVisible(false)}  // Hide panel when mouse leaves
+        style={{
+          transform: isVisible ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.3s ease-in-out',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          height: '100vh',
+          // ... existing code ...
+        }}
+      >
+        <div className="navigation-header">
+          <h2>Energy Dashboard</h2>
+        </div>
+        <div className="navigation-menu">
+          {pages.map((page) => (
+            <button
+              key={page.name}
+              className="navigation-item"
+              onClick={() => navigate(page.path)}
+            >
+              <span className="icon">{page.icon}</span>
+              <span className="label">{page.name}</span>
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
