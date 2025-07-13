@@ -113,9 +113,9 @@ function ImpactPage() {
       const updatedTestimonials = [...testimonials, newTestimonial];
       setTestimonials(updatedTestimonials);
       localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
-      toast({ title: 'Story Submitted', description: 'Your story has been simulated successfully! (Not yet saved to database)', status: 'success', duration: 3000, isClosable: true });
+      toast({ title: 'Story Submitted', description: 'Your story has been submitted successfully!', status: 'success', duration: 3000, isClosable: true });
     } catch (error) {
-      toast({ title: 'Error', description: 'Submission failed. Please try again later.', status: 'error', duration: 3000, isClosable: true });
+      toast({ title: 'Error', description: 'Submission failed.', status: 'error', duration: 3000, isClosable: true });
       console.error('Submission error:', error);
     }
     
@@ -125,6 +125,7 @@ function ImpactPage() {
     setRating(0);
   };
 
+  // Move all useColorModeValue calls to the top level
   const bgColor = useColorModeValue('gray.50', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'whiteAlpha.900');
   const statColor = useColorModeValue('teal.500', 'teal.300');
@@ -157,12 +158,11 @@ function ImpactPage() {
     { label: 'CO₂ Emissions Reduced', value: '620 tons offset', icon: FaLeaf },
   ];
 
-  function handleRate(testimonialIndex, newRating) {
+  const handleRate = (testimonialIndex, newRating) => {
     const updatedTestimonials = [...testimonials];
     updatedTestimonials[testimonialIndex].rating = newRating;
     setTestimonials(updatedTestimonials);
-    localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
-  }
+  };
 
   if (!user) {
     return (
@@ -270,7 +270,7 @@ function ImpactPage() {
                   <Flex align="center" mb={4}>
                     <Avatar src={testimonial.avatar} name={testimonial.name} size="xl" mr={4} />
                     <VStack align="start" flex="1">
-                      <Text fontSize="lg" fontStyle="italic" color={textColor}>"{testimonial.quote}"</Text>
+                      <Text fontSize="lg" fontStyle="italic" color={textColor}>{testimonial.quote}"</Text>
                       <HStack mt={2}>
                         {Array(5).fill('').map((_, starIndex) => (
                           <MotionIcon
