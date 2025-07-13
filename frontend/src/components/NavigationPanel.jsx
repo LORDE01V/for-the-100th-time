@@ -1,20 +1,21 @@
 import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import to access navigation state
 import './NavigationPanel.css'; // Import the CSS file for styling
-import { FiHome } from 'react-icons/fi'; // Keeping FiHome for Home
+import { FiHome, FiArrowLeft } from 'react-icons/fi'; // Keeping FiHome for Home
 import { FaSolarPanel, FaUser, FaBatteryFull, FaCoins, FaRegLightbulb, FaTools, FaTree, FaLightbulb, FaRegSun, FaUsers, FaHandshake, FaCreditCard } from 'react-icons/fa';
 import { Bot } from 'lucide-react'; // For AI Suggestions
 
 const NavigationPanel = () => {
   const navigate = useNavigate();
   const panelRef = useRef(null);
+  const location = useLocation();  // Get current location to check state
 
   // Add state for hover visibility
   const [isVisible, setIsVisible] = useState(false);
 
   // List of all pages with their names, paths, and icons
   const pages = [
-    { name: 'Home', path: '/', icon: <FiHome /> },  // Keeping FiHome as it's appropriate
+    { name: 'Home', path: '/home', icon: <FiHome /> },  // Updated path to '/home' to match the route for HomePage.js
     { name: 'Dashboard', path: '/dashboard', icon: <FaSolarPanel /> },
     { name: 'Profile', path: '/profile', icon: <FaUser /> },
     { name: 'Settings', path: '/settings', icon: <FaTools /> },
@@ -30,6 +31,9 @@ const NavigationPanel = () => {
     { name: 'Refer', path: '/refer', icon: <FaHandshake /> },
     { name: 'Subscription', path: '/subscription', icon: <FaCreditCard /> },
     { name: 'Top Up', path: '/top-up', icon: <FaBatteryFull /> },
+    { name: 'Back to Dashboard', path: '/dashboard', icon: <FiArrowLeft /> },  // Assuming FiArrowLeft is imported; if not, use another icon like FiHome
+    // Conditionally add Back to Home if coming from homepage
+    ...(location.state?.from === 'home' ? [{ name: 'Back to Home', path: '/home', icon: <FiHome /> }] : []),
   ];
 
   // Remove drag-related functions
@@ -79,7 +83,7 @@ const NavigationPanel = () => {
             <button
               key={page.name}
               className="navigation-item"
-              onClick={() => navigate(page.path)}
+              onClick={() => navigate(page.path)}  // Clicks on 'Home' will call navigate('/')
             >
               <span className="icon">{page.icon}</span>
               <span className="label">{page.name}</span>
