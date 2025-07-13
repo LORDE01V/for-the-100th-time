@@ -141,11 +141,12 @@ function ReferPage() {
 
           {/* Referral Link Section */}
           <Card
-            bg="rgba(255, 255, 255, 0.1)"
-            backdropFilter="blur(10px)"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-            borderRadius="lg"
-            boxShadow="md"
+            bg={useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(0, 0, 0, 0.6)')}
+            boxShadow={useColorModeValue('md', 'xl')}
+            borderRadius={useColorModeValue('lg', 'xl')}
+            backdropFilter={useColorModeValue('none', 'blur(16px)')}
+            border={useColorModeValue('1px solid rgba(255, 255, 255, 0.2)', '1px solid gray.600')}
+            color={useColorModeValue('gray.600', 'white')}
           >
             <CardHeader>
               <Heading size="md">Your Referral Link</Heading>
@@ -200,11 +201,12 @@ function ReferPage() {
 
           {/* Rewards Section */}
           <Card
-            bg="rgba(255, 255, 255, 0.1)"
-            backdropFilter="blur(10px)"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-            borderRadius="lg"
-            boxShadow="md"
+            bg={useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(0, 0, 0, 0.6)')}
+            boxShadow={useColorModeValue('md', 'xl')}
+            borderRadius={useColorModeValue('lg', 'xl')}
+            backdropFilter={useColorModeValue('none', 'blur(16px)')}
+            border={useColorModeValue('1px solid rgba(255, 255, 255, 0.2)', '1px solid gray.600')}
+            color={useColorModeValue('gray.600', 'white')}
           >
             <CardHeader>
               <Heading size="md">Your Rewards</Heading>
@@ -235,11 +237,12 @@ function ReferPage() {
 
           {/* Referral History Section */}
           <Card
-            bg="rgba(255, 255, 255, 0.1)"
-            backdropFilter="blur(10px)"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-            borderRadius="lg"
-            boxShadow="md"
+            bg={useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(0, 0, 0, 0.6)')}
+            boxShadow={useColorModeValue('md', 'xl')}
+            borderRadius={useColorModeValue('lg', 'xl')}
+            backdropFilter={useColorModeValue('none', 'blur(16px)')}
+            border={useColorModeValue('1px solid rgba(255, 255, 255, 0.2)', '1px solid gray.600')}
+            color={useColorModeValue('gray.600', 'white')}
           >
             <CardHeader>
               <Heading size="md">Referral History</Heading>

@@ -26,13 +26,25 @@ function SubscriptionPage() {
   const toast = useToast();
   const { selectPlan } = useSubscription();
   
-  // Ensure all useColorModeValue calls are at the top level
+  // Define all useColorModeValue hooks at the top level to avoid React Hook rules violations
   const headingColor = useColorModeValue('gray.900', 'white');
   const newCardBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(17, 25, 40, 0.75)');
   const newBorderColor = useColorModeValue('gray.300', 'gray.700');
   const glassCardBg = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(17, 25, 40, 0.2)');
   const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.1)');
-  
+  const mutedTextColor = useColorModeValue('gray.600', 'gray.400');
+  const subscriptionBoxBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');
+  const subscriptionBoxShadow = useColorModeValue('md', 'xl');
+  const subscriptionBorderRadius = useColorModeValue('md', 'xl');
+  const subscriptionBackdropFilter = useColorModeValue('none', 'blur(16px)');
+  const subscriptionBorderColor = useColorModeValue('gray.300', 'gray.600');
+  const subscriptionTextColor = useColorModeValue('gray.700', 'white');
+  const cardBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');
+  const cardBorderColor = useColorModeValue('gray.200', 'gray.600');
+  const cardColor = useColorModeValue('gray.800', 'white');
+  const cardHeadingColor = useColorModeValue('gray.800', 'white');
+  const cardTextColor = useColorModeValue('gray.800', 'white');
+
   const subscriptionPlans = useMemo(() => [
     {
       id: 'basic-lite',
@@ -140,8 +152,6 @@ function SubscriptionPage() {
     }
   }, []);
   
-  const mutedTextColor = useColorModeValue('gray.600', 'gray.400');
-
   let mockRationaleMessages = [
     "This plan suits your low energy usage pattern based on mock data analysis.",
     "Based on your data, this is a great match for high efficiency needs.",
@@ -217,7 +227,7 @@ function SubscriptionPage() {
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
-      backgroundRepeat="no-repeat"  // Added to prevent repetition
+      backgroundRepeat="no-repeat"
       position="relative"
       _before={{
         content: '""',
@@ -232,15 +242,18 @@ function SubscriptionPage() {
     >
       <Box
         maxW="container.xl"
+        width="100%"
         py={8}
+        px={{ base: 2, md: 8 }}
         position="relative"
         zIndex={2}
       >
-        <Flex justify="space-between" align="center" mb={8}>
+        <Flex justify="flex-start" align="center" mb={8}>
           <Button
             leftIcon={<FaArrowLeft />}
             onClick={() => navigate(-1)}
             variant="ghost"
+            mr={4}
           >
             Back
           </Button>
@@ -248,7 +261,6 @@ function SubscriptionPage() {
             <FaCreditCard style={{ display: 'inline-block', marginRight: '0.5rem' }} />
             Subscription Plans
           </Heading>
-          <Box w="136px" />
         </Flex>
         <Alert status="info" mb={8} borderRadius="md">
           <AlertIcon />
@@ -272,7 +284,7 @@ function SubscriptionPage() {
                 minH="340px"
                 maxW="320px"
                 mx="auto"
-                backdropFilter="blur(15px)"  // Increased blur for better effect
+                backdropFilter="blur(15px)"
                 borderColor={selectedPlans.includes(plan.id) ? 'green.500' : glassBorderColor}
               >
                 <VStack spacing={4} align="stretch" height="100%">
@@ -311,7 +323,7 @@ function SubscriptionPage() {
             </motion.div>
           ))}
         </SimpleGrid>
-        <Text color={mutedTextColor} mb={4}>Review and update your profile details.</Text>
+        <Text color={mutedTextColor} mt={8} mb={4}>Review and update your profile details.</Text>
       </Box>
     </Flex>
   );
