@@ -18,7 +18,7 @@ import {
   HStack,
   useColorModeValue
 } from '@chakra-ui/react';
-import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaMoon, FaSun } from 'react-icons/fa';
+import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaMoon, FaSun, FaArrowLeft } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
@@ -182,15 +182,18 @@ function DashboardContent() {
               mx="auto"
               style={{ display: 'block' }}
             >
-              <Heading
-                as="h1"
-                size="xl"
-                color="white"
-                textShadow="0 2px 8px rgba(0,0,0,0.7)"
-                textAlign="center"
-              >
+              <HStack justify="space-between" align="center" mb={8}>
+                <Button leftIcon={<FaArrowLeft />} onClick={() => navigate(-1)} variant="ghost" mr={4}>
+                  Back
+                </Button>
+              </HStack>
+
+              <Heading as="h1" size="xl" color={useColorModeValue('gray.800', 'white')} mb={2} textAlign="center">
                 Energy Dashboard
               </Heading>
+              <Text color={useColorModeValue('gray.600', 'gray.400')} fontSize="lg" textAlign="center" mb={6}>
+                Take control of your energy and discover ways to optimize your usage for a sustainable future!
+              </Text>
             </Box>
 
             <Box textAlign="center" mb={8}>

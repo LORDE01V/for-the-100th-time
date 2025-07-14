@@ -114,8 +114,17 @@ function AboutPage() {
         borderColor={aboutBorderColor}
         color={aboutTextColor}
       >
-        <Text fontSize="4xl" fontWeight="bold" textAlign="center" mb={4} color={useColorModeValue('gray.800', 'white')}>
+        <HStack justify="space-between" align="center" mb={8}>
+          <Button leftIcon={<FaArrowLeft />} onClick={() => navigate(-1)} variant="ghost" mr={4}>
+            Back
+          </Button>
+        </HStack>
+
+        <Heading as="h1" size="xl" color={useColorModeValue('gray.800', 'white')} mb={2} textAlign="center">
           About Us
+        </Heading>
+        <Text color={useColorModeValue('gray.600', 'gray.400')} fontSize="lg" textAlign="center" mb={6}>
+          Discover our mission and the team empowering sustainable energy solutions!
         </Text>
         {/* Mission Statement */}
         <Text fontSize="lg" textAlign="center" mb={4} color={useColorModeValue('gray.800', 'white')}>

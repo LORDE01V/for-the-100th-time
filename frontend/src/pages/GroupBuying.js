@@ -152,22 +152,18 @@ function GroupBuying() {
 
   // Color mode values
   const textColor = useColorModeValue('gray.800', 'whiteAlpha.900');
-  const headingColor = useColorModeValue('gray.800', 'white');
   const inputBgColor = useColorModeValue('white', 'gray.800');
   const inputBorderColor = useColorModeValue('gray.300', 'gray.600');
 
   // Define colors for glassmorphism effect on cards
   const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
-  const glassBoxShadow = useColorModeValue('0 4px 12px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.5)'); // Adjust shadow for depth
+  const glassBoxShadow = useColorModeValue('0 4px 12px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.5)'); // Renamed or kept as is if intended
 
   // Define hover box shadow using useColorModeValue at the top level
   const hoverBoxShadow = useColorModeValue('0 8px 16px rgba(0, 0, 0, 0.2)', '0 8px 16px rgba(0, 0, 0, 0.6)');
 
-  // At the top of the component, after existing useColorModeValue definitions 
   const cardBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(0, 0, 0, 0.6)');
-  const cardBoxShadow = useColorModeValue('md', 'xl');
   const cardBorderRadius = useColorModeValue('lg', 'xl');
-  const cardBackdropFilter = useColorModeValue('none', 'blur(16px)');
   const cardBorder = useColorModeValue('1px solid rgba(255, 255, 255, 0.2)', '1px solid gray.600');
   const cardColor = useColorModeValue('gray.800', 'white'); // ... existing code ... 
 
@@ -287,17 +283,17 @@ function GroupBuying() {
         <VStack spacing={8} align="stretch">
           {/* Header Section */}
           <HStack justify="space-between" align="center" mb={8}>
-            <Button
-              leftIcon={<FaArrowLeft />}
-              variant="ghost"
-              onClick={() => navigate('/home')}
-              color={headingColor}
-            >
-              Back to Home
+            <Button leftIcon={<FaArrowLeft />} onClick={() => navigate(-1)} variant="ghost" mr={4}>
+              Back
             </Button>
           </HStack>
 
-          <Heading size="xl" color={headingColor} mb={2} textAlign="center">Group Buying Campaigns</Heading>
+          <Heading size="xl" color={useColorModeValue('gray.800', 'white')} mb={2} textAlign="center">
+            Group Buying Campaigns
+          </Heading>
+          <Text color={useColorModeValue('gray.600', 'gray.400')} fontSize="lg" textAlign="center" mb={6}>
+            Join forces to save on solar gear and make energy more affordable for everyone!
+          </Text>
           <AnimatePresence mode="wait">
              <MotionText
                 key={animationKey}
@@ -326,20 +322,17 @@ function GroupBuying() {
                 <Card
                   key={campaign.id}
                   bg={cardBg}
-                  boxShadow={cardBoxShadow}
+                  boxShadow={glassBoxShadow}  // Only one boxShadow prop
                   borderRadius={cardBorderRadius}
-                  backdropFilter={cardBackdropFilter}
+                  backdropFilter="blur(10px)"
                   border={cardBorder}
                   color={cardColor}
                   borderWidth="1px"
-                  borderColor={glassBorderColor} // Ensure no duplicates
-                  boxShadow={glassBoxShadow}
-                  borderRadius="lg"
-                  backdropFilter="blur(10px)"
+                  borderColor={glassBorderColor}
                   transition="all 0.3s ease-in-out"
                   _hover={{
                     transform: 'translateY(-5px)',
-                    boxShadow: hoverBoxShadow,
+                    boxShadow: hoverBoxShadow,  // No duplicates here
                   }}
                 >
                   <CardHeader p={0}>

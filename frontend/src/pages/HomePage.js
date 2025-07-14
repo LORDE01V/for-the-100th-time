@@ -47,7 +47,8 @@ import {
   FaRegSun,
   FaRegMoon,
   FaSignOutAlt,
-  FaUser
+  FaUser,
+  FaArrowLeft
 } from 'react-icons/fa';
 
 // Import useColorMode hook
@@ -190,6 +191,11 @@ function HomePage() {
   const cardBoxShadow = 'xl';  // Not a hook, so it can stay as is
   const cardBorderRadius = 'xl';  // Not a hook
   const cardBackdropFilter = 'blur(16px)';  // Not a hook
+
+  // Add or update button styles at the top level for consistency
+  const buttonBg = useColorModeValue('blue.500', 'blue.300');
+  const buttonColor = useColorModeValue('white', 'gray.900');
+  const buttonHoverBg = useColorModeValue('blue.600', 'blue.400');
 
   // Effects
   useEffect(() => {
@@ -472,7 +478,14 @@ function HomePage() {
           </Container>
           {/* Ensure Footer is rendered with proper styling */}
           <Box mt={8} position="relative" zIndex="3" width="100%" bg="transparent">
-            <Footer />
+            <Footer 
+              backToTopStyle={{  // Pass props to Footer if needed
+                bg: buttonBg,
+                color: buttonColor,
+                opacity: 1,
+                _hover: { bg: buttonHoverBg },
+              }}
+            />
           </Box>
         </Box>
       </Box>

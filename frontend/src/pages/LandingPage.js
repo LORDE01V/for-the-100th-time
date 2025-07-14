@@ -153,8 +153,11 @@ function RotatingGreetingsSection() {
 }
 
 const MeetTheDevelopers = () => {
-  const headingColor = 'white';
-  const cardBorderColor = 'rgba(255,255,255,0.15)';
+  const bgColor = useColorModeValue('gray.100', 'gray.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const headingColor = useColorModeValue('gray.800', 'white');
+  const textColorSm = useColorModeValue('gray.600', 'gray.300');
+  const textColorCenter = useColorModeValue('gray.700', 'gray.400');
 
   const developers = useMemo(() => [
     {
@@ -214,99 +217,20 @@ const MeetTheDevelopers = () => {
   };
 
   return (
-    <Box py={20} px={4} position="relative" zIndex={3}>
-      <Container maxW="container.xl">
-        <Heading
-          as="h2"
-          size="xl"
-          textAlign="center"
-          mb={10}
-          color="white"
-          textShadow="2px 2px 4px rgba(0,0,0,0.7)"
-        >
+    <Box id="meet-the-team" py={10} px={4} bg={bgColor} borderTop="1px solid" borderColor={borderColor}>
+      <Container maxW="container.lg">
+        <Heading size="xl" mb={6} textAlign="center" color={headingColor}>
           Meet the Developers
         </Heading>
-
-        <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={8}>
-          {developers.map((dev, index) => (
-            <VStack
-              key={index}
-              spacing={3}
-              p={4}
-              borderRadius="lg"
-              boxShadow="lg"
-              borderWidth="1px"
-              borderColor={cardBorderColor}
-              textAlign="center"
-              width="100%"
-              bg="rgba(20,20,20,0.95)"
-              _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
-              transition="all 0.3s ease"
-            >
-              <MotionBox
-                width="100%"
-                height="200px"
-                position="relative"
-                overflow="hidden"
-                borderRadius="lg"
-                mb={2}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                initial="animate"
-                whileHover="hover"
-                variants={imageContainerFlipVariants}
-              >
-                {getImageByName(dev.name) ? (
-                  <Image
-                    src={getImageByName(dev.name)}
-                    alt={dev.name}
-                    width="100%"
-                    height="100%"
-                    objectFit="cover"
-                    objectPosition="center"
-                    borderRadius="lg"
-                  />
-                ) : (
-                  <Avatar
-                    size="full"
-                    name={dev.name}
-                    width="100%"
-                    height="100%"
-                    borderRadius="lg"
-                  />
-                )}
-              </MotionBox>
-
-              <Box>
-                <Text
-                  fontWeight="bold"
-                  fontSize="lg"
-                  color="white"
-                  style={{ color: 'white' }}
-                  textShadow="1px 1px 2px rgba(0,0,0,0.7)"
-                >
-                  {dev.name}
-                </Text>
-                <Text
-                  fontSize="md"
-                  color="white"
-                  style={{ color: 'white' }}
-                  fontStyle="italic"
-                  textDecoration="underline"
-                >
-                  {dev.role}
-                </Text>
-                <Text
-                  fontSize="sm"
-                  color="white"
-                  style={{ color: 'white' }}
-                  px={2}
-                  textShadow="1px 1px 2px rgba(0,0,0,0.7)"
-                >
-                  {dev.description}
-                </Text>
-              </Box>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+          {developers.map((dev) => (
+            <VStack key={dev.name} align="stretch" spacing={4}>
+              <Avatar size="2xl" name={dev.name} src={getImageByName(dev.name)} />
+              <VStack align="stretch" spacing={2}>
+                <Heading size="md" color={headingColor}>{dev.name}</Heading>
+                <Text fontSize="sm" color={textColorSm}>{dev.role}</Text>
+                <Text textAlign="center" color={textColorCenter}>{dev.description}</Text>
+              </VStack>
             </VStack>
           ))}
         </SimpleGrid>
