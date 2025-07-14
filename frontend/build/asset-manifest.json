@@ -1,19 +1,23 @@
 {
   "files": {
-<<<<<<< HEAD
-    "main.css": "/static/css/main.507526f9.css",
-    "main.js": "/static/js/main.15dbd3ff.js",
-=======
-    "main.css": "/static/css/main.8798d0d3.css",
-    "main.js": "/static/js/main.e32c4cd9.js",
->>>>>>> parent of 4fba680 (Enhance LandingPage with HeroTypingTitle component for dynamic messaging)
-    "static/js/239.dfdb0d71.chunk.js": "/static/js/239.dfdb0d71.chunk.js",
-    "static/js/977.2caed02d.chunk.js": "/static/js/977.2caed02d.chunk.js",
-    "static/js/455.795f3d75.chunk.js": "/static/js/455.795f3d75.chunk.js",
+    "main.css": "/static/css/main.69bcb7d5.css",
+    "main.js": "/static/js/main.6fde6195.js",
+    "static/js/239.ad40150f.chunk.js": "/static/js/239.ad40150f.chunk.js",
+    "static/js/977.b584b783.chunk.js": "/static/js/977.b584b783.chunk.js",
+    "static/js/455.af472426.chunk.js": "/static/js/455.af472426.chunk.js",
     "static/media/inverter__5kw_hybrid.png": "/static/media/inverter__5kw_hybrid.3bb50edf13d28d1fe814.png",
     "static/media/About_Page_IMG.png": "/static/media/About_Page_IMG.765ca35b432a4903de76.png",
+    "static/media/page_impact.png": "/static/media/page_impact.ff956e6ba77508e6bad8.png",
     "static/media/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.png": "/static/media/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.c12b84b456ca06063c19.png",
+    "static/media/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png": "/static/media/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.ca540d7cff724090ee43.png",
+    "static/media/notification.png": "/static/media/notification.637e025f6ba414e6448e.png",
+    "static/media/subscriptions_page.png": "/static/media/subscriptions_page.92c52817d7adc9e9a7c3.png",
+    "static/media/group_buying.png": "/static/media/group_buying.6fa50568bde8a786a66e.png",
+    "static/media/Forum_page.png": "/static/media/Forum_page.e4e588da49a2d6153800.png",
+    "static/media/Refer_and_earn_page.png": "/static/media/Refer_and_earn_page.e9b8e58b8b54b57cdb72.png",
     "static/media/langa.png": "/static/media/langa.f96efb5446e10b091dfe.png",
+    "static/media/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_c2363fd3-711f-41c0-b272-af8fbfd0298c.png": "/static/media/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_c2363fd3-711f-41c0-b272-af8fbfd0298c.fc18336e6b3833c235d0.png",
+    "static/media/Support_page.png": "/static/media/Support_page.19ff5e56f199e975a9e4.png",
     "static/media/battery_bank_10_kwh.png": "/static/media/battery_bank_10_kwh.139199d8d645fe337ef5.png",
     "static/media/Terms_Page_And_Services.png": "/static/media/Terms_Page_And_Services.ce2677bfb05d8b94a407.png",
     "static/media/Slowed-GridX-Video.mp4": "/static/media/Slowed-GridX-Video.0d66115fdbda666d28c2.mp4",
@@ -29,24 +33,14 @@
     "static/media/slick.ttf": "/static/media/slick.c94f7671dcc99dce43e2.ttf",
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/index.html",
-<<<<<<< HEAD
-    "main.507526f9.css.map": "/static/css/main.507526f9.css.map",
-    "main.15dbd3ff.js.map": "/static/js/main.15dbd3ff.js.map",
-=======
-    "main.8798d0d3.css.map": "/static/css/main.8798d0d3.css.map",
-    "main.e32c4cd9.js.map": "/static/js/main.e32c4cd9.js.map",
->>>>>>> parent of 4fba680 (Enhance LandingPage with HeroTypingTitle component for dynamic messaging)
-    "239.dfdb0d71.chunk.js.map": "/static/js/239.dfdb0d71.chunk.js.map",
-    "977.2caed02d.chunk.js.map": "/static/js/977.2caed02d.chunk.js.map",
-    "455.795f3d75.chunk.js.map": "/static/js/455.795f3d75.chunk.js.map"
+    "main.69bcb7d5.css.map": "/static/css/main.69bcb7d5.css.map",
+    "main.6fde6195.js.map": "/static/js/main.6fde6195.js.map",
+    "239.ad40150f.chunk.js.map": "/static/js/239.ad40150f.chunk.js.map",
+    "977.b584b783.chunk.js.map": "/static/js/977.b584b783.chunk.js.map",
+    "455.af472426.chunk.js.map": "/static/js/455.af472426.chunk.js.map"
   },
   "entrypoints": [
-<<<<<<< HEAD
-    "static/css/main.507526f9.css",
-    "static/js/main.15dbd3ff.js"
-=======
-    "static/css/main.8798d0d3.css",
-    "static/js/main.e32c4cd9.js"
->>>>>>> parent of 4fba680 (Enhance LandingPage with HeroTypingTitle component for dynamic messaging)
+    "static/css/main.69bcb7d5.css",
+    "static/js/main.6fde6195.js"
   ]
 }
