@@ -28,7 +28,8 @@ import {
   HStack,
   IconButton,
   Input,
-  VStack
+  VStack,
+  Textarea
 } from '@chakra-ui/react';
 import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload, FaStar } from 'react-icons/fa';
 import { jsPDF } from "jspdf";
@@ -246,13 +247,6 @@ function ImpactPage() {
 
           <Divider />
 
-          <Box bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)">
-            <Heading as="h2" size="lg" mb={4}>Upcoming Events Calendar</Heading>
-            <EventCalendar />
-          </Box>
-
-          <Divider />
-
           <Box>
             <Heading as="h2" size="lg" mb={4}>Community Voices</Heading>
             <Slider
@@ -291,6 +285,32 @@ function ImpactPage() {
                 </Box>
               ))}
             </Slider>
+          </Box>
+
+          <Divider />
+
+          <Box mt={8} p={6} bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)" borderRadius="lg" boxShadow="md">
+            <Heading as="h2" size="lg" mb={4} color={headingColor}>Share Your Story</Heading>
+            <form onSubmit={handleSubmit}>
+              <VStack spacing={4} align="stretch">
+                <Input placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input placeholder="Your Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Textarea placeholder="Share your story..." value={quote} onChange={(e) => setQuote(e.target.value)} />
+                <HStack justify="center">
+                  {Array(5).fill('').map((_, starIndex) => (
+                    <Icon
+                      as={FaStar}
+                      key={starIndex}
+                      color={starIndex < rating ? 'yellow.400' : 'gray.300'}
+                      boxSize={6}
+                      cursor="pointer"
+                      onClick={() => setRating(starIndex + 1)}
+                    />
+                  ))}
+                </HStack>
+                <Button type="submit" colorScheme="teal">Submit Story</Button>
+              </VStack>
+            </form>
           </Box>
 
           <Divider />

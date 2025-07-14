@@ -738,3 +738,25 @@
 2025-07-13 09:13:51,068 - INFO - 127.0.0.1 - - [13/Jul/2025 09:13:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
 2025-07-13 09:13:51,380 - WARNING - Unknown option passed to Flask-CORS: origin
 2025-07-13 09:13:51,676 - INFO - 127.0.0.1 - - [13/Jul/2025 09:13:51] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-14 08:56:40,502 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 08:56:40,514 - INFO - 127.0.0.1 - - [14/Jul/2025 08:56:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 08:56:40,883 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 08:56:41,686 - INFO - 127.0.0.1 - - [14/Jul/2025 08:56:41] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-14 09:12:59,367 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-14 09:12:59,368 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-14 09:12:59,372 - INFO -  * Restarting with stat
+2025-07-14 09:13:29,498 - WARNING -  * Debugger is active!
+2025-07-14 09:13:29,506 - INFO -  * Debugger PIN: 854-777-465
+2025-07-14 09:13:37,155 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:13:37,161 - INFO - 127.0.0.1 - - [14/Jul/2025 09:13:37] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 09:13:37,168 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:13:37,176 - INFO - 127.0.0.1 - - [14/Jul/2025 09:13:37] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 09:13:37,513 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:13:38,052 - INFO - 127.0.0.1 - - [14/Jul/2025 09:13:38] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-14 09:20:10,058 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:20:10,060 - INFO - 127.0.0.1 - - [14/Jul/2025 09:20:10] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 09:20:10,386 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:20:11,135 - INFO - 127.0.0.1 - - [14/Jul/2025 09:20:11] "POST /api/auth/login HTTP/1.1" 200 -
