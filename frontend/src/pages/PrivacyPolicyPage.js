@@ -12,6 +12,9 @@ function PrivacyPolicyPage() {
   const textColor = useColorModeValue('gray.700', 'gray.100');
   const headingColor = useColorModeValue('gray.800', 'white');
   const listColor = useColorModeValue('gray.600', 'gray.300');
+  const privacyBoxBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');
+  const privacyBorderColor = useColorModeValue('gray.300', 'gray.600');
+  const privacyTextColor = useColorModeValue('gray.700', 'white');
 
   useEffect(() => {
     console.log('PrivacyPolicyPage is rendering with styles check');
@@ -53,20 +56,19 @@ function PrivacyPolicyPage() {
         maxW="3xl" 
         position="relative"
         zIndex="2"
-        bg={useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(17, 25, 40, 0.85)')}
-        backdropFilter="blur(10px)"
-        borderRadius="lg"
-        boxShadow="md"
-        p={8}
-        sx={{
-          WebkitBackdropFilter: 'blur(10px)',
-        }}
+        bg={privacyBoxBg}
+        boxShadow={useColorModeValue('md', 'xl')}
+        borderRadius={useColorModeValue('lg', 'xl')}
+        backdropFilter={useColorModeValue('none', 'blur(16px)')}
+        border='1px solid'
+        borderColor={privacyBorderColor}
+        color={privacyTextColor}
       >
         <Heading as="h2" size="xl" mb={6} textAlign="center" color={headingColor}>
           Privacy Policy for Gridx
         </Heading>
-        <Text color={textColor} mb={4}>Effective Date: [Insert Date]</Text>
-        <VStack align="start" spacing={6} color={textColor}>
+        <Text color={privacyTextColor} mb={4}>Effective Date: [Insert Date]</Text>
+        <VStack align="start" spacing={6} color={privacyTextColor}>
           <Text>
             Welcome to Gridx! Your privacy is important to us, and this policy explains how we collect, use, and protect your information when you use our web application.
           </Text>

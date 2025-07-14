@@ -1,16 +1,20 @@
 import axios from 'axios';
 
+// eslint-disable-next-line no-unused-vars
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 // Create an axios instance with default config
 const api = axios.create({
-    baseURL: API_URL,
+    baseURL: process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000',  // Remove /api from default
     headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'X-Requested-With': 'XMLHttpRequest',
+        'Access-Control-Allow-Origin': 'http://localhost:3000'
     },
-    timeout: 20000, // 20 second timeout
-    withCredentials: true, // Added for JWT cookies
+    timeout: 10000, // 10-second timeout
+    withCredentials: true, // Include cookies in requests
+    xsrfCookieName: 'csrftoken',  // Add CSRF protection
+    xsrfHeaderName: 'X-CSRFToken'
 });
 
 // Add a request interceptor to add the auth token to requests
@@ -27,26 +31,18 @@ api.interceptors.request.use(
     }
 );
 
-// Add a response interceptor to handle common errors
+// Add response interceptor for better error handling
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (error.response?.status === 401 && error.config && !error.config._retry) {
-            error.config._retry = true;
-            try {
-                const refreshResponse = await api.post('/api/auth/refresh');
-                const newToken = refreshResponse.data.token;
-                localStorage.setItem('token', newToken);
-                error.config.headers.Authorization = `Bearer ${newToken}`;
-                return api(error.config);
-            } catch (refreshError) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/login';
-            }
-        }
-        return Promise.reject(error);
+  response => response,
+  error => {
+    if (error.code === 'ECONNABORTED') {
+      return Promise.reject(new Error('Connection timeout. Please check your internet'));
     }
+    if (!error.response) {
+      return Promise.reject(new Error('Server unavailable. Please try again later'));
+    }
+    return Promise.reject(error);
+  }
 );
 
 // Auth API calls

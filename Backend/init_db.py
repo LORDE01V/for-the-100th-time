@@ -14,6 +14,9 @@ def get_db():
 
 def init_db_tables():
     conn = get_db()
+    if not conn:
+        raise Exception("Database connection failed. Check your .env file.")
+    
     with conn.cursor() as cur:
         # Drop existing table if --reset flag is used
         if '--reset' in sys.argv:
@@ -29,14 +32,9 @@ def init_db_tables():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-        
-        # Always attempt to alter the column to ensure the type is updated
-        cur.execute("""
-            ALTER TABLE users 
-            ALTER COLUMN password_hash TYPE VARCHAR(255);  -- Explicitly set to 255
-            ALTER COLUMN email TYPE CITEXT;  -- This is from your original script, kept for completeness
-        """)
+        # No need to alter column here; the CREATE will handle it
     conn.commit()
+    print("✅ Users table initialized or updated successfully.")
 
 def init_db():
     """Initialize PostgreSQL database with required tables"""

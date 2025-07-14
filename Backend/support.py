@@ -33,17 +33,28 @@ def connect_db():
 
 def get_db():
     try:
+        db_host = os.getenv('DB_HOST', 'localhost')  # Default to 'localhost' if not set
+        db_name = os.getenv('DB_NAME', 'Fintech_Solar')  # Default if not set
+        db_user = os.getenv('DB_USER', 'postgres')  # Default if not set
+        db_password = os.getenv('DB_PASSWORD', '')  # Check for password
+        db_port = os.getenv('DB_PORT', '5432')  # Default port
+        
+        if not db_password:
+            logging.error('DB_PASSWORD is not set in your .env file. Please add it and try again.')
+            raise ValueError('DB_PASSWORD environment variable must be set.')
+        
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'Fintech_Solar'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', ''),  # Ensure this is set in your .env
-            port=os.getenv('DB_PORT', '5432')
+            host=db_host,
+            database=db_name,
+            user=db_user,
+            password=db_password,
+            port=db_port
         )
+        logging.info('Database connection successful.')
         return conn
     except OperationalError as e:
-        print(f"🚨 Database connection failed: {e}")
-        return None
+        logging.error(f'Database connection failed: {str(e)}. Please verify your .env file settings.')
+        raise  # Re-raise for the caller to handle
 
 # ================== CORE FUNCTIONS ==================
 def execute_query(operation=None, query=None, params=None):

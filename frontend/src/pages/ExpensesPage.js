@@ -10,6 +10,7 @@ import {
   Text,
   SimpleGrid,
   Badge,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaMoneyBill, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
@@ -43,6 +44,13 @@ const ExpensesPage = () => {
     }
   ]);
 
+  const headingColor = useColorModeValue('gray.800', 'white');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const subTextColor = useColorModeValue('gray.600', 'white');
+  const summaryTextColor = useColorModeValue('green.500', 'white');  // For colored summary texts
+  const monthlyTextColor = useColorModeValue('blue.500', 'white');
+  const lastPaymentTextColor = useColorModeValue('purple.500', 'white');
+
   return (
     <Box
       minH="100vh"
@@ -75,57 +83,66 @@ const ExpensesPage = () => {
         </Button>
 
         <VStack spacing={8} align="stretch">
-          <Heading size="xl" color="white">Expenses</Heading>
+          <Heading size="xl" color={headingColor}>Expenses</Heading>
 
           {/* Summary Cards */}
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
             <Box
-              p={6}
-              bg="rgba(255, 255, 255, 0.1)"
-              backdropFilter="blur(10px)"
-              border="1px solid rgba(255, 255, 255, 0.2)"
-              borderRadius="lg"
-              shadow="md"
+              bg={useColorModeValue('white', 'rgba(0, 0, 0, 0.6)')}
+              boxShadow="xl"
+              borderRadius="xl"
+              p={8}
+              position="relative"
+              zIndex={2}
+              backdropFilter="blur(16px)"
+              border="1px solid"
+              borderColor={useColorModeValue('gray.200', 'gray.600')}
             >
               <Flex align="center" mb={4}>
                 <Icon as={FaMoneyBill} w={6} h={6} color="green.500" mr={3} />
-                <Text fontSize="lg" fontWeight="bold" color="gray.800">Total Expenses</Text>
+                <Text fontSize="lg" fontWeight="bold" color={textColor}>Total Expenses</Text>
               </Flex>
-              <Text fontSize="2xl" fontWeight="bold" color="green.500">
+              <Text fontSize="2xl" fontWeight="bold" color={summaryTextColor}>
                 R{expenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}
               </Text>
             </Box>
 
             <Box
-              p={6}
-              bg="rgba(255, 255, 255, 0.1)"
-              backdropFilter="blur(10px)"
-              border="1px solid rgba(255, 255, 255, 0.2)"
-              borderRadius="lg"
-              shadow="md"
+              bg={useColorModeValue('white', 'rgba(0, 0, 0, 0.6)')}
+              boxShadow="xl"
+              borderRadius="xl"
+              p={8}
+              position="relative"
+              zIndex={2}
+              backdropFilter="blur(16px)"
+              border="1px solid"
+              borderColor={useColorModeValue('gray.200', 'gray.600')}
             >
               <Flex align="center" mb={4}>
                 <Icon as={FaChartLine} w={6} h={6} color="blue.500" mr={3} />
-                <Text fontSize="lg" fontWeight="bold" color="gray.800">Monthly Average</Text>
+                <Text fontSize="lg" fontWeight="bold" color={textColor}>Monthly Average</Text>
               </Flex>
-              <Text fontSize="2xl" fontWeight="bold" color="blue.500">
+              <Text fontSize="2xl" fontWeight="bold" color={monthlyTextColor}>
                 R{(expenses.reduce((sum, exp) => sum + exp.amount, 0) / expenses.length).toFixed(2)}
               </Text>
             </Box>
 
             <Box
-              p={6}
-              bg="rgba(255, 255, 255, 0.1)"
-              backdropFilter="blur(10px)"
-              border="1px solid rgba(255, 255, 255, 0.2)"
-              borderRadius="lg"
-              shadow="md"
+              bg={useColorModeValue('white', 'rgba(0, 0, 0, 0.6)')}
+              boxShadow="xl"
+              borderRadius="xl"
+              p={8}
+              position="relative"
+              zIndex={2}
+              backdropFilter="blur(16px)"
+              border="1px solid"
+              borderColor={useColorModeValue('gray.200', 'gray.600')}
             >
               <Flex align="center" mb={4}>
                 <Icon as={FaCalendarAlt} w={6} h={6} color="purple.500" mr={3} />
-                <Text fontSize="lg" fontWeight="bold" color="gray.800">Last Payment</Text>
+                <Text fontSize="lg" fontWeight="bold" color={textColor}>Last Payment</Text>
               </Flex>
-              <Text fontSize="2xl" fontWeight="bold" color="purple.500">
+              <Text fontSize="2xl" fontWeight="bold" color={lastPaymentTextColor}>
                 {expenses[0].date}
               </Text>
             </Box>
@@ -133,14 +150,17 @@ const ExpensesPage = () => {
 
           {/* Expenses List */}
           <Box
-            p={6}
-            bg="rgba(255, 255, 255, 0.1)"
-            backdropFilter="blur(10px)"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-            borderRadius="lg"
-            shadow="md"
+            bg={useColorModeValue('white', 'rgba(0, 0, 0, 0.6)')}
+            boxShadow="xl"
+            borderRadius="xl"
+            p={8}
+            position="relative"
+            zIndex={2}
+            backdropFilter="blur(16px)"
+            border="1px solid"
+            borderColor={useColorModeValue('gray.200', 'gray.600')}
           >
-            <Heading size="md" mb={4} color="gray.800">Recent Expenses</Heading>
+            <Heading size="md" mb={4} color={headingColor}>Recent Expenses</Heading>
             <VStack spacing={4} align="stretch">
               {expenses.map((expense) => (
                 <Flex
@@ -152,13 +172,13 @@ const ExpensesPage = () => {
                   borderRadius="md"
                 >
                   <Box>
-                    <Text fontWeight="bold" color="gray.800">{expense.category}</Text>
-                    <Text fontSize="sm" color="gray.600">
+                    <Text fontWeight="bold" color={textColor}>{expense.category}</Text>
+                    <Text fontSize="sm" color={subTextColor}>
                       {expense.date}
                     </Text>
                   </Box>
                   <Box textAlign="right">
-                    <Text fontWeight="bold" color="gray.800">R{expense.amount.toFixed(2)}</Text>
+                    <Text fontWeight="bold" color={textColor}>R{expense.amount.toFixed(2)}</Text>
                     <Badge
                       colorScheme={expense.status === 'Paid' ? 'green' : 'yellow'}
                     >

@@ -1,0 +1,84 @@
+/* frontend/src/components/NavigationPanel.css */
+.navigation-panel {
+  position: absolute; /* Allows the panel to be draggable */
+  top: 0;
+  left: 0;
+  height: 100%; /* Full height of the viewport */
+  width: 240px; /* Sidebar width */
+  background: rgba(209, 243, 242, 0.2); /* Light arctic blue with transparency */
+  backdrop-filter: blur(10px); /* Frosted glass effect */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent white border */
+  border-radius: 16px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 255, 255, 0.2); /* Soft cyan glow */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000; /* Ensure it stays above other content */
+  overflow: hidden; /* Prevent content overflow */
+}
+
+.navigation-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.navigation-header h2 {
+  font-family: 'Poppins', sans-serif; /* Clean sans-serif font */
+  font-size: 1.5rem;
+  color: #ffffff; /* White text */
+}
+
+.navigation-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Spacing between menu items */
+  width: 100%;
+  height: calc(100% - 60px); /* Adjust height to fit within the panel */
+  overflow-y: auto; /* Enable vertical scrolling */
+  scrollbar-width: thin; /* Thin scrollbar for Firefox */
+}
+
+.navigation-menu::-webkit-scrollbar {
+  width: 8px; /* Thin scrollbar for WebKit browsers */
+}
+
+.navigation-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3); /* Light scrollbar thumb */
+  border-radius: 4px; /* Rounded scrollbar thumb */
+}
+
+.navigation-item {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Spacing between icon and label */
+  width: 100%;
+  padding: 10px 15px;
+  background: transparent; /* Transparent background */
+  border: none; /* Remove default button border */
+  border-radius: 12px; /* Rounded corners */
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  color: #eeeeee; /* Light gray text */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+.navigation-item:hover {
+  background: rgba(209, 243, 242, 0.3); /* Light blue hover effect */
+  box-shadow: 0 4px 10px rgba(0, 255, 255, 0.3); /* Glow on hover */
+}
+
+.navigation-item:active {
+  background: rgba(209, 243, 242, 0.5); /* Slightly darker active state */
+}
+
+.navigation-item .icon {
+  font-size: 1.2rem; /* Icon size */
+  color: #ffffff; /* White icon color */
+}
+
+.navigation-item .label {
+  flex: 1; /* Take up remaining space */
+  text-align: left; /* Align text to the left */
+} 
