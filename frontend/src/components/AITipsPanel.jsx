@@ -14,9 +14,8 @@ import {
 } from '@chakra-ui/react';
 import { FiChevronLeft, FiChevronRight, FiDollarSign, FiSun, FiBattery } from 'react-icons/fi';
 import PropTypes from 'prop-types';
-import ActivityReport from './widgets/ActivityReport';
 
-const AITipsPanel = ({ tips = [] }) => {
+const AITipsPanel = () => {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const headingColor = useColorModeValue('gray.800', 'whiteAlpha.900');
   const accentColor = useColorModeValue('blue.500', 'blue.300');

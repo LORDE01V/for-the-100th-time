@@ -35,14 +35,27 @@ import {
   Image,
   Flex,
   Icon,
+  Switch,
+  Tooltip,
+  Select,
+  Avatar,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/react';
-import { FaUsers, FaClock, FaTag, FaSolarPanel, FaBolt, FaBatteryFull, FaArrowLeft } from 'react-icons/fa';
+import { FaUsers, FaClock, FaTag, FaSolarPanel, FaBolt, FaBatteryFull, FaArrowLeft, FaWhatsapp, FaFacebook, FaEnvelope } from 'react-icons/fa';
+import { FiShare2 } from 'react-icons/fi';  // Separate import for FiShare2
 import { useNavigate } from 'react-router-dom';
 import batteryBankImage from '../assets/images/battery_bank_10_kwh.png';
 import inverterImage from '../assets/images/inverter__5kw_hybrid.png';
 import solarPanelImage from '../assets/images/solar_panel_350w.png';
 import groupBuyingBackground from '../assets/images/group_buying.png';  // Import the background image
 import { motion, AnimatePresence } from 'framer-motion';
+import rctImage from '../assets/images/rct.jpeg';
+import newSolarPanelImage from '../assets/images/solar_panel.png';
+import { Gi3dGlasses } from 'react-icons/gi';
+import inverterGeneratorImage from '../assets/images/Inverter_power_generator.jpg';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
 
 // Create a motion component for Text
 const MotionText = motion.create(Text);
@@ -70,7 +83,12 @@ function GroupBuying() {
       description: 'High-efficiency monocrystalline solar panels perfect for residential installations.',
       timeLeft: '15 days left',
       category: 'Solar Panels',
-      icon: FaSolarPanel
+      icon: FaSolarPanel,
+      milestones: [
+        { price: 1800, participants: 15 },
+        { price: 1600, participants: 20 },
+        { price: 1400, participants: 25 },
+      ]
     },
     {
       id: 2,
@@ -84,7 +102,12 @@ function GroupBuying() {
       description: 'Smart hybrid inverter with battery backup and grid-tie capabilities.',
       timeLeft: '30 days left',
       category: 'Inverters',
-      icon: FaBolt
+      icon: FaBolt,
+      milestones: [
+        { price: 20000, participants: 5 },
+        { price: 19000, participants: 7 },
+        { price: 18000, participants: 10 },
+      ]
     },
     {
       id: 3,
@@ -98,8 +121,71 @@ function GroupBuying() {
       description: 'Lithium-ion battery bank for reliable energy storage.',
       timeLeft: '16 days left',
       category: 'Batteries',
-      icon: FaBatteryFull
+      icon: FaBatteryFull,
+      milestones: [
+        { price: 50000, participants: 3 },
+        { price: 48000, participants: 4 },
+        { price: 46000, participants: 5 },
+      ]
     },
+    // New campaigns added below
+    {
+      id: 4,
+      product: 'Solar Panel (450W Premium)',
+      image: newSolarPanelImage,
+      originalPrice: 2500,
+      groupPrice: 1800,
+      goal: 25,
+      participants: 15,
+      deadline: '2024-05-25',
+      description: 'Advanced monocrystalline panels with 22% efficiency rating',
+      timeLeft: '20 days left',
+      category: 'Solar Panels',
+      icon: FaSolarPanel,
+      milestones: [
+        { price: 2200, participants: 18 },
+        { price: 2000, participants: 22 },
+        { price: 1800, participants: 25 },
+      ]
+    },
+    {
+      id: 5,
+      product: 'RCT Power Device',
+      image: rctImage,
+      originalPrice: 8500,
+      groupPrice: 6500,
+      goal: 15,
+      participants: 7,
+      deadline: '2024-05-10',
+      description: 'Smart energy management device for optimal power distribution',
+      timeLeft: '10 days left',
+      category: 'Devices',
+      icon: FaBolt,
+      milestones: [
+        { price: 7500, participants: 10 },
+        { price: 7000, participants: 12 },
+        { price: 6500, participants: 15 },
+      ]
+    },
+    {
+      id: 6,
+      product: 'Inverter Power Generator (8kW)',
+      image: inverterGeneratorImage,
+      originalPrice: 35000,
+      groupPrice: 29500,
+      goal: 15,
+      participants: 7,
+      deadline: '2024-06-15',
+      description: 'Dual fuel inverter generator with smart throttle technology for optimal fuel efficiency',
+      timeLeft: '45 days left',
+      category: 'Generators',
+      icon: FaBolt,
+      milestones: [
+        { price: 32000, participants: 10 },
+        { price: 31000, participants: 12 },
+        { price: 30000, participants: 15 },
+      ]
+    }
   ], []));
 
   const [newCampaign, setNewCampaign] = useState({
@@ -110,8 +196,13 @@ function GroupBuying() {
     targetBuyers: 10,
     deadline: '',
     image: null,
-    category: 'Solar Panels' // Default category
+    category: 'Solar Panels', // Default category
+    notifyMe: false, // Added for notification preference
   });
+
+  const [monthlyUsage, setMonthlyUsage] = useState(500);
+  const [showNotificationPref, setShowNotificationPref] = useState(false);
+  const [referralCode] = useState(`REF-${Math.random().toString(36).slice(2, 7).toUpperCase()}`);
 
   // Array of motivational lines
   const motivationalLines = useMemo(() => [
@@ -130,6 +221,12 @@ function GroupBuying() {
   // State for current line index and the key for AnimatePresence
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [animationKey, setAnimationKey] = useState(0); // Key to trigger exit/enter animation
+
+  const testimonials = useMemo(() => [
+    { name: "Lihle M.", savings: "R12,400", text: "Joined a battery campaign and saved enough to power my entire home!", rating: 5, location: "Johannesburg", avatar: "https://via.placeholder.com/50", installationPhoto: null },
+    { name: "Kgosi T.", savings: "R8,200", text: "The group buying process was smooth and the support team helped with all my questions.", rating: 4.5, location: "Pretoria", avatar: "https://via.placeholder.com/50", installationPhoto: null },
+    { name: "Zanele S.", savings: "R5,600", text: "Never thought solar could be this affordable until I found these group deals.", rating: 5, location: "Cape Town", avatar: "https://via.placeholder.com/50", installationPhoto: null }
+  ], []);
 
   // Effect to rotate lines every 7 seconds
   useEffect(() => {
@@ -238,7 +335,8 @@ function GroupBuying() {
       targetBuyers: 10,
       deadline: '',
       image: null,
-      category: 'Solar Panels'
+      category: 'Solar Panels',
+      notifyMe: false, // Reset notification preference
     });
     setSelectedImage(null);
     onClose(); // Close the modal after creation
@@ -259,6 +357,373 @@ function GroupBuying() {
     }
   };
 
+  // Add state for AR modal at top of component
+  const [selectedARModel, setSelectedARModel] = useState(null);
+  const { isOpen: isAROpen, onOpen: onAROpen, onClose: onARClose } = useDisclosure();
+
+  // Add Transparency Dashboard component
+  const TrustPanel = ({ supplierRating, deliverySuccess, disputeResolution }) => (
+    <SimpleGrid columns={3} spacing={4} mb={8} p={4} 
+      bg={useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(0, 0, 0, 0.4)')}
+      borderRadius="lg" backdropFilter="blur(10px)" borderWidth="1px"
+      borderColor={useColorModeValue('gray.200', 'gray.600')}>
+      <Box textAlign="center">
+        <Text fontSize="sm" color={textColor}>Supplier Rating</Text>
+        <Progress value={supplierRating * 20} colorScheme="green" size="sm" my={2}/>
+        <Text fontSize="2xl" fontWeight="bold">{supplierRating}/5</Text>
+      </Box>
+      <Box textAlign="center">
+        <Text fontSize="sm" color={textColor}>Delivery Success</Text>
+        <Progress value={deliverySuccess} colorScheme="blue" size="sm" my={2}/>
+        <Text fontSize="2xl" fontWeight="bold">{deliverySuccess}%</Text>
+      </Box>
+      <Box textAlign="center">
+        <Text fontSize="sm" color={textColor}>Dispute Resolution</Text>
+        <Text fontSize="2xl" fontWeight="bold" color="green.500">{disputeResolution}</Text>
+        <Text fontSize="sm">Average Resolution Time</Text>
+      </Box>
+    </SimpleGrid>
+  );
+
+  // Add AR Viewer component
+  const ARViewer = ({ model }) => (
+    <Box h="400px" w="100%" bg="blackAlpha.800" borderRadius="lg" p={4}>
+      {/* The ArViewer component is removed as per the edit hint. */}
+      <Text color="white" textAlign="center" mt={20}>
+        AR Preview is currently unavailable.
+      </Text>
+    </Box>
+  );
+
+  // Replace ThermometerProgress component
+  const ThermometerProgress = ({ progress, goal }) => {
+    const glowColor = progress >= 90 ? 'rgba(72, 187, 120, 0.4)' : 'transparent';
+    
+    return (
+      <Box position="relative" h="30px" w="100%" borderRadius="full" overflow="hidden">
+        <Box 
+          position="absolute"
+          left="0"
+          h="100%"
+          width={`${progress}%`}
+          bgGradient="linear(to-r, blue.400, green.400)"
+          transition="width 0.5s ease-out"
+          boxShadow={`0 0 15px ${glowColor}`}
+        />
+        <Box
+          position="absolute"
+          right="2"
+          top="50%"
+          transform="translateY(-50%)"
+          fontSize="sm"
+          color="white"
+          zIndex="1"
+        >
+          {Math.round(progress)}% ({goal - Math.round((goal * progress)/100)} to go)
+        </Box>
+        <Box 
+          position="absolute"
+          right="0"
+          h="100%"
+          w="2px"
+          bg="white"
+          style={{ left: `${progress}%` }}
+        />
+      </Box>
+    );
+  };
+
+  // Enhanced testimonials with verified purchases and interactive elements
+  const TestimonialCarousel = () => {
+    const [currentTestimonial] = useState(0);
+    
+    return (
+      <Box mt={8} position="relative">
+        <Heading size="lg" mb={6} textAlign="center">Verified Buyer Stories</Heading>
+        <VStack spacing={6} align="center">
+          {testimonials.map((testimonial, index) => (
+            <Box
+              key={index}
+              p={6}
+              bg="whiteAlpha.200"
+              borderRadius="lg"
+              boxShadow="lg"
+              textAlign="center"
+              w={["100%", "80%", "60%"]}
+            >
+              <Avatar name={testimonial.name} src={testimonial.avatar} size="2xl" mb={4} />
+              <Text fontSize="xl" mb={4}>"{testimonial.text}"</Text>
+              <Text fontWeight="bold">{testimonial.name}</Text>
+              <Badge colorScheme="green">Saved {testimonial.savings}</Badge>
+            </Box>
+          ))}
+        </VStack>
+      </Box>
+    );
+  };
+
+  // Enhanced calculator with campaign selection and detailed breakdown
+  const SavingsCalculator = () => {
+    const [selectedCampaignId, setSelectedCampaignId] = useState(1);
+    const [systemSize, setSystemSize] = useState(5);
+    
+    const selectedCampaign = ongoingCampaigns.find(c => c.id === selectedCampaignId);
+    const savingsPerUnit = selectedCampaign?.originalPrice - selectedCampaign?.groupPrice || 0;
+    const yearlySavings = (monthlyUsage * 0.95 * systemSize * savingsPerUnit) / 100;
+
+    return (
+      <Box bg="whiteAlpha.200" p={4} borderRadius="lg" mb={8}>
+        <Heading size="md" mb={4}>Advanced Savings Calculator</Heading>
+        <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+          <FormControl>
+            <FormLabel>Select Campaign</FormLabel>
+            <Select 
+              value={selectedCampaignId}
+              onChange={(e) => setSelectedCampaignId(Number(e.target.value))}
+              bg="whiteAlpha.800"
+            >
+              {ongoingCampaigns.map(campaign => (
+                <option key={campaign.id} value={campaign.id}>
+                  {campaign.product}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl>
+            <FormLabel>System Size (kW)</FormLabel>
+            <NumberInput 
+              min={1} 
+              max={20} 
+              value={systemSize}
+              onChange={(value) => setSystemSize(value)}
+            >
+              <NumberInputField bg="whiteAlpha.800" />
+            </NumberInput>
+          </FormControl>
+          <Box>
+            <Text>Projected 5-Year Savings:</Text>
+            <Heading color="green.400" size="xl">
+              R{(yearlySavings * 5).toLocaleString()}
+            </Heading>
+            <Text fontSize="sm" color="gray.400">
+              {systemSize}kW system | {monthlyUsage}kWh/month
+            </Text>
+          </Box>
+        </SimpleGrid>
+        <Box mt={4} p={4} bg="blackAlpha.200" borderRadius="md">
+          <Text fontSize="sm">Savings Breakdown:</Text>
+          <SimpleGrid columns={2} spacing={2}>
+            <Text>Unit Price Saving:</Text>
+            <Text textAlign="right">R{savingsPerUnit.toLocaleString()}</Text>
+            <Text>Total System Saving:</Text>
+            <Text textAlign="right">R{(savingsPerUnit * systemSize).toLocaleString()}</Text>
+            <Text>Annual Energy Saving:</Text>
+            <Text textAlign="right">R{yearlySavings.toLocaleString()}</Text>
+          </SimpleGrid>
+        </Box>
+      </Box>
+    );
+  };
+
+  // Enhanced notification system with multiple options
+  const NotificationPreferences = () => {
+    const [preferences, setPreferences] = useState({
+      milestones: true,
+      priceDrops: true,
+      deadlineReminders: false,
+      newCampaigns: true
+    });
+
+    return (
+      <Box mt={4} p={4} bg="whiteAlpha.100" borderRadius="lg">
+        <Heading size="sm" mb={3}>Notification Settings</Heading>
+        <SimpleGrid columns={[1, 2]} spacing={3}>
+          {Object.entries(preferences).map(([key, value]) => (
+            <Flex key={key} align="center" justify="space-between">
+              <Text>
+                {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+              </Text>
+              <Switch
+                colorScheme="green"
+                isChecked={value}
+                onChange={() => setPreferences(prev => ({
+                  ...prev,
+                  [key]: !prev[key]
+                }))}
+              />
+            </Flex>
+          ))}
+        </SimpleGrid>
+        <Button
+          mt={3}
+          size="sm"
+          colorScheme="green"
+          onClick={() => {
+            // Add API call to save preferences
+            toast({ title: "Preferences saved!", status: "success" });
+          }}
+        >
+          Save Preferences
+        </Button>
+      </Box>
+    );
+  };
+
+  // Enhanced referral system with tracking and rewards
+  const ReferralProgram = () => {
+    const [referrals] = useState([]);
+    const referralBonus = 100;
+    
+    return (
+      <Box bgGradient="linear(to-r, green.800, blue.800)" p={6} borderRadius="xl" mb={8}>
+        <Flex justify="space-between" align="center" mb={4}>
+          <Box>
+            <Heading size="lg" color="white">Earn Up To R500</Heading>
+            <Text color="whiteAlpha.800">For Every Friend Who Joins</Text>
+          </Box>
+          <Badge colorScheme="yellow" fontSize="lg" p={2}>
+            Your Credits: R{(referrals.length * referralBonus).toLocaleString()}
+          </Badge>
+        </Flex>
+        
+        <SimpleGrid columns={[1, 2]} spacing={4}>
+          <Box>
+            <InputGroup>
+              <Input 
+                value={referralCode} 
+                isReadOnly 
+                bg="whiteAlpha.800" 
+                fontWeight="bold"
+              />
+              <InputRightElement width="4.5rem">
+                <Button 
+                  h="1.75rem" 
+                  size="sm" 
+                  onClick={() => navigator.clipboard.writeText(referralCode)}
+                  leftIcon={<FiShare2 />}
+                >
+                  Share
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+            <HStack mt={2} spacing={2}>
+              <Button 
+                leftIcon={<FaWhatsapp />}
+                colorScheme="whatsapp"
+                size="sm"
+              >
+                WhatsApp
+              </Button>
+              <Button 
+                leftIcon={<FaFacebook />}
+                colorScheme="facebook"
+                size="sm"
+              >
+                Facebook
+              </Button>
+              <Button 
+                leftIcon={<FaEnvelope />}
+                colorScheme="gray"
+                size="sm"
+              >
+                Email
+              </Button>
+            </HStack>
+          </Box>
+          
+          <Box>
+            <Text color="white" mb={2}>Your Referral Progress:</Text>
+            <Progress 
+              value={(referrals.length / 5) * 100} 
+              size="sm" 
+              colorScheme="yellow"
+              borderRadius="full"
+            />
+            <Text color="whiteAlpha.800" mt={1}>
+              {5 - referrals.length} more referrals to unlock bonus
+            </Text>
+          </Box>
+        </SimpleGrid>
+      </Box>
+    );
+  };
+
+  // Enhanced pricing visualization with predictions
+  const PriceHistoryChart = ({ campaign }) => {
+    const [timeframe, setTimeframe] = useState('7d');
+    
+    const generateData = (period) => {
+      // Simulated data generation based on timeframe
+      const basePrice = campaign.originalPrice; // Use the first price as the base
+      const dataPoints = {
+        '7d': 7,
+        '30d': 30,
+        'all': 365 // Use the length of the prices array for 'all'
+      };
+      
+      return Array.from({ length: dataPoints[period] }, (_, i) => ({
+        day: i + 1,
+        price: basePrice - ((basePrice - campaign.groupPrice) * (i / dataPoints[period])) + 
+          Math.random() * (basePrice * 0.05)
+      }));
+    };
+
+    return (
+      <Box p={4} bg="whiteAlpha.200" borderRadius="lg">
+        <Flex justify="space-between" mb={4}>
+          <Text fontWeight="bold">Price Evolution</Text>
+          <Select 
+            value={timeframe} 
+            onChange={(e) => setTimeframe(e.target.value)}
+            size="sm" 
+            width="100px"
+          >
+            <option value="7d">7 Days</option>
+            <option value="30d">30 Days</option>
+            <option value="all">All Time</option>
+          </Select>
+        </Flex>
+        
+        <Line
+          data={{
+            labels: generateData(timeframe).map(d => `Day ${d.day}`),
+            datasets: [{
+              label: 'Price Per Participant',
+              data: generateData(timeframe).map(d => d.price),
+              borderColor: '#48BB78',
+              tension: 0.4,
+              pointRadius: 3,
+              pointHoverRadius: 5
+            }]
+          }}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: { position: 'top' },
+              tooltip: {
+                callbacks: {
+                  label: (context) => 
+                    `R${context.raw.toFixed(2)} (Day ${context.dataIndex + 1})`
+                }
+              }
+            },
+            scales: {
+              y: {
+                title: { text: 'Price (R)', display: true },
+                ticks: { callback: value => `R${value.toLocaleString()}` }
+              }
+            }
+          }}
+        />
+        
+        <Text mt={2} fontSize="sm" color="gray.400">
+          Predicted final price: R{campaign.groupPrice.toLocaleString()} (Current discount: 
+          {(((campaign.originalPrice - campaign.groupPrice)/campaign.originalPrice)*100).toFixed(1)}%)
+        </Text>
+      </Box>
+    );
+  };
+
   return (
     <Box
       minH="100vh"
@@ -266,7 +731,7 @@ function GroupBuying() {
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
-      backgroundRepeat="no-repeat"  // Added to prevent repetition
+      backgroundRepeat="no-repeat"
       position="relative"
       _before={{
           content: '""',
@@ -275,12 +740,12 @@ function GroupBuying() {
           left: 0,
           right: 0,
           bottom: 0,
-          bg: 'rgba(0, 0, 0, 0.5)',
+          bg: 'rgba(0, 0, 0, 0.25)', // <-- was 0.5, now 0.25 for less darkness
           zIndex: 1,
       }}
     >
       <Container maxW="container.lg" py={8} position="relative" zIndex={2}>
-        <VStack spacing={8} align="stretch">
+        <VStack spacing={12} align="stretch"> {/* was 8, now 12 */}
           {/* Header Section */}
           <HStack justify="space-between" align="center" mb={8}>
             <Button leftIcon={<FaArrowLeft />} onClick={() => navigate(-1)} variant="ghost" mr={4}>
@@ -311,6 +776,14 @@ function GroupBuying() {
              </MotionText>
           </AnimatePresence>
 
+          <TrustPanel 
+            supplierRating="4.8" 
+            deliverySuccess="94" 
+            disputeResolution="24h" 
+          />
+
+          <SavingsCalculator />
+
           {/* Campaigns List */}
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
             {ongoingCampaigns.map((campaign) => {
@@ -322,18 +795,16 @@ function GroupBuying() {
                 <Card
                   key={campaign.id}
                   bg={cardBg}
-                  boxShadow={glassBoxShadow}  // Only one boxShadow prop
-                  borderRadius={cardBorderRadius}
-                  backdropFilter="blur(10px)"
-                  border={cardBorder}
+                  boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)" // Stronger shadow
+                  borderRadius="xl"
+                  border="1px solid rgba(255,255,255,0.18)"
                   color={cardColor}
-                  borderWidth="1px"
-                  borderColor={glassBorderColor}
-                  transition="all 0.3s ease-in-out"
-                  _hover={{
-                    transform: 'translateY(-5px)',
-                    boxShadow: hoverBoxShadow,  // No duplicates here
-                  }}
+                  p={4} // Add padding
+                  m={2} // Add margin between cards
+                  minH="480px" // Ensure cards are tall enough
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="space-between"
                 >
                   <CardHeader p={0}>
                     <Image
@@ -350,7 +821,7 @@ function GroupBuying() {
                       <Heading size="md">{campaign.product}</Heading>
                     </Flex>
 
-                    <VStack spacing={3} align="stretch">
+                    <VStack spacing={4} align="stretch">
                       <HStack justify="space-between">
                         <Text color={cardColor}>
                           <Icon as={FaTag} mr={2} />
@@ -376,7 +847,26 @@ function GroupBuying() {
                         </Text>
                       </HStack>
 
-                      <Progress value={progressValue} size="sm" colorScheme="blue" hasStripe isAnimated />
+                      <ThermometerProgress progress={progressValue} goal={campaign.goal} />
+                      <Box display="flex" justifyContent="space-between" mt={2}>
+                        {campaign.milestones?.map((milestone, idx) => (
+                          <Tooltip 
+                            key={idx} 
+                            label={`Price drops to R${milestone.price} at ${milestone.participants} participants`}
+                          >
+                            <Box
+                              h="10px"
+                              w="10px"
+                              borderRadius="full"
+                              bg="yellow.400"
+                              border="2px solid white"
+                              position="relative"
+                              top="-8px"
+                              left={`calc(${(milestone.participants / campaign.goal) * 100}% - 5px)`}
+                            />
+                          </Tooltip>
+                        ))}
+                      </Box>
 
                       <HStack>
                         <Icon as={FaClock} />
@@ -400,6 +890,21 @@ function GroupBuying() {
                       <Button variant="outline" onClick={() => navigate('/home')} size="sm" width="100%" mt={2}>
                          Back to Home
                       </Button>
+                      <Button
+                        leftIcon={<Gi3dGlasses />}
+                        colorScheme="purple"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedARModel(campaign.product);
+                          onAROpen();
+                        }}
+                        mt={2}
+                      >
+                        AR Preview
+                      </Button>
+                      <Box mt={4}>
+                        <PriceHistoryChart campaign={campaign} />
+                      </Box>
                     </VStack>
                   </CardBody>
                 </Card>
@@ -423,6 +928,30 @@ function GroupBuying() {
               Create New Campaign
             </Button>
           </Box>
+
+          <Box bg="green.800" p={4} borderRadius="lg" mb={8}>
+            <Heading size="md" mb={2} color="white">Earn R500 Credit</Heading>
+            <Text color="whiteAlpha.800" mb={4}>
+              Share your referral code and get R100 credit for each friend who joins a campaign
+            </Text>
+            <HStack>
+              <Input 
+                value={referralCode} 
+                isReadOnly 
+                bg="whiteAlpha.800" 
+                fontWeight="bold"
+              />
+              <Button 
+                leftIcon={<FiShare2 />} 
+                colorScheme="whiteAlpha" 
+                onClick={() => navigator.clipboard.writeText(referralCode)}
+              >
+                Share
+              </Button>
+            </HStack>
+          </Box>
+
+          <TestimonialCarousel />
         </VStack>
       </Container>
 
@@ -531,6 +1060,15 @@ function GroupBuying() {
                   borderColor={inputBorderColor}
                 />
               </FormControl>
+
+              <FormControl display="flex" alignItems="center" mt={4}>
+                <FormLabel mb="0">Notify me about campaign milestones</FormLabel>
+                <Switch 
+                  colorScheme="green" 
+                  isChecked={showNotificationPref}
+                  onChange={(e) => setShowNotificationPref(e.target.checked)}
+                />
+              </FormControl>
             </VStack>
           </ModalBody>
 
@@ -540,6 +1078,23 @@ function GroupBuying() {
             </Button>
             <Button colorScheme="blue" onClick={handleCreateCampaign}>
               Create Campaign
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* AR Modal */}
+      <Modal isOpen={isAROpen} onClose={onARClose} size="full">
+        <ModalOverlay />
+        <ModalContent bg="blackAlpha.900">
+          <ModalHeader color="white">{selectedARModel} AR Preview</ModalHeader>
+          <ModalCloseButton color="white" />
+          <ModalBody>
+            <ARViewer model={selectedARModel} />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="purple" onClick={onARClose}>
+              Close AR View
             </Button>
           </ModalFooter>
         </ModalContent>

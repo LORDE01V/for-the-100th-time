@@ -1,0 +1,58 @@
+<div class="impact-container">
+  <!-- Hero Section -->
+  <div class="impact-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Our Collective Impact</h1>
+      <p>Join thousands of South Africans transforming energy access</p>
+    </div>
+  </div>
+
+  <!-- Statistics Grid -->
+  <div class="stats-grid">
+    <div *ngFor="let stat of stats" class="stat-card" [style.border-color]="stat.color">
+      <span class="material-icons stat-icon" [style.color]="stat.color">{{ stat.icon }}</span>
+      <h3>{{ stat.value }}</h3>
+      <p>{{ stat.label }}</p>
+    </div>
+  </div>
+
+  <!-- Report Section -->
+  <div class="report-section">
+    <button class="download-button" (click)="downloadImpactReport()">
+      <span class="material-icons">download</span>
+      Download Full Impact Report
+    </button>
+  </div>
+
+  <!-- Community Stories -->
+  <div class="community-section">
+    <h2>Community Success Stories</h2>
+    <div class="stories-grid">
+      <div *ngFor="let story of communityStories" class="story-card">
+        <img [src]="story.avatar" [alt]="story.name" class="avatar">
+        <div class="story-content">
+          <h4>{{ story.name }}</h4>
+          <p class="location">{{ story.location }}</p>
+          <p class="story-text">{{ story.story }}</p>
+          <div class="rating">
+            <span class="material-icons">star</span>
+            <span class="material-icons">star</span>
+            <span class="material-icons">star</span>
+            <span class="material-icons">star</span>
+            <span class="material-icons">star</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Impact Map -->
+  <div class="impact-map">
+    <h2>National Impact Footprint</h2>
+    <div class="map-placeholder">
+      <span class="material-icons">map</span>
+      <p>Interactive Impact Map Coming Soon</p>
+    </div>
+  </div>
+</div>
