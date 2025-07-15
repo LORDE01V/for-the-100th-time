@@ -1,14 +1,13 @@
 import React from 'react';
-import { 
-  Routes, 
-  Route, 
-  Navigate, 
-  Outlet 
+import {
+  Routes,
+  Route,
+  Navigate,
+  Outlet
 } from 'react-router-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { auth } from './services/api'; // Assuming auth service is still needed
-import Supportbot from './components/Supportbot'; // Correct casing
-import LoadSheddingPage from './pages/LoadSheddingPage';
+import { auth } from './services/api';
+import Supportbot from './components/Supportbot';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from './theme';
@@ -36,16 +35,15 @@ import AISuggestions from './pages/AISuggestions';
 import PersonalUserPage from './pages/PersonalUserPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
+import LoadSheddingPage from './pages/LoadSheddingPage'; // Ensure this is imported
 
 // Protected Route component
 const ProtectedRoute = () => {
-  const user = auth.getCurrentUser(); // Check if user data/token exists
-  console.log('ProtectedRoute: User is', user ? 'authenticated' : 'not authenticated');  // Added for debugging
+  const user = auth.getCurrentUser();
+  console.log('ProtectedRoute: user from localStorage:', user);
   if (!user) {
-    // If no user (no token), redirect to login
     return <Navigate to="/login" replace />;
   }
-  // If user exists, render the nested routes
   return <Outlet />;
 };
 
@@ -61,9 +59,7 @@ function App() {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/about" element={<AboutPage />} /> {/* About Page route */}
-
-                {/* Add OAuth callback route */}
+                <Route path="/about" element={<AboutPage />} />
                 <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
 
                 {/* Protected Routes */}
@@ -77,7 +73,7 @@ function App() {
                   <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/support" element={<SupportPage />} />
                   <Route path="/forum" element={<ForumPage />} />
-                  <Route path="/loadshedding" element={<LoadSheddingPage />} />
+                  <Route path="/loadshedding" element={<LoadSheddingPage />} /> {/* Retained as a separate route */}
                   <Route path="/refer" element={<ReferPage />} />
                   <Route path="/group-buying" element={<GroupBuying />} />
                   <Route path="/subscription" element={<SubscriptionPage />} />
@@ -85,11 +81,11 @@ function App() {
                   <Route path="/personal-user" element={<PersonalUserPage />} />
                 </Route>
 
-                {/* New Routes */}
+                {/* Static Pages */}
                 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                 <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
-                {/* Fallback route */}
+                {/* Fallback */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               <Supportbot />
