@@ -36,7 +36,6 @@ import {
 import {
   FaSolarPanel,
   FaBatteryFull,
-  FaPlug,
   FaTree,
   FaCoins,
   FaTools,
@@ -63,21 +62,6 @@ const getTimeOfDay = () => {
   return hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
 };
 
-const GLASS_STYLES = {
-  light: {
-    backdropFilter: 'blur(10px)',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    border: '1px solid rgba(255, 255, 255, 0.3)',
-    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.2)',
-  },
-  dark: {
-    backdropFilter: 'blur(10px)',
-    backgroundColor: 'rgba(17, 25, 40, 0.75)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-  }
-};
-
 function HomePage() {
   // Hooks and state
   const navigate = useNavigate();
@@ -88,7 +72,6 @@ function HomePage() {
   const textColor = useColorModeValue('gray.800', 'gray.400');
   const headingColor = useColorModeValue('gray.900', 'white');
   const spinnerColor = useColorModeValue('blue.500', 'blue.300');
-  const glassStyles = useColorModeValue(GLASS_STYLES.light, GLASS_STYLES.dark);
   const user = auth.getCurrentUser();
   console.log('HomePage rendering: User is', user ? 'logged in' : 'not logged in');
   // const { currentThemeConfig } = useDashboard(); // Remove or comment out this line
@@ -200,6 +183,13 @@ function HomePage() {
     'Current weather patterns suggest ideal solar generation today.'
     ]
   }), []);
+
+  // Add new variables for the card styles at the top level
+  const cardBg = useColorModeValue('transparent', 'rgba(0, 0, 0, 0.6)');
+  const cardBorderColor = useColorModeValue('transparent', 'gray.600)');
+  const cardBoxShadow = 'xl';  // Not a hook, so it can stay as is
+  const cardBorderRadius = 'xl';  // Not a hook
+  const cardBackdropFilter = 'blur(16px)';  // Not a hook
 
   // Effects
   useEffect(() => {
@@ -328,16 +318,18 @@ function HomePage() {
           <Box
             p={6}
             borderWidth="1px"
-            borderRadius="md"
-            bg={glassStyles.backgroundColor}
-            boxShadow="lg"
+            border="1px solid"
+            borderRadius={cardBorderRadius}  // Use the variable here
+            bg={cardBg}  // Use the variable
+            boxShadow={cardBoxShadow}  // Use the variable
             _hover={{ boxShadow: 'xl' }}
             display="flex"
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            height="200px"  // Consistent height for cards
-            backdropFilter="blur(10px)"
+            height="200px"
+            backdropFilter={cardBackdropFilter}  // Use the variable
+            borderColor={cardBorderColor}  // Use the variable
           >
             <Flex align="center" justify="center">
               <Icon as={item.icon} boxSize={8} color={item.colorScheme + '.500'} />

@@ -15,7 +15,8 @@ import {
   IconButton,
   useToast,
   Spinner,
-  HStack
+  HStack,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaMoon, FaSun } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -89,9 +90,12 @@ function DashboardContent() {
   const { selectedPlan: recommendedPlan } = useSubscription();
   const [selectedTheme, setSelectedTheme] = useState('arcticBlue');
 
+  // Call useColorModeValue at the top level to fix linter errors
+  const cardBg = useColorModeValue('white', 'rgba(0, 0, 0, 0.6)');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+
   // Update theme variables to be dynamic based on color mode
   const backgroundColor = colorMode === 'light' ? '#ffffff' : '#1e1e2f';  // Light: white, Dark: dark background
-  const cardBg = colorMode === 'light' ? '#ffffff' : '#2b2b3d';  // Light: white, Dark: dark card
   const textColor = colorMode === 'light' ? '#000000' : '#ffffff';  // Light: black, Dark: white
   const accentColor = 'teal.300';  // Keep accent as is
 
@@ -235,12 +239,23 @@ function DashboardContent() {
                     transition={{ duration: 0.5 }}
                     whileHover={{ scale: 1.05, boxShadow: 'lg' }}
                     as={Box}
-                    bg={cardBg}
                     p={6}
                     borderRadius="2xl"
                     boxShadow="md"
                   >
-                    <Box {...glassCardStyle}>
+                    <Box
+                      maxW="md"
+                      w="full"
+                      bg={cardBg}
+                      boxShadow="xl"
+                      borderRadius="xl"
+                      p={8}
+                      position="relative"
+                      zIndex={2}
+                      backdropFilter="blur(16px)"
+                      border="1px solid"
+                      borderColor={borderColor}
+                    >
                       <EnergyModeToggle />
                     </Box>
                   </motion.div>

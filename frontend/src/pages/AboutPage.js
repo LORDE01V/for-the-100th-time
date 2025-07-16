@@ -74,6 +74,10 @@ function AboutPage() {
     }
   ];
 
+  const aboutBoxBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');
+  const aboutBorderColor = useColorModeValue('gray.300', 'gray.600');
+  const aboutTextColor = useColorModeValue('gray.700', 'white');
+
   return (
     <Box
       minH="100vh"
@@ -96,35 +100,49 @@ function AboutPage() {
         zIndex={0}
       />
       {/* Content */}
-      <Box maxW="800px" mx="auto" position="relative" zIndex={1} p={8}>
-        <Text fontSize="4xl" fontWeight="bold" textAlign="center" mb={4} color="white">
+      <Box
+        maxW="800px"
+        mx="auto"
+        position="relative"
+        zIndex={1}
+        p={8}
+        bg={aboutBoxBg}
+        boxShadow={useColorModeValue('md', 'xl')}
+        borderRadius={useColorModeValue('lg', 'xl')}
+        backdropFilter={useColorModeValue('none', 'blur(16px)')}
+        border='1px solid'
+        borderColor={aboutBorderColor}
+        color={aboutTextColor}
+      >
+        <Text fontSize="4xl" fontWeight="bold" textAlign="center" mb={4} color={useColorModeValue('gray.800', 'white')}>
           About Us
         </Text>
         {/* Mission Statement */}
-        <Text fontSize="lg" textAlign="center" mb={4} color="gray.200">
+        <Text fontSize="lg" textAlign="center" mb={4} color={useColorModeValue('gray.800', 'white')}>
           <b>Our Mission:</b> Empowering communities with affordable solar energy and smart financial management.
         </Text>
         {/* What We Do */}
-        <Text fontSize="md" textAlign="center" mb={8} color="gray.300">
+        <Text fontSize="md" textAlign="center" mb={8} color={useColorModeValue('gray.800', 'white')}>
           Gridx helps low-income households and small businesses manage energy usage efficiently, track expenses, and stay powered sustainably. We combine technology, finance, and clean energy to create a brighter future for all.
         </Text>
         {/* Core Values */}
         <Box mb={8}>
-          <Heading as="h3" size="md" color="white" mb={2} textAlign="center">Our Core Values</Heading>
+          <Heading as="h3" size="md" color={useColorModeValue('gray.800', 'white')} mb={2} textAlign="center">Our Core Values</Heading>
           <Flex justify="center" wrap="wrap" gap={6}>
             {['Sustainability', 'Community', 'Innovation', 'Transparency'].map((value) => (
               <Box
                 key={value}
+                minW="150px"
+                p={4}
+                mx="auto"
                 bg={glassCoreBg}
-                backdropFilter="blur(15px)"  // Increased blur for stronger effect
+                backdropFilter="blur(15px)"
                 border="1px solid"
                 borderColor={glassCoreBorder}
                 borderRadius="md"
-                p={4}
-                minW="150px"
-                textAlign="center"
+                boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"
                 color="white"
-                boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"  // Added subtle shadow for depth
+                textAlign="center"
               >
                 {value}
               </Box>
@@ -132,7 +150,7 @@ function AboutPage() {
           </Flex>
         </Box>
         {/* Team Streamline */}
-        <Text fontSize="3xl" fontWeight="bold" textAlign="center" mb={4} color="white">
+        <Text fontSize="3xl" fontWeight="bold" textAlign="center" mb={4} color={useColorModeValue('gray.800', 'white')}>
           Our Team
         </Text>
         <Flex
@@ -146,23 +164,23 @@ function AboutPage() {
           {team.map((member) => (
             <Box
               key={member.name}
+              minW="200px"
+              maxW="250px"
+              p={6}
+              mx="auto"
+              mb={4}
               bg={glassTeamBg}
-              backdropFilter="blur(15px)"  // Increased blur for stronger effect
+              backdropFilter="blur(15px)"
               borderRadius="2xl"
               boxShadow="lg"
-              p={6}
               display="flex"
               flexDirection="column"
               alignItems="center"
               justifyContent="center"
-              minW="200px"
-              maxW="250px"
-              mx="auto"
-              mb={4}
+              border="1px solid"
+              borderColor={glassCoreBorder}
               transition="transform 0.2s"
               _hover={{ transform: 'translateY(-6px) scale(1.04)', boxShadow: '2xl' }}
-              border="1px solid"
-              borderColor={glassCoreBorder}  // Using existing border color for consistency
             >
               {/* Full-size square profile picture */}
               <Box
@@ -200,8 +218,8 @@ function AboutPage() {
         </Flex>
         {/* Contact Info & Socials */}
         <Box textAlign="center" mb={6}>
-          <Heading as="h3" size="md" color="white" mb={2}>Contact Us</Heading>
-          <Text color="gray.200" mb={2}>
+          <Heading as="h3" size="md" color={useColorModeValue('gray.800', 'white')} mb={2}>Contact Us</Heading>
+          <Text color={useColorModeValue('gray.800', 'white')} mb={2}>
             Have questions or feedback? Reach out to us!
           </Text>
           <Flex justify="center" gap={4} mb={2}>
@@ -218,19 +236,19 @@ function AboutPage() {
               Instagram
             </Button>
           </Flex>
-          <Text color="gray.400" fontSize="xs">
+          <Text color={useColorModeValue('gray.800', 'white')} fontSize="xs">
             support@gridx.com
           </Text>
         </Box>
         {/* Legal/Privacy */}
         <Box textAlign="center" mb={4}>
-          <Text color="gray.500" fontSize="xs">
+          <Text color={useColorModeValue('gray.800', 'white')} fontSize="xs">
             By using Gridx, you agree to our <a href="/privacy" style={{ color: "#63b3ed" }}>Privacy Policy</a> and <a href="/terms" style={{ color: "#63b3ed" }}>Terms of Service</a>.
           </Text>
         </Box>
         {/* Version/Last Updated */}
         <Box textAlign="center" mb={2}>
-          <Text color="gray.600" fontSize="xs">
+          <Text color={useColorModeValue('gray.800', 'white')} fontSize="xs">
             Version 1.0.0 &nbsp;|&nbsp; Last updated: June 2024
           </Text>
         </Box>

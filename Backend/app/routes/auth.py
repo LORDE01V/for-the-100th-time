@@ -7,10 +7,10 @@ import time
 import logging
 from datetime import datetime
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
-CORS(auth_bp, origins=["http://localhost:3000", "http://192.168.18.3:3000"])
+CORS(auth_bp, origins=["*"], supports_credentials=True)  # Remove strict CORS here
 
 # Configure logging
 logging.basicConfig(
@@ -135,59 +135,49 @@ def logout():
     session.clear()
     return create_response("Logged out successfully")
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:3000', supports_credentials=True)
 def login():
+    if request.method == 'OPTIONS':
+        return create_response("OK", 200)
     try:
         data = request.get_json()
         if not data or not isinstance(data, dict):
             logging.error('No valid JSON data received in login request')
             return create_response('Invalid credentials', 400)
         
-        email = data.get('email')
-        if isinstance(email, dict):
-            email = email.get('email')
-        elif not isinstance(email, str):
-            logging.error('Invalid email format in data')
-            return create_response('Invalid credentials', 400)
-        email = email.lower() if email else None
-        
+        email = data.get('email', '').lower()
         password = data.get('password')
-        if isinstance(password, dict):
-            password = password.get('password')
-        elif not isinstance(password, str):
-            logging.error('Invalid password format in data')
-            return create_response('Invalid credentials', 400)
         
         if not email or not password:
             logging.error('Missing or invalid email/password in data')
             return create_response('Invalid credentials', 400)
         
-        logging.info(f'Attempting login for email: {email}')
-        user = get_user_by_email(email.lower())
-        if not user:
-            logging.error(f'User not found for email: {email}')
-            return create_response('Invalid credentials', 401)
-        
-        logging.info(f'Verifying password: Incoming password length {len(password)}, Stored hash length {len(user["password_hash"])}')  # Log lengths only
-        if not check_password_hash(user['password_hash'], password):
-            logging.error(f'Password mismatch for email: {email} - Hash verification failed')
-            return create_response('Invalid credentials', 401)
-        
-        access_token = create_access_token(identity=user['id'])  # Use ID instead of email
-        response = jsonify({
-            'success': True,
-            'user': {
-                'email': user['email'],
-                'name': user['full_name']
-            },
-            'redirect': url_for('home.home_page')
-        })
-        # Assuming set_access_cookies is defined elsewhere or needs to be imported
-        # from flask_jwt_extended import set_access_cookies
-        # set_access_cookies(response, access_token) 
-        return response
+        try:
+            user = get_user_by_email(email)
+            if not user:
+                logging.error(f'User not found for email: {email}')
+                return create_response('Invalid credentials', 401)
+            
+            if not check_password_hash(user['password_hash'], password):
+                logging.error(f'Password mismatch for email: {email}')
+                return create_response('Invalid credentials', 401)
+            
+            access_token = create_access_token(identity=user['id'])
+            return jsonify({
+                'success': True,
+                'user': {
+                    'email': user['email'],
+                    'name': user['full_name']
+                },
+                'token': access_token,
+                'redirect': url_for('home.home_page')
+            })
+        except Exception as db_error:
+            logging.error(f'Database error during login: {str(db_error)}')
+            return create_response('Failed to connect to the server. Please check database settings.', 500)
     except Exception as e:
-        logging.error(f'Login error: {str(e)} - Request data structure: {type(data)}')
+        logging.error(f'Login error: {str(e)}')
         return create_response('Login failed', 500)
 
 @auth_bp.route('/register', methods=['POST'])
@@ -196,8 +186,9 @@ def register():
     if not data or not isinstance(data, dict):
         return jsonify({'error': 'Invalid request data'}), 400
     
-    if not all(key in data for key in ['name', 'email', 'password']):
-        return jsonify({'error': 'Missing required fields'}), 400
+    required_fields = ['name', 'email', 'password']
+    if not all(key in data for key in required_fields):
+        return jsonify({'error': f'Missing required fields: {", ".join(set(required_fields) - set(data.keys()))}'}), 400
     
     email = data.get('email').lower()
     password = data.get('password')
@@ -208,12 +199,20 @@ def register():
     
     try:
         password_hash = generate_password_hash(password)
-        logging.info(f'User registration for email: {email} - Plain password length: {len(password)}, Hashed password length: {len(password_hash)}')
+        logging.info(f'Attempting to register user with email: {email}')
         create_user(email=email, password_hash=password_hash, full_name=full_name)
-        return jsonify({'message': 'User registered successfully'}), 201
+        
+        # Automatically log in the user after successful registration
+        access_token = create_access_token(identity=email)
+        return jsonify({
+            'message': 'User registered successfully',
+            'success': True,
+            'token': access_token,
+            'user': {'email': email, 'name': full_name}
+        }), 201
     except Exception as e:
         logging.error(f'Registration error: {str(e)} - Email: {email}')
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Registration failed. Please check your details or try again later.'}), 500
 
 @auth_bp.route('/user', methods=['PUT'])
 @jwt_required()

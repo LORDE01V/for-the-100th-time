@@ -609,10 +609,18 @@ const ForumPage = () => {
       }}
     >
       <Box
-        maxW="container.xl"
-        py={8}
+        maxW="md"
+        w="full"
+        bg={useColorModeValue('white', 'rgba(0, 0, 0, 0.6)')}
+        boxShadow="xl"
+        borderRadius="xl"
+        p={8}
         position="relative"
         zIndex={2}
+        backdropFilter="blur(16px)"
+        border="1px solid"
+        borderColor={useColorModeValue('gray.200', 'gray.600')}
+        color={useColorModeValue('gray.800', 'white')}
       >
         <Button
           leftIcon={<FaArrowLeft />}
@@ -633,7 +641,7 @@ const ForumPage = () => {
           <Heading size="xl">Community Forum</Heading>
           {selectedTopic ? renderTopicDiscussion() : renderTopicsList()}
         </VStack>
-    </Box>
+      </Box>
     </Box>
   );
 };

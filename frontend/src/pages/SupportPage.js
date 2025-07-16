@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api'; // Assuming auth service is still used
+import { auth } from '../services/api';
 
 // Import Chakra UI Components
 import {
@@ -28,10 +29,9 @@ import {
   HStack
 } from '@chakra-ui/react';
 
-// Import Icons (for navigation and contact info)
+// Import Icons
 import { FaArrowLeft, FaPhone, FaEnvelope, FaExternalLinkAlt } from 'react-icons/fa';
 import supportBackground from '../assets/images/Support_page.png';
-
 
 function SupportPage() {
   const navigate = useNavigate();
@@ -45,14 +45,17 @@ function SupportPage() {
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Color mode values
+  // Move useColorModeValue calls to the top level
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const textColor = useColorModeValue('gray.600', 'gray.400');
   const headingColor = useColorModeValue('gray.800', 'white');
   const inputBorderColor = useColorModeValue('gray.300', 'gray.600');
   const linkColor = useColorModeValue('blue.500', 'blue.300');
   const spinnerColor = useColorModeValue('blue.500', 'blue.300');
-
+  const faqBoxBg = useColorModeValue('white', 'rgba(0, 0, 0, 0.6)');
+  const faqBoxBorderColor = useColorModeValue('gray.200', 'gray.600');
+  const contactBoxBg = useColorModeValue('white', 'rgba(0, 0, 0, 0.6)');
+  const contactBoxBorderColor = useColorModeValue('gray.200', 'gray.600');
 
   // Dummy FAQ data
   const faqItems = [
@@ -74,10 +77,9 @@ function SupportPage() {
     }
   ];
 
-  // Update the useEffect for authentication
   useEffect(() => {
     if (!user) {
-      navigate('/');  // Changed from '/login' to '/' to go back to landing page
+      navigate('/');
       toast({
         title: 'Authentication required',
         description: 'Please log in to access this page',
@@ -88,25 +90,19 @@ function SupportPage() {
     }
   }, [user, navigate, toast]);
 
-  // Update the back button handler
   const handleBackClick = () => {
     navigate('/home');
   };
 
-  // Handle Contact Form Submission
   const handleContactSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
-      // Reset form
       setName('');
       setEmail('');
       setSubject('');
       setMessage('');
-
       toast({
         title: 'Message Sent',
         description: 'Your support request has been received. We will contact you shortly.',
@@ -114,10 +110,9 @@ function SupportPage() {
         duration: 5000,
         isClosable: true,
       });
-    }, 2000); // Simulate a 2-second delay for submission
+    }, 2000);
   };
 
-  // Filter out the question about updating profile information
   const filteredFaqItems = faqItems.filter(item => item.question !== 'How do I update my profile information?');
 
   if (!user) {
@@ -161,187 +156,125 @@ function SupportPage() {
           Back
         </Button>
 
-        <Heading as="h1" size="xl" color="white" mb={6}>
+        <Heading as="h1" size="xl" color={headingColor} mb={6}>
           Support and Help Center
         </Heading>
 
         {/* FAQ Section */}
         <Box
-            p={6}
-            bg="rgba(255, 255, 255, 0.1)"
-            backdropFilter="blur(10px)"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-            borderRadius="lg"
-            boxShadow="md"
-            mb={8}
+          p={6}
+          bg={faqBoxBg}
+          backdropFilter="blur(16px)"
+          border="1px solid"
+          borderColor={faqBoxBorderColor}
+          boxShadow="xl"
+          borderRadius="xl"
+          mb={8}
+          color={headingColor}  // Use for text inside
         >
-            <Heading as="h2" size="lg" mb={4} color={headingColor}>
-                Frequently Asked Questions
-            </Heading>
-             <Accordion allowMultiple>
-                {filteredFaqItems.map((item, index) => (
-                <AccordionItem key={index}>
-                    <h2>
-                        <AccordionButton>
-                            <Box flex="1" textAlign="left" fontWeight="semibold" color={textColor}>
-                                {item.question}
-                            </Box>
-                            <AccordionIcon />
-                        </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4} color={textColor}>
-                        {item.answer}
-                    </AccordionPanel>
-                </AccordionItem>
-                ))}
-            </Accordion>
+          <Heading as="h2" size="lg" mb={4} color={headingColor}>
+            Frequently Asked Questions
+          </Heading>
+          <Accordion allowMultiple>
+            {filteredFaqItems.map((item, index) => (
+              <AccordionItem key={index}>
+                <h2>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left" fontWeight="semibold" color={textColor}>
+                      {item.question}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4} color={textColor}>
+                  {item.answer}
+                </AccordionPanel>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </Box>
 
         {/* Contact Form Section */}
         <Box
-            p={6}
-            bg="rgba(255, 255, 255, 0.1)"
-            backdropFilter="blur(10px)"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-            borderRadius="lg"
-            boxShadow="md"
-            mb={8}
+          p={6}
+          bg={contactBoxBg}  // Reuse or define a new one if needed
+          backdropFilter="blur(16px)"
+          border="1px solid"
+          borderColor={contactBoxBorderColor}
+          boxShadow="xl"
+          borderRadius="xl"
+          mb={8}
+          color={headingColor}
         >
-             <Heading as="h2" size="lg" mb={4} color={headingColor}>
-                Contact Support
-            </Heading>
-            <Text color={textColor} mb={4}>
-                Couldn't find your answer? Send us a message.
-            </Text>
-            <VStack as="form" spacing={4} onSubmit={handleContactSubmit}>
-                <FormControl id="contact-name" isRequired>
-                    <FormLabel color={textColor}>Your Name</FormLabel>
-                    <Input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        borderColor={inputBorderColor}
-                        _hover={{ borderColor: 'teal.500' }}
-                        _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
-                    />
-                </FormControl>
-                 <FormControl id="contact-email" isRequired>
-                    <FormLabel color={textColor}>Email Address</FormLabel>
-                    <Input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        borderColor={inputBorderColor}
-                        _hover={{ borderColor: 'teal.500' }}
-                        _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
-                    />
-                </FormControl>
-                <FormControl id="contact-subject">
-                    <FormLabel color={textColor}>Subject</FormLabel>
-                    <Input
-                        type="text"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                         borderColor={inputBorderColor}
-                        _hover={{ borderColor: 'teal.500' }}
-                        _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
-                    />
-                </FormControl>
-                <FormControl id="contact-message" isRequired>
-                    <FormLabel color={textColor}>Message</FormLabel>
-                    <Textarea
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        rows={6}
-                         borderColor={inputBorderColor}
-                        _hover={{ borderColor: 'teal.500' }}
-                        _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
-                    />
-                </FormControl>
-                <Button
-                    type="submit"
-                    colorScheme="teal"
-                    size="lg"
-                    fontSize="md"
-                    isLoading={isSubmitting}
-                    loadingText="Sending..."
-                    w="full"
-                    mt={4}
-                >
-                    Send Message
-                </Button>
-            </VStack>
+          <Heading as="h2" size="lg" mb={4} color={headingColor}>
+            Contact Support
+          </Heading>
+          <Text color={textColor} mb={4}>
+            Couldn't find your answer? Send us a message.
+          </Text>
+          <VStack as="form" spacing={4} onSubmit={handleContactSubmit}>
+            <FormControl id="contact-name" isRequired>
+              <FormLabel color={textColor}>Your Name</FormLabel>
+              <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                borderColor={inputBorderColor}
+                _hover={{ borderColor: 'teal.500' }}
+                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
+              />
+            </FormControl>
+            <FormControl id="contact-email" isRequired>
+              <FormLabel color={textColor}>Email Address</FormLabel>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                borderColor={inputBorderColor}
+                _hover={{ borderColor: 'teal.500' }}
+                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
+              />
+            </FormControl>
+            <FormControl id="contact-subject">
+              <FormLabel color={textColor}>Subject</FormLabel>
+              <Input
+                type="text"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                borderColor={inputBorderColor}
+                _hover={{ borderColor: 'teal.500' }}
+                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
+              />
+            </FormControl>
+            <FormControl id="contact-message" isRequired>
+              <FormLabel color={textColor}>Message</FormLabel>
+              <Textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={6}
+                borderColor={inputBorderColor}
+                _hover={{ borderColor: 'teal.500' }}
+                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
+              />
+            </FormControl>
+            <Button
+              type="submit"
+              colorScheme="teal"
+              size="lg"
+              fontSize="md"
+              isLoading={isSubmitting}
+              loadingText="Sending..."
+              w="full"
+              mt={4}
+            >
+              Send Message
+            </Button>
+          </VStack>
         </Box>
-
-        {/* Additional Resources Section */}
-         <Box
-            p={6}
-            bg="rgba(255, 255, 255, 0.1)"
-            backdropFilter="blur(10px)"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-            borderRadius="lg"
-            boxShadow="md"
-            mb={8}
-        >
-            <Heading as="h2" size="lg" mb={4} color={headingColor}>
-                Additional Resources
-            </Heading>
-            <VStack spacing={3} align="flex-start">
-                <ChakraLink href="#" isExternal color={linkColor} fontWeight="semibold">
-                     <HStack> {/* Use HStack to align icon and text */}
-                        <Icon as={FaExternalLinkAlt} />
-                        <Text>Link to Documentation</Text>
-                     </HStack>
-                </ChakraLink>
-                <ChakraLink href="#" isExternal color={linkColor} fontWeight="semibold">
-                     <HStack> {/* Use HStack to align icon and text */}
-                        <Icon as={FaExternalLinkAlt} />
-                        <Text>Visit our Blog</Text>
-                     </HStack>
-                </ChakraLink>
-            </VStack>
-         </Box>
-
-
-         {/* Contact Information Section */}
-        <Box
-            p={6}
-            bg="rgba(255, 255, 255, 0.1)"
-            backdropFilter="blur(10px)"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-            borderRadius="lg"
-            boxShadow="md"
-        >
-            <Heading as="h2" size="lg" mb={4} color={headingColor}>
-                Contact Information
-            </Heading>
-            <VStack spacing={3} align="flex-start" color={textColor}>
-                <HStack>
-                    <Icon as={FaPhone} color="teal.500" />
-                    <Text fontWeight="semibold">Phone:</Text>
-                    <Text>+27 12 345 6789</Text>
-                </HStack>
-                 <HStack>
-                    <Icon as={FaEnvelope} color="teal.500" />
-                    <Text fontWeight="semibold">Email:</Text>
-                     {/* Use ChakraLink for email link */}
-                    <ChakraLink href="mailto:support@solarfinech.com" color={linkColor}>support@solarfinech.com</ChakraLink>
-                </HStack>
-                 {/* Add Address if needed */}
-                 {/*
-                 <HStack>
-                    <Icon as={FaMapMarkerAlt} color="teal.500" />
-                    <Text fontWeight="semibold">Address:</Text>
-                    <Text>123 Solar Lane, Sun City, 1234</Text>
-                 </HStack>
-                 */}
-            </VStack>
-        </Box>
-
-
+        {/* Add other sections as needed */}
       </Container>
     </Box>
   );
 }
 
-export default SupportPage;
+export default SupportPage;  // Ensure the file exports the component

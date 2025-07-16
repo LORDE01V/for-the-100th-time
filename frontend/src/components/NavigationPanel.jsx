@@ -1,80 +1,106 @@
-import React, { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import to access navigation state
 import './NavigationPanel.css'; // Import the CSS file for styling
-import { FiHome, FiSettings, FiUser, FiHelpCircle } from 'react-icons/fi'; // Feather icons
+import { FiHome, FiArrowLeft } from 'react-icons/fi'; // Keeping FiHome for Home
+import { FaSolarPanel, FaUser, FaBatteryFull, FaCoins, FaRegLightbulb, FaTools, FaTree, FaLightbulb, FaRegSun, FaUsers, FaHandshake, FaCreditCard } from 'react-icons/fa';
+import { Bot } from 'lucide-react'; // For AI Suggestions
+import { useColorModeValue } from '@chakra-ui/react';  // Already present, but confirming it's used
 
 const NavigationPanel = () => {
   const navigate = useNavigate();
   const panelRef = useRef(null);
+  const location = useLocation();  // Get current location to check state
+
+  // Add state for hover visibility
+  const [isVisible, setIsVisible] = useState(false);
 
   // List of all pages with their names, paths, and icons
   const pages = [
-    { name: 'Home', path: '/', icon: <FiHome /> },
-    { name: 'Dashboard', path: '/dashboard', icon: <FiHome /> },
-    { name: 'Profile', path: '/profile', icon: <FiUser /> },
-    { name: 'Settings', path: '/settings', icon: <FiSettings /> },
-    { name: 'Support', path: '/support', icon: <FiHelpCircle /> },
-    { name: 'About', path: '/about', icon: <FiHelpCircle /> },
-    { name: 'AI Suggestions', path: '/ai-suggestions', icon: <FiHelpCircle /> },
-    { name: 'Expenses', path: '/expenses', icon: <FiHelpCircle /> },
-    { name: 'Fault Details', path: '/fault-details', icon: <FiHelpCircle /> },
-    { name: 'Forum', path: '/forum', icon: <FiHelpCircle /> },
-    { name: 'Group Buying', path: '/group-buying', icon: <FiHelpCircle /> },
-    { name: 'Impact', path: '/impact', icon: <FiHelpCircle /> },
-    { name: 'Landing', path: '/landing', icon: <FiHelpCircle /> },
-    { name: 'Notifications', path: '/notifications', icon: <FiHelpCircle /> },
-    { name: 'OAuth Callback', path: '/oauth-callback', icon: <FiHelpCircle /> },
-    { name: 'Personal User', path: '/personal-user', icon: <FiHelpCircle /> },
-    { name: 'Privacy Policy', path: '/privacy-policy', icon: <FiHelpCircle /> },
-    { name: 'Refer', path: '/refer', icon: <FiHelpCircle /> },
-    { name: 'Register', path: '/register', icon: <FiHelpCircle /> },
-    { name: 'Subscription', path: '/subscription', icon: <FiHelpCircle /> },
-    { name: 'Terms of Service', path: '/terms-of-service', icon: <FiHelpCircle /> },
-    { name: 'Top Up', path: '/top-up', icon: <FiHelpCircle /> },
-    { name: 'Login', path: '/login', icon: <FiHelpCircle /> }, // Moved under Top Up
+    { name: 'Home', path: '/home', icon: <FiHome /> },  // Updated path to '/home' to match the route for HomePage.js
+    { name: 'Dashboard', path: '/dashboard', icon: <FaSolarPanel /> },
+    { name: 'Profile', path: '/profile', icon: <FaUser /> },
+    { name: 'Settings', path: '/settings', icon: <FaTools /> },
+    { name: 'Support', path: '/support', icon: <FaLightbulb /> },
+    { name: 'About', path: '/about', icon: <FaUsers /> },  // Using FaUsers as a placeholder
+    { name: 'AI Suggestions', path: '/ai-suggestions', icon: <Bot /> },
+    { name: 'Expenses', path: '/expenses', icon: <FaCoins /> },
+    { name: 'Forum', path: '/forum', icon: <FaRegSun /> },
+    { name: 'Group Buying', path: '/group-buying', icon: <FaUsers /> },
+    { name: 'Impact', path: '/impact', icon: <FaTree /> },
+    { name: 'Notifications', path: '/notifications', icon: <FaRegLightbulb /> },
+    { name: 'Personal User', path: '/personal-user', icon: <FaUser /> },  // Using FaUser as it's similar to Profile
+    { name: 'Refer', path: '/refer', icon: <FaHandshake /> },
+    { name: 'Subscription', path: '/subscription', icon: <FaCreditCard /> },
+    { name: 'Top Up', path: '/top-up', icon: <FaBatteryFull /> },
+    { name: 'Back to Dashboard', path: '/dashboard', icon: <FiArrowLeft /> },  // Assuming FiArrowLeft is imported; if not, use another icon like FiHome
+    // Conditionally add Back to Home if coming from homepage
+    ...(location.state?.from === 'home' ? [{ name: 'Back to Home', path: '/home', icon: <FiHome /> }] : []),
   ];
 
-  // Drag-and-drop functionality
-  const handleDragStart = (e) => {
-    const panel = panelRef.current;
-    const rect = panel.getBoundingClientRect();
-    panel.dataset.offsetX = e.clientX - rect.left;
-    panel.dataset.offsetY = e.clientY - rect.top;
-  };
-
-  const handleDrag = (e) => {
-    const panel = panelRef.current;
-    if (e.clientX === 0 && e.clientY === 0) return; // Prevent drag end flickering
-    const offsetX = parseFloat(panel.dataset.offsetX);
-    const offsetY = parseFloat(panel.dataset.offsetY);
-    panel.style.left = `${e.clientX - offsetX}px`;
-    panel.style.top = `${e.clientY - offsetY}px`;
-  };
+  // Remove drag-related functions
+  // const handleDragStart = (e) => { ... };  // Removed to prevent dragging
+  // const handleDrag = (e) => { ... };  // Removed to prevent dragging
 
   return (
-    <div
-      className="navigation-panel"
-      ref={panelRef}
-      draggable="true"
-      onDragStart={handleDragStart}
-      onDrag={handleDrag}
-    >
-      <div className="navigation-header">
-        <h2>Energy Dashboard</h2>
+    <>
+      {/* Trigger Button */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '20px',
+          left: '10px',
+          zIndex: '1000',
+          cursor: 'pointer',
+          padding: '10px',
+          background: useColorModeValue('white', 'rgba(0, 0, 0, 0.6)'),  // Updated for frosted glass effect
+          backdropFilter: 'blur(16px)',
+          border: '1px solid',
+          borderColor: useColorModeValue('gray.200', 'gray.600'),
+          borderRadius: '50%',
+          color: 'white',
+        }}
+        onMouseEnter={() => setIsVisible(true)}
+      >
+        ☰
       </div>
-      <div className="navigation-menu">
-        {pages.map((page) => (
-          <button
-            key={page.name}
-            className="navigation-item"
-            onClick={() => navigate(page.path)}
-          >
-            <span className="icon">{page.icon}</span>
-            <span className="label">{page.name}</span>
-          </button>
-        ))}
+
+      <div
+        className="navigation-panel"
+        ref={panelRef}
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+        style={{
+          transform: isVisible ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.3s ease-in-out',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          height: '100vh',
+          zIndex: 1000,
+          padding: '16px',
+          background: useColorModeValue('white', 'rgba(0, 0, 0, 0.6)'),  // Updated for frosted glass effect
+          backdropFilter: 'blur(16px)',
+          border: '1px solid',
+          borderColor: useColorModeValue('gray.200', 'gray.600'),
+        }}
+      >
+        <div className="navigation-header">
+          <h2>Energy Dashboard</h2>
+        </div>
+        <div className="navigation-menu">
+          {pages.map((page) => (
+            <button
+              key={page.name}
+              className="navigation-item"
+              onClick={() => navigate(page.path)}
+            >
+              <span className="icon">{page.icon}</span>
+              <span className="label">{page.name}</span>
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

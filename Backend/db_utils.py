@@ -57,3 +57,25 @@ def execute_query(query_type, query, params=None):
         if conn:
             cur.close()
             conn.close()
+
+def create_topup_table():
+    query = """
+    CREATE TABLE IF NOT EXISTS topup_transactions (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) NOT NULL,  // References the user making the top-up
+        amount DECIMAL(10, 2) NOT NULL,  // Top-up amount in ZAR
+        promo_code VARCHAR(50),  // Optional promo code
+        voucher_code VARCHAR(50),  // Optional voucher code
+        transaction_type VARCHAR(50) NOT NULL,  // e.g., 'topup' or 'recharge'
+        is_auto_topup BOOLEAN DEFAULT FALSE,  // Whether it's an auto-top-up
+        min_balance DECIMAL(10, 2),  // Minimum balance threshold for auto-top-up
+        auto_topup_amount DECIMAL(10, 2),  // Amount for auto-top-up
+        auto_topup_frequency VARCHAR(50),  // e.g., 'weekly'
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  // Timestamp of the transaction
+    );
+    """
+    try:
+        execute_query('alter', query)
+        print("Top-up table created successfully.")
+    except Exception as e:
+        print(f"🚨 Failed to create top-up table: {str(e)}")

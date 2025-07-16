@@ -4,6 +4,7 @@ import os
 from datetime import timedelta
 from dotenv import load_dotenv
 from flask_cors import CORS
+from app.routes.topup import topup_bp
 
 # Load environment variables
 load_dotenv()
@@ -14,7 +15,18 @@ oauth = OAuth()
 def create_app():
     app = Flask(__name__,
                 template_folder='templates')
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://192.168.18.3:3000"]}})
+    
+    # Enhanced CORS configuration
+    CORS(app, resources={r"/*": {  # Apply to all routes
+        "origins": [
+            "http://localhost:3000",
+            "http://localhost:5000",
+            "http://127.0.0.1:3000"
+        ],
+        "supports_credentials": True,
+        "allow_headers": ["*"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    }})
     
     # Configuration
     app.config.update(
@@ -47,5 +59,6 @@ def create_app():
     # Register blueprints
     from .routes.auth import auth_bp
     app.register_blueprint(auth_bp)
+    app.register_blueprint(topup_bp)
     
     return app 
