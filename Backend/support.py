@@ -157,7 +157,6 @@ def record_payment(contract_id, amount, payment_method):
         VALUES (%s, %s, %s)
         """, (contract_id, amount, payment_method))
         
-        
         # Update contract balance
         cur.execute("""
         UPDATE solar_contracts 
@@ -175,109 +174,6 @@ def record_payment(contract_id, amount, payment_method):
         if cur: cur.close()
         if conn: conn.close()
 
-def add_story(username, email, story):
-    """Add a new story to the database"""
-    conn, cur = connect_db()
-    try:
-        if not conn or not cur:
-            raise Exception("Database connection failed")
-        
-        cur.execute("""
-        INSERT INTO stories (username, email, story)
-        VALUES (%s, %s, %s) RETURNING id
-        """, (username, email, story))
-        
-        result = cur.fetchone()
-        if result is None:  # Check if no rows were returned
-            raise Exception("Failed to insert story: No rows returned.")
-        
-        conn.commit()
-        return result[0]  # Return the ID of the inserted story
-    except Exception as e:
-        if conn:
-            conn.rollback()
-        print(f"🚨 Failed to add story: {e}")
-        return None
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()       
-
-# ... existing code ...
-
-def fetch_all_events(conn):
-    """
-    Fetch all events from the database.
-    """
-    try:
-        cur = conn.cursor()
-        cur.execute("SELECT date, title, start, end, description, location, event_type FROM events")
-        events = cur.fetchall()
-        return {
-            event[0]: {
-                "title": event[1],
-                "start": event[2],
-                "end": event[3],
-                "description": event[4],
-                "location": event[5],
-                "eventType": event[6]
-            }
-            for event in events
-        }
-    except Exception as e:
-        print(f"Error fetching events: {str(e)}")
-        raise
-
-def save_event_to_db(conn, event_data):
-    """
-    Save or update an event in the database.
-    """
-    try:
-        cur = conn.cursor()
-        cur.execute(
-            """
-            INSERT INTO events (date, title, start, end, description, location, event_type)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (date) DO UPDATE
-            SET title = EXCLUDED.title,
-                start = EXCLUDED.start,
-                end = EXCLUDED.end,
-                description = EXCLUDED.description,
-                location = EXCLUDED.location,
-                event_type = EXCLUDED.event_type
-            """,
-            (
-                event_data['date'],
-                event_data['title'],
-                event_data['start'],
-                event_data['end'],
-                event_data['description'],
-                event_data['location'],
-                event_data['eventType']
-            )
-        )
-        conn.commit()
-    except Exception as e:
-        print(f"Error saving event: {str(e)}")
-        raise
-
-def delete_event_from_db(conn, date):
-    """
-    Delete an event from the database by date.
-    """
-    try:
-        cur = conn.cursor()
-        cur.execute("DELETE FROM events WHERE date = %s", (date,))
-        if cur.rowcount == 0:
-            raise ValueError("Event not found")
-        conn.commit()
-    except Exception as e:
-        print(f"Error deleting event: {str(e)}")
-        raise
-
-
-
-
-
 def get_payment_history(contract_id):
     """Get payment history for a contract"""
     query = """
@@ -287,6 +183,61 @@ def get_payment_history(contract_id):
     ORDER BY payment_date DESC
     """
     return execute_query('search', query, (contract_id,))
+
+
+def save_support_request(name, email, subject, message):
+    query = """
+    INSERT INTO support_requests (name, email, subject, message)
+    VALUES (%s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (name, email, subject, message))
+
+def save_community_story(user_name, story_text, rating):
+    query = """
+    INSERT INTO community_stories (user_name, story_text, rating)
+    VALUES (%s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (user_name, story_text, rating))
+
+
+def get_all_community_stories():
+    query = """
+    SELECT id, user_name, story_text, rating, created_at
+    FROM community_stories
+    ORDER BY created_at DESC
+    """
+    return execute_query('select', query)
+
+def save_profile_details(full_name, surname, email, phone_number, address):
+    query = """
+    INSERT INTO users (full_name, surname, email, phone_number, address)
+    VALUES (%s, %s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (full_name, surname, email, phone_number, address))
+
+def create_event(title, start, end, description, location, event_type):
+    """Insert a new event into the events table."""
+    query = """
+    INSERT INTO events_calendar (title, start, "end", description, location, event_type)
+    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;
+    """
+    print(f"Creating event with: {title}, {start}, {end}, {description}, {location}, {event_type}")
+    return execute_query('insert', query, (title, start, end, description, location, event_type))
+
+def get_all_events():
+    """Retrieve all events from the events table."""
+    query = "SELECT id, title, start, \"end\", description, location, event_type FROM events_calendar;"
+    result = execute_query('search', query)
+    columns = ['id', 'title', 'start', 'end', 'description', 'location', 'event_type']
+    return [dict(zip(columns, row)) for row in result]
+
+
+
+def delete_event(event_id):
+    """Delete an event by its ID."""
+    query = "DELETE FROM events_calendar WHERE id = %s;"
+    execute_query('insert', query, (event_id,))
+
 
 
 # Initialize database tables when module loads
@@ -339,7 +290,89 @@ def initialize_db():
             payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             payment_method VARCHAR(50)
         )""")
+
         
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS support_requests (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            subject VARCHAR(255),
+            message TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS community_stories (
+            id SERIAL PRIMARY KEY,
+            user_name VARCHAR(100) NOT NULL,
+            story_text TEXT NOT NULL,
+            rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS profiledetails (
+            id INTEGER PRIMARY KEY,
+            full_name TEXT NOT NULL,
+            surname TEXT NOT NULL,
+            email TEXT,
+            phone_number TEXT,
+            address TEXT
+        )
+    """)
+ 
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS notification_preference (
+            user_id INTEGER PRIMARY KEY,
+            receive_sms BOOLEAN NOT NULL DEFAULT TRUE,
+            receive_email BOOLEAN NOT NULL DEFAULT TRUE,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+""")
+
+        cur.execute("""
+        CREATE OR REPLACE FUNCTION update_updated_at_column()
+        RETURNS TRIGGER AS $$
+        BEGIN
+            NEW.updated_at = CURRENT_TIMESTAMP;
+            RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+""")
+
+        cur.execute("""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+            SELECT 1
+            FROM pg_trigger
+            WHERE tgname = 'set_updated_at'
+        ) THEN
+            CREATE TRIGGER set_updated_at
+            BEFORE UPDATE ON notification_preference
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+        END IF;
+        END;
+        $$;
+    """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS events_calendar (
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            start TIMESTAMP NOT NULL,
+            "end" TIMESTAMP NOT NULL,
+            description TEXT NOT NULL,
+            location VARCHAR(255) NOT NULL,
+            event_type VARCHAR(50) NOT NULL
+        );
+        """)
+
+
         conn.commit()
         print("✅ Database tables initialized")
     except Exception as e:

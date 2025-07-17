@@ -288,7 +288,7 @@ async def fastapi_register(user: UserRegister):
                 'message': 'Account deleted successfully'
             })
             
-        except Exception as e:
+    except Exception as e:
             # Rollback in case of error
             if conn:  # Ensure conn is not None before rollback
                 conn.rollback()

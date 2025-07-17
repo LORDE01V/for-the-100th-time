@@ -589,3 +589,16 @@
 2025-07-10 13:28:50,415 - WARNING - Unknown option passed to Flask-CORS: origin
 2025-07-10 13:28:50,416 - INFO - 127.0.0.1 - - [10/Jul/2025 13:28:50] "OPTIONS /api/auth/login HTTP/1.1" 200 -
 >>>>>>>>> Temporary merge branch 2
+2025-07-17 10:19:44,750 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-07-17 10:19:44,752 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-17 10:19:44,756 - INFO -  * Restarting with stat
+2025-07-17 10:20:02,702 - WARNING -  * Debugger is active!
+2025-07-17 10:20:02,708 - INFO -  * Debugger PIN: 130-474-514
+2025-07-17 10:21:47,133 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-17 10:21:47,151 - INFO - 127.0.0.1 - - [17/Jul/2025 10:21:47] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-17 10:21:47,477 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-17 10:21:48,498 - INFO - 127.0.0.1 - - [17/Jul/2025 10:21:48] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-17 10:21:54,795 - INFO - 127.0.0.1 - - [17/Jul/2025 10:21:54] "OPTIONS /api/events HTTP/1.1" 200 -
