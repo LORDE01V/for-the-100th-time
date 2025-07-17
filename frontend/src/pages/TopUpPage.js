@@ -67,10 +67,13 @@ function TopUpPage() {
 
   // Styles for the glassmorphism effect on the form Box
   const glassmorphismBoxStyles = {
-    bg: useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(26, 32, 44, 0.15)'), // Semi-transparent background
-    backdropFilter: 'blur(10px)', // Blur effect
-    boxShadow: useColorModeValue('lg', 'dark-lg'), // Shadow for depth
-    borderRadius: 'lg', // Rounded corners
+    bg: useColorModeValue('white', 'rgba(0, 0, 0, 0.6)'),
+    boxShadow: 'xl',
+    borderRadius: 'xl',
+    backdropFilter: 'blur(16px)',
+    border: '1px solid',
+    borderColor: useColorModeValue('gray.200', 'gray.600'),
+    color: useColorModeValue('gray.800', 'white'),
   };
 
     useEffect(() => {

@@ -5,6 +5,7 @@ import { FiHome, FiArrowLeft } from 'react-icons/fi'; // Keeping FiHome for Home
 import { FaSolarPanel, FaUser, FaBatteryFull, FaCoins, FaRegLightbulb, FaTools, FaTree, FaLightbulb, FaRegSun, FaUsers, FaHandshake, FaCreditCard } from 'react-icons/fa';
 import { Bot } from 'lucide-react'; // For AI Suggestions
 import { useColorModeValue } from '@chakra-ui/react';  // Already present, but confirming it's used
+import { Box, Text } from '@chakra-ui/react'; // Added Box and Text for the trigger button
 
 const NavigationPanel = () => {
   const navigate = useNavigate();
@@ -44,25 +45,27 @@ const NavigationPanel = () => {
   return (
     <>
       {/* Trigger Button */}
-      <div
-        style={{
-          position: 'fixed',
-          top: '20px',
-          left: '10px',
-          zIndex: '1000',
-          cursor: 'pointer',
-          padding: '10px',
-          background: useColorModeValue('white', 'rgba(0, 0, 0, 0.6)'),  // Updated for frosted glass effect
-          backdropFilter: 'blur(16px)',
-          border: '1px solid',
-          borderColor: useColorModeValue('gray.200', 'gray.600'),
-          borderRadius: '50%',
-          color: 'white',
-        }}
-        onMouseEnter={() => setIsVisible(true)}
+      <Box
+        position="fixed"
+        top="20px"
+        left="20px"
+        zIndex="1000"
+        cursor="pointer"
+        p={3}
+        bg="white"
+        borderRadius="full"
+        boxShadow="lg"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        width="60px"
+        height="60px"
+        onClick={() => setIsVisible(!isVisible)}
       >
-        ☰
-      </div>
+        <Text fontSize="lg" color={useColorModeValue('teal.500', 'teal.300')}>
+          ☰
+        </Text>
+      </Box>
 
       <div
         className="navigation-panel"
@@ -78,7 +81,7 @@ const NavigationPanel = () => {
           height: '100vh',
           zIndex: 1000,
           padding: '16px',
-          background: useColorModeValue('white', 'rgba(0, 0, 0, 0.6)'),  // Updated for frosted glass effect
+          background: useColorModeValue('white', 'rgba(0, 0, 0, 0.6)'),
           backdropFilter: 'blur(16px)',
           border: '1px solid',
           borderColor: useColorModeValue('gray.200', 'gray.600'),

@@ -22,6 +22,7 @@ const DashboardCard = ({
   children,
   bg,
   bgGradient,
+  planDetails, // New prop for detailed plan information
   ...props
 }) => {
   const { currentThemeConfig } = useDashboard();
@@ -96,6 +97,18 @@ const DashboardCard = ({
         <Box flex="1" mt={2} color={currentThemeConfig.colors.text}>
           {children}
         </Box>
+
+        {/* Plan Details (if provided) */}
+        {planDetails && (
+          <Box mt={4} p={4} bg="gray.100" borderRadius="md">
+            <Heading as="h4" size="sm" mb={2}>
+              Plan Details
+            </Heading>
+            <Text fontSize="sm" color={textColor}>
+              {planDetails}
+            </Text>
+          </Box>
+        )}
 
         {/* Footer (if provided) */}
         {footer && (
