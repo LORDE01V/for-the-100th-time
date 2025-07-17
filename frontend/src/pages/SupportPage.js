@@ -94,18 +94,15 @@ function SupportPage() {
     navigate('/home');
   };
 
-  // ... existing code ...
-const handleContactSubmit = async (e) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-  try {
-    const response = await fetch('/api/support', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, subject, message }),
-    });
-    const data = await response.json();
-    if (response.ok) {
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setName('');
+      setEmail('');
+      setSubject('');
+      setMessage('');
       toast({
         title: 'Message Sent',
         description: 'Your support request has been received. We will contact you shortly.',
@@ -113,31 +110,8 @@ const handleContactSubmit = async (e) => {
         duration: 5000,
         isClosable: true,
       });
-      setName('');
-      setEmail('');
-      setSubject('');
-      setMessage('');
-    } else {
-      toast({
-        title: 'Error',
-        description: data.error || 'Failed to send message.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  } catch (err) {
-    toast({
-      title: 'Error',
-      description: 'Failed to send message.',
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    });
-  }
-  setIsSubmitting(false);
-};
-// ... existing code ...
+    }, 2000);
+  };
 
   const filteredFaqItems = faqItems.filter(item => item.question !== 'How do I update my profile information?');
 

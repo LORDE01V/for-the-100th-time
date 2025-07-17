@@ -39,7 +39,7 @@ const ForumPage = () => {
   const [tone, setTone] = useState(null);
   const [isCheckingTone, setIsCheckingTone] = useState(false);
 
-  // Mock data for forum topics
+  // Mock data for dummyTopics
   const dummyTopics = useMemo(() => [
     {
       id: 1,
@@ -607,10 +607,18 @@ const ForumPage = () => {
       }}
     >
       <Box
-        maxW="container.xl"
-        py={8}
+        maxW="md"
+        w="full"
+        bg={useColorModeValue('white', 'rgba(0, 0, 0, 0.6)')}
+        boxShadow="xl"
+        borderRadius="xl"
+        p={8}
         position="relative"
         zIndex={2}
+        backdropFilter="blur(16px)"
+        border="1px solid"
+        borderColor={useColorModeValue('gray.200', 'gray.600')}
+        color={useColorModeValue('gray.800', 'white')}
       >
         <Button
           leftIcon={<FaArrowLeft />}
@@ -629,9 +637,12 @@ const ForumPage = () => {
 
         <VStack spacing={8} align="stretch">
           <Heading size="xl">Community Forum</Heading>
-          {selectedTopic ? renderTopicDiscussion() : renderTopicsList()}
+          {selectedTopic 
+            ? renderTopicDiscussion() 
+            : renderTopicsList()
+          }
         </VStack>
-    </Box>
+      </Box>
     </Box>
   );
 };

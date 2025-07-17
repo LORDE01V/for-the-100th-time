@@ -157,12 +157,19 @@ function GroupBuying() {
   const inputBorderColor = useColorModeValue('gray.300', 'gray.600');
 
   // Define colors for glassmorphism effect on cards
-  const glassCardBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(26, 32, 44, 0.15)');
   const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
   const glassBoxShadow = useColorModeValue('0 4px 12px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.5)'); // Adjust shadow for depth
 
   // Define hover box shadow using useColorModeValue at the top level
   const hoverBoxShadow = useColorModeValue('0 8px 16px rgba(0, 0, 0, 0.2)', '0 8px 16px rgba(0, 0, 0, 0.6)');
+
+  // At the top of the component, after existing useColorModeValue definitions 
+  const cardBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(0, 0, 0, 0.6)');
+  const cardBoxShadow = useColorModeValue('md', 'xl');
+  const cardBorderRadius = useColorModeValue('lg', 'xl');
+  const cardBackdropFilter = useColorModeValue('none', 'blur(16px)');
+  const cardBorder = useColorModeValue('1px solid rgba(255, 255, 255, 0.2)', '1px solid gray.600');
+  const cardColor = useColorModeValue('gray.800', 'white'); // ... existing code ... 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -318,9 +325,14 @@ function GroupBuying() {
               return (
                 <Card
                   key={campaign.id}
-                  bg={glassCardBg}
+                  bg={cardBg}
+                  boxShadow={cardBoxShadow}
+                  borderRadius={cardBorderRadius}
+                  backdropFilter={cardBackdropFilter}
+                  border={cardBorder}
+                  color={cardColor}
                   borderWidth="1px"
-                  borderColor={glassBorderColor}
+                  borderColor={glassBorderColor} // Ensure no duplicates
                   boxShadow={glassBoxShadow}
                   borderRadius="lg"
                   backdropFilter="blur(10px)"
@@ -347,7 +359,7 @@ function GroupBuying() {
 
                     <VStack spacing={3} align="stretch">
                       <HStack justify="space-between">
-                        <Text color={textColor}>
+                        <Text color={cardColor}>
                           <Icon as={FaTag} mr={2} />
                           Original: R{campaign.originalPrice}
                         </Text>
@@ -362,11 +374,11 @@ function GroupBuying() {
                         Group Price: R{campaign.groupPrice}
                       </Text>
 
-                      <Text color={textColor} noOfLines={2}>{campaign.description}</Text>
+                      <Text color={cardColor} noOfLines={2}>{campaign.description}</Text>
 
                       <HStack>
                         <Icon as={FaUsers} />
-                        <Text color={textColor}>
+                        <Text color={cardColor}>
                           {campaign.participants} of {campaign.goal} joined
                         </Text>
                       </HStack>
@@ -375,7 +387,7 @@ function GroupBuying() {
 
                       <HStack>
                         <Icon as={FaClock} />
-                        <Text color={textColor}>{campaign.timeLeft}</Text>
+                        <Text color={cardColor}>{campaign.timeLeft}</Text>
                       </HStack>
 
                       <Button

@@ -31,7 +31,7 @@ import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 
 // Import icons - Added FaArrowLeft import here
 import { FaArrowLeft } from 'react-icons/fa';
-//import settingsBackground from '../assets/images/Settings_page.png';  // Added: Import the image for proper bundling
+import settingsBackground from '../assets/images/Settings_page.png';  // Added: Import the image for proper bundling
 
 
 function SettingsPage() {

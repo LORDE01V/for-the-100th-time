@@ -37,6 +37,11 @@ function NotificationsPage() {
   const headingColor = useColorModeValue('gray.800', 'white');
   const textColor = useColorModeValue('gray.600', 'gray.400');
 
+  // New color mode values for the card, moved to top level
+  const cardBg = useColorModeValue('white', 'rgba(0, 0, 0, 0.6)');
+  const cardBorderColor = useColorModeValue('gray.200', 'gray.600');
+  const cardColor = useColorModeValue('gray.800', 'white');
+
   // Dummy notification data
   const [notifications, setNotifications] = useState([
     { id: 1, status: 'warning', title: 'Low Balance', description: 'Your energy credit is running low. Top up soon!', isDismissed: false },
@@ -111,35 +116,48 @@ function NotificationsPage() {
           Notifications
         </Heading>
 
-        <Stack spacing={4}>
-          {activeNotifications.length > 0 ? (
-            activeNotifications.map((notif) => (
-              <Alert
-                key={notif.id}
-                status={notif.status}
-                variant="left-accent"
-                bg="rgba(255, 255, 255, 0.1)"
-                backdropFilter="blur(10px)"
-                border="1px solid rgba(255, 255, 255, 0.2)"
-                pr={10} // Add padding to the right to make space for the close button
-              >
-                <AlertIcon />
-                <Box flex="1">
-                  <AlertTitle mt={-1} mb={1} fontSize="md">{notif.title}</AlertTitle>
-                  <AlertDescription display="block">{notif.description}</AlertDescription>
-                </Box>
-                <CloseButton
-                  position="absolute"
-                  right="8px"
-                  top="8px"
-                  onClick={() => handleDismissNotification(notif.id)}
-                />
-              </Alert>
-            ))
-          ) : (
-            <Text textAlign="center" mt={8} color={textColor}>No new notifications.</Text>
-          )}
-        </Stack>
+        <Box
+          bg={cardBg}
+          boxShadow="xl"
+          borderRadius="xl"
+          p={8}
+          position="relative"
+          zIndex={2}
+          backdropFilter="blur(16px)"
+          border="1px solid"
+          borderColor={cardBorderColor}
+          color={cardColor}
+        >
+          <Stack spacing={4}>
+            {activeNotifications.length > 0 ? (
+              activeNotifications.map((notif) => (
+                <Alert
+                  key={notif.id}
+                  status={notif.status}
+                  variant="left-accent"
+                  bg="rgba(255, 255, 255, 0.1)"
+                  backdropFilter="blur(10px)"
+                  border="1px solid rgba(255, 255, 255, 0.2)"
+                  pr={10}
+                >
+                  <AlertIcon />
+                  <Box flex="1">
+                    <AlertTitle mt={-1} mb={1} fontSize="md">{notif.title}</AlertTitle>
+                    <AlertDescription display="block">{notif.description}</AlertDescription>
+                  </Box>
+                  <CloseButton
+                    position="absolute"
+                    right="8px"
+                    top="8px"
+                    onClick={() => handleDismissNotification(notif.id)}
+                  />
+                </Alert>
+              ))
+            ) : (
+              <Text textAlign="center" mt={8} color={textColor}>No new notifications.</Text>
+            )}
+          </Stack>
+        </Box>
 
       </Container>
     </Box>
