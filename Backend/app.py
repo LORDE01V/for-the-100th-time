@@ -11,7 +11,7 @@ from flask_jwt_extended import JWTManager
 import datetime
 from db_utils import create_topup_table  # Import the new function
 from app.routes.topup import topup_bp  # Add this import
-
+from Energy_optimizer.agent import EnergyUsageOptimizerAgent
 # Set up logging to console only
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

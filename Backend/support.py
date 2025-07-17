@@ -1,4 +1,3 @@
-from sqlite3.dbapi2 import connect
 import psycopg2
 from psycopg2 import OperationalError
 import os
@@ -13,6 +12,7 @@ import sys
 # Load environment variables
 load_dotenv()
 
+# ================== DATABASE CONNECTION ==================
 def connect_db():
     """Connect to PostgreSQL database"""
     password = os.getenv('DB_PASSWORD', '')
@@ -26,24 +26,36 @@ def connect_db():
             password=password,
             port=os.getenv('DB_PORT', '5432')
         )
-        return conn  # Return only the connection object
+        return conn, conn.cursor()
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
-        return None
+        return None, None
 
+# Add the get_db function here, right after the connect_db function
 def get_db():
     try:
+        db_host = os.getenv('DB_HOST', 'localhost')  # Default to 'localhost' if not set
+        db_name = os.getenv('DB_NAME', 'Fintech_Solar')  # Default if not set
+        db_user = os.getenv('DB_USER', 'postgres')  # Default if not set
+        db_password = os.getenv('DB_PASSWORD', '')  # Check for password
+        db_port = os.getenv('DB_PORT', '5432')  # Default port
+        
+        if not db_password:
+            logging.error('DB_PASSWORD is not set in your .env file. Please add it and try again.')
+            raise ValueError('DB_PASSWORD environment variable must be set.')
+        
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'Fintech_Solar'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', ''),  # Ensure this is set in your .env
-            port=os.getenv('DB_PORT', '5432')
+            host=db_host,
+            database=db_name,
+            user=db_user,
+            password=db_password,
+            port=db_port
         )
+        logging.info('Database connection successful.')
         return conn
     except OperationalError as e:
-        print(f"🚨 Database connection failed: {e}")
-        return None
+        logging.error(f'Database connection failed: {str(e)}. Please verify your .env file settings.')
+        raise  # Re-raise for the caller to handle
 
 # ================== CORE FUNCTIONS ==================
 def execute_query(operation=None, query=None, params=None):
@@ -115,173 +127,31 @@ def add_solar_system(installer_id, capacity_kw, components=None, installation_da
 def create_contract(user_id, system_id, monthly_payment, total_cost, start_date, end_date=None):
     """Create a new solar contract"""
     query = """
-    INSERT INTO environmental_impact (user_id, system_id, co2_saved, trees_equivalent, calculation_date)
-    VALUES (%s, %s, %s, %s, %s) RETURNING id
+    INSERT INTO solar_contracts 
+    (user_id, system_id, monthly_payment, total_cost, start_date, end_date)
+    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id
     """
+    return execute_query('insert', query, 
+                       (user_id, system_id, monthly_payment, total_cost, start_date, end_date))
 
-    co2_saved = 0  # Replace with actual calculation or value
-    trees_equivalent = 0  # Replace with actual calculation or value
-    calculation_date = datetime.datetime.now()  # Example: current timestam
-    return execute_query('insert', query, (user_id, system_id, co2_saved, trees_equivalent, calculation_date))
-
-# ================== FINANCIAL OPERATIONS ==================
-def create_expense(user_id, amount, description, date=None):
-    """Create a new expense for a user"""
+def get_user_contracts(user_id):
+    """Get all contracts for a user"""
     query = """
-    INSERT INTO expenses (user_id, amount, description, date)
-    VALUES (%s, %s, %s, %s) RETURNING id
+    SELECT sc.*, ss.capacity_kw, ss.components 
+    FROM solar_contracts sc
+    JOIN solar_systems ss ON sc.system_id = ss.id
+    WHERE sc.user_id = %s
     """
-    return execute_query('insert', query, (user_id, amount, description, date))
+    return execute_query('search', query, (user_id,))
 
-def save_payment_method(user_id, payment_type, card_number=None, expiry_date=None, card_holder_name=None, is_default=False, ewallet_provider=None, ewallet_identifier=None):
-    """Save a new payment method"""
-    try:
-        print("=== Save Payment Method Debug ===")
-        print(f"User ID: {user_id}")
-        print(f"Payment Type: {payment_type}")
-        
-        if payment_type == 'ewallet':
-            # Handle eWallet payment method
-            query = """
-            INSERT INTO payment_methods (
-                user_id, 
-                payment_type, 
-                ewallet_provider, 
-                ewallet_identifier, 
-                is_default
-            )
-            VALUES (%s, %s, %s, %s, %s) 
-            RETURNING id
-            """
-            result = execute_query('insert', query, (
-                user_id, 
-                payment_type, 
-                ewallet_provider, 
-                ewallet_identifier, 
-                is_default
-            ))
-        else:
-            # Handle card payment methods
-            if not expiry_date:  # Ensure expiry_date is valid
-                raise Exception("Expiry date is missing or invalid")
-            month, year = expiry_date.split('/')
-            expiry_date = f"20{year}-{month}-01"  # Convert to YYYY-MM-DD format
-
-            query = """
-            INSERT INTO payment_methods (
-                user_id, 
-                payment_type, 
-                card_number, 
-                expiry_date, 
-                card_holder_name, 
-                is_default
-            )
-            VALUES (%s, %s, %s, %s, %s, %s) 
-            RETURNING id
-            """
-            result = execute_query('insert', query, (
-                user_id, 
-                payment_type, 
-                card_number, 
-                expiry_date, 
-                card_holder_name, 
-                is_default
-            ))
-        
-        print(f"Query result: {result}")
-        return result
-
-    except Exception as e:
-        print(f"Error in save_payment_method: {str(e)}")
-        import traceback
-        print("Traceback:", traceback.format_exc())
-        raise
-
-def fetch_user_payment_methods(user_id):
-    """Fetch all payment methods for a user"""
-    query = """
-    SELECT id, payment_type, card_number, expiry_date, card_holder_name, ewallet_provider, ewallet_identifier, is_default
-    FROM payment_methods
-    WHERE user_id = %s
-    """
-    result = execute_query('search', query, (user_id,))
-    if result:
-        columns = ['id', 'payment_type', 'card_number', 'expiry_date', 'card_holder_name', 'ewallet_provider', 'ewallet_identifier', 'is_default']
-        return [dict(zip(columns, row)) for row in result]
-    return []
-
-def remove_payment_method(payment_method_id):
-    """Remove a payment method by its ID"""
-    query = """
-    DELETE FROM payment_methods
-    WHERE id = %s
-    RETURNING id
-    """
-    result = execute_query('delete', query, (payment_method_id,))
-    if result:
-        return {"message": f"Payment method with ID {result[0][0]} has been removed successfully."}
-    return {"error": "Payment method not found or could not be removed."}
-
-# ================== SUPPORT OPERATIONS ==================
-def create_support_ticket(name, email, subject, message):
-    query = """
-    INSERT INTO support (name, email, subject, message)
-    VALUES (%s, %s, %s, %s) RETURNING id
-    """
-    return execute_query('insert', query, (name, email, subject, message))
-
-# ================== NOTIFICATION OPERATIONS ==================
-def create_notification(user_id, title, message, type):
-    """Create a new notification"""
-    query = """
-    INSERT INTO notifications (user_id, title, message, type)
-    VALUES (%s, %s, %s, %s) RETURNING id
-    """
-    result = execute_query('insert', query, (user_id, title, message, type))
-    if not result:  # Ensure the query returned a result
-        raise Exception("Failed to create notification")
-    notification_id = result[0]
-    print(f"Notification created with ID: {notification_id}")
-    return notification_id
-
-def create_load_shedding_alert(user_id, stage, start_time, end_time, area):
-    """Create a load shedding alert"""
-    query = """
-    INSERT INTO load_shedding_alerts (user_id, stage, start_time, end_time, area)
-    VALUES (%s, %s, %s, %s, %s) RETURNING id
-    """
-    return execute_query('insert', query, (user_id, stage, start_time, end_time, area))
-
-# ================== REFERRAL & GROUP OPERATIONS ==================
-def create_referral(referrer_id, referred_email):
-    """Create a new referral"""
-    query = """
-    INSERT INTO referrals (referrer_id, referred_email)
-    VALUES (%s, %s) RETURNING id
-    """
-    return execute_query('insert', query, (referrer_id, referred_email))
-
-def create_group_campaign(creator_id, title, description, goal_participants, discount_percentage):
-    """Create a new group buying campaign"""
-    query = """
-    INSERT INTO group_campaigns (creator_id, title, description, goal_participants, discount_percentage)
-    VALUES (%s, %s, %s, %s, %s) RETURNING id
-    """
-    return execute_query('insert', query, (creator_id, title, description, goal_participants, discount_percentage))
-
-# Add this function BEFORE initialize_db()
-def add_energy_motto_column():
+# ================== PAYMENT OPERATIONS ==================
+def record_payment(contract_id, amount, payment_method):
+    """Record a payment and update contract balance"""
     conn, cur = connect_db()
     try:
-        connur = connect_db()
-        if not conn or not cur:
-            raise Exception("Database connection failed")
         cur.execute("BEGIN")
         
         # Record payment
-        contract_id = 1  # Replace with the actual contract ID or logic to fetch it
-        amount = 0  # Replace with the actual amount
-        payment_method = "default"  # Replace with the actual payment method
         cur.execute("""
         INSERT INTO payments (contract_id, amount, payment_method)
         VALUES (%s, %s, %s)
@@ -297,27 +167,78 @@ def add_energy_motto_column():
         conn.commit()
         return True
     except Exception as e:
-        if conn:
-            conn.rollback()
+        conn.rollback()
         print(f"🚨 Payment failed: {e}")
         return False
     finally:
         if cur: cur.close()
         if conn: conn.close()
 
-def create_stories_table():
+def get_payment_history(contract_id):
+    """Get payment history for a contract"""
     query = """
-    CREATE TABLE IF NOT EXISTS stories ( 
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(225) NOT NULL,      
-        email VARCHAR(225) NOT NULL,     
-        story TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+    SELECT id, amount, payment_date, payment_method 
+    FROM payments 
+    WHERE contract_id = %s
+    ORDER BY payment_date DESC
     """
-    execute_query('alter', query)
-    print("create_stories_table executed successfully.")
+    return execute_query('search', query, (contract_id,))
+
+
+def save_support_request(name, email, subject, message):
+    query = """
+    INSERT INTO support_requests (name, email, subject, message)
+    VALUES (%s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (name, email, subject, message))
+
+def save_community_story(user_name, story_text, rating):
+    query = """
+    INSERT INTO community_stories (user_name, story_text, rating)
+    VALUES (%s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (user_name, story_text, rating))
+
+
+def get_all_community_stories():
+    query = """
+    SELECT id, user_name, story_text, rating, created_at
+    FROM community_stories
+    ORDER BY created_at DESC
+    """
+    return execute_query('select', query)
+
+def save_profile_details(full_name, surname, email, phone_number, address):
+    query = """
+    INSERT INTO users (full_name, surname, email, phone_number, address)
+    VALUES (%s, %s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (full_name, surname, email, phone_number, address))
+
+def create_event(title, start, end, description, location, event_type):
+    """Insert a new event into the events table."""
+    query = """
+    INSERT INTO events_calendar (title, start, "end", description, location, event_type)
+    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;
+    """
+    print(f"Creating event with: {title}, {start}, {end}, {description}, {location}, {event_type}")
+    return execute_query('insert', query, (title, start, end, description, location, event_type))
+
+def get_all_events():
+    """Retrieve all events from the events table."""
+    query = "SELECT id, title, start, \"end\", description, location, event_type FROM events_calendar;"
+    result = execute_query('search', query)
+    columns = ['id', 'title', 'start', 'end', 'description', 'location', 'event_type']
+    return [dict(zip(columns, row)) for row in result]
+
+
+
+def delete_event(event_id):
+    """Delete an event by its ID."""
+    query = "DELETE FROM events_calendar WHERE id = %s;"
+    execute_query('insert', query, (event_id,))
+
+
 
 # Initialize database tables when module loads
 def initialize_db():
@@ -369,7 +290,89 @@ def initialize_db():
             payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             payment_method VARCHAR(50)
         )""")
+
         
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS support_requests (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            subject VARCHAR(255),
+            message TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS community_stories (
+            id SERIAL PRIMARY KEY,
+            user_name VARCHAR(100) NOT NULL,
+            story_text TEXT NOT NULL,
+            rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS profiledetails (
+            id INTEGER PRIMARY KEY,
+            full_name TEXT NOT NULL,
+            surname TEXT NOT NULL,
+            email TEXT,
+            phone_number TEXT,
+            address TEXT
+        )
+    """)
+ 
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS notification_preference (
+            user_id INTEGER PRIMARY KEY,
+            receive_sms BOOLEAN NOT NULL DEFAULT TRUE,
+            receive_email BOOLEAN NOT NULL DEFAULT TRUE,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+""")
+
+        cur.execute("""
+        CREATE OR REPLACE FUNCTION update_updated_at_column()
+        RETURNS TRIGGER AS $$
+        BEGIN
+            NEW.updated_at = CURRENT_TIMESTAMP;
+            RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+""")
+
+        cur.execute("""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+            SELECT 1
+            FROM pg_trigger
+            WHERE tgname = 'set_updated_at'
+        ) THEN
+            CREATE TRIGGER set_updated_at
+            BEFORE UPDATE ON notification_preference
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+        END IF;
+        END;
+        $$;
+    """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS events_calendar (
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            start TIMESTAMP NOT NULL,
+            "end" TIMESTAMP NOT NULL,
+            description TEXT NOT NULL,
+            location VARCHAR(255) NOT NULL,
+            event_type VARCHAR(50) NOT NULL
+        );
+        """)
+
+
         conn.commit()
         print("✅ Database tables initialized")
     except Exception as e:

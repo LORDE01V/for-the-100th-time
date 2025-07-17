@@ -14,10 +14,26 @@ from psycopg2 import sql, OperationalError
 from datetime import timedelta, datetime
 import secrets
 import os
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordBearer
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Optional, List
+import threading
+import uvicorn
+from flask import Blueprint, url_for, session
+from email_utils import send_welcome_email
+from app import create_app
+from hugging_services import HuggingFaceChatbot
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
 from support import connect_db
-
+from app.routes.support import support_bp 
+from app.routes.community_stories import community_stories_bp
+from app.routes.userprofile import profile_bp
+from app.routes.notification_preference import notifications_bp
+from app.routes.events_calendar import events_calendar_bp
 # Add the Backend directory and its parent to the Python path
 backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
 parent_dir = os.path.dirname(backend_dir)  # Parent directory: for-the-100th-time
@@ -27,11 +43,6 @@ sys.path.append(parent_dir)  # Add for-the-100th-time, to ensure subpackages are
 # Load environment variables (same as support.py)
 load_dotenv()
 
-def create_app():
-    """Factory function to create and configure the Flask application."""
-    app = Flask(__name__)
-    return app
-
 # Configuration (use environment variables for secrets in production)
 SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
@@ -39,7 +50,6 @@ JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
 # ================= FLASK APP =================
 # Rename existing app to flask_app
 flask_app = create_app()  # Use factory app
-
 flask_app.config.update(
     SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev'),
     SESSION_COOKIE_NAME='session',
@@ -54,30 +64,37 @@ flask_app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
 flask_app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
 flask_app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
 flask_app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+flask_app.config['JWT_HEADER_TYPE'] = 'Bearer' 
 
-
-# Initialize extensions
+# Initialize CORS properly in one place
 CORS(flask_app, 
-     resources={r"/api/*": {"origins": ["http://localhost:3000", "http://localhost:5000"]}},
-     expose_headers=["Authorization"],
-     supports_credentials=True)
+     resources={r"/api/*": {
+         "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000"],
+         "supports_credentials": True,
+         "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
+         "expose_headers": ["Authorization"],
+         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+     }}
+)
 jwt = JWTManager(flask_app)
 
 # Register blueprints
 flask_app.register_blueprint(home_bp)
 flask_app.register_blueprint(auth_bp, name='auth_bp')
 flask_app.register_blueprint(support_bp)
-flask_app.register_blueprint(events_bp)
-flask_app.register_blueprint(testimonials_bp)
+flask_app.register_blueprint(community_stories_bp)
+flask_app.register_blueprint(profile_bp)
+flask_app.register_blueprint(notifications_bp, url_prefix='/notifications')
+flask_app.register_blueprint(events_calendar_bp)
 
-# Add after request handler
-@flask_app.after_request
-def add_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-    return response
+# Remove the after_request handler entirely to avoid conflicts
+# @flask_app.after_request
+# def add_cors_headers(response):
+#     response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+#     response.headers['Access-Control-Allow-Credentials'] = 'true'
+#     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+#     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+#     return response
 
 # Database connection helper (PostgreSQL)
 def get_db():
@@ -133,9 +150,9 @@ def flask_register():
         return jsonify({
             'success': True,
             'user': {
-                'id': result[0],
-                'email': email,
-                'name': name
+                'id': user_data[0],
+                'email': user_data[1],
+                'name': user_data[2]
             }
         }), 201
 
@@ -143,10 +160,7 @@ def flask_register():
         print(f"Registration Error: {str(e)}")
         return jsonify({'success': False, 'message': 'Registration failed'}), 500
     finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
+        if conn: conn.close()
 
 @flask_app.route('/api/auth/login', methods=['POST'])
 def flask_login():
@@ -185,10 +199,8 @@ def flask_login():
         app.logger.error(f"Login error: {str(e)}")
         return jsonify({'success': False, 'message': 'Login failed'}), 500
     finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
+        if conn:
+            conn.close()
 
 @flask_app.route('/api/solar/systems', methods=['POST'])
 @jwt_required()
@@ -262,764 +274,71 @@ async def fastapi_register(user: UserRegister):
     conn = None
     try:
         conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
+            if cur.fetchone():
+                raise HTTPException(status_code=400, detail="Email exists")
 
-        cur = conn.cursor()
-        
-        # Start transaction
-        cur.execute("BEGIN")
-        
-        try:
-            # Delete all user-related data in the correct order (due to foreign key constraints)
-            # Delete from user_profiles
-            cur.execute('DELETE FROM user_profiles WHERE user_id = %s', (user_id,))
-            
-            # Delete from user_settings
-            cur.execute('DELETE FROM user_settings WHERE user_id = %s', (user_id,))
-            
-            # Delete from expenses
-            cur.execute('DELETE FROM expenses WHERE user_id = %s', (user_id,))
-            
-            # Delete from top_ups
-            cur.execute('DELETE FROM top_ups WHERE user_id = %s', (user_id,))
-            
-            # Delete from user_balances
-            cur.execute('DELETE FROM user_balances WHERE user_id = %s', (user_id,))
-            
-            # Delete from auto_top_up_settings
-            cur.execute('DELETE FROM auto_top_up_settings WHERE user_id = %s', (user_id,))
-            
-            # Delete from social_links
-            cur.execute('DELETE FROM social_links WHERE user_id = %s', (user_id,))
-            
-            # Delete from solar_systems
-            cur.execute('DELETE FROM solar_systems WHERE user_id = %s', (user_id,))
-            
-            # Delete from energy_usage
-            cur.execute('DELETE FROM energy_usage WHERE user_id = %s', (user_id,))
-            
-            # Delete from environmental_impact
-            cur.execute('DELETE FROM environmental_impact WHERE user_id = %s', (user_id,))
-            
-            # Delete from payment_methods
-            cur.execute('DELETE FROM payment_methods WHERE user_id = %s', (user_id,))
-            
-            # Delete from transactions
-            cur.execute('DELETE FROM transactions WHERE user_id = %s', (user_id,))
-            
-            # Delete from forum_topics
-            cur.execute('DELETE FROM forum_topics WHERE user_id = %s', (user_id,))
-            
-            # Delete from forum_replies
-            cur.execute('DELETE FROM forum_replies WHERE user_id = %s', (user_id,))
-            
-            # Delete from support_tickets
-            cur.execute('DELETE FROM support_tickets WHERE user_id = %s', (user_id,))
-            
-            # Finally, delete the user
-            cur.execute('DELETE FROM users WHERE id = %s', (user_id,))
-            
-            # Commit the transaction
-            conn.commit()
-            
-            return jsonify({
-                'success': True,
-                'message': 'Account deleted successfully'
-            })
-            
-        except Exception as e:
-            # Rollback in case of error
-            if conn:  # Ensure conn is not None before rollback
-                conn.rollback()
-            print(f"Error during account deletion: {str(e)}")
-            raise
-            
-    except Exception as e:
-        print(f"Delete account error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to delete account'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
-
-# Forum routes
-@flask_app.route('/api/forum/topics', methods=['GET'])
-@jwt_required()
-def get_forum_topics():
-    try:
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Get all topics with author info and reply count
-        cur.execute('''
-            SELECT 
-                t.id,
-                t.title,
-                t.content,
-                t.created_at,
-                u.full_name as author_name,
-                u.id as author_id,
-                COUNT(r.id) as reply_count,
-                COALESCE(MAX(r.created_at), t.created_at) as last_activity
-            FROM forum_topics t
-            LEFT JOIN users u ON t.user_id = u.id
-            LEFT JOIN forum_replies r ON t.id = r.topic_id
-            GROUP BY t.id, u.full_name, u.id
-            ORDER BY last_activity DESC
-        ''')
-        
-        topics = []
-        for row in cur.fetchall():
-            topics.append({
-                'id': row[0],
-                'title': row[1],
-                'content': row[2],
-                'created_at': row[3].isoformat(),
-                'author': {
-                    'id': row[5],
-                    'name': row[4]
-                },
-                'posts': row[6] + 1,  # Include the original post in count
-                'last_activity': row[7].isoformat()
-            })
-        
-        return jsonify({
-            'success': True,
-            'topics': topics
-        })
-
-    except Exception as e:
-        print(f"Error fetching forum topics: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to fetch forum topics'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
-
-@flask_app.route('/api/forum/topics', methods=['POST'])
-@jwt_required()
-def create_forum_topic():
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        title = data.get('title')
-        content = data.get('content')
-
-        if not all([title, content]):
-            return jsonify({'success': False, 'message': 'Title and content are required'}), 400
-
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Create new topic
-        cur.execute('''
-            INSERT INTO forum_topics (user_id, title, content)
-            VALUES (%s, %s, %s)
-            RETURNING id, created_at
-        ''', (user_id, title, content))
-        
-        result = cur.fetchone()
-        if not result:  # Ensure the query returned a result
-            return jsonify({'success': False, 'message': 'Failed to create topic'}), 500
-        topic_id, created_at = result
-        
-        # Get author info
-        cur.execute('SELECT full_name FROM users WHERE id = %s', (user_id,))
-        result = cur.fetchone()
-        if not result:  # Ensure the query returned a result
-            return jsonify({'success': False, 'message': 'Failed to retrieve author name'}), 500
-        author_name = result[0]
-        
-        return jsonify({
-            'success': True,
-            'topic': {
-                'id': topic_id,
-                'title': title,
-                'content': content,
-                'created_at': created_at.isoformat(),
-                'author': {
-                    'id': user_id,
-                    'name': author_name
-                },
-                'posts': 1,
-                'last_activity': created_at.isoformat()
-            }
-        }), 201
-
-    except Exception as e:
-        print(f"Error creating forum topic: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to create forum topic'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
-
-@flask_app.route('/api/forum/topics/<int:topic_id>', methods=['GET'])
-@jwt_required()
-def get_forum_topic(topic_id):
-    try:
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Get topic with author info
-        cur.execute('''
-            SELECT 
-                t.id,
-                t.title,
-                t.content,
-                t.created_at,
-                u.id as author_id,
-                u.full_name as author_name
-            FROM forum_topics t
-            JOIN users u ON t.user_id = u.id
-            WHERE t.id = %s
-        ''', (topic_id,))
-        
-        topic = cur.fetchone()
-        if not topic:
-            return jsonify({'success': False, 'message': 'Topic not found'}), 404
-        
-        # Get all replies for the topic
-        cur.execute('''
-            SELECT 
-                r.id,
-                r.content,
-                r.created_at,
-                u.id as author_id,
-                u.full_name as author_name
-            FROM forum_replies r
-            JOIN users u ON r.user_id = u.id
-            WHERE r.topic_id = %s
-            ORDER BY r.created_at ASC
-        ''', (topic_id,))
-        
-        replies = []
-        for row in cur.fetchall():
-            replies.append({
-                'id': row[0],
-                'content': row[1],
-                'created_at': row[2].isoformat(),
-                'author': {
-                    'id': row[3],
-                    'name': row[4]
-                }
-            })
-        
-        return jsonify({
-            'success': True,
-            'topic': {
-                'id': topic[0],
-                'title': topic[1],
-                'content': topic[2],
-                'created_at': topic[3].isoformat(),
-                'author': {
-                    'id': topic[4],
-                    'name': topic[5]
-                },
-                'replies': replies
-            }
-        })
-
-    except Exception as e:
-        print(f"Error fetching forum topic: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to fetch forum topic'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
-
-@flask_app.route('/api/forum/topics/<int:topic_id>/replies', methods=['POST'])
-@jwt_required()
-def create_forum_reply(topic_id):
-    try:
-        user_id = get_jwt_identity()
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        content = data.get('content')
-        if not content:
-            return jsonify({'success': False, 'message': 'Content is required'}), 400
-
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Verify topic exists
-        cur.execute('SELECT id FROM forum_topics WHERE id = %s', (topic_id,))
-        if not cur.fetchone():
-            return jsonify({'success': False, 'message': 'Topic not found'}), 404
-        
-        # Create reply
-        cur.execute('''
-            INSERT INTO forum_replies (topic_id, user_id, content)
-            VALUES (%s, %s, %s)
-            RETURNING id, created_at
-        ''', (topic_id, user_id, content))
-        
-        result = cur.fetchone()
-        if not result:  # Ensure the query returned a result
-            return jsonify({'success': False, 'message': 'Failed to create reply'}), 500
-        reply_id, created_at = result
-        
-        # Get author info
-        cur.execute('SELECT full_name FROM users WHERE id = %s', (user_id,))
-        result = cur.fetchone()
-        if not result:  # Ensure the query returned a result
-            return jsonify({'success': False, 'message': 'Failed to retrieve author name'}), 500
-        author_name = result[0]
-        
-        return jsonify({
-            'success': True,
-            'reply': {
-                'id': reply_id,
-                'content': content,
-                'created_at': created_at.isoformat(),
-                'author': {
-                    'id': user_id,
-                    'name': author_name
-                }
-            }
-        }), 201
-
-    except Exception as e:
-        print(f"Error creating forum reply: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to create forum reply'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
-
-@flask_app.route('/api/payment-methods', methods=['POST'])
-@jwt_required()
-def add_payment_method():
-    try:
-        # Debug logging
-        print("=== Payment Method Creation Request Debug ===")
-        print("Request Headers:", dict(request.headers))
-        print("Request Data:", request.get_json())
-        
-        user_id = get_jwt_identity()
-        print("User ID:", user_id)
-        
-        data = request.get_json()
-        if not data:
-            print("No data received in request")
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        # Validate required fields
-        required_fields = ['type', 'cardNumber', 'expiryDate', 'cardHolderName']
-        for field in required_fields:
-            if field not in data:
-                print(f"Missing required field: {field}")
-                return jsonify({
-                    'success': False,
-                    'message': f'Missing required field: {field}'
-                }), 400
-
-        # Convert frontend field names to backend field names
-        payment_data = {
-            'payment_type': data['type'],
-            'card_number': data['cardNumber'],
-            'expiry_date': data['expiryDate'],
-            'card_holder_name': data['cardHolderName'],
-            'is_default': data.get('isDefault', False)
-        }
-
-        print("Processed payment data:", payment_data)
-
-        # Save payment method
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-        cur = conn.cursor()
-        try:
-            result = save_payment_method(
-                user_id=user_id,
-                payment_type=payment_data['payment_type'],
-                card_number=payment_data['card_number'],
-                expiry_date=payment_data['expiry_date'],
-                card_holder_name=payment_data['card_holder_name'],
-                is_default=payment_data['is_default']
+            hashed_pw = generate_password_hash(user.password)
+            cur.execute(
+                """INSERT INTO users (email, password_hash, full_name, phone)
+                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+                (user.email, hashed_pw, user.name, user.phone)
             )
+            user_data = cur.fetchone()
+            conn.commit()
 
-            print("Save payment method result:", result)
-
-            if result:
-                # Create notification for successful payment method addition
-                try:
-                    # Create notification
-                    cur.execute('''
-                        INSERT INTO notifications (user_id, title, message, type)
-                        VALUES (%s, %s, %s, %s)
-                    ''', (
-                        user_id,
-                        'Payment Method Added',
-                        f'Successfully added a new {payment_data["payment_type"]} payment method.',
-                        'success'
-                    ))
-                    conn.commit()
-                except Exception as e:
-                    print(f"Error creating notification: {str(e)}")
-                    conn.rollback()
-
-            return jsonify({
-                'success': True,
-                'message': 'Payment method saved successfully',
-                'payment_method_id': result
-            })
-        except Exception as e:
-            print("Error saving payment method:", str(e))
-            import traceback
-            print("Traceback:", traceback.format_exc())
-            return jsonify({'success': False, 'message': str(e)}), 500
+        return {
+            "success": True,
+            "user": {"id": user_data[0], "email": user_data[1], "name": user_data[2]}
+        }
     except Exception as e:
-        print("Error saving payment method:", str(e))
-        import traceback
-        print("Traceback:", traceback.format_exc())
-        return jsonify({'success': False, 'message': str(e)}), 500
-
-@flask_app.route('/api/payment-methods', methods=['GET'])
-@jwt_required()
-def get_payment_methods():
-    try:
-        user_id = get_jwt_identity()
-        payment_methods = fetch_user_payment_methods(user_id)
-        
-        # Format the payment methods for the frontend
-        formatted_methods = []
-        
-        # Check if payment_methods is not None and is iterable
-        if payment_methods:
-            for method in payment_methods:
-                try:
-                    formatted_method = {
-                        'id': method['id'],  # Assuming id is the first column
-                        'payment_type': method['payment_type'],
-                        'card_number': method['card_number'],
-                        'expiry_date': method['expiry_date'].strftime('%m/%y') if method['expiry_date'] else None,
-                        'card_holder_name': method['card_holder_name'],
-                        'is_default': method['is_default'],
-                        'created_at': method['created_at'].isoformat() if method['created_at'] else None  # Add created_at
-                    }
-                    formatted_methods.append(formatted_method)
-                except (IndexError, AttributeError) as e:
-                    print(f"Error formatting payment method: {str(e)}")
-                    continue
-        
-        print("Debug - Formatted payment methods:", formatted_methods)  # Debug log
-        
-        return jsonify({
-            'success': True,
-            'payment_methods': formatted_methods
-        })
-    except Exception as e:
-        print("Error fetching payment methods:", str(e))
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
-
-@flask_app.route('/api/payment-methods/<int:payment_method_id>', methods=['DELETE'])
-@jwt_required()
-def delete_payment_method(payment_method_id):
-    try:
-        user_id = get_jwt_identity()
-        
-        # Get payment method details before deleting
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-        cur = conn.cursor()
-        try:
-            cur.execute('''
-                SELECT payment_type, card_number, card_holder_name 
-                FROM payment_methods 
-                WHERE id = %s AND user_id = %s
-            ''', (payment_method_id, user_id))
-            payment_method = cur.fetchone()
-            
-            if not payment_method:
-                return jsonify({
-                    'success': False,
-                    'message': 'Payment method not found or could not be deleted'
-                }), 404
-            
-            # Use the renamed function to delete the payment method
-            result = remove_payment_method(payment_method_id)
-            
-            if result:
-                # Create notification for successful payment method deletion
-                cur.execute('''
-                    INSERT INTO notifications (user_id, title, message, type)
-                    VALUES (%s, %s, %s, %s)
-                ''', (
-                    user_id,
-                    'Payment Method Removed',
-                    f'Successfully removed your {payment_method[0]} payment method ending in {payment_method[1][-4:] if payment_method[1] else "N/A"}.',
-                    'info'
-                ))
-                conn.commit()
-                
-                return jsonify({
-                    'success': True,
-                    'message': 'Payment method deleted successfully'
-                })
-            else:
-                return jsonify({
-                    'success': False,
-                    'message': 'Payment method not found or could not be deleted'
-                }), 404
-
-        except Exception as e:
-            conn.rollback()
-            raise e
-        finally:
-            if cur: cur.close()
-            if conn: conn.close()
-
-    except Exception as e:
-        print(f"Error deleting payment method: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
-
-@flask_app.route('/api/payment-methods/<int:payment_method_id>/default', methods=['PUT'])
-@jwt_required()
-def set_default_payment_method(payment_method_id):
-    try:
-        user_id = get_jwt_identity()
-        
-        # First, unset all default payment methods for this user
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-        cur = conn.cursor()
-        
-        # Update all payment methods to not be default
-        cur.execute('''
-            UPDATE payment_methods 
-            SET is_default = FALSE 
-            WHERE user_id = %s
-        ''', (user_id,))
-        
-        # Set the selected payment method as default
-        cur.execute('''
-            UPDATE payment_methods 
-            SET is_default = TRUE 
-            WHERE id = %s AND user_id = %s
-            RETURNING id
-        ''', (payment_method_id, user_id))
-        
-        result = cur.fetchone()
-        conn.commit()
-        
-        if result:
-            return jsonify({
-                'success': True,
-                'message': 'Default payment method updated successfully'
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': 'Payment method not found'
-            }), 404
-
-    except Exception as e:
-        print(f"Error setting default payment method: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
+        if conn: conn.close()
 
-# Add debug logging
-@flask_app.before_request
-def log_request_info():
-    print('Headers:', dict(request.headers))
-    print('Body:', request.get_data())
-    print('Method:', request.method)
-    print('URL:', request.url)
-
-@flask_app.after_request
-def after_request(response):
-    print('Response:', response.get_data())
-    return response
-
-@flask_app.route('/api/notifications', methods=['GET'])
-@jwt_required()
-def get_notifications():
+@app.post("/fastapi/auth/login")
+async def fastapi_login(user: UserLogin):
+    """FastAPI version of /api/auth/login"""
+    conn = None
     try:
-        user_id = get_jwt_identity()
         conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+        with conn.cursor() as cur:
+            cur.execute(
+                'SELECT id, email, password_hash, full_name FROM users WHERE email = %s',
+                (user.email,)
+            )
+            db_user = cur.fetchone()
 
-        cur = conn.cursor()
-        
-        # Get all notifications for the user
-        cur.execute('''
-            SELECT id, title, message, type, is_read, created_at
-            FROM notifications
-            WHERE user_id = %s
-            ORDER BY created_at DESC
-        ''', (user_id,))
-        
-        notifications = cur.fetchall()
-        
-        return jsonify({
-            'success': True,
-            'notifications': [{
-                'id': n[0],
-                'title': n[1],
-                'message': n[2],
-                'type': n[3],
-                'is_read': n[4],
-                'created_at': n[5].isoformat()
-            } for n in notifications]
-        })
-
+            if db_user and check_password_hash(db_user[2], user.password):
+                token = create_access_token(identity=db_user[0])
+                return {
+                    "success": True,
+                    "token": token,
+                    "user": {"id": db_user[0], "name": db_user[3], "email": db_user[1]}
+                }
+        raise HTTPException(status_code=401, detail="Invalid credentials")
     except Exception as e:
-        print(f"Get notifications error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to get notifications'}), 500
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
+        if conn: conn.close()
 
-@flask_app.route('/api/notifications/<int:notification_id>/read', methods=['PUT'])
-@jwt_required()
-def mark_notification_read(notification_id):
+# Initialize chatbot
+chatbot = HuggingFaceChatbot()
+
+class ChatMessage(BaseModel):
+    message: str
+    history: List[dict]
+
+@app.post("/api/chat")
+async def chat_endpoint(chat_message: ChatMessage):
     try:
-        user_id = get_jwt_identity()
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        cur = conn.cursor()
-        
-        # Mark notification as read
-        cur.execute('''
-            UPDATE notifications
-            SET is_read = TRUE
-            WHERE id = %s AND user_id = %s
-            RETURNING id
-        ''', (notification_id, user_id))
-        
-        if cur.rowcount == 0:
-            return jsonify({'success': False, 'message': 'Notification not found'}), 404
-        
-        conn.commit()
-        
-        return jsonify({
-            'success': True,
-            'message': 'Notification marked as read'
-        })
-
+        response = chatbot.get_response(chat_message.message)
+        return {"response": response}
     except Exception as e:
-        print(f"Mark notification read error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to mark notification as read'}), 500
-    finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
+        raise HTTPException(status_code=500, detail=str(e))
 
-@flask_app.route('/api/profile/picture', methods=['POST'])
-@jwt_required()
-def upload_profile_picture():
-    try:
-        if 'profile_picture' not in request.files:
-            return jsonify({'success': False, 'message': 'No file provided'}), 400
-            
-        file = request.files['profile_picture']
-        if file.filename == '':
-            return jsonify({'success': False, 'message': 'No file selected'}), 400
-            
-        if file and allowed_file(file.filename):
-            user_id = get_jwt_identity()
-            filename = secure_filename(f"{user_id}_{file.filename}")
-            filepath = os.path.join(UPLOAD_FOLDER, filename)
-            file.save(filepath)
-            
-            # Store the file path in the database
-            conn = get_db()
-            if not conn:
-                return jsonify({'success': False, 'message': 'Database error'}), 500
-            cur = conn.cursor()
-            try:
-                cur.execute('''
-                    UPDATE user_profiles 
-                    SET profile_picture_url = %s 
-                    WHERE user_id = %s
-                ''', (f"/uploads/profile_pictures/{filename}", user_id))
-                conn.commit()
-                
-                return jsonify({
-                    'success': True,
-                    'profile_picture_url': f"/uploads/profile_pictures/{filename}"
-                })
-            except Exception as e:
-                conn.rollback()
-                raise e
-            finally:
-                cur.close()
-                if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                    conn.close()
-                
-        return jsonify({'success': False, 'message': 'Invalid file type'}), 400
-        
-    except Exception as e:
-        print(f"Upload profile picture error: {str(e)}")
-        return jsonify({'success': False, 'message': f'Failed to upload profile picture: {str(e)}'}), 500
-
-@flask_app.route('/api/chat', methods=['POST'])
-def chat():
-    try:
-        # Example chat logic
-        data = request.get_json()
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-        user_message = data.get('message', '')
-        response = process_chat_message(user_message)  # Replace with actual chat processing logic
-        return jsonify({'success': True, 'response': response})
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Internal server error'}), 500
-
-def process_chat_message(user_message):
-    """Process the chat message and return a response."""
-    # Replace this with actual chat processing logic
-    return f"Echo: {user_message}"
-
+# ================= RUN BOTH APPS =================
 if __name__ == '__main__':
     flask_app.run(host='0.0.0.0', port=5000, debug=True)
 
