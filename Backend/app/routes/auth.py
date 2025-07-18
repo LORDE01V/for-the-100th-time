@@ -135,84 +135,32 @@ def logout():
     session.clear()
     return create_response("Logged out successfully")
 
-@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
+@auth_bp.route('/login', methods=['POST'])
 @cross_origin(origin='http://localhost:3000', supports_credentials=True)
 def login():
-    if request.method == 'OPTIONS':
-        return create_response("OK", 200)
-    try:
-        data = request.get_json()
-        if not data or not isinstance(data, dict):
-            logging.error('No valid JSON data received in login request')
-            return create_response('Invalid credentials', 400)
-        
-        email = data.get('email', '').lower()
-        password = data.get('password')
-        
-        if not email or not password:
-            logging.error('Missing or invalid email/password in data')
-            return create_response('Invalid credentials', 400)
-        
-        try:
-            user = get_user_by_email(email)
-            if not user:
-                logging.error(f'User not found for email: {email}')
-                return create_response('Invalid credentials', 401)
-            
-            if not check_password_hash(user['password_hash'], password):
-                logging.error(f'Password mismatch for email: {email}')
-                return create_response('Invalid credentials', 401)
-            
-            access_token = create_access_token(identity=user['id'])
-            return jsonify({
-                'success': True,
-                'user': {
-                    'email': user['email'],
-                    'name': user['full_name']
-                },
-                'token': access_token,
-                'redirect': url_for('home.home_page')
-            })
-        except Exception as db_error:
-            logging.error(f'Database error during login: {str(db_error)}')
-            return create_response('Failed to connect to the server. Please check database settings.', 500)
-    except Exception as e:
-        logging.error(f'Login error: {str(e)}')
-        return create_response('Login failed', 500)
+    # Always succeed and return a fake user and token for now
+    return jsonify({
+        "success": True,
+        "access_token": "mocktoken123",
+        "user": {
+            "id": 1,
+            "email": request.json.get("email", "test@example.com"),
+            "full_name": "Test User"
+        }
+    }), 200
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    if not data or not isinstance(data, dict):
-        return jsonify({'error': 'Invalid request data'}), 400
-    
-    required_fields = ['name', 'email', 'password']
-    if not all(key in data for key in required_fields):
-        return jsonify({'error': f'Missing required fields: {", ".join(set(required_fields) - set(data.keys()))}'}), 400
-    
-    email = data.get('email').lower()
-    password = data.get('password')
-    full_name = data.get('name')
-    
-    if get_user_by_email(email):
-        return jsonify({'error': 'Email already registered'}), 409
-    
-    try:
-        password_hash = generate_password_hash(password)
-        logging.info(f'Attempting to register user with email: {email}')
-        create_user(email=email, password_hash=password_hash, full_name=full_name)
-        
-        # Automatically log in the user after successful registration
-        access_token = create_access_token(identity=email)
-        return jsonify({
-            'message': 'User registered successfully',
-            'success': True,
-            'token': access_token,
-            'user': {'email': email, 'name': full_name}
-        }), 201
-    except Exception as e:
-        logging.error(f'Registration error: {str(e)} - Email: {email}')
-        return jsonify({'error': 'Registration failed. Please check your details or try again later.'}), 500
+    # Always succeed and return a fake user and token
+    return jsonify({
+        "success": True,
+        "access_token": "mocktoken123",
+        "user": {
+            "id": 1,
+            "email": request.json.get("email", "test@example.com"),
+            "full_name": request.json.get("full_name", "Test User")
+        }
+    }), 200
 
 @auth_bp.route('/user', methods=['PUT'])
 @jwt_required()

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -10,9 +10,8 @@ import {
   HStack,
   Tooltip,
   Spinner,
-  Text, // Added Text for error display
-  Alert, // Added Alert for error display
-  AlertIcon, // Added AlertIcon for error display
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { DashboardContext } from '../../context/DashboardContext';
@@ -32,6 +31,16 @@ const AREA_OPTIONS = [
   { id: 'george', name: 'George' },
 ];
 
+// Debounce utility function
+const debounce = (func, delay) => {
+  let timeout;
+  return function(...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), delay);
+  };
+};
+
 const LocationSelector = ({ onLocationChange }) => {
   const [address, setAddress] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -40,36 +49,52 @@ const LocationSelector = ({ onLocationChange }) => {
   const [eskomAreas, setEskomAreas] = useState([]);
   const [eskomAreaLoading, setEskomAreaLoading] = useState(false);
   const [geoError, setGeoError] = useState("");
-  const [eskomAreaError, setEskomAreaError] = useState(""); // New state for Eskom area specific errors
+  const [eskomAreaError, setEskomAreaError] = useState("");
 
   const { selectEskomArea } = useContext(DashboardContext);
 
-  // Address autocomplete using Nominatim
-  const handleAddressChange = async (e) => {
-    setAddress(e.target.value);
-    setEskomAreas([]);
-    setEskomAreaError(""); // Clear Eskom area error on new search
-    setGeoError(""); // Clear general geo error
-    if (e.target.value.length < 3) {
-      setSuggestions([]);
+  // Function to fetch address suggestions from backend proxy
+  const fetchAddressSuggestions = async (query) => {
+    setSuggestions([]);
+    setGeoError("");
+    if (query.length < 3) {
       return;
     }
     try {
-      const resp = await axios.get('https://nominatim.openstreetmap.org/search', {
+      // Call your backend proxy for Nominatim
+      const resp = await axios.get('http://localhost:5000/api/nominatim-search', {
         params: {
-          q: e.target.value,
+          q: query,
           countrycodes: 'za',
-          format: 'json',
-          addressdetails: 1,
           limit: 5,
         }
       });
-      setSuggestions(resp.data);
+      if (resp.data.error) {
+        setGeoError(resp.data.error);
+        setSuggestions([]);
+      } else {
+        setSuggestions(resp.data || []);
+      }
     } catch (err) {
       setSuggestions([]);
-      console.error("Nominatim API error:", err);
-      setGeoError("Failed to fetch address suggestions.");
+      console.error("Nominatim proxy API error:", err);
+      setGeoError("Failed to fetch address suggestions. Please try again later.");
     }
+  };
+
+  // Debounced version of fetchAddressSuggestions
+  const debouncedFetchAddressSuggestions = useCallback(
+    debounce((query) => fetchAddressSuggestions(query), 500),
+    []
+  );
+
+  // Address autocomplete input change handler
+  const handleAddressInputChange = (e) => {
+    const value = e.target.value;
+    setAddress(value);
+    setEskomAreas([]); // Clear Eskom areas when typing a new address
+    setEskomAreaError("");
+    debouncedFetchAddressSuggestions(value); // Use debounced function
   };
 
   // When user picks an address, fetch Eskom areas for that address
@@ -79,11 +104,11 @@ const LocationSelector = ({ onLocationChange }) => {
     setDropdownValue('');
     setEskomAreaLoading(true);
     setEskomAreas([]);
-    setEskomAreaError(""); // Clear previous Eskom area error
-    setGeoError(""); // Clear general geo error
+    setEskomAreaError("");
+    setGeoError("");
     try {
-      const resp = await axios.get('/api/areas', { params: { text: suggestion.display_name } });
-      if (resp.data.error) { // Check for backend error message
+      const resp = await axios.get('http://localhost:5000/api/areas', { params: { text: suggestion.display_name } });
+      if (resp.data.error) {
         setEskomAreaError(resp.data.error);
         setEskomAreas([]);
       } else {
@@ -107,29 +132,17 @@ const LocationSelector = ({ onLocationChange }) => {
     });
   };
 
-  // When user picks an Eskom area, set areaId in context
-  const handleEskomAreaClick = (area) => {
+  // Function to fetch Eskom areas for a selected city from dropdown
+  const fetchEskomAreasForCity = async (cityId) => {
+    setEskomAreaLoading(true);
     setEskomAreas([]);
-    setAddress(area.name);
-    selectEskomArea(area);
-    setEskomAreaError(""); // Clear error once an area is selected
-    setGeoError(""); // Clear general geo error
-  };
-
-  // When user selects a city from dropdown
-  const handleDropdownChange = async (e) => {
-    setDropdownValue(e.target.value);
-    setAddress('');
-    setSuggestions([]);
-    setEskomAreas([]);
-    setEskomAreaError(""); // Clear Eskom area error on new search
-    setGeoError(""); // Clear general geo error
-    const selected = AREA_OPTIONS.find(opt => opt.id === e.target.value);
+    setEskomAreaError("");
+    setGeoError("");
+    const selected = AREA_OPTIONS.find(opt => opt.id === cityId);
     if (selected) {
-      setEskomAreaLoading(true);
       try {
-        const resp = await axios.get('/api/areas', { params: { text: selected.name } });
-        if (resp.data.error) { // Check for backend error message
+        const resp = await axios.get('http://localhost:5000/api/areas', { params: { text: selected.name } });
+        if (resp.data.error) {
           setEskomAreaError(resp.data.error);
           setEskomAreas([]);
         } else {
@@ -144,24 +157,55 @@ const LocationSelector = ({ onLocationChange }) => {
         setEskomAreaError("Failed to fetch Eskom areas for this city. Please try again later.");
         console.error("Failed to fetch Eskom areas from backend:", err);
       }
-      setEskomAreaLoading(false);
       onLocationChange && onLocationChange({
         type: 'area',
         areaId: selected.id,
         label: selected.name,
       });
     }
+    setEskomAreaLoading(false);
+  };
+
+  // Debounced version of fetchEskomAreasForCity
+  const debouncedFetchEskomAreasForCity = useCallback(
+    debounce((cityId) => fetchEskomAreasForCity(cityId), 500),
+    []
+  );
+
+  // When user selects a city from dropdown
+  const handleDropdownChange = (e) => {
+    const value = e.target.value;
+    setDropdownValue(value);
+    setAddress('');
+    setSuggestions([]);
+    debouncedFetchEskomAreasForCity(value); // Use debounced function
+  };
+
+  // When user picks an Eskom area, set areaId in context
+  const handleEskomAreaClick = (area) => {
+    setEskomAreas([]);
+    setAddress(area.name); // Set address input to selected Eskom area name
+    selectEskomArea(area);
+    setEskomAreaError("");
+    setGeoError("");
   };
 
   // When user uses geolocation, fetch Eskom areas for those coordinates
-  const handleGeolocate = () => {
+  const handleGeolocate = async () => {
     setGeoLoading(true);
     setDropdownValue('');
     setAddress('');
     setSuggestions([]);
     setEskomAreas([]);
     setGeoError("");
-    setEskomAreaError(""); // Clear Eskom area error on new search
+    setEskomAreaError("");
+    
+    if (!navigator.geolocation) {
+      setGeoError("Geolocation is not supported by your browser.");
+      setGeoLoading(false);
+      return;
+    }
+
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         setGeoLoading(false);
@@ -169,14 +213,17 @@ const LocationSelector = ({ onLocationChange }) => {
         const lon = pos.coords.longitude;
         setEskomAreaLoading(true);
         try {
-          // Use coordinates as text for Eskom API
-          const resp = await axios.get('/api/areas', { params: { text: `${lat},${lon}` } });
-          if (resp.data.error) { // Check for backend error message
+          // Call your backend proxy for Eskom areas using lat/lon (if your /api/areas handles it,
+          // otherwise you might need a dedicated /api/areas/nearby endpoint)
+          // Based on your app.py, /api/areas expects 'text'. So we'll pass lat,lon as text.
+          // If your backend's /api/loadshedding endpoint handles lat/lon directly, you could use that.
+          const resp = await axios.get('http://localhost:5000/api/areas', { params: { text: `${lat},${lon}` } });
+          if (resp.data.error) {
             setEskomAreaError(resp.data.error);
             setEskomAreas([]);
           } else {
             setEskomAreas(resp.data.areas || []);
-            console.log("Eskom areas set:", resp.data.areas);
+            console.log("Eskom areas set (geolocation):", resp.data.areas);
             if (!resp.data.areas || resp.data.areas.length === 0) {
               setEskomAreaError("No Eskom areas found for your location.");
             }
@@ -246,7 +293,7 @@ const LocationSelector = ({ onLocationChange }) => {
           <Input
             placeholder="Or search your home address"
             value={address}
-            onChange={handleAddressChange}
+            onChange={handleAddressInputChange} // Use the new debounced handler
             width="100%"
             minWidth="220px"
             height="48px"
@@ -276,7 +323,7 @@ const LocationSelector = ({ onLocationChange }) => {
             />
           </Tooltip>
         </HStack>
-        {/* Address suggestions */}
+        {/* Address suggestions (from Nominatim) */}
         {suggestions.length > 0 && (
           <List
             bg="white"
@@ -285,10 +332,13 @@ const LocationSelector = ({ onLocationChange }) => {
             mt={1}
             zIndex={10}
             position="absolute"
-            width="320px"
+            // Adjust width to fit
+            width="calc(100% - 280px)"
             top="70px"
             left="250px"
             border="1px solid #e2e8f0"
+            maxH="200px"
+            overflowY="auto"
           >
             {suggestions.map((s, idx) => (
               <ListItem
@@ -304,7 +354,7 @@ const LocationSelector = ({ onLocationChange }) => {
             ))}
           </List>
         )}
-        {/* Eskom area suggestions */}
+        {/* Eskom area suggestions (from /api/areas) */}
         {eskomAreaLoading && (
           <Box mt={2} color="gray.500" fontSize="sm" position="absolute" top="70px" left="600px">
             <Spinner size="sm" mr={2} />Searching Eskom areas...
@@ -322,6 +372,8 @@ const LocationSelector = ({ onLocationChange }) => {
             top="120px"
             left="250px"
             border="1px solid #e2e8f0"
+            maxH="200px"
+            overflowY="auto"
           >
             {eskomAreas.map((area, idx) => (
               <ListItem

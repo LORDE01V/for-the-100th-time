@@ -7,13 +7,15 @@ import re
 import requests
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from hugging_services import HuggingFaceChatbot
+from chat_interface import EnhancedChatbot
 import logging
 from authlib.integrations.flask_client import OAuth
 from flask_jwt_extended import JWTManager
 from app.routes.auth import auth_bp
-from app.routes.loadshedding import loadshedding_bp # This import might be redundant if loadshedding routes are directly in app.py
-from app.routes.email import email_bp # This import might be redundant if email routes are directly in app.py
+from functools import lru_cache
+import time
+from huggingface_agent import query_mistral
+from app.routes.ai_agent import ai_agent_bp
 
 # SSL workaround for dev
 try:
@@ -25,20 +27,27 @@ else:
 
 env_path = Path(__file__).resolve().parent / '.env'
 load_dotenv(dotenv_path=env_path)
-print("ESKOMSEPUSH_API_KEY:", os.environ.get("ESKOMSEPUSH_API_KEY"))
+
+# Debug checks for environment variables
+print("🔍 OPEN_METEO_API_URL:", os.getenv("OPEN_METEO_API_URL"))
+print("🔍 FLASK_SECRET_KEY:", os.getenv("FLASK_SECRET_KEY"))
+print("🔍 JWT_SECRET_KEY:", os.getenv("JWT_SECRET_KEY"))
+print("🔍 ONESIGNAL_APP_ID:", os.getenv("ONESIGNAL_APP_ID"))
+print("🔍 ONESIGNAL_API_KEY:", os.getenv("ONESIGNAL_API_KEY"))
+print("ESKOMSEPUSH_API_KEY:", os.getenv("ESKOMSEPUSH_API_KEY")) # Keep this as it's used
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Flask app setup
+# Initialize Flask app
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
 
-# CORS
+# Configure CORS
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000"}})
 
-# OAuth
+# Initialize OAuth
 oauth = OAuth(app)
 oauth.register(
     name='google',
@@ -55,18 +64,11 @@ oauth.register(
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "default_jwt_secret_key")
 jwt = JWTManager(app)
 
-# Register blueprints (ensure these are correctly defined if they exist as separate files)
 app.register_blueprint(auth_bp)
-# app.register_blueprint(loadshedding_bp) # Commented out if loadshedding routes are directly in app.py
-# app.register_blueprint(email_bp) # Commented out if email routes are directly in app.py
+app.register_blueprint(ai_agent_bp)
 
-chatbot = HuggingFaceChatbot()
+chatbot = EnhancedChatbot()
 
-# SendGrid (ensure this is only if you're using SendGrid directly in app.py, not via email_bp)
-# from sendgrid import SendGridAPIClient
-# from sendgrid.helpers.mail import Mail
-
-# --- Chatbot Endpoints ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     try:
@@ -107,7 +109,6 @@ def voice_to_text():
         logger.error(f"Error in voice-to-text endpoint: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-# --- Energy Optimizer Endpoint (if agent available) ---
 try:
     from agent import EnergyUsageOptimizerAgent
     AGENT_AVAILABLE = True
@@ -128,11 +129,65 @@ def optimize_energy():
         logger.error(f"Error in energy optimizer: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-# --- Eskom Areas Search Endpoint ---
+# --- Nominatim Search Proxy Endpoint ---
+@app.route('/api/nominatim-search', methods=['GET'])
+def nominatim_search():
+    query = request.args.get('q')
+    countrycodes = request.args.get('countrycodes', 'za') # Default to ZA
+    limit = request.args.get('limit', 5) # Default limit
+
+    if not query:
+        logger.warning("Nominatim search request received without query.")
+        return jsonify({"error": "Query parameter 'q' is required."}), 400
+
+    nominatim_url = "https://nominatim.openstreetmap.org/search"
+    params = {
+        "q": query,
+        "countrycodes": countrycodes,
+        "format": "json",
+        "addressdetails": 1,
+        "limit": limit,
+    }
+    # Add a User-Agent header as recommended by Nominatim's usage policy
+    headers = {
+        "User-Agent": "GriddX-EnergyApp/1.0 (your_email@example.com)" # Replace with your app name and contact email
+    }
+
+    try:
+        logger.info(f"Proxying Nominatim search for query: {query}")
+        response = requests.get(nominatim_url, params=params, headers=headers, timeout=10)
+        response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
+        return jsonify(response.json())
+    except requests.exceptions.Timeout:
+        logger.error(f"Nominatim API request timed out for query: {query}")
+        return jsonify({"error": "Address search service timed out. Please try again later."}), 504
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching from Nominatim API for query '{query}': {e}")
+        status_code = e.response.status_code if e.response is not None else 500
+        return jsonify({"error": f"Failed to fetch address suggestions: {e}"}), status_code
+    except Exception as e:
+        logger.exception(f"Unexpected error in /api/nominatim-search for query: {query}")
+        return jsonify({"error": f"An unexpected error occurred during address search: {str(e)}"}), 500
+
+
+# --- Eskom Areas Search Endpoint with Caching ---
+@lru_cache(maxsize=128)
+def _get_eskom_areas_cached(text, eskom_api_key):
+    logger.info(f"Fetching Eskom areas from external API for text: {text}")
+    try:
+        r = requests.get(
+            f"https://developer.sepush.co.za/business/2.0/areas_search?text={text}",
+            headers={"Token": eskom_api_key},
+            timeout=10
+        )
+        r.raise_for_status()
+        return r.json()
+    except requests.exceptions.RequestException as e:
+        raise
+
 @app.route('/api/areas', methods=['GET'])
 def get_eskom_areas():
-    # Correctly use ESKOMSEPUSH_API_KEY from .env
-    eskom_api_key = os.getenv("ESKOMSEPUSH_API_KEY") 
+    eskom_api_key = os.getenv("ESKOMSEPUSH_API_KEY")
     text = request.args.get("text", "")
     if not text:
         return jsonify({"error": "Please provide search text"}), 400
@@ -140,15 +195,19 @@ def get_eskom_areas():
         return jsonify({"error": "ESKOMSEPUSH_API_KEY not set in environment variables."}), 500
 
     try:
-        r = requests.get(
-            f"https://developer.sepush.co.za/business/2.0/areas_search?text={text}",
-            headers={"Token": eskom_api_key}
-        )
-        r.raise_for_status() # Raise an exception for HTTP errors
-        return jsonify(r.json())
+        cached_data = _get_eskom_areas_cached(text, eskom_api_key)
+        # Log if data is served from cache or external API
+        if request.args.get("_cached"): # This is a simple way to check if it was explicitly requested as cached, not truly checking lru_cache hit
+             logger.info(f"Eskom areas for '{text}' served from cache.")
+        else:
+             logger.info(f"Eskom areas for '{text}' fetched from external API (or cache hit).")
+        return jsonify(cached_data)
     except requests.exceptions.RequestException as e:
-        logger.error(f"Error fetching Eskom areas: {e}")
-        return jsonify({"error": f"Failed to fetch Eskom areas: {e}"}), 500
+        status_code = e.response.status_code if e.response is not None else 500
+        return jsonify({"error": f"Failed to fetch Eskom areas: {e}"}), status_code
+    except Exception as e:
+        logger.exception("Unexpected error in get_eskom_areas endpoint")
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 
 # --- Health Check ---
@@ -194,7 +253,6 @@ def log_message():
         return jsonify({'error': str(e)}), 500
 
 # --- Weather Endpoint ---
-# Add or update this dictionary at the top of your app.py (or above the endpoint)
 AREA_COORDINATES = {
     "johannesburg": {"latitude": -26.2023, "longitude": 28.0436},
     "capetown": {"latitude": -33.9249, "longitude": 18.4241},
@@ -208,19 +266,16 @@ AREA_COORDINATES = {
     "kimberley": {"latitude": -28.7383, "longitude": 24.7637},
     "pietermaritzburg": {"latitude": -29.6006, "longitude": 30.3794},
     "george": {"latitude": -33.9648, "longitude": 22.4617},
-    # ...add more as needed
 }
 
 @app.route('/api/weather')
 def weather():
-    # 1. Try to get lat/lon from query params
     lat = request.args.get('lat')
     lon = request.args.get('lon')
     if lat and lon:
         latitude = float(lat)
         longitude = float(lon)
     else:
-        # 2. Fallback to areaId if no lat/lon provided
         area_id = request.args.get('areaId', 'johannesburg').lower()
         coords = AREA_COORDINATES.get(area_id, AREA_COORDINATES["johannesburg"])
         latitude = coords["latitude"]
@@ -241,7 +296,6 @@ def weather():
         if isinstance(data, list):
             data = data[0]
 
-        # --- Transform daily data ---
         daily = data.get("daily", {})
         daily_forecast = []
         for i in range(len(daily.get("time", []))):
@@ -257,7 +311,6 @@ def weather():
                 "uv_index_clear_sky_max": daily.get("uv_index_clear_sky_max", [None]*len(daily["time"]))[i],
             })
 
-        # --- Transform hourly data ---
         hourly = data.get("hourly", {})
         hourly_forecast = []
         for i in range(len(hourly.get("time", []))):
@@ -379,18 +432,8 @@ def test_email_notification():
     </ul>
     <p>If you received this email, your SendGrid integration is working correctly.</p>
     """
-    # Assuming SendGridAPIClient and Mail are imported if needed
-    # from sendgrid import SendGridAPIClient
-    # from sendgrid.helpers.mail import Mail
     try:
-        # sendgrid_client = SendGridAPIClient(sendgrid_api_key)
-        # response = sendgrid_client.send(message)
-        # logging.info(f"SendGrid test email response: Status Code: {response.status_code}, Body: {response.body}, Headers: {response.headers}")
-        # if response.status_code == 202:
-        #     return jsonify({"status": "success", "message": "Test email sent successfully!"}), 200
-        # else:
-        #     return jsonify({"status": "error", "message": "Failed to send test email.", "sendgrid_response": {"status_code": response.status_code, "body": response.body.decode(), "headers": dict(response.headers)}}), response.status_code
-        return jsonify({"status": "success", "message": "SendGrid email logic placeholder. Uncomment SendGrid code to enable."}), 200 # Placeholder for SendGrid logic
+        return jsonify({"status": "success", "message": "SendGrid email logic placeholder. Uncomment SendGrid code to enable."}), 200
     except Exception as e:
         logging.exception("Exception in /api/email/test")
         return jsonify({"error": str(e)}), 500
@@ -409,7 +452,7 @@ def get_loadshedding():
     area_id = request.args.get('areaId')
     lat = request.args.get('lat')
     lon = request.args.get('lon')
-    eskom_api_key = os.getenv("ESKOMSEPUSH_API_KEY")  # Corrected to ESKOMSEPUSH_API_KEY
+    eskom_api_key = os.getenv("ESKOMSEPUSH_API_KEY")
 
     headers = {"Token": eskom_api_key}
 
@@ -440,8 +483,6 @@ def get_loadshedding():
             area_data = area_resp.json()
             if not area_data.get("areas"):
                 return jsonify({"error": "No Eskom area found for this location"}), 404
-            # If multiple areas, you might want to return a list or pick the closest
-            # For simplicity, picking the first one found
             area_id_from_coords = area_data["areas"][0]["id"]
             status_resp = requests.get(
                 f"https://developer.sepush.co.za/business/2.0/area?id={area_id_from_coords}",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -14,10 +14,12 @@ import {
 } from '@chakra-ui/react';
 import { FaPaperPlane, FaTimes, FaCommentDots, FaMicrophone } from 'react-icons/fa';
 import RecordRTC from 'recordrtc';
-import langaImage from '../assets/images/langa.png';
+// Replaced local image import with a placeholder URL
+// If you have a specific image, you'll need to host it or use a base64 string (not recommended for large images)
+const langaImage = "https://placehold.co/150x150/008080/ffffff?text=Langa"; 
 
 const SupportBot = () => {
-  console.log('SupportBot component is mounting');  // Existing debug log
+  console.log('SupportBot component is mounting');
 
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -25,56 +27,82 @@ const SupportBot = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [typing, setTyping] = useState(false);
+  const [typing, setTyping] = useState(false); // State for "Bot is typing..."
 
   // For recording with RecordRTC
   const [recorder, setRecorder] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
 
   const toast = useToast();
+  const messagesEndRef = useRef(null); // Ref to scroll to the latest message
 
-  const bgColor = useColorModeValue('gray.100', 'gray.700');  // For bot messages
-  const userBgColor = useColorModeValue('blue.100', 'blue.800');  // For user messages
-  const textColor = useColorModeValue('black', 'white');  // For text color
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
+  const userBgColor = useColorModeValue('blue.100', 'blue.800');
+  const textColor = useColorModeValue('black', 'white');
+
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
+  // Scroll to the latest message whenever messages state updates
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSendMessage = async (messageText = null) => {
     const textToSend = messageText || inputMessage.trim();
     if (!textToSend) return;
 
+    // Add user message immediately
     setMessages(prev => [...prev, { text: textToSend, sender: 'user' }]);
-    setInputMessage('');
-    setIsLoading(true);
-    setTyping(true);
+    setInputMessage(''); // Clear input
+    setIsLoading(true); // Disable input/send button
+    setTyping(true); // Show "Bot is typing..."
 
+    // Show '🤔 Thinking...' immediately
+    setMessages(prev => [...prev, { text: '🤔 Thinking...', sender: 'bot', thinking: true }]);
+
+    // Simulate typing effect
+    await new Promise(res => setTimeout(res, 800)); // Short delay before typing
+
+    // Replace '🤔 Thinking...' with animated typing dots
+    setMessages(prev => {
+      const updated = [...prev];
+      const lastIdx = updated.findIndex(m => m.thinking);
+      if (lastIdx !== -1) {
+        updated[lastIdx] = { ...updated[lastIdx], text: 'Langa is typing', typing: true };
+      }
+      return updated;
+    });
+
+    // Animate typing effect (3 dots)
+    let dotCount = 0;
+    const typingInterval = setInterval(() => {
+      setMessages(prev => {
+        const updated = [...prev];
+        const lastIdx = updated.findIndex(m => m.typing);
+        if (lastIdx !== -1) {
+          updated[lastIdx] = { ...updated[lastIdx], text: `Langa is typing${'.'.repeat(dotCount % 4)}` };
+        }
+        return updated;
+      });
+      dotCount++;
+    }, 400);
+
+    let data;
     try {
-      const response = await fetch('http://localhost:5000/api/chat', {
+      const response = await fetch(`${API_BASE_URL}/api/ai-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          message: textToSend
-        }),
+        body: JSON.stringify({ prompt: textToSend }),
       });
-
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
-      const data = await response.json();
-      
-      setMessages(prev => [...prev, {
-        text: data.response,
-        sender: 'bot'
-      }]);
-
-      setTyping(false);  // Set typing to false immediately after adding the response
+      data = await response.json();
     } catch (error) {
       console.error('Error:', error);
-      setMessages(prev => [...prev, {
-        text: "I apologize, but I'm having trouble connecting. Please try again.",
-        sender: 'bot'
-      }]);
+      data = { response: "I apologize, but I'm having trouble connecting. Please try again." };
       toast({
         title: 'Error',
         description: 'Failed to get response from server',
@@ -83,8 +111,22 @@ const SupportBot = () => {
         isClosable: true,
       });
     } finally {
+      clearInterval(typingInterval);
       setIsLoading(false);
+      setTyping(false);
     }
+
+    // Replace the last 'Langa is typing...' with the real response
+    setMessages(prev => {
+      const updated = [...prev];
+      const lastIdx = updated.findIndex(m => m.typing || m.thinking);
+      if (lastIdx !== -1) {
+        updated[lastIdx] = { text: data.response, sender: 'bot' };
+      } else {
+        updated.push({ text: data.response, sender: 'bot' });
+      }
+      return updated;
+    });
   };
 
   // Handle voice recording button
@@ -137,7 +179,7 @@ const SupportBot = () => {
 
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:5000/api/voice-to-text', {
+        const response = await fetch(`${API_BASE_URL}/api/voice-to-text`, {
           method: 'POST',
           body: formData
         });
@@ -269,7 +311,14 @@ const SupportBot = () => {
                 {message.sender === 'user' && <Avatar name="You" bg="blue.500" size="sm" ml={2} />}
               </Flex>
             ))}
-            {typing && <Text fontStyle="italic" color="gray.500">Bot is typing...</Text>}
+            {/* Thinking state display */}
+            {typing && (
+              <Flex justify="flex-start" align="center">
+                <Avatar name="SolarBot" src={langaImage} size="sm" mr={2} />
+                <Text fontStyle="italic" color="gray.500">Langa is typing...</Text>
+              </Flex>
+            )}
+            <div ref={messagesEndRef} /> {/* For auto-scrolling */}
           </VStack>
 
           {/* Input */}
@@ -290,7 +339,7 @@ const SupportBot = () => {
               borderRadius="full"
               mr={2}
               _focus={{ borderColor: "teal.400" }}
-              disabled={isLoading || isRecording}
+              disabled={isLoading || isRecording} /* Disable during loading/recording */
             />
             <IconButton
               colorScheme={isRecording ? "red" : "teal"}
@@ -308,7 +357,7 @@ const SupportBot = () => {
               icon={<FaPaperPlane />}
               onClick={() => handleSendMessage()}
               isLoading={isLoading}
-              disabled={isLoading || !inputMessage.trim() || isRecording}
+              disabled={isLoading || !inputMessage.trim() || isRecording} /* Disable during loading/recording or if no text */
               borderRadius="full"
             />
           </Flex>
