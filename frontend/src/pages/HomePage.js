@@ -185,8 +185,8 @@ function HomePage() {
   }), []);
 
   // Add new variables for the card styles at the top level
-  const cardBg = useColorModeValue('transparent', 'rgba(0, 0, 0, 0.6)');
-  const cardBorderColor = useColorModeValue('transparent', 'gray.600)');
+  const cardBg = useColorModeValue('rgba(255,255,255,0.7)', 'rgba(0, 0, 0, 0.6)');
+  const cardBorderColor = useColorModeValue('rgba(255,255,255,0.4)', 'gray.600');
   const cardBoxShadow = 'xl';  // Not a hook, so it can stay as is
   const cardBorderRadius = 'xl';  // Not a hook
   const cardBackdropFilter = 'blur(16px)';  // Not a hook
