@@ -22,6 +22,7 @@ from hugging_services import HuggingFaceChatbot
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
 
+
 # Load environment variables (same as support.py)
 load_dotenv()
 

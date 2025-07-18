@@ -110,3 +110,16 @@
 2025-06-26 09:19:48,707 - INFO -  * Debugger PIN: 240-196-647
 2025-06-26 09:20:55,340 - INFO - 127.0.0.1 - - [26/Jun/2025 09:20:55] "OPTIONS /api/auth/login HTTP/1.1" 200 -
 2025-06-26 09:20:55,887 - INFO - 127.0.0.1 - - [26/Jun/2025 09:20:55] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-18 14:20:32,446 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-18 14:20:32,449 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-18 14:20:32,452 - INFO -  * Restarting with stat
+2025-07-18 14:20:47,667 - WARNING -  * Debugger is active!
+2025-07-18 14:20:47,690 - INFO -  * Debugger PIN: 821-025-207
+2025-07-18 14:20:47,847 - INFO - 127.0.0.1 - - [18/Jul/2025 14:20:47] "[33mGET /api/transactions/topup?user_id=1 HTTP/1.1[0m" 404 -
+2025-07-18 14:20:47,850 - INFO - 127.0.0.1 - - [18/Jul/2025 14:20:47] "[33mGET /api/transactions/topup?user_id=1 HTTP/1.1[0m" 404 -
+2025-07-18 14:20:48,165 - INFO - 127.0.0.1 - - [18/Jul/2025 14:20:48] "[33mGET /api/transactions/topup?user_id=1 HTTP/1.1[0m" 404 -
+2025-07-18 14:20:48,477 - INFO - 127.0.0.1 - - [18/Jul/2025 14:20:48] "[33mGET /api/transactions/topup?user_id=1 HTTP/1.1[0m" 404 -
+2025-07-18 14:20:49,323 - INFO - 127.0.0.1 - - [18/Jul/2025 14:20:49] "[33mGET /api/transactions/topup?user_id=1 HTTP/1.1[0m" 404 -
+2025-07-18 14:20:52,414 - INFO - 127.0.0.1 - - [18/Jul/2025 14:20:52] "[33mGET /api/transactions/topup?user_id=1 HTTP/1.1[0m" 404 -
+2025-07-18 14:20:56,905 - INFO - 127.0.0.1 - - [18/Jul/2025 14:20:56] "[33mGET /api/transactions/topup?user_id=1 HTTP/1.1[0m" 404 -
