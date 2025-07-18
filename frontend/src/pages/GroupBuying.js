@@ -39,10 +39,8 @@ import {
   Tooltip,
   Select,
   Avatar,
-  InputGroup,
-  InputRightElement,
 } from '@chakra-ui/react';
-import { FaUsers, FaClock, FaTag, FaSolarPanel, FaBolt, FaBatteryFull, FaArrowLeft, FaWhatsapp, FaFacebook, FaEnvelope } from 'react-icons/fa';
+import { FaUsers, FaClock, FaTag, FaSolarPanel, FaBolt, FaBatteryFull, FaArrowLeft } from 'react-icons/fa';
 import { FiShare2 } from 'react-icons/fi';  // Separate import for FiShare2
 import { useNavigate } from 'react-router-dom';
 import batteryBankImage from '../assets/images/battery_bank_10_kwh.png';
@@ -200,7 +198,7 @@ function GroupBuying() {
     notifyMe: false, // Added for notification preference
   });
 
-  const [monthlyUsage, setMonthlyUsage] = useState(500);
+  const [monthlyUsage] = useState(500);
   const [showNotificationPref, setShowNotificationPref] = useState(false);
   const [referralCode] = useState(`REF-${Math.random().toString(36).slice(2, 7).toUpperCase()}`);
 
@@ -253,15 +251,7 @@ function GroupBuying() {
   const inputBorderColor = useColorModeValue('gray.300', 'gray.600');
 
   // Define colors for glassmorphism effect on cards
-  const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
-  const glassBoxShadow = useColorModeValue('0 4px 12px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.5)'); // Renamed or kept as is if intended
-
-  // Define hover box shadow using useColorModeValue at the top level
-  const hoverBoxShadow = useColorModeValue('0 8px 16px rgba(0, 0, 0, 0.2)', '0 8px 16px rgba(0, 0, 0, 0.6)');
-
   const cardBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(0, 0, 0, 0.6)');
-  const cardBorderRadius = useColorModeValue('lg', 'xl');
-  const cardBorder = useColorModeValue('1px solid rgba(255, 255, 255, 0.2)', '1px solid gray.600');
   const cardColor = useColorModeValue('gray.800', 'white'); // ... existing code ... 
 
   const handleInputChange = (e) => {
@@ -435,7 +425,6 @@ function GroupBuying() {
 
   // Enhanced testimonials with verified purchases and interactive elements
   const TestimonialCarousel = () => {
-    const [currentTestimonial] = useState(0);
     
     return (
       <Box mt={8} position="relative">
@@ -521,129 +510,6 @@ function GroupBuying() {
             <Text textAlign="right">R{yearlySavings.toLocaleString()}</Text>
           </SimpleGrid>
         </Box>
-      </Box>
-    );
-  };
-
-  // Enhanced notification system with multiple options
-  const NotificationPreferences = () => {
-    const [preferences, setPreferences] = useState({
-      milestones: true,
-      priceDrops: true,
-      deadlineReminders: false,
-      newCampaigns: true
-    });
-
-    return (
-      <Box mt={4} p={4} bg="whiteAlpha.100" borderRadius="lg">
-        <Heading size="sm" mb={3}>Notification Settings</Heading>
-        <SimpleGrid columns={[1, 2]} spacing={3}>
-          {Object.entries(preferences).map(([key, value]) => (
-            <Flex key={key} align="center" justify="space-between">
-              <Text>
-                {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-              </Text>
-              <Switch
-                colorScheme="green"
-                isChecked={value}
-                onChange={() => setPreferences(prev => ({
-                  ...prev,
-                  [key]: !prev[key]
-                }))}
-              />
-            </Flex>
-          ))}
-        </SimpleGrid>
-        <Button
-          mt={3}
-          size="sm"
-          colorScheme="green"
-          onClick={() => {
-            // Add API call to save preferences
-            toast({ title: "Preferences saved!", status: "success" });
-          }}
-        >
-          Save Preferences
-        </Button>
-      </Box>
-    );
-  };
-
-  // Enhanced referral system with tracking and rewards
-  const ReferralProgram = () => {
-    const [referrals] = useState([]);
-    const referralBonus = 100;
-    
-    return (
-      <Box bgGradient="linear(to-r, green.800, blue.800)" p={6} borderRadius="xl" mb={8}>
-        <Flex justify="space-between" align="center" mb={4}>
-          <Box>
-            <Heading size="lg" color="white">Earn Up To R500</Heading>
-            <Text color="whiteAlpha.800">For Every Friend Who Joins</Text>
-          </Box>
-          <Badge colorScheme="yellow" fontSize="lg" p={2}>
-            Your Credits: R{(referrals.length * referralBonus).toLocaleString()}
-          </Badge>
-        </Flex>
-        
-        <SimpleGrid columns={[1, 2]} spacing={4}>
-          <Box>
-            <InputGroup>
-              <Input 
-                value={referralCode} 
-                isReadOnly 
-                bg="whiteAlpha.800" 
-                fontWeight="bold"
-              />
-              <InputRightElement width="4.5rem">
-                <Button 
-                  h="1.75rem" 
-                  size="sm" 
-                  onClick={() => navigator.clipboard.writeText(referralCode)}
-                  leftIcon={<FiShare2 />}
-                >
-                  Share
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-            <HStack mt={2} spacing={2}>
-              <Button 
-                leftIcon={<FaWhatsapp />}
-                colorScheme="whatsapp"
-                size="sm"
-              >
-                WhatsApp
-              </Button>
-              <Button 
-                leftIcon={<FaFacebook />}
-                colorScheme="facebook"
-                size="sm"
-              >
-                Facebook
-              </Button>
-              <Button 
-                leftIcon={<FaEnvelope />}
-                colorScheme="gray"
-                size="sm"
-              >
-                Email
-              </Button>
-            </HStack>
-          </Box>
-          
-          <Box>
-            <Text color="white" mb={2}>Your Referral Progress:</Text>
-            <Progress 
-              value={(referrals.length / 5) * 100} 
-              size="sm" 
-              colorScheme="yellow"
-              borderRadius="full"
-            />
-            <Text color="whiteAlpha.800" mt={1}>
-              {5 - referrals.length} more referrals to unlock bonus
-            </Text>
-          </Box>
-        </SimpleGrid>
       </Box>
     );
   };
