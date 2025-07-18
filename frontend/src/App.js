@@ -36,6 +36,7 @@ import AISuggestions from './pages/AISuggestions';
 import PersonalUserPage from './pages/PersonalUserPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
+import ThemeToggleButton from './components/ThemeToggleButton'; // Import the new component
 
 // Protected Route component
 const ProtectedRoute = () => {
@@ -93,6 +94,7 @@ function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               <Supportbot />
+              <ThemeToggleButton /> {/* Render the new theme toggle button globally */}
             </Router>
           </SubscriptionProvider>
         </DashboardProvider>

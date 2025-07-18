@@ -17,10 +17,8 @@ import {
   Text,
   Button,
   Icon,
-  IconButton,
   Input,
   Spinner,
-  useColorMode,
   useColorModeValue,
   useToast,
   Fade,
@@ -40,7 +38,6 @@ import {
   FaCreditCard,
   FaRegLightbulb,
   FaRegSun,
-  FaRegMoon,
   FaSignOutAlt,
   FaUser,
 } from 'react-icons/fa';
@@ -53,7 +50,6 @@ const getTimeOfDay = () => {
 function HomePage() {
   const navigate = useNavigate();
   const toast = useToast();
-  const { colorMode, toggleColorMode } = useColorMode();
   const newsletterBg = useColorModeValue('whiteAlpha.900', 'gray.800');
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const textColor = useColorModeValue('gray.800', 'gray.400');
@@ -188,13 +184,6 @@ function HomePage() {
                     weekday: 'long', month: 'long', day: 'numeric'
                   })}
                 </Text>
-                <IconButton
-                  aria-label="Toggle Theme"
-                  icon={colorMode === 'light' ? <FaRegMoon /> : <FaRegSun />}
-                  onClick={toggleColorMode}
-                  variant="ghost"
-                  color={textColor}
-                />
               </VStack>
             </Flex>
 
