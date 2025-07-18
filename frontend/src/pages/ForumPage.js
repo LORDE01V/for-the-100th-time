@@ -523,8 +523,27 @@ const ForumPage = () => {
           <Heading size="md" mt={4}>Posts:</Heading>
           {selectedTopic.posts && selectedTopic.posts.length > 0 ? (
             selectedTopic.posts.map((post, index) => (
-              <Box key={index} p={3} bg="gray.100" borderRadius="md" shadow="sm">
-                <Text color={textColor}>{post}</Text>
+              <Box
+                key={index}
+                p={4}
+                bg="gray.100"
+                borderRadius="md"
+                shadow="sm"
+                w="100%"
+                minW={0}
+                whiteSpace="pre-line"
+                wordBreak="break-word"
+                overflowWrap="break-word"
+              >
+                <Text
+                  color={textColor}
+                  fontSize="md"
+                  lineHeight="1.6"
+                  wordBreak="break-word"
+                  overflowWrap="break-word"
+                >
+                  {post}
+                </Text>
               </Box>
             ))
           ) : (
@@ -589,8 +608,11 @@ const ForumPage = () => {
   );
 
   return (
-    <Box
+    <Flex
       minH="100vh"
+      w="100vw"
+      align="center"
+      justify="center"
       backgroundImage={`url(${forumBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
@@ -609,18 +631,24 @@ const ForumPage = () => {
       }}
     >
       <Box
-        maxW="md"
-        w="full"
-        bg={useColorModeValue('white', 'rgba(0, 0, 0, 0.6)')}
-        boxShadow="xl"
-        borderRadius="xl"
-        p={8}
+        maxW="900px"
+        w="95vw"
+        minH="80vh"
+        bg="rgba(255, 255, 255, 0.18)"
+        boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
+        borderRadius="2xl"
+        p={{ base: 4, md: 10 }}
         position="relative"
         zIndex={2}
-        backdropFilter="blur(16px)"
-        border="1px solid"
-        borderColor={useColorModeValue('gray.200', 'gray.600')}
-        color={useColorModeValue('gray.800', 'white')}
+        style={{
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+        className="forum-card"
       >
         <Button
           leftIcon={<FaArrowLeft />}
@@ -642,7 +670,7 @@ const ForumPage = () => {
           {selectedTopic ? renderTopicDiscussion() : renderTopicsList()}
         </VStack>
       </Box>
-    </Box>
+    </Flex>
   );
 };
 
