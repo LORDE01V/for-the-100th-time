@@ -25,7 +25,6 @@ import {
   ChevronRightIcon,
 } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
-import api from '../services/api'; // Import the API service
 
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -104,25 +103,10 @@ const EventCalendar = () => {
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
 
   useEffect(() => {
-    // Fetch events from the database when the component mounts
-    const fetchEvents = async () => {
-      try {
-        const response = await api.get('/api/events'); // Replace with your actual endpoint
-        setEvents(response.data); // Assuming the API returns events as an object
-      } catch (error) {
-        console.error('Error fetching events:', error);
-        toast({
-          title: 'Error fetching events',
-          description: 'Could not load events from the server.',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-          position: 'bottom',
-        });
-      }
-    };
-
-    fetchEvents();
+    const savedEvents = localStorage.getItem('calendarEvents');
+    if (savedEvents) {
+      setEvents(JSON.parse(savedEvents));
+    }
   }, []);
 
   const handlePrev = () => {
@@ -157,7 +141,7 @@ const EventCalendar = () => {
     onOpen();
   };
 
-  const saveEvent = async () => {
+  const saveEvent = () => {
     // Validate all required fields
     if (!eventData.title.trim() || 
         !eventData.start || 
@@ -175,37 +159,22 @@ const EventCalendar = () => {
       return;
     }
 
-    try {
-      const updated = { 
-        ...events, 
-        [selectedDate]: eventData 
-      };
-
-      // Save the event to the database
-      await api.post('/events', { date: selectedDate, ...eventData }); // Replace with your actual endpoint
-
-      setEvents(updated);
-      onClose();
-
-      toast({
-        title: 'Event saved',
-        description: 'Your event has been successfully saved to the database.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-        position: 'bottom',
-      });
-    } catch (error) {
-      console.error('Error saving event:', error);
-      toast({
-        title: 'Error saving event',
-        description: 'Could not save the event to the server.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'bottom',
-      });
-    }
+    const updated = { 
+      ...events, 
+      [selectedDate]: eventData 
+    };
+    setEvents(updated);
+    localStorage.setItem('calendarEvents', JSON.stringify(updated));
+    onClose();
+    
+    toast({
+      title: 'Event created',
+      description: 'Your event has been successfully saved',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+      position: 'bottom',
+    });
   };
 
   // Add ref for tracking deleted event

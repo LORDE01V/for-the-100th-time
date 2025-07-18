@@ -206,25 +206,42 @@ useEffect(() => {
 
 
   // Handle Delete Account
-  const handleDeleteAccount = async () => {
-      // --- MOCK DELETE ACCOUNT PROCESS ---
-      console.log('Deleting account for user:', user?.email);
-      // In a real app: Call delete API, then clear auth token and redirect
+ 
+const handleDeleteAccount = async () => {
+    try {
+        console.log('Deleting account for user:', user?.email);
 
-      onClose(); // Close the confirmation modal
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+        // Call the backend API to delete the user account
+        await api.delete('/api/auth/delete-account', { data: { email: user?.email } });
 
-      auth.logout(); // Clear auth token (assuming this clears localStorage)
-       toast({
-           title: 'Account Deleted',
-           description: 'Your account has been deleted successfully.',
-           status: 'success',
-           duration: 3000,
-           isClosable: true,
-       });
-      navigate('/login'); // Redirect to login page
-      // --- END MOCK PROCESS ---
-  };
+        // Clear authentication token and logout
+        auth.logout();
+
+        // Show success toast
+        toast({
+            title: 'Account Deleted',
+            description: 'Your account has been deleted successfully.',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+        });
+
+        // Redirect to the landing page
+        navigate('/');
+    } catch (error) {
+        console.error('Error deleting account:', error);
+        toast({
+            title: 'Error Occurred',
+            description: error.message || 'Could not delete account.',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+        });
+    } finally {
+        onClose(); // Close the confirmation modal
+    }
+};
+
 
 
   // Render loading spinner while user is being checked or data is loading initially

@@ -1,17 +1,10 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api'; // Assuming auth service is still used
+import { auth } from '../services/api';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-// Removed unused imports: ReactSlick and ReactCalendar
-// eslint-disable-next-line no-unused-vars
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import Calendar from 'react-calendar';
-import api from '../services/api';
 import {
   Box,
   Flex,
@@ -38,10 +31,11 @@ import {
 import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload, FaStar } from 'react-icons/fa';
 import { jsPDF } from "jspdf";
 import { motion } from 'framer-motion';
-import './ImpactPage.css';  // Assuming we'll create a new CSS file for print styles, or add inline if needed
-import EventCalendar from '../components/EventCalendar';  // New import for the calendar component
+import './ImpactPage.css';
+import EventCalendar from '../components/EventCalendar';
 import ImpactMapPreview from '../components/ImpactMapPreview';
 import impactBackground from '../assets/images/page_impact.png';
+import axios from 'axios';
 
 function generateImpactReportPDF() {
   const doc = new jsPDF();
@@ -57,6 +51,24 @@ function generateImpactReportPDF() {
   doc.save("impact_report.pdf");
 }
 
+const DUMMY_TESTIMONIALS = [
+  { name: 'Emily Johnson', quote: 'GridX made solar simple for my family!', avatar: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167', rating: 5 },
+  { name: 'Michael Smith', quote: 'Fantastic support and easy to use.', avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91', rating: 4 },
+  { name: 'Jessica Brown', quote: 'I love tracking my energy savings.', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5 },
+  { name: 'David Wilson', quote: 'Solar energy has never been easier.', avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', rating: 5 },
+  { name: 'Ashley Miller', quote: 'GridX is a game changer for my home.', avatar: 'https://images.unsplash.com/photo-1464983953574-0892a716854b', rating: 4 },
+  { name: 'Matthew Davis', quote: 'Highly recommend to anyone going solar.', avatar: 'https://images.unsplash.com/photo-1519340333755-c2f6c58f5c4b', rating: 5 },
+  { name: 'Hannah Moore', quote: 'Easy to use and very informative.', avatar: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308', rating: 4 },
+  { name: 'Christopher Taylor', quote: 'Great for monitoring my energy use.', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d', rating: 5 },
+  { name: 'Lauren Anderson', quote: 'The best app for solar households.', avatar: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167', rating: 5 },
+  { name: 'Daniel Thomas', quote: 'I appreciate the detailed analytics.', avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91', rating: 4 },
+  { name: 'Olivia Jackson', quote: 'My bills have dropped thanks to Gridx.', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5 },
+  { name: 'James White', quote: 'Setup was quick and painless.', avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', rating: 5 },
+  { name: 'Samantha Harris', quote: 'I love seeing my energy impact.', avatar: 'https://images.unsplash.com/photo-1464983953574-0892a716854b', rating: 4 },
+  { name: 'Benjamin Martin', quote: 'GridX is the future of home energy.', avatar: 'https://images.unsplash.com/photo-1519340333755-c2f6c58f5c4b', rating: 5 },
+  { name: 'Grace Lee', quote: 'So easy, even my kids use it!', avatar: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308', rating: 5 }
+];
+
 function ImpactPage() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -65,78 +77,84 @@ function ImpactPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [rating, setRating] = useState(0);
-  const [testimonials, setTestimonials] = useState(() => {
-    // Ignore localStorage for now to always show the new profiles
-    return [
-      { name: 'Emily Johnson', quote: 'GridX made solar simple for my family!', avatar: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167', rating: 5 },
-      { name: 'Michael Smith', quote: 'Fantastic support and easy to use.', avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91', rating: 4 },
-      { name: 'Jessica Brown', quote: 'I love tracking my energy savings.', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5 },
-      { name: 'David Wilson', quote: 'Solar energy has never been easier.', avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', rating: 5 },
-      { name: 'Ashley Miller', quote: 'GridX is a game changer for my home.', avatar: 'https://images.unsplash.com/photo-1464983953574-0892a716854b', rating: 4 },
-      { name: 'Matthew Davis', quote: 'Highly recommend to anyone going solar.', avatar: 'https://images.unsplash.com/photo-1519340333755-c2f6c58f5c4b', rating: 5 },
-      { name: 'Hannah Moore', quote: 'Easy to use and very informative.', avatar: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308', rating: 4 },
-      { name: 'Christopher Taylor', quote: 'Great for monitoring my energy use.', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d', rating: 5 },
-      { name: 'Lauren Anderson', quote: 'The best app for solar households.', avatar: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167', rating: 5 },
-      { name: 'Daniel Thomas', quote: 'I appreciate the detailed analytics.', avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91', rating: 4 },
-      { name: 'Olivia Jackson', quote: 'My bills have dropped thanks to Gridx.', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5 },
-      { name: 'James White', quote: 'Setup was quick and painless.', avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', rating: 5 },
-      { name: 'Samantha Harris', quote: 'I love seeing my energy impact.', avatar: 'https://images.unsplash.com/photo-1464983953574-0892a716854b', rating: 4 },
-      { name: 'Benjamin Martin', quote: 'GridX is the future of home energy.', avatar: 'https://images.unsplash.com/photo-1519340333755-c2f6c58f5c4b', rating: 5 },
-      { name: 'Grace Lee', quote: 'So easy, even my kids use it!', avatar: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308', rating: 5 }
-    ];
-  });
+  const [testimonials, setTestimonials] = useState(DUMMY_TESTIMONIALS);
+
+  // Helper to fetch backend stories and map to testimonial structure
+  const fetchBackendStories = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/community-stories');
+      console.log('Fetched stories:', response.data); 
+      return response.data.map(story => ({
+        name: story.user_name,
+        quote: story.story_text,
+        rating: story.rating,
+        avatar: 'https://via.placeholder.com/150',
+      }));
+    } catch (error) {
+      console.error('Failed to fetch community stories:', error);
+      return [];
+    }
+  };
+
+  // On mount, fetch backend stories and append to dummy testimonials
+  useEffect(() => {
+    const fetchStories = async () => {
+      const backendStories = await fetchBackendStories();
+      console.log('Fetched stories on load:', backendStories);
+      setTestimonials([...DUMMY_TESTIMONIALS, ...backendStories]);
+    };
+    fetchStories();
+  }, []);
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
+  // On submit, POST to backend and re-fetch all backend stories
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !quote) {
-      toast({
-        title: 'Error',
-        description: 'All fields are required.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+    if (!name) {
+      toast({ title: 'Error', description: 'Name is required.', status: 'error', duration: 3000, isClosable: true });
       return;
     }
- 
-    
-    const newTestimonial = {
-      name,
-      quote,
-      email,
-      rating,
-      avatar: 'https://via.placeholder.com/150',
-    };
-    
+    if (!email || !isValidEmail(email)) {
+      toast({ title: 'Error', description: 'A valid Email is required.', status: 'error', duration: 3000, isClosable: true });
+      return;
+    }
+    if (!quote) {
+      toast({ title: 'Error', description: 'Testimonial is required.', status: 'error', duration: 3000, isClosable: true });
+      return;
+    }
+
     try {
-      const updatedTestimonials = [...testimonials, newTestimonial];
-      setTestimonials(updatedTestimonials);
-      localStorage.setItem('testimonials', JSON.stringify(updatedTestimonials));
+      await axios.post('http://localhost:5000/api/community-stories', {
+        user_name: name,
+        story_text: quote,
+        rating: rating,
+      });
+      // Re-fetch all backend stories and append to dummy testimonials
+      const backendStories = await fetchBackendStories();
+      setTestimonials([...DUMMY_TESTIMONIALS, ...backendStories]);
+      console.log('Updated testimonials:', [...DUMMY_TESTIMONIALS, ...backendStories]);
       toast({ title: 'Story Submitted', description: 'Your story has been submitted successfully!', status: 'success', duration: 3000, isClosable: true });
     } catch (error) {
       toast({ title: 'Error', description: 'Submission failed.', status: 'error', duration: 3000, isClosable: true });
       console.error('Submission error:', error);
     }
-    
+
     setName('');
     setEmail('');
     setQuote('');
     setRating(0);
   };
 
-  // Move all useColorModeValue calls to the top level
   const bgColor = useColorModeValue('gray.50', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'whiteAlpha.900');
   const statColor = useColorModeValue('teal.500', 'teal.300');
   const testimonialBorderColor = useColorModeValue('gray.200', 'gray.600');
   const headingColor = useColorModeValue('gray.800', 'white');
   const subTextColor = useColorModeValue('gray.600', 'whiteAlpha.700');
-
   const MotionIcon = motion(Icon);
 
   useEffect(() => {
@@ -195,9 +213,8 @@ function ImpactPage() {
         bottom: 0,
         bg: 'rgba(0, 0, 0, 0.5)',
         zIndex: 1,
-  }}  
->
-    
+      }}
+    >
       <Box p={[4, 6, 8]} maxWidth="1200px" mx="auto" color={textColor} position="relative" zIndex={2}>
         <HStack justify="space-between" align="center" mb={8}>
           <Button
@@ -264,7 +281,7 @@ function ImpactPage() {
               accessibility={true}
             >
               {testimonials.map((testimonial, index) => (
-                <Box key={testimonial.name} p={6} bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)" borderWidth="1px" borderColor={testimonialBorderColor} borderRadius="lg" boxShadow="md">
+                <Box key={testimonial.name + index} p={6} bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)" borderWidth="1px" borderColor={testimonialBorderColor} borderRadius="lg" boxShadow="md">
                   <Flex align="center" mb={4}>
                     <Avatar src={testimonial.avatar} name={testimonial.name} size="xl" mr={4} />
                     <VStack align="start" flex="1">

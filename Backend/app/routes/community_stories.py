@@ -21,6 +21,8 @@ def submit_community_story():
 def fetch_community_stories():
     try:
         stories = get_all_community_stories()
+        if not stories:  # Check if stories is None or empty
+            return jsonify({'error': 'No stories found'}), 404
         # Assuming get_all_community_stories returns a list of tuples
         stories_list = [
             {

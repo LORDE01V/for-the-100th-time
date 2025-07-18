@@ -65,6 +65,8 @@ def execute_query(operation=None, query=None, params=None):
         raise Exception("Database connection failed")
 
     try:
+        if not query:
+            raise ValueError("Query cannot be None or empty")
         if params:
             cur.execute(query, params)
         else:
@@ -74,7 +76,8 @@ def execute_query(operation=None, query=None, params=None):
             return cur.fetchall()
         elif operation == 'insert':
             conn.commit()
-            return cur.fetchone()[0] if cur.description else None
+            result = cur.fetchone()
+            return result[0] if result and cur.description else None
     except Exception as e:
         conn.rollback()
         logging.error("Query failed: %s - Query: %s", str(e), query)
@@ -148,6 +151,8 @@ def get_user_contracts(user_id):
 def record_payment(contract_id, amount, payment_method):
     """Record a payment and update contract balance"""
     conn, cur = connect_db()
+    if not cur:
+        raise Exception("Database connection failed. Cursor is None")
     try:
         cur.execute("BEGIN")
         
@@ -164,10 +169,15 @@ def record_payment(contract_id, amount, payment_method):
         WHERE id = %s
         """, (amount, contract_id))
         
-        conn.commit()
+
+        if conn:
+            conn.commit()
+        else:
+            raise Exception("Database connection failed. Connection is None")
         return True
     except Exception as e:
-        conn.rollback()
+        if conn:
+            conn.rollback()
         print(f"🚨 Payment failed: {e}")
         return False
     finally:
@@ -229,8 +239,9 @@ def get_all_events():
     query = "SELECT id, title, start, \"end\", description, location, event_type FROM events_calendar;"
     result = execute_query('search', query)
     columns = ['id', 'title', 'start', 'end', 'description', 'location', 'event_type']
-    return [dict(zip(columns, row)) for row in result]
-
+    if result:
+        return [dict(zip(columns, row)) for row in result]
+    
 
 
 def delete_event(event_id):
@@ -238,11 +249,46 @@ def delete_event(event_id):
     query = "DELETE FROM events_calendar WHERE id = %s;"
     execute_query('insert', query, (event_id,))
 
+def get_user_balance(user_id):
+    """Fetch the current balance for a user."""
+    query = "SELECT current_balance FROM topup_settings WHERE user_id = %s"
+    result = execute_query('search', query, (user_id,))
+    if result:
+        return result[0][0]  # Return the balance
+    return 0.0  # Default to 0.0 if no balance is found
 
+def update_user_balance(user_id, amount):
+    print(f"Updating balance for user_id={user_id}, amount={amount}")
+    # First, try to update the balance
+    query = """
+    UPDATE topup_settings
+    SET current_balance = current_balance + %s, updated_at = CURRENT_TIMESTAMP
+    WHERE user_id = %s
+    RETURNING current_balance
+    """
+    result = execute_query('search', query, (amount, user_id))
+    print(f"Update result: {result}")
+    if result:
+        return result[0][0]  # Return the updated balance
+
+    # If no row was updated, insert a new row for this user
+    print("No existing topup_settings row for user, inserting new row...")
+    insert_query = """
+    INSERT INTO topup_settings (user_id, current_balance)
+    VALUES (%s, %s)
+    RETURNING current_balance
+    """
+    insert_result = execute_query('search', insert_query, (user_id, amount))
+    print(f"Insert result: {insert_result}")
+    if insert_result:
+        return insert_result[0][0]
+    raise Exception("Failed to update or insert user balance")
 
 # Initialize database tables when module loads
 def initialize_db():
     conn, cur = connect_db()
+    if not cur:
+        raise Exception("Database connection failed. Cursor is None")
     try:
         cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -372,11 +418,36 @@ def initialize_db():
         );
         """)
 
-
-        conn.commit()
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS topup_transactions (
+            id SERIAL PRIMARY KEY,                     
+            user_id INTEGER NOT NULL,                  
+            amount DECIMAL(10, 2) NOT NULL,            
+            promo_code VARCHAR(50),                    
+            voucher_code VARCHAR(50),                  
+            transaction_type VARCHAR(50) NOT NULL,              
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+);
+""")
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS topup_settings (
+            id SERIAL PRIMARY KEY,                     
+            user_id INTEGER NOT NULL UNIQUE, 
+            current_balance DECIMAL(10, 2) DEFAULT 0.0,          
+            is_auto_topup BOOLEAN DEFAULT FALSE,      
+            min_balance DECIMAL(10, 2),                
+            auto_topup_amount DECIMAL(10, 2),          
+            auto_topup_frequency VARCHAR(50),         
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+            FOREIGN KEY (user_id) REFERENCES users(id) 
+); 
+        """)
+        if conn:
+            conn.commit()
         print("✅ Database tables initialized")
     except Exception as e:
-        conn.rollback()
+        if conn:
+            conn.rollback()
         print(f"🚨 Database initialization failed: {e}")
         raise
     finally:
@@ -390,10 +461,19 @@ initialize_db()
 if __name__ == "__main__":
     try:
         conn, cur = connect_db()
+        if not conn or not cur:
+            raise Exception("Database connection failed. Connection or cursor is None")
         print("✅ Database connection successful!")
         cur.execute("SELECT version()")
-        print("PostgreSQL version:", cur.fetchone()[0])
+        result = cur.fetchone()
+        if result:
+            print("PostgreSQL version: ", result[0])
+        else:
+            print("🚨 Failed to get PosstgreSQl version.")
+
     except Exception as e:
         print("🚨 Database connection failed:", e)
     finally:
+        if cur: cur.close()
         if conn: conn.close()
+        

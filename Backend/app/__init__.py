@@ -59,7 +59,7 @@ def create_app():
     # Register blueprints
     from .routes.auth import auth_bp
     app.register_blueprint(auth_bp)
-    app.register_blueprint(topup_bp)
+    #app.register_blueprint(topup_bp)
     
     
     return app 

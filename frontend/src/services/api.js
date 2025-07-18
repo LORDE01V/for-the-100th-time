@@ -11,7 +11,7 @@ const api = axios.create({
         'X-Requested-With': 'XMLHttpRequest',
         'Access-Control-Allow-Origin': 'http://localhost:3000'
     },
-    timeout: 10000, // 10-second timeout
+    timeout: 30000, // 10-second timeout
     withCredentials: true, // Include cookies in requests
     xsrfCookieName: 'csrftoken',  // Add CSRF protection
     xsrfHeaderName: 'X-CSRFToken'

@@ -34,6 +34,10 @@ from app.routes.community_stories import community_stories_bp
 from app.routes.userprofile import profile_bp
 from app.routes.notification_preference import notifications_bp
 from app.routes.events_calendar import events_calendar_bp
+from app.routes.topup import topup_bp
+from Backend.support import update_user_balance
+
+
 # Add the Backend directory and its parent to the Python path
 backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
 parent_dir = os.path.dirname(backend_dir)  # Parent directory: for-the-100th-time
@@ -71,8 +75,8 @@ CORS(flask_app,
      resources={r"/api/*": {
          "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000"],
          "supports_credentials": True,
-         "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
-         "expose_headers": ["Authorization"],
+         #"allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin","X-Requested-With"],
+         #"expose_headers": ["Authorization"],
          "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
      }}
 )
@@ -80,7 +84,14 @@ jwt = JWTManager(flask_app)
 
 # Register blueprints
 flask_app.register_blueprint(home_bp)
-flask_app.register_blueprint(auth_bp, name='auth_bp')
+#flask_app.register_blueprint(auth_bp, name='auth_bp')
+flask_app.register_blueprint(support_bp)
+flask_app.register_blueprint(community_stories_bp)
+flask_app.register_blueprint(profile_bp)
+flask_app.register_blueprint(notifications_bp, url_prefix='/notifications')
+flask_app.register_blueprint(events_calendar_bp)
+flask_app.register_blueprint(topup_bp, url_prefix='/api')
+
 
 # Remove the after_request handler entirely to avoid conflicts
 # @flask_app.after_request
@@ -138,6 +149,8 @@ def flask_register():
                 (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
             )
             user_data = cur.fetchone()
+            if not user_data:
+                return jsonify({'success': False, 'message': 'Failed to create user'}), 500
             conn.commit()
 
         send_welcome_email(data['email'], data['name'])
@@ -168,6 +181,8 @@ def flask_login():
             return jsonify({'success': False, 'message': 'Missing credentials'}), 400
 
         conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
         with conn.cursor() as cur:
             cur.execute('''
                 SELECT id, password_hash, full_name 
@@ -191,11 +206,34 @@ def flask_login():
         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
     except Exception as e:
-        app.logger.error(f"Login error: {str(e)}")
+        flask_app.logger.error(f"Login error: {str(e)}")
         return jsonify({'success': False, 'message': 'Login failed'}), 500
     finally:
         if conn:
             conn.close()
+
+@flask_app.route('/api/topup', methods=['OPTIONS'])
+def handle_topup_options():
+    response = make_response()
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Allow-Credentials'] = 'true' 
+    return response
+
+
+@flask_app.route('/api/topup', methods=['POST'])
+def api_topup():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid request body'}), 400
+    user_id = data.get('user_id')
+    amount = data.get('amount')
+    new_balance = update_user_balance(user_id, amount)
+    return jsonify({'newBalance': new_balance, 'success': True})
+
+
+
 
 @flask_app.route('/api/solar/systems', methods=['POST'])
 @jwt_required()
@@ -269,6 +307,9 @@ async def fastapi_register(user: UserRegister):
     conn = None
     try:
         conn = get_db()
+        if not conn:  # Check if connection failed
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+            
         with conn.cursor() as cur:
             cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
             if cur.fetchone():
@@ -288,12 +329,12 @@ async def fastapi_register(user: UserRegister):
                 'message': 'Account deleted successfully'
             })
             
-    except Exception as e:
-            # Rollback in case of error
-            if conn:  # Ensure conn is not None before rollback
-                conn.rollback()
-            print(f"Error during account deletion: {str(e)}")
-            raise
+    # except Exception as e:
+    #         # Rollback in case of error
+    #         if conn:  # Ensure conn is not None before rollback
+    #             conn.rollback()
+    #         print(f"Error during account deletion: {str(e)}")
+    #         raise
             
     except Exception as e:
         print(f"Delete account error: {str(e)}")
@@ -452,7 +493,7 @@ def create_forum_topic():
         if conn: conn.close()
 
 @app.post("/fastapi/auth/login")
-async def fastapi_login(user: UserLogin):
+async def fastapi_login(user: UserLogin, topic_id: int):
     """FastAPI version of /api/auth/login"""
     conn = None
     try:
@@ -475,6 +516,7 @@ async def fastapi_login(user: UserLogin):
             JOIN users u ON t.user_id = u.id
             WHERE t.id = %s
         ''', (topic_id,))
+
         
         topic = cur.fetchone()
         if not topic:
