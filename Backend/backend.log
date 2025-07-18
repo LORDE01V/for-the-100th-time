@@ -1364,3 +1364,67 @@ LINE 4:             transaction_type, is_auto_topup, min_balance,
 2025-07-18 11:38:27,714 - INFO - 127.0.0.1 - - [18/Jul/2025 11:38:27] "GET /api/user/balance HTTP/1.1" 200 -
 2025-07-18 11:38:38,734 - INFO - 127.0.0.1 - - [18/Jul/2025 11:38:38] "OPTIONS /api/user/topup HTTP/1.1" 200 -
 2025-07-18 11:38:39,273 - INFO - 127.0.0.1 - - [18/Jul/2025 11:38:39] "POST /api/user/topup HTTP/1.1" 200 -
+2025-07-18 11:42:27,287 - INFO - 127.0.0.1 - - [18/Jul/2025 11:42:27] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-18 11:43:05,320 - INFO - 127.0.0.1 - - [18/Jul/2025 11:43:05] "OPTIONS /api/auth/change-password HTTP/1.1" 200 -
+2025-07-18 11:43:05,822 - INFO - Database connection successful.
+2025-07-18 11:43:06,647 - INFO - 127.0.0.1 - - [18/Jul/2025 11:43:06] "POST /api/auth/change-password HTTP/1.1" 200 -
+2025-07-18 11:43:16,579 - INFO - 127.0.0.1 - - [18/Jul/2025 11:43:16] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 11:43:16,976 - INFO - 127.0.0.1 - - [18/Jul/2025 11:43:16] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-18 11:46:57,278 - INFO - 127.0.0.1 - - [18/Jul/2025 11:46:57] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-18 12:15:07,388 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Videos\\GridX2\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-07-18 12:24:36,497 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-07-18 12:24:36,498 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-18 12:24:36,503 - INFO -  * Restarting with stat
+2025-07-18 12:24:56,212 - WARNING -  * Debugger is active!
+2025-07-18 12:24:56,216 - INFO -  * Debugger PIN: 130-474-514
+2025-07-18 12:26:02,580 - INFO - 127.0.0.1 - - [18/Jul/2025 12:26:02] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:26:03,568 - INFO - 127.0.0.1 - - [18/Jul/2025 12:26:03] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:26:06,351 - INFO - 127.0.0.1 - - [18/Jul/2025 12:26:06] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-18 12:26:13,332 - INFO - 127.0.0.1 - - [18/Jul/2025 12:26:13] "OPTIONS /api/auth/delete-account HTTP/1.1" 200 -
+2025-07-18 12:26:13,488 - INFO - Database connection successful.
+2025-07-18 12:26:13,631 - INFO - 127.0.0.1 - - [18/Jul/2025 12:26:13] "[35m[1mDELETE /api/auth/delete-account HTTP/1.1[0m" 500 -
+2025-07-18 12:26:49,994 - INFO - 127.0.0.1 - - [18/Jul/2025 12:26:49] "OPTIONS /api/auth/delete-account HTTP/1.1" 200 -
+2025-07-18 12:26:50,509 - INFO - Database connection successful.
+2025-07-18 12:26:50,617 - INFO - 127.0.0.1 - - [18/Jul/2025 12:26:50] "[35m[1mDELETE /api/auth/delete-account HTTP/1.1[0m" 500 -
+2025-07-18 12:30:15,516 - INFO - 127.0.0.1 - - [18/Jul/2025 12:30:15] "OPTIONS /api/auth/delete-account HTTP/1.1" 200 -
+2025-07-18 12:30:16,021 - INFO - Database connection successful.
+2025-07-18 12:30:16,080 - INFO - 127.0.0.1 - - [18/Jul/2025 12:30:16] "DELETE /api/auth/delete-account HTTP/1.1" 200 -
+2025-07-18 12:30:24,705 - INFO - 127.0.0.1 - - [18/Jul/2025 12:30:24] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:30:24,945 - ERROR - User not found for email: user@gmail.com
+2025-07-18 12:30:24,947 - INFO - 127.0.0.1 - - [18/Jul/2025 12:30:24] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-18 12:31:12,880 - INFO - 127.0.0.1 - - [18/Jul/2025 12:31:12] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:31:13,742 - INFO - 127.0.0.1 - - [18/Jul/2025 12:31:13] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:31:26,264 - INFO - 127.0.0.1 - - [18/Jul/2025 12:31:26] "OPTIONS /api/user/balance HTTP/1.1" 200 -
+2025-07-18 12:31:26,487 - INFO - 127.0.0.1 - - [18/Jul/2025 12:31:26] "GET /api/user/balance HTTP/1.1" 200 -
+2025-07-18 12:31:30,625 - INFO - 127.0.0.1 - - [18/Jul/2025 12:31:30] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-18 12:33:31,665 - INFO - 127.0.0.1 - - [18/Jul/2025 12:33:31] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-18 12:33:37,779 - INFO - 127.0.0.1 - - [18/Jul/2025 12:33:37] "OPTIONS /api/auth/delete-account HTTP/1.1" 200 -
+2025-07-18 12:33:38,242 - INFO - Database connection successful.
+2025-07-18 12:33:38,305 - INFO - 127.0.0.1 - - [18/Jul/2025 12:33:38] "DELETE /api/auth/delete-account HTTP/1.1" 200 -
+2025-07-18 12:34:15,365 - INFO - 127.0.0.1 - - [18/Jul/2025 12:34:15] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:34:15,623 - ERROR - User not found for email: user@gmail.com
+2025-07-18 12:34:15,626 - INFO - 127.0.0.1 - - [18/Jul/2025 12:34:15] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-18 12:34:21,115 - INFO - 127.0.0.1 - - [18/Jul/2025 12:34:21] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:34:21,720 - ERROR - User not found for email: full@gmail.com
+2025-07-18 12:34:21,722 - INFO - 127.0.0.1 - - [18/Jul/2025 12:34:21] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-18 12:35:19,043 - INFO - 127.0.0.1 - - [18/Jul/2025 12:35:19] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:35:19,294 - ERROR - User not found for email: gogo@gmail.com
+2025-07-18 12:35:19,296 - INFO - 127.0.0.1 - - [18/Jul/2025 12:35:19] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-18 12:35:21,781 - ERROR - User not found for email: gogo@gmail.com
+2025-07-18 12:35:21,782 - INFO - 127.0.0.1 - - [18/Jul/2025 12:35:21] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-18 12:37:02,480 - INFO - 127.0.0.1 - - [18/Jul/2025 12:37:02] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:37:03,029 - ERROR - User not found for email: t@gmail.com
+2025-07-18 12:37:03,030 - INFO - 127.0.0.1 - - [18/Jul/2025 12:37:03] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-18 12:37:15,815 - INFO - 127.0.0.1 - - [18/Jul/2025 12:37:15] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:37:16,730 - INFO - 127.0.0.1 - - [18/Jul/2025 12:37:16] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:38:28,113 - INFO - 127.0.0.1 - - [18/Jul/2025 12:38:28] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:38:29,398 - INFO - 127.0.0.1 - - [18/Jul/2025 12:38:29] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:38:32,935 - INFO - 127.0.0.1 - - [18/Jul/2025 12:38:32] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-18 12:38:56,721 - INFO - 127.0.0.1 - - [18/Jul/2025 12:38:56] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:38:57,493 - INFO - 127.0.0.1 - - [18/Jul/2025 12:38:57] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:39:01,580 - INFO - 127.0.0.1 - - [18/Jul/2025 12:39:01] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-18 12:39:26,741 - INFO - 127.0.0.1 - - [18/Jul/2025 12:39:26] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 12:39:28,082 - INFO - 127.0.0.1 - - [18/Jul/2025 12:39:28] "POST /api/auth/login HTTP/1.1" 200 -

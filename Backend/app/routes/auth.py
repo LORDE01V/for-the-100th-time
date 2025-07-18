@@ -8,6 +8,8 @@ import logging
 from datetime import datetime
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_cors import CORS, cross_origin
+from flask import jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
@@ -311,22 +313,14 @@ def change_password():
 
 # Route to delete account
 @auth_bp.route('/delete-account', methods=['DELETE'])
+@jwt_required()
 def delete_account():
-    data = request.get_json()
-    email = data.get('email')
-
-    if not email:
-        return jsonify({'message': 'Email is required'}), 400
-
-    user = User.query.filter_by(email=email).first()
-
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
-
-    # Delete user and associated data
-    db.session.delete(user)
-    db.session.commit()
-
+    user_id = get_jwt_identity()
+    conn = get_db()
+    with conn.cursor() as cur:
+        # Delete the user (and cascade to related data if your schema supports it)
+        cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
     return jsonify({'message': 'Account deleted successfully'}), 200
 
 # Route to handle login

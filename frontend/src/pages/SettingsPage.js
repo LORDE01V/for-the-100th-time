@@ -207,40 +207,19 @@ useEffect(() => {
 
   // Handle Delete Account
  
-const handleDeleteAccount = async () => {
+  const handleDeleteAccount = async () => {
+    if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) return;
     try {
-        console.log('Deleting account for user:', user?.email);
-
-        // Call the backend API to delete the user account
-        await api.delete('/api/auth/delete-account', { data: { email: user?.email } });
-
-        // Clear authentication token and logout
-        auth.logout();
-
-        // Show success toast
-        toast({
-            title: 'Account Deleted',
-            description: 'Your account has been deleted successfully.',
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-        });
-
-        // Redirect to the landing page
-        navigate('/');
-    } catch (error) {
-        console.error('Error deleting account:', error);
-        toast({
-            title: 'Error Occurred',
-            description: error.message || 'Could not delete account.',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-        });
-    } finally {
-        onClose(); // Close the confirmation modal
+      // Assumes JWT is sent via Authorization header or cookie
+      await api.delete('/api/auth/delete-account');
+      // Clear user state (context, localStorage, etc.)
+      localStorage.clear();
+      // Redirect to landing page
+      navigate('/');
+    } catch (err) {
+      alert('Failed to delete account. Please try again.');
     }
-};
+  };
 
 
 
