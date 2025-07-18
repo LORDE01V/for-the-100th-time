@@ -13,11 +13,9 @@ import {
   useToast,
   Spinner,
   useColorModeValue,
+  HStack, // Add HStack import
 } from '@chakra-ui/react';
-import {
-  FaComments,
-  FaSun
-} from 'react-icons/fa';
+import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaMoon, FaSun, FaArrowLeft } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
 import EnergyModeToggle from '../components/widgets/EnergyModeToggle';
@@ -35,6 +33,7 @@ import { useSubscription } from '../context/SubscriptionContext';
 import LoadsheddingStatus from '../components/widgets/LoadsheddingStatus'; // Correct import path
 import dashboardBg from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.png';
 import LocationSelector from '../components/widgets/LocationSelector'; // Ensure LocationSelector is imported
+import { useNavigate } from 'react-router-dom'; // Add this import
 
 const subscriptionPlans = [
   { id: 'basic-lite', name: 'Basic Lite', price: 29 },
@@ -84,6 +83,7 @@ function DashboardContent() {
     areaId: 'johannesburg',
     label: 'Johannesburg',
   });
+  const navigate = useNavigate(); // Add this line
 
   const cardBg = useColorModeValue('white', 'gray.800');
 
@@ -157,15 +157,18 @@ function DashboardContent() {
               mx="auto"
               style={{ display: 'block' }}
             >
-              <Heading
-                as="h1"
-                size="xl"
-                color="white"
-                textShadow="0 2px 8px rgba(0,0,0,0.7)"
-                textAlign="center"
-              >
+              <HStack justify="space-between" align="center" mb={8}>
+                <Button leftIcon={<FaArrowLeft />} onClick={() => navigate(-1)} variant="ghost" mr={4}>
+                  Back
+                </Button>
+              </HStack>
+
+              <Heading as="h1" size="xl" color={useColorModeValue('gray.800', 'white')} mb={2} textAlign="center">
                 Energy Dashboard
               </Heading>
+              <Text color={useColorModeValue('gray.600', 'gray.400')} fontSize="lg" textAlign="center" mb={6}>
+                Take control of your energy and discover ways to optimize your usage for a sustainable future!
+              </Text>
             </Box>
 
             <Box textAlign="center" mb={8}>

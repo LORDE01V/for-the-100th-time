@@ -35,7 +35,8 @@ import AISuggestions from './pages/AISuggestions';
 import PersonalUserPage from './pages/PersonalUserPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
-import LoadSheddingPage from './pages/LoadSheddingPage'; // Ensure this is imported
+import LoadSheddingPage from './pages/LoadSheddingPage';
+import ThemeToggleButton from './components/ThemeToggleButton';
 
 // Protected Route component
 const ProtectedRoute = () => {
@@ -73,7 +74,7 @@ function App() {
                   <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/support" element={<SupportPage />} />
                   <Route path="/forum" element={<ForumPage />} />
-                  <Route path="/loadshedding" element={<LoadSheddingPage />} /> {/* Retained as a separate route */}
+                  <Route path="/loadshedding" element={<LoadSheddingPage />} />
                   <Route path="/refer" element={<ReferPage />} />
                   <Route path="/group-buying" element={<GroupBuying />} />
                   <Route path="/subscription" element={<SubscriptionPage />} />
@@ -89,6 +90,7 @@ function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               <Supportbot />
+              <ThemeToggleButton />
             </Router>
           </SubscriptionProvider>
         </DashboardProvider>

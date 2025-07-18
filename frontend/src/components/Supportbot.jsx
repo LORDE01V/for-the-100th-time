@@ -231,7 +231,8 @@ const SupportBot = () => {
           <IconButton
             aria-label="Chat with Langa"
             icon={<FaCommentDots />}
-            size="lg"
+            boxSize="56px" // Explicitly set box size to match ThemeToggleButton
+            fontSize="2xl" // Explicitly set font size to match ThemeToggleButton
             colorScheme="teal"
             isRound
             boxShadow="lg"

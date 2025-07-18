@@ -742,6 +742,7 @@
 2025-07-14 08:56:40,514 - INFO - 127.0.0.1 - - [14/Jul/2025 08:56:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
 2025-07-14 08:56:40,883 - WARNING - Unknown option passed to Flask-CORS: origin
 2025-07-14 08:56:41,686 - INFO - 127.0.0.1 - - [14/Jul/2025 08:56:41] "POST /api/auth/login HTTP/1.1" 200 -
+<<<<<<< HEAD
 2025-07-14 10:17:13,633 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5000
@@ -2860,3 +2861,91 @@ What do you need?
 2025-07-17 18:34:16,576 - INFO - Starting Flask app on port 5000
 2025-07-17 18:34:16,716 - WARNING -  * Debugger is active!
 2025-07-17 18:34:16,723 - INFO -  * Debugger PIN: 770-890-533
+=======
+2025-07-14 09:12:59,367 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-14 09:12:59,368 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-14 09:12:59,372 - INFO -  * Restarting with stat
+2025-07-14 09:13:29,498 - WARNING -  * Debugger is active!
+2025-07-14 09:13:29,506 - INFO -  * Debugger PIN: 854-777-465
+2025-07-14 09:13:37,155 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:13:37,161 - INFO - 127.0.0.1 - - [14/Jul/2025 09:13:37] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 09:13:37,168 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:13:37,176 - INFO - 127.0.0.1 - - [14/Jul/2025 09:13:37] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 09:13:37,513 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:13:38,052 - INFO - 127.0.0.1 - - [14/Jul/2025 09:13:38] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-14 09:20:10,058 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:20:10,060 - INFO - 127.0.0.1 - - [14/Jul/2025 09:20:10] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 09:20:10,386 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 09:20:11,135 - INFO - 127.0.0.1 - - [14/Jul/2025 09:20:11] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-14 10:56:30,422 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-14 10:56:30,424 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-14 10:56:30,428 - INFO -  * Restarting with stat
+2025-07-14 10:56:46,479 - WARNING -  * Debugger is active!
+2025-07-14 10:56:46,486 - INFO -  * Debugger PIN: 854-777-465
+2025-07-14 10:59:09,369 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 10:59:09,373 - INFO - 127.0.0.1 - - [14/Jul/2025 10:59:09] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 10:59:09,699 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 10:59:10,535 - INFO - 127.0.0.1 - - [14/Jul/2025 10:59:10] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-14 11:30:47,351 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 11:30:47,355 - INFO - 127.0.0.1 - - [14/Jul/2025 11:30:47] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 11:30:47,672 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 11:30:47,950 - INFO - 127.0.0.1 - - [14/Jul/2025 11:30:47] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-14 11:37:50,308 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 11:37:50,308 - INFO - 127.0.0.1 - - [14/Jul/2025 11:37:50] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 11:37:50,629 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 11:37:50,879 - INFO - 127.0.0.1 - - [14/Jul/2025 11:37:50] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-14 11:44:24,790 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 11:44:24,791 - INFO - 127.0.0.1 - - [14/Jul/2025 11:44:24] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-14 11:44:25,103 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-14 11:44:25,347 - INFO - 127.0.0.1 - - [14/Jul/2025 11:44:25] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-15 08:50:55,121 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-15 08:50:55,122 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-15 08:50:55,124 - INFO -  * Restarting with stat
+2025-07-15 08:51:05,935 - WARNING -  * Debugger is active!
+2025-07-15 08:51:05,941 - INFO -  * Debugger PIN: 854-777-465
+2025-07-15 08:51:12,242 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-15 08:51:12,243 - INFO - 127.0.0.1 - - [15/Jul/2025 08:51:12] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-15 08:51:12,562 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-15 08:51:12,984 - INFO - 127.0.0.1 - - [15/Jul/2025 08:51:12] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-15 09:59:54,602 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-15 09:59:54,607 - INFO - 127.0.0.1 - - [15/Jul/2025 09:59:54] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-15 09:59:54,921 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-15 09:59:55,184 - INFO - 127.0.0.1 - - [15/Jul/2025 09:59:55] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-15 11:27:40,961 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-15 11:27:40,965 - INFO - 127.0.0.1 - - [15/Jul/2025 11:27:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-15 11:27:41,276 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-15 11:27:41,632 - INFO - 127.0.0.1 - - [15/Jul/2025 11:27:41] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-15 11:52:41,422 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-15 11:52:41,423 - INFO - 127.0.0.1 - - [15/Jul/2025 11:52:41] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-15 11:52:41,738 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-15 11:52:42,010 - INFO - 127.0.0.1 - - [15/Jul/2025 11:52:42] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-15 11:55:48,071 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-15 11:55:48,072 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-15 11:55:48,075 - INFO -  * Restarting with stat
+2025-07-15 11:55:58,895 - WARNING -  * Debugger is active!
+2025-07-15 11:55:58,911 - INFO -  * Debugger PIN: 854-777-465
+2025-07-18 09:58:07,694 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-18 09:58:07,695 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-18 09:58:07,700 - INFO -  * Restarting with stat
+2025-07-18 09:58:39,275 - WARNING -  * Debugger is active!
+2025-07-18 09:58:39,284 - INFO -  * Debugger PIN: 854-777-465
+2025-07-18 10:06:55,342 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-18 10:06:55,343 - INFO - 127.0.0.1 - - [18/Jul/2025 10:06:55] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-18 10:06:55,649 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-18 10:06:55,863 - INFO - 127.0.0.1 - - [18/Jul/2025 10:06:55] "POST /api/auth/login HTTP/1.1" 200 -
+>>>>>>> 130eee850821471921ea07067d2c152574a3223e
