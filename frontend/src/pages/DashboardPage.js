@@ -18,7 +18,7 @@ import {
   HStack,
   useColorModeValue
 } from '@chakra-ui/react';
-import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaMoon, FaSun } from 'react-icons/fa';
+import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaMoon, FaSun, FaHome } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
@@ -171,6 +171,20 @@ function DashboardContent() {
       <Box position="relative" zIndex={1} p={8}>
         <Flex direction="row" w="full" maxW="1400px" mx="auto">
           <Box w="full" px={8} py={6}>
+            {/* --- Back to Home button at the very top, centered and clear --- */}
+            <Box textAlign="center" mb={4}>
+              <Button
+                leftIcon={<FaHome />}
+                colorScheme="teal"
+                variant="solid"
+                size="lg"
+                onClick={() => navigate('/home')}
+              >
+                Back to Home
+              </Button>
+            </Box>
+            {/* --- End Back to Home button block --- */}
+
             <Box
               display="inline-block"
               bg="rgba(0,0,0,0.45)"
@@ -446,8 +460,8 @@ function DashboardContent() {
           aria-label="Open Chatbot"
           icon={<FaComments />}
           position="fixed"
-          bottom="20px"
-          right="20px"
+          bottom="21px"
+          right="21px"
           {...bubbleButtonProps}
           // onClick={...} // your chatbot open handler
         />
