@@ -33,8 +33,11 @@ const PersonalUserPage = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     axios
-      .get("/api/auth/user", { withCredentials: true })
+      .get("http://localhost:5000/profile/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       .then((res) => setFormData(res.data))
       .catch(() =>
         toast({
@@ -56,8 +59,11 @@ const PersonalUserPage = () => {
 
   const confirmSubmit = () => {
     setIsOpen(false);
+    const token = localStorage.getItem('token');
     axios
-      .put("/api/auth/user", formData, { withCredentials: true })
+      .post("http://localhost:5000/profile/me", formData, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       .then(() =>
         toast({
           title: "Profile updated successfully",

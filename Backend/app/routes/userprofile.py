@@ -1,44 +1,89 @@
 from flask import Blueprint, request, jsonify
 from Backend.db_utils import connect_db
-#from ... import db_utils
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 profile_bp = Blueprint('profile', __name__)
 
-@profile_bp.route('/profile/<int:user_id>', methods=['GET'])
+
+
+@profile_bp.route('/profile/me', methods=['GET'])
 @jwt_required()
-def get_profile(user_id):
-    db = connect_db()
-    user = db.execute(
-        'SELECT full_name, surname, email, phone_number, address FROM users WHERE id = ?', (user_id,)
-    ).fetchone()
+def get_my_profile():
+    user_id = get_jwt_identity()
+    conn, cur = connect_db()
+    # Join users and profile_details to get all info
+    cur.execute(
+        '''
+        SELECT u.full_name, u.email, u.phone, p.address, p.surname
+        FROM users u
+        LEFT JOIN profiledetails p ON u.id = p.id
+        WHERE u.id = %s
+        ''', (user_id,)
+    )
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
     if user:
-        return jsonify(dict(user)), 200
+        return jsonify({
+            "full_name": user[0],
+            "email": user[1],
+            "phone_number": user[2],
+            "address": user[3]
+        }), 200
     return jsonify({'error': 'User not found'}), 404
 
-@profile_bp.route('/profile/<int:user_id>', methods=['POST'])
+import psycopg2
+
+@profile_bp.route('/profile/me', methods=['POST', 'PUT'])
 @jwt_required()
-def update_profile(user_id):
-    data = request.json
-    db = connect_db()
-    db.execute(
-        '''
-        UPDATE users SET
-            full_name = ?,
-            surname = ?,
-            email = ?,
-            phone_number = ?,
-            address = ?
-        WHERE id = ?
-        ''',
-        (
-            data.get('full_name'),
-            data.get('surname'),
-            data.get('email'),
-            data.get('phone_number'),
-            data.get('address'),
-            user_id
+def update_my_profile():
+    try:
+        user_id = get_jwt_identity()
+        data = request.json
+        conn, cur = connect_db()
+        # Update users table
+        cur.execute(
+            '''
+            UPDATE users SET
+                full_name = %s,
+                surname = %s,
+                email = %s,
+                phone = %s
+            WHERE id = %s
+            ''',
+            (
+                data.get('full_name'),
+                data.get('surname'),
+                data.get('email'),
+                data.get('phone_number'),
+                user_id
+            )
         )
-    )
-    db.commit()
-    return jsonify({'message': 'Profile updated'}), 200
+        # Update profile_details table
+        cur.execute(
+            '''
+            UPDATE profiledetails SET
+                surname =%s,
+                address = %s
+            WHERE id = %s
+            ''',
+            (   
+                data.get('surname'),
+                data.get('address'),
+               
+                user_id
+            )
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'message': 'Profile updated'}), 200
+    except psycopg2.errors.UniqueViolation:
+        # Rollback the transaction to avoid locking the DB
+        conn.rollback()
+        return jsonify({'error': 'This email is already in use.'}), 400
+    except Exception as e:
+        print("Update error:", e)
+        if conn:
+            conn.rollback()
+        return jsonify({'error': 'Update failed', 'details': str(e)}), 500
