@@ -49,12 +49,7 @@ const SolarOutput = ({ location }) => {
 
   useEffect(() => {
     const fetchHourlyForecast = async () => {
-      let url = '';
-      if (location && location.type === 'coords') {
-        url = `http://localhost:5000/api/weather?lat=${location.latitude}&lon=${location.longitude}`;
-      } else if (location && location.type === 'area') {
-        url = `http://localhost:5000/api/weather?areaId=${location.areaId}`;
-      } else {
+      if (!location || !location.latitude || !location.longitude) {
         setError("Please select an area, search an address, or allow location access.");
         setLoading(false);
         return;
@@ -63,42 +58,33 @@ const SolarOutput = ({ location }) => {
       setLoading(true);
       setError(null);
       try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&hourly=temperature_2m,relative_humidity_2m&timezone=auto`;
         const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        if (data.hourly_forecast && Array.isArray(data.hourly_forecast)) {
+        if (data.hourly && data.hourly.time) {
           const now = new Date();
           const currentHour = now.getHours();
-
-          // Filter for the current day's hourly data and map to chart format
-          const todayHourlyData = data.hourly_forecast.filter(item => {
-            const itemDate = new Date(item.time);
-            return itemDate.getDate() === now.getDate() &&
-                   itemDate.getMonth() === now.getMonth() &&
-                   itemDate.getFullYear() === now.getFullYear();
-          }).map(item => ({
-            hour: new Date(item.time).getHours(),
-            // Example: higher temp/lower humidity = better output (customize as needed)
-            output: Math.min(100, Math.max(0, Math.round(item.temperature_2m * 2 + (100 - item.relative_humidity_2m) / 2))),
-          }));
+          const today = now.toISOString().slice(0, 10);
+          const todayHourlyData = data.hourly.time
+            .map((time, idx) => {
+              if (!time.startsWith(today)) return null;
+              return {
+                hour: new Date(time).getHours(),
+                output: Math.min(100, Math.max(0, Math.round(data.hourly.temperature_2m[idx] * 2 + (100 - data.hourly.relative_humidity_2m[idx]) / 2))),
+              };
+            })
+            .filter(Boolean);
 
           setHourlyForecast(todayHourlyData);
-
-          // Calculate current efficiency (e.g., based on the current hour's output)
           const currentHourData = todayHourlyData.find(item => item.hour === currentHour);
           setCurrentEfficiency(currentHourData ? currentHourData.output : 0);
-
-          // Calculate peak efficiency for the day
           const peak = todayHourlyData.reduce((max, item) => Math.max(max, item.output), 0);
           setPeakEfficiency(peak);
-
         } else {
           setError("Invalid data format received from weather API for hourly forecast.");
         }
       } catch (e) {
-        console.error("Failed to fetch hourly forecast:", e);
         setError("Failed to load solar output data. Please try again later.");
       } finally {
         setLoading(false);

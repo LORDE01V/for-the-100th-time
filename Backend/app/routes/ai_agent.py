@@ -1,55 +1,88 @@
 from flask import Blueprint, request, jsonify
-import os
-from huggingface_agent import query_mistral
 import requests
-import json
+import os
 
-ai_agent_bp = Blueprint('ai_agent', __name__)
+ai_agent_bp = Blueprint('ai_agent_bp', __name__)
+
+# List of greeting/empty/vague triggers
+GREETINGS = [
+    '', 'hi', 'hello', 'hey', 'how are you', 'good morning', 'good afternoon', 'good evening', 'greetings', 'yo', 'sup', 'hola', 'bonjour', 'hallo', 'help', 'start', 'menu', 'test', 'ping', 'who are you', 'what can you do', 'assist', 'assistance', 'support'
+]
+
+FAREWELLS = [
+    'bye', 'goodbye', 'ciao', 'see you', 'see ya', 'later', 'farewell', 'thanks, bye', 'thank you, bye', 'talk to you later', 'see you later', 'see you soon', 'catch you later', 'adios', 'cheers', 'peace out', 'take care', 'until next time'
+]
+
+def is_greeting_or_empty(msg):
+    msg = (msg or '').strip().lower()
+    # Only treat as greeting if the message is exactly a greeting (not if it contains a greeting word)
+    return msg in GREETINGS
+
+def is_farewell(msg):
+    msg = (msg or '').strip().lower()
+    return any(f in msg for f in FAREWELLS)
 
 @ai_agent_bp.route('/api/ai-agent', methods=['POST'])
-def ai_agent_openrouter():
-    data = request.get_json(force=True, silent=True)
-    if not data or 'prompt' not in data or not data['prompt'].strip():
-        return jsonify({'response': 'Prompt is required'}), 400
-    prompt = data['prompt'].strip()
-
-    # Guardrails: Only answer energy/solar/forecast/loadshedding/dashboard queries
-    allowed_keywords = [
-        'energy', 'solar', 'forecast', 'loadshedding', 'dashboard', 'usage', 'optimizer', 'battery', 'panel', 'grid', 'power', 'consumption', 'generation', 'saving', 'outage', 'electricity', 'renewable', 'weather', 'sunlight', 'pv', 'inverter', 'subscription', 'tariff', 'billing', 'alert', 'notification', 'report', 'trend', 'ai', 'suggestion', 'tip', 'support', 'device', 'area', 'location', 'status', 'schedule', 'time', 'history', 'performance', 'maintenance', 'capacity', 'storage', 'efficiency', 'cost', 'payment', 'topup', 'transaction', 'user', 'profile', 'account', 'login', 'register', 'plan', 'upgrade', 'downgrade', 'settings', 'help', 'faq', 'contact', 'feedback', 'optimizer', 'optimizer agent', 'optimizer model', 'optimizer suggestion', 'optimizer plan', 'optimizer forecast', 'optimizer dashboard', 'optimizer usage', 'optimizer report', 'optimizer tip', 'optimizer support', 'optimizer device', 'optimizer area', 'optimizer location', 'optimizer status', 'optimizer schedule', 'optimizer time', 'optimizer history', 'optimizer performance', 'optimizer maintenance', 'optimizer capacity', 'optimizer storage', 'optimizer efficiency', 'optimizer cost', 'optimizer payment', 'optimizer topup', 'optimizer transaction', 'optimizer user', 'optimizer profile', 'optimizer account', 'optimizer login', 'optimizer register', 'optimizer plan', 'optimizer upgrade', 'optimizer downgrade', 'optimizer settings', 'optimizer help', 'optimizer faq', 'optimizer contact', 'optimizer feedback'
-    ]
-    prompt_lower = prompt.lower()
-    if not any(kw in prompt_lower for kw in allowed_keywords):
-        return jsonify({'response': "I'm only trained to assist with Solar Optimizer App queries like energy usage, solar data, forecast, and loadshedding. Please ask something related to that."}), 200
-
-    OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
-    if not OPENROUTER_API_KEY:
-        return jsonify({'response': 'OpenRouter API key not set in environment.'}), 500
-
+def handle_ai_agent():
     try:
-        api_url = 'https://openrouter.ai/api/v1/chat/completions'
+        data = request.get_json(force=True)
+        message = data.get("message", "").strip() if data else ""
+
+        if is_greeting_or_empty(message):
+            return jsonify({
+                "reply": "Hello! You can ask about your solar system, energy usage, loadshedding alerts, forecasts, billing, or account settings. How can I assist you today?"
+            }), 200
+
+        if is_farewell(message):
+            return jsonify({
+                "reply": "Glad I could assist you, feel free to come back if you need help."
+            }), 200
+
+        system_prompt = (
+            "You are a helpful AI assistant specialized exclusively in the Solar Optimizer app.\n"
+            "Answer only questions related to:\n"
+            "- Energy usage and optimization\n"
+            "- Solar panel systems and installations\n"
+            "- Solar power generation, battery storage, and inverters\n"
+            "- Weather and sunlight forecasts relevant to solar output\n"
+            "- Loadshedding schedules and alerts\n"
+            "- Dashboard analytics, reports, and performance trends\n"
+            "- Billing, payments, and subscription plans\n"
+            "- Device status, maintenance, and troubleshooting\n"
+            "- User account management including login and registration\n"
+            "- Tips, recommendations, and support related solely to the Solar Optimizer app\n\n"
+            "If a user asks about anything outside these topics, politely respond:\n"
+            "I'm here to help with Solar Optimizer app related questions only. Please ask about energy, solar, loadshedding, billing, or dashboard features.\n\n"
+            "If the user input is empty, vague, or just a greeting, respond with a welcoming message suggesting what can be asked:\n"
+            "Hello! You can ask about your solar system, energy usage, loadshedding alerts, forecasts, billing, or account settings. How can I assist you today?\n\n"
+            "Do not read markdown syntax such as **, __, or backticks aloud. Instead, provide clear, natural language responses without mentioning formatting symbols.\n\n"
+            "Keep all answers concise, informative, and user-friendly.\n\n"
+            "Never answer questions unrelated to the Solar Optimizer app."
+        )
+
         headers = {
-            'Authorization': f'Bearer {OPENROUTER_API_KEY}',
-            'HTTP-Referer': 'http://localhost:3000',
-            'Content-Type': 'application/json'
+            "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+            "Content-Type": "application/json"
         }
-        payload = {
-            'model': 'mistralai/mistral-small-3.2-24b-instruct',
-            'messages': [
-                { 'role': 'user', 'content': prompt }
+        body = {
+            "model": "mistralai/mistral-small-3.2-24b-instruct:free",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": system_prompt
+                },
+                {
+                    "role": "user",
+                    "content": message
+                }
             ]
         }
-        resp = requests.post(api_url, headers=headers, data=json.dumps(payload), timeout=60)
-        if resp.status_code == 200:
-            result = resp.json()
-            # OpenRouter returns choices[0].message.content
-            answer = None
-            if 'choices' in result and result['choices'] and 'message' in result['choices'][0]:
-                answer = result['choices'][0]['message'].get('content', '').strip()
-            if answer:
-                return jsonify({'response': answer}), 200
-            else:
-                return jsonify({'response': 'No answer found from OpenRouter.'}), 200
-        else:
-            return jsonify({'response': f'OpenRouter error: {resp.status_code} - {resp.text}'}), 500
+
+        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=body)
+        response.raise_for_status()
+        response_data = response.json()
+        reply = response_data["choices"][0]["message"]["content"]
+        return jsonify({ "reply": reply }), 200
+
     except Exception as e:
-        return jsonify({'response': f'Error contacting OpenRouter: {str(e)}'}), 500
+        return jsonify({ "error": str(e) }), 500

@@ -38,7 +38,7 @@ const DailyForecast = ({ location }) => {
 
   useEffect(() => {
     const fetchDailyForecast = async () => {
-      if (!location || !location.type) {
+      if (!location || !location.latitude || !location.longitude) {
         setError("Please select an area, search an address, or allow location access.");
         setLoading(false);
         return;
@@ -47,39 +47,23 @@ const DailyForecast = ({ location }) => {
       setLoading(true);
       setError(null);
       try {
-        let url = '';
-        if (location && location.type === 'coords') {
-          url = `http://localhost:5000/api/weather?lat=${location.latitude}&lon=${location.longitude}`;
-        } else if (location && location.type === 'area') {
-          url = `http://localhost:5000/api/weather?areaId=${location.areaId}`;
-        } else {
-          setError("Please select an area, search an address, or allow location access.");
-          setLoading(false);
-          return;
-        }
-
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&daily=temperature_2m_max,temperature_2m_min,uv_index_max,sunshine_duration,sunrise,sunset&timezone=auto`;
         const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        if (data.daily_forecast && Array.isArray(data.daily_forecast)) {
-          const formattedForecast = data.daily_forecast.map(day => {
+        if (data.daily && data.daily.time) {
+          const formattedForecast = data.daily.time.map((date, idx) => {
             let iconType = 'sun';
-            if (day.temperature_2m_max < 15) iconType = 'cloud';
-            if (day.uv_index_max > 7) iconType = 'sun';
-            if (new Date(day.sunrise).getHours() === currentHour) iconType = 'sunrise';
-            if (new Date(day.sunset).getHours() === currentHour) iconType = 'sunset';
-
-            const usage = day.sunshine_duration ? Math.min(100, Math.round((day.sunshine_duration / 36000) * 100)) : 0;
-
+            if (data.daily.temperature_2m_max[idx] < 15) iconType = 'cloud';
+            if (data.daily.uv_index_max[idx] > 7) iconType = 'sun';
+            const usage = data.daily.sunshine_duration ? Math.min(100, Math.round((data.daily.sunshine_duration[idx] / 36000) * 100)) : 0;
             return {
-              hour: new Date(day.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+              hour: new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
               usage: usage,
               icon: iconType,
-              tempMax: day.temperature_2m_max,
-              tempMin: day.temperature_2m_min,
-              uvIndex: day.uv_index_max,
+              tempMax: data.daily.temperature_2m_max[idx],
+              tempMin: data.daily.temperature_2m_min[idx],
+              uvIndex: data.daily.uv_index_max[idx],
             };
           });
           setDailyForecast(formattedForecast);
@@ -87,7 +71,6 @@ const DailyForecast = ({ location }) => {
           setError("Invalid data format received from weather API.");
         }
       } catch (e) {
-        console.error("Failed to fetch daily forecast:", e);
         setError("Failed to load daily energy forecast. Please try again later.");
       } finally {
         setLoading(false);

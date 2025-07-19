@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Box,
   Flex,
@@ -11,27 +11,110 @@ import {
   useToast,
   Avatar,
   useColorModeValue,
+  Button,
 } from '@chakra-ui/react';
-import { FaPaperPlane, FaTimes, FaCommentDots, FaMicrophone } from 'react-icons/fa';
+import { FaPaperPlane, FaTimes, FaCommentDots, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 import RecordRTC from 'recordrtc';
 // Replaced local image import with a placeholder URL
 // If you have a specific image, you'll need to host it or use a base64 string (not recommended for large images)
-const langaImage = "https://placehold.co/150x150/008080/ffffff?text=Langa"; 
+const langaImage = "https://placehold.co/150x150/008080/ffffff?text=Langa";
+
+// Add SpeechRecognition support
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+
+let selectedVoice = null;
+
+function pickSiriLikeVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  // Prefer 'Samantha', 'Alex', or any en-US Siri-like voice
+  let siriVoice = voices.find(v => v.lang && v.lang.includes('en-US') && (v.name === 'Samantha' || v.name === 'Alex'));
+  if (!siriVoice) {
+    siriVoice = voices.find(v => v.lang && v.lang.includes('en-US'));
+  }
+  if (!siriVoice) {
+    siriVoice = voices.find(v => v.lang && v.lang.startsWith('en'));
+  }
+  return siriVoice || null;
+}
+
+// Set up voice selection on load and on voiceschanged
+function useSiriLikeVoice() {
+  useEffect(() => {
+    function setVoice() {
+      selectedVoice = pickSiriLikeVoice();
+    }
+    setVoice();
+    window.speechSynthesis.onvoiceschanged = setVoice;
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
+}
+
+const langaGreeting = "Hi! I'm Langa. How can I help you today?";
 
 const SupportBot = () => {
   console.log('SupportBot component is mounting');
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { text: "Hi! I'm Langa. How can I help you today?", sender: 'bot' }
-  ]);
+  const [isOpen, setIsOpen] = useState(false); // Must be false
+  const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [typing, setTyping] = useState(false); // State for "Bot is typing..."
+  const [hasSpokenLangaGreeting, setHasSpokenLangaGreeting] = useState(false);
+  const [isMuted, setIsMuted] = useState(false); // Mute/unmute state
 
   // For recording with RecordRTC
   const [recorder, setRecorder] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
+
+  // --- Langa Voice Logic ---
+  const [isSpeaking, setIsSpeaking] = useState(false); // For animation
+
+  // State for voice-to-text
+  const [isListening, setIsListening] = useState(false);
+  const recognitionActiveRef = useRef(false);
+
+  useSiriLikeVoice();
+
+  // Voice reply function for Langa
+  const speakReply = useCallback((text) => {
+    if (isMuted) return;
+    if (!window.speechSynthesis) return;
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    utterance.lang = selectedVoice?.lang || 'en-US';
+    utterance.voice = selectedVoice || null;
+    utterance.pitch = 1.1;
+    utterance.rate = 0.95;
+    window.speechSynthesis.cancel(); // Always cancel any ongoing speech
+    setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  }, [isMuted]);
+
+  // Langa greeting ONLY when chatbot is opened for the first time per session (not on app load)
+  useEffect(() => {
+    if (isOpen && !hasSpokenLangaGreeting && !isMuted) {
+      window.speechSynthesis.cancel();
+      speakReply(langaGreeting);
+      setHasSpokenLangaGreeting(true);
+    }
+    if (isOpen && isMuted) {
+      window.speechSynthesis.cancel();
+    }
+  }, [isOpen, hasSpokenLangaGreeting, isMuted, speakReply]);
+
+  // Call speakReply whenever a new bot message is added (and not muted)
+  useEffect(() => {
+    if (messages.length === 0) return;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.sender === 'bot' && lastMsg.text && !lastMsg.typing && !lastMsg.thinking && !isMuted) {
+      speakReply(lastMsg.text);
+    }
+    // eslint-disable-next-line
+  }, [messages, isMuted, speakReply]);
 
   const toast = useToast();
   const messagesEndRef = useRef(null); // Ref to scroll to the latest message
@@ -94,7 +177,7 @@ const SupportBot = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: textToSend }),
+        body: JSON.stringify({ message: textToSend }),
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -116,14 +199,14 @@ const SupportBot = () => {
       setTyping(false);
     }
 
-    // Replace the last 'Langa is typing...' with the real response
+    const botReply = data.reply || data.response || "Sorry, I didn't get a reply.";
     setMessages(prev => {
       const updated = [...prev];
       const lastIdx = updated.findIndex(m => m.typing || m.thinking);
       if (lastIdx !== -1) {
-        updated[lastIdx] = { text: data.response, sender: 'bot' };
+        updated[lastIdx] = { text: botReply, sender: 'bot' };
       } else {
-        updated.push({ text: data.response, sender: 'bot' });
+        updated.push({ text: botReply, sender: 'bot' });
       }
       return updated;
     });
@@ -170,9 +253,6 @@ const SupportBot = () => {
       setIsRecording(false);
       const audioBlob = recorder.getBlob();
 
-      // Optional: verify blob size/type
-      console.log('Recorded blob size:', audioBlob.size);
-
       // Send to the backend
       const formData = new FormData();
       formData.append('audio', audioBlob, 'my_recording.wav');
@@ -189,7 +269,10 @@ const SupportBot = () => {
 
         const data = await response.json();
         if (data.text) {
-          await handleSendMessage(data.text);
+          // Instead of sending immediately, insert into input field:
+          setInputMessage(data.text); // <--- This puts the transcribed text in the input box
+          // Optionally, you could auto-send:
+          // await handleSendMessage(data.text);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -209,6 +292,47 @@ const SupportBot = () => {
       recorder.destroy();
       setRecorder(null);
     });
+  };
+
+  // Voice-to-text mic logic
+  const handleMicClick = () => {
+    if (!recognition) {
+      setMessages(prev => [...prev, { text: "Sorry, your browser doesn't support voice-to-text.", sender: 'bot' }]);
+      return;
+    }
+    if (isListening || recognitionActiveRef.current) {
+      recognition.stop();
+      setIsListening(false);
+      recognitionActiveRef.current = false;
+      return;
+    }
+    // Only start if not already listening
+    try {
+      recognition.start();
+      setIsListening(true);
+      recognitionActiveRef.current = true;
+    } catch (e) {
+      // If already started, just ignore
+      setIsListening(true);
+      recognitionActiveRef.current = true;
+    }
+    recognition.onresult = (event) => {
+      const speech = event.results[0][0].transcript;
+      setInputMessage('');
+      setIsListening(false);
+      recognitionActiveRef.current = false;
+      handleSendMessage(speech);
+    };
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionActiveRef.current = false;
+    };
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setMessages(prev => [...prev, { text: "Sorry, I couldn't process your voice message. Try again or type your message.", sender: 'bot' }]);
+      setIsListening(false);
+      recognitionActiveRef.current = false;
+    };
   };
 
   const handleKeyPress = (e) => {
@@ -236,7 +360,11 @@ const SupportBot = () => {
             colorScheme="teal"
             isRound
             boxShadow="lg"
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setIsOpen(true);
+              setHasSpokenLangaGreeting(false); // Reset greeting for new session
+              setMessages([{ text: "Hi! I'm Langa. How can I help you today?", sender: 'bot' }]);
+            }}
           />
         </Box>
       )}
@@ -267,19 +395,36 @@ const SupportBot = () => {
             boxShadow={"md"}
           >
             <HStack>
-              <Avatar size="md" border="2px solid white" src={langaImage} />
+              <Avatar size="md" border="2px solid white" src={langaImage} className={isSpeaking ? 'bot-speaking' : ''} />
               <Heading size="md" fontWeight="bold" letterSpacing="wide">
                 Langa
               </Heading>
             </HStack>
-            <IconButton
-              icon={<FaTimes />}
-              variant="ghost"
-              color="white"
-              onClick={() => setIsOpen(false)}
-              size="sm"
-              _hover={{ bg: "teal.600" }}
-            />
+            <HStack>
+              <IconButton
+                icon={isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
+                variant="ghost"
+                color="white"
+                onClick={() => {
+                  setIsMuted(m => {
+                    if (!m) window.speechSynthesis.cancel();
+                    return !m;
+                  });
+                }}
+                size="sm"
+                aria-label={isMuted ? 'Unmute Langa' : 'Mute Langa'}
+                _hover={{ bg: "teal.600" }}
+                title={isMuted ? 'Unmute voice replies' : 'Mute voice replies'}
+              />
+              <IconButton
+                icon={<FaTimes />}
+                variant="ghost"
+                color="white"
+                onClick={() => setIsOpen(false)}
+                size="sm"
+                _hover={{ bg: "teal.600" }}
+              />
+            </HStack>
           </Flex>
 
           {/* Messages */}
@@ -342,16 +487,14 @@ const SupportBot = () => {
               _focus={{ borderColor: "teal.400" }}
               disabled={isLoading || isRecording} /* Disable during loading/recording */
             />
-            <IconButton
-              colorScheme={isRecording ? "red" : "teal"}
-              aria-label={isRecording ? "Stop recording" : "Start recording"}
-              icon={<FaMicrophone />}
-              onClick={handleVoiceRecording}
-              isLoading={isLoading}
-              disabled={isLoading}
+            <Button
+              onClick={handleMicClick}
+              colorScheme={isListening ? "red" : "teal"}
               borderRadius="full"
               mr={2}
-            />
+            >
+              {isListening ? '🎤 Listening… Tap to Stop' : '🎙️ Speak'}
+            </Button>
             <IconButton
               colorScheme="teal"
               aria-label="Send message"
