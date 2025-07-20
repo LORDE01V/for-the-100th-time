@@ -438,4 +438,5 @@ if __name__ == '__main__':
     for rule in flask_app.url_map.iter_rules():
         print(rule)
     print("=========================")
+    print("Flask app running on http://0.0.0.0:5000")
     flask_app.run(host='0.0.0.0', port=5000, debug=True)
