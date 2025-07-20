@@ -351,4 +351,19 @@ export const activityReportData = {
     { date: '2025-03-20', message: 'Final alert', type: 'warning' }
   ],
   budgetProgress: 75,  // Keeping this as is
-}; 
+};
+
+// Mock Areas for Area Selection
+export const mockAreas = [
+  { id: 'johannesburg', name: 'Johannesburg', latitude: -26.2041, longitude: 28.0473 },
+  { id: 'capetown', name: 'Cape Town', latitude: -33.9249, longitude: 18.4241 },
+  { id: 'durban', name: 'Durban', latitude: -29.8587, longitude: 31.0218 },
+  { id: 'pretoria', name: 'Pretoria', latitude: -25.7479, longitude: 28.2293 },
+  { id: 'bloemfontein', name: 'Bloemfontein', latitude: -29.0852, longitude: 26.2159 },
+  { id: 'polokwane', name: 'Polokwane', latitude: -23.9045, longitude: 29.4688 },
+  { id: 'nelspruit', name: 'Nelspruit', latitude: -25.4773, longitude: 30.9700 },
+  { id: 'kimberley', name: 'Kimberley', latitude: -28.7383, longitude: 24.7630 },
+  { id: 'mafikeng', name: 'Mafikeng', latitude: -25.8733, longitude: 25.6713 },
+  { id: 'gqeberha', name: 'Gqeberha', latitude: -33.9611, longitude: 25.6102 },
+  { id: 'eastlondon', name: 'East London', latitude: -33.0186, longitude: 27.8942 },
+]; 

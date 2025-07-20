@@ -2,12 +2,7 @@ import psycopg2
 from psycopg2 import OperationalError
 import os
 from dotenv import load_dotenv
-import pandas as pd
-import plotly.express as px
-import json
-import datetime
 import logging
-import sys
 
 # Load environment variables
 load_dotenv()
@@ -31,19 +26,16 @@ def connect_db():
         print(f"🚨 Database connection failed: {e}")
         return None, None
 
-# Add the get_db function here, right after the connect_db function
 def get_db():
     try:
-        db_host = os.getenv('DB_HOST', 'localhost')  # Default to 'localhost' if not set
-        db_name = os.getenv('DB_NAME', 'Fintech_Solar')  # Default if not set
-        db_user = os.getenv('DB_USER', 'postgres')  # Default if not set
-        db_password = os.getenv('DB_PASSWORD', '')  # Check for password
-        db_port = os.getenv('DB_PORT', '5432')  # Default port
-        
+        db_host = os.getenv('DB_HOST', 'localhost')
+        db_name = os.getenv('DB_NAME', 'Fintech_Solar')
+        db_user = os.getenv('DB_USER', 'postgres')
+        db_password = os.getenv('DB_PASSWORD', '')
+        db_port = os.getenv('DB_PORT', '5432')
         if not db_password:
             logging.error('DB_PASSWORD is not set in your .env file. Please add it and try again.')
             raise ValueError('DB_PASSWORD environment variable must be set.')
-        
         conn = psycopg2.connect(
             host=db_host,
             database=db_name,
@@ -55,7 +47,7 @@ def get_db():
         return conn
     except OperationalError as e:
         logging.error(f'Database connection failed: {str(e)}. Please verify your .env file settings.')
-        raise  # Re-raise for the caller to handle
+        raise
 
 # ================== CORE FUNCTIONS ==================
 def execute_query(operation=None, query=None, params=None):
@@ -76,7 +68,8 @@ def execute_query(operation=None, query=None, params=None):
             conn.commit()
             return cur.fetchone()[0] if cur.description else None
     except Exception as e:
-        conn.rollback()
+        if conn:
+            conn.rollback()
         logging.error("Query failed: %s - Query: %s", str(e), query)
         raise
     finally:
@@ -101,18 +94,43 @@ def get_user_by_email(email):
         return dict(zip(columns, result[0]))
     return None
 
-def update_user_by_id(user_id, email=None, full_name=None, surname=None, phone_number=None, address=None):
+def get_user_by_id(user_id):
+    """Get user by ID"""
+    try:
+        user_id = int(user_id)
+    except Exception:
+        return None
+    query = "SELECT id, email, password_hash, full_name FROM users WHERE id = %s"
+    result = execute_query('search', query, (user_id,))
+    if result:
+        columns = ['id', 'email', 'password_hash', 'full_name']
+        return dict(zip(columns, result[0]))
+    return None
+
+def get_user_by_email_or_id(identifier):
+    """Try by id first, then by email"""
+    user = get_user_by_id(identifier)
+    if user:
+        return user
+    return get_user_by_email(identifier)
+
+def update_user_by_id(user_id, email=None, full_name=None):
     query = """
     UPDATE users 
     SET email = COALESCE(%s, email), 
-        full_name = COALESCE(%s, full_name), 
-        surname = COALESCE(%s, surname), 
-        phone_number = COALESCE(%s, phone_number), 
-        address = COALESCE(%s, address)
+        full_name = COALESCE(%s, full_name)
     WHERE id = %s RETURNING id
     """
-    params = (email, full_name, surname, phone_number, address, user_id)
+    params = (email, full_name, user_id)
     return execute_query('search', query, params) is not None
+
+def create_user_from_google(user_info):
+    """Create user from Google OAuth info"""
+    return create_user(
+        email=user_info['email'],
+        password_hash=None,
+        full_name=user_info.get('name', '')
+    )
 
 # ================== SOLAR SYSTEM OPERATIONS ==================
 def add_solar_system(installer_id, capacity_kw, components=None, installation_date=None):
@@ -150,20 +168,17 @@ def record_payment(contract_id, amount, payment_method):
     conn, cur = connect_db()
     try:
         cur.execute("BEGIN")
-        
         # Record payment
         cur.execute("""
         INSERT INTO payments (contract_id, amount, payment_method)
         VALUES (%s, %s, %s)
         """, (contract_id, amount, payment_method))
-        
         # Update contract balance
         cur.execute("""
         UPDATE solar_contracts 
         SET payments_made = payments_made + %s
         WHERE id = %s
         """, (amount, contract_id))
-        
         conn.commit()
         return True
     except Exception as e:
@@ -184,7 +199,7 @@ def get_payment_history(contract_id):
     """
     return execute_query('search', query, (contract_id,))
 
-# Initialize database tables when module loads
+# ================== DB INITIALIZATION ==================
 def initialize_db():
     conn, cur = connect_db()
     try:
@@ -192,17 +207,10 @@ def initialize_db():
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             email VARCHAR(255) UNIQUE NOT NULL,
-            password_hash VARCHAR(255) NOT NULL,
-            full_name VARCHAR(100),
-            surname VARCHAR(100),
-            phone_number VARCHAR(20),
-            address TEXT,
-            is_installer BOOLEAN DEFAULT FALSE
+            password_hash VARCHAR(255),
+            full_name VARCHAR(100)
         )""")
-        
-        # Add this to ensure the column is altered if it exists with the wrong type
         cur.execute("ALTER TABLE users ALTER COLUMN password_hash TYPE VARCHAR(255);")
-        
         cur.execute("""
         CREATE TABLE IF NOT EXISTS solar_systems (
             id SERIAL PRIMARY KEY,
@@ -211,7 +219,6 @@ def initialize_db():
             components TEXT,
             installation_date DATE
         )""")
-        
         cur.execute("""
         CREATE TABLE IF NOT EXISTS solar_contracts (
             id SERIAL PRIMARY KEY,
@@ -225,7 +232,6 @@ def initialize_db():
             is_active BOOLEAN DEFAULT TRUE,
             CONSTRAINT valid_payment CHECK (monthly_payment > 0 AND total_cost > monthly_payment)
         )""")
-        
         cur.execute("""
         CREATE TABLE IF NOT EXISTS payments (
             id SERIAL PRIMARY KEY,
@@ -234,7 +240,6 @@ def initialize_db():
             payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             payment_method VARCHAR(50)
         )""")
-        
         conn.commit()
         print("✅ Database tables initialized")
     except Exception as e:
@@ -248,7 +253,7 @@ def initialize_db():
 # Initialize when imported
 initialize_db()
 
-# Temporarily add this test to support.py
+# Test connection when run directly
 if __name__ == "__main__":
     try:
         conn, cur = connect_db()
