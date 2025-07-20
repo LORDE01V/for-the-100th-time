@@ -1,0 +1,55 @@
+<!-- Main Navigation -->
+<nav class="main-nav">
+  <div class="nav-container">
+    <a routerLink="/" class="brand-logo">
+      <img src="assets/images/gridx-bg.jpg" alt="GridX Logo">
+      <span>{{ title }}</span>
+    </a>
+
+    <div class="nav-links">
+      <a routerLink="/dashboard" *ngIf="authService.isAuthenticated()">Dashboard</a>
+      <a routerLink="/ai-suggestions">AI Suggestions</a>
+      <a routerLink="/loadshedding">Load Shedding</a>
+      <a routerLink="/group-buying">Group Buying</a>
+      
+      <div class="auth-links" *ngIf="!authService.isAuthenticated()">
+        <a routerLink="/login" class="login-btn">Login</a>
+        <a routerLink="/register" class="register-btn">Register</a>
+      </div>
+
+      <div class="user-menu" *ngIf="authService.isAuthenticated()">
+        <a routerLink="/settings" class="settings-link">Settings</a>
+        <button (click)="logout()" class="logout-btn">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main>
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Global Footer -->
+<footer class="global-footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4>Energy Management</h4>
+      <a routerLink="/solar-optimization">Solar Optimization</a>
+      <a routerLink="/battery-management">Battery Management</a>
+      <a routerLink="/energy-reports">Energy Reports</a>
+    </div>
+    
+    <div class="footer-section">
+      <h4>Legal</h4>
+      <a routerLink="/privacy-policy">Privacy Policy</a>
+      <a routerLink="/terms-of-service">Terms of Service</a>
+    </div>
+
+    <div class="footer-contact">
+      <h4>Contact Support</h4>
+      <p>24/7 Energy Support</p>
+      <a routerLink="/support">Open Support Chat</a>
+    </div>
+  </div>
+</footer>

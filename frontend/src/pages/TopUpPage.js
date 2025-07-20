@@ -34,6 +34,9 @@ import {
   Select
 } from '@chakra-ui/react';
 
+import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png';  // Import the new background image
+import api from '../services/api';
+
 function TopUpPage() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -111,7 +114,7 @@ function TopUpPage() {
   // Handler for the Top-Up button click
   const handleTopUp = async (e) => {
     e.preventDefault();
-
+  
     const topUpAmount = parseFloat(amount);
     if (isNaN(topUpAmount) || topUpAmount <= 0) {
         toast({
@@ -125,36 +128,48 @@ function TopUpPage() {
     }
 
     setIsProcessing(true);
+  
+    const data = {
+        user_id: user?.id,  // Using optional chaining for safety
+        amount: topUpAmount,
+        promo_code: promoCode,
+        voucher_code: voucherCode,
+        transaction_type: transactionType,
+        is_auto_topup: isAutoTopUpEnabled,
+        min_balance: isAutoTopUpEnabled ? parseFloat(minBalance) : null,
+        auto_topup_amount: isAutoTopUpEnabled ? parseFloat(autoTopUpAmount) : null,
+        auto_topup_frequency: isAutoTopUpEnabled ? autoTopUpFrequency : null,
+    };
 
-    // Log the transaction type along with other details
-    console.log('Attempting transaction:', { 
-        type: transactionType,
-        amount, 
-        promoCode, 
-        voucherCode 
-    });
-
-    // Simulate an API call delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // Simulate successful transaction and update balance
-    const newBalance = currentBalance + topUpAmount;
-    setCurrentBalance(newBalance);
-
-    // Clear form fields after successful transaction
-    setAmount('');
-    setPromoCode('');
-    setVoucherCode('');
-
-    toast({
-        title: `${transactionType === 'topup' ? 'Top-Up' : 'Recharge'} Successful!`,
-        description: `Your new balance is R${newBalance.toFixed(2)}.`,
-        status: 'success',
+    try {
+        const response = await api.post('/api/topup', data); // Remove manual CSRF handling
+      
+      if (response.status === 200 && response.data.success) {
+        // Update balance and show success
+        setCurrentBalance(prev => prev + topUpAmount);
+        toast({
+          title: 'Success!',
+          description: `New balance: R${(currentBalance + topUpAmount).toFixed(2)}`,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 
+                      error.response?.data?.error || 
+                      'Payment service unavailable';
+      
+      toast({
+        title: 'Payment Failed',
+        description: errorMessage,
+        status: 'error',
         duration: 5000,
         isClosable: true,
-    });
-
-    setIsProcessing(false); // Reset loading state
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // Render loading spinner if user is being checked (though ProtectedRoute handles the redirect)
@@ -172,32 +187,33 @@ function TopUpPage() {
       align="center"
       justify="center"
       p={4}
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)" // Your gradient
+      backgroundImage={`url(${topUpBackground})`}  // Replace gradient with the new image
       backgroundSize="cover"
       backgroundPosition="center"
-      backgroundAttachment="fixed" // Fix background during scroll
-      position="relative" // Needed for the pseudo-element overlay
-      _before={{ // Semi-transparent overlay for readability
+      backgroundAttachment="fixed"
+      position="relative"
+      _before={{
           content: '""',
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          bg: 'rgba(0, 0, 0, 0.5)', // Dark overlay (adjust opacity as needed)
-          zIndex: 1, // Ensure overlay is behind content
+          bg: 'rgba(0, 0, 0, 0.5)',  // Semi-transparent overlay for readability
+          zIndex: 1,
       }}
     >
       <Box
         maxW="md"
         w="full"
-        {...glassmorphismBoxStyles} // Apply glassmorphism styles here
-        boxShadow="md" // Keep or adjust shadow as needed
-        borderRadius="lg" // Keep or adjust border radius
+        {...glassmorphismBoxStyles}  // Existing glassmorphism styles
+        boxShadow="md"
+        borderRadius="lg"
         p={6}
         textAlign="center"
-        position="relative" // Needed for zIndex
-        zIndex={2} // Ensure content is above overlay
+        position="relative"
+        zIndex={2}
+        backdropFilter="blur(16px)"  // Increase blur for stronger glassmorphism effect
       >
          {/* Back to Home Button in HStack */}
          <HStack justify="space-between" w="full" mb={8} align="center">
@@ -299,7 +315,7 @@ function TopUpPage() {
           </Heading>
           
           {isAutoTopUpEnabled ? (
-            <Alert status="success" mb={4}>
+            <Alert status="success" mb={4} bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(10px)" borderRadius="md">
               <AlertIcon />
               <Box>
                 <AlertTitle>Auto Top-Up is Active</AlertTitle>

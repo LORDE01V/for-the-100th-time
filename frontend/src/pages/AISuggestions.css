@@ -1,0 +1,304 @@
+/* Styles for the AI Suggestions page */
+
+.ai-suggestions {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.ai-suggestions h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 80%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.categories {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.categories button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.categories button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.suggestion-card {
+  width: 300px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.suggestion-card h3 {
+  margin: 0 0 10px;
+}
+
+.suggestion-card p {
+  margin: 0 0 20px;
+}
+
+.votes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.votes button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.votes span {
+  font-size: 18px;
+}
+
+/* Tooltip styles */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+  margin-bottom: 5px;
+}
+
+.tooltip-container:hover .tooltip-content {
+  opacity: 1;
+}
+
+/* Priority badge styles */
+.priority-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.priority-high {
+  background-color: #E53E3E;
+}
+
+.priority-medium {
+  background-color: #DD6B20;
+}
+
+.priority-low {
+  background-color: #38A169;
+}
+
+/* Chart container styles */
+.chart-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+/* Daily tip styles */
+.daily-tip {
+  background: rgba(20, 184, 166, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  color: white;
+  margin-bottom: 20px;
+}
+
+/* Feedback styles */
+.feedback-container {
+  margin-top: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+}
+
+.feedback-button {
+  margin: 0 10px;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid;
+}
+
+.feedback-yes {
+  border-color: #38A169;
+  background: rgba(56, 161, 105, 0.2);
+  color: white;
+}
+
+.feedback-no {
+  border-color: #E53E3E;
+  background: rgba(229, 62, 62, 0.2);
+  color: white;
+}
+
+/* Sort toggle button */
+.sort-toggle {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(20, 184, 166, 0.2);
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 20px auto;
+  display: block;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .suggestions-list {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .suggestion-card {
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  .categories {
+    flex-wrap: wrap;
+  }
+  
+  .categories button {
+    margin: 5px;
+  }
+} 
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.suggestion-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Enhanced hover effects */
+.suggestion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(20,184,166,0.15);
+}
+
+/* Smooth transitions for buttons */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Enhanced search bar focus */
+.search-bar input:focus {
+  outline: none;
+  border-color: #38B2AC;
+  box-shadow: 0 0 0 2px rgba(56, 178, 172, 0.2);
+}
+
+/* Category button animations */
+.categories button {
+  transition: all 0.2s ease-in-out;
+}
+
+.categories button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(56, 178, 172, 0.3);
+}
+
+/* Priority badge pulse animation for high priority */
+.suggestion-card .chakra-badge[data-color="red"] {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(229, 62, 62, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+  }
+} 
+
+/* Page-wide background for AI Suggestions */
+body.ai-suggestions-bg {
+  background-image: url('../assets/images/AI_suggestion.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+} 

@@ -4,10 +4,10 @@ import {
   Flex,
   VStack,
   HStack,
-  Text,
   IconButton,
   Input,
   Heading,
+  Text,
   useToast,
   Avatar,
   useColorModeValue,
@@ -17,6 +17,8 @@ import RecordRTC from 'recordrtc';
 import langaImage from '../assets/images/langa.png';
 
 const SupportBot = () => {
+  console.log('SupportBot component is mounting');  // Existing debug log
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { text: "Hi! I'm Langa. How can I help you today?", sender: 'bot' }
@@ -175,61 +177,92 @@ const SupportBot = () => {
   };
 
   return (
-    <Box 
-      position="fixed" 
-      bottom="20px" 
-      right="20px" 
-      zIndex="9999"
-    >
-      {!isOpen ? (
-        <IconButton
-          aria-label="Chat with Langa"
-          icon={<FaCommentDots />}
-          size="lg"
-          colorScheme="teal"
-          isRound
-          boxShadow="lg"
-          onClick={() => setIsOpen(true)}
-        />
-      ) : (
+    <>
+      {/* Floating Bubble (always visible, but hidden when chat is open) */}
+      {!isOpen && (
         <Box
-          width="350px"
-          height="500px"
+          position="fixed"
+          bottom="24px"
+          right="24px"
+          zIndex="9999"
+        >
+          <IconButton
+            aria-label="Chat with Langa"
+            icon={<FaCommentDots />}
+            boxSize="56px" // Explicitly set box size to match ThemeToggleButton
+            fontSize="2xl" // Explicitly set font size to match ThemeToggleButton
+            colorScheme="teal"
+            isRound
+            boxShadow="lg"
+            onClick={() => setIsOpen(true)}
+          />
+        </Box>
+      )}
+
+      {/* Chatbot Card (only visible when open) */}
+      {isOpen && (
+        <Box
+          position="fixed"
+          bottom="24px"
+          right="24px"
+          zIndex="9999"
+          width={["95vw", "350px"]}
+          maxWidth="100vw"
+          height="520px"
           bg="white"
-          borderRadius="lg"
+          borderRadius="2xl"
           boxShadow="2xl"
+          overflow="hidden"
           display="flex"
           flexDirection="column"
         >
           <Flex
-            bg="teal.500"
-            color="white"
-            p={3}
-            borderTopRadius="lg"
-            justify="space-between"
-            align="center"
+            align={"center"}
+            justify={"space-between"}
+            bgGradient={"linear(to-r, teal.500, teal.400)"}
+            color={"white"}
+            p={4}
+            boxShadow={"md"}
           >
-            <Heading size="md">Langa</Heading>
+            <HStack>
+              <Avatar size="md" border="2px solid white" src={langaImage} />
+              <Heading size="md" fontWeight="bold" letterSpacing="wide">
+                Langa
+              </Heading>
+            </HStack>
             <IconButton
               icon={<FaTimes />}
               variant="ghost"
               color="white"
               onClick={() => setIsOpen(false)}
               size="sm"
-              _hover={{ bg: 'teal.600' }}
+              _hover={{ bg: "teal.600" }}
             />
           </Flex>
 
+          {/* Messages */}
           <VStack
-            flex="1"
-            spacing={4}
-            p={4}
+            flex={1}
+            spacing={3}
+            px={3}
+            py={2}
             overflowY="auto"
-            bg="gray.50"
             align="stretch"
+            bg="gray.50"
+            sx={{
+              "&::-webkit-scrollbar": {
+                width: "6px",
+                background: "#e0e0e0",
+                borderRadius: "8px"
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "#b2b2b2",
+                borderRadius: "8px"
+              }
+            }}
           >
-            {messages.map((message) => (
-              <Flex key={message.id} justify={message.sender === 'bot' ? 'flex-start' : 'flex-end'} align="center">
+            {messages.map((message, idx) => (
+              <Flex key={idx} justify={message.sender === 'bot' ? 'flex-start' : 'flex-end'} align="center">
                 {message.sender === 'bot' && <Avatar name="SolarBot" src={langaImage} size="sm" mr={2} />}
                 <Box bg={message.sender === 'bot' ? bgColor : userBgColor} color={textColor} p={3} borderRadius="md">
                   {message.text}
@@ -240,33 +273,35 @@ const SupportBot = () => {
             {typing && <Text fontStyle="italic" color="gray.500">Bot is typing...</Text>}
           </VStack>
 
-          <HStack p={4} bg="white" borderTop="1px" borderColor="gray.200" spacing={3}>
+          {/* Input */}
+          <Flex
+            p={3}
+            bg="gray.100"
+            borderTop="1px solid"
+            borderColor="gray.200"
+            align="center"
+          >
             <Input
               value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
+              onChange={e => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
               size="md"
               bg="white"
-              color="black"
-              borderColor="gray.300"
-              _hover={{ borderColor: 'teal.500' }}
-              _focus={{ 
-                borderColor: 'teal.500', 
-                boxShadow: 'none',
-                color: 'black'
-              }}
-              _placeholder={{ color: 'gray.500' }}
+              borderRadius="full"
+              mr={2}
+              _focus={{ borderColor: "teal.400" }}
               disabled={isLoading || isRecording}
-              style={{ caretColor: 'black' }}
             />
             <IconButton
-              colorScheme={isRecording ? 'red' : 'teal'}
-              aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+              colorScheme={isRecording ? "red" : "teal"}
+              aria-label={isRecording ? "Stop recording" : "Start recording"}
               icon={<FaMicrophone />}
               onClick={handleVoiceRecording}
               isLoading={isLoading}
               disabled={isLoading}
+              borderRadius="full"
+              mr={2}
             />
             <IconButton
               colorScheme="teal"
@@ -275,11 +310,12 @@ const SupportBot = () => {
               onClick={() => handleSendMessage()}
               isLoading={isLoading}
               disabled={isLoading || !inputMessage.trim() || isRecording}
+              borderRadius="full"
             />
-          </HStack>
+          </Flex>
         </Box>
       )}
-    </Box>
+    </>
   );
 };
 

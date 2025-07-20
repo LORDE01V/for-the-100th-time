@@ -1,0 +1,8 @@
+# Angular specific
+/dist
+/node_modules
+/.angular/cache
+
+# Preserve React and Backend
+../frontend/
+../Backend/

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -14,19 +15,37 @@ import {
   useToast,
   Spinner,
   Tooltip,
+  HStack,
 } from '@chakra-ui/react';
 import { FaArrowLeft, FaCreditCard, FaBolt, FaSun, FaShieldAlt, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useSubscription } from '../context/SubscriptionContext';
+import subscriptionsBackground from '../assets/images/subscriptions_page.png';  // Import the background image
 
 function SubscriptionPage() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { selectPlan } = useSubscription();
   
-  // Ensure all useColorModeValue calls are at the top level
+  // Define all useColorModeValue hooks at the top level to avoid React Hook rules violations
   const headingColor = useColorModeValue('gray.900', 'white');
   const newCardBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(17, 25, 40, 0.75)');
   const newBorderColor = useColorModeValue('gray.300', 'gray.700');
-  
+  const glassCardBg = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(17, 25, 40, 0.2)');
+  const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.1)');
+  const mutedTextColor = useColorModeValue('gray.600', 'gray.400');
+  const subscriptionBoxBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');
+  const subscriptionBoxShadow = useColorModeValue('md', 'xl');
+  const subscriptionBorderRadius = useColorModeValue('md', 'xl');
+  const subscriptionBackdropFilter = useColorModeValue('none', 'blur(16px)');
+  const subscriptionBorderColor = useColorModeValue('gray.300', 'gray.600');
+  const subscriptionTextColor = useColorModeValue('gray.700', 'white');
+  const cardBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');
+  const cardBorderColor = useColorModeValue('gray.200', 'gray.600');
+  const cardColor = useColorModeValue('gray.800', 'white');
+  const cardHeadingColor = useColorModeValue('gray.800', 'white');
+  const cardTextColor = useColorModeValue('gray.800', 'white');
+
   const subscriptionPlans = useMemo(() => [
     {
       id: 'basic-lite',
@@ -125,7 +144,7 @@ function SubscriptionPage() {
   ], []);
 
   const [selectedPlans, setSelectedPlans] = useState([]);
-  const [rationale, setRationale] = useState({});
+  const [rationale] = useState({});
   
   useEffect(() => {
     const savedPlans = localStorage.getItem('selectedPlans');
@@ -134,7 +153,7 @@ function SubscriptionPage() {
     }
   }, []);
   
-  const mockRationaleMessages = [
+  let mockRationaleMessages = [
     "This plan suits your low energy usage pattern based on mock data analysis.",
     "Based on your data, this is a great match for high efficiency needs.",
     "Ideal for users with moderate usage; it optimizes costs effectively.",
@@ -188,53 +207,15 @@ function SubscriptionPage() {
     "A top pick for efficient and eco-friendly options."
   ];
 
-  const fetchPlanRationale = async (planId) => {
-    setRationale(prev => ({ ...prev, [planId]: { ...prev[planId], isLoading: true } }));
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const randomIndex = Math.floor(Math.random() * mockRationaleMessages.length);
-      const mockResponse = {
-        rationale: mockRationaleMessages[randomIndex]
-      };
-      setRationale(prev => ({ ...prev, [planId]: { message: mockResponse.rationale, isLoading: false } }));
-    } catch (error) {
-      console.error('Mock fetch error:', error);
-      toast({
-        title: 'Error',
-        description: '⚠️ Could not fetch plan feedback. Please try again.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      setRationale(prev => ({ ...prev, [planId]: { message: '', isLoading: false } }));
-    }
-  };
+  mockRationaleMessages = mockRationaleMessages.filter(message => !message.includes("energy profile"));
 
   const handleSelectPlan = (plan) => {
-    if (selectedPlans.includes(plan.id)) {
-      setSelectedPlans(selectedPlans.filter(id => id !== plan.id));
-      setRationale(prev => ({ ...prev, [plan.id]: { message: '', isLoading: false } }));
-    } else if (selectedPlans.length < 3) {
-      setSelectedPlans([...selectedPlans, plan.id]);
-      localStorage.setItem('selectedPlans', JSON.stringify([...selectedPlans, plan.id]));
-      toast({
-        title: 'Success!',
-        description: `You have selected the ${plan.name} plan.`,
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-      fetchPlanRationale(plan.id);
-    } else {
-      toast({
-        title: 'Limit Reached!',
-        description: 'You can only select up to 3 plans. Please unselect one first.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
+    selectPlan(plan);
+    window.location.href = '/dashboard';
+  };
+
+  const fetchPlanRationale = async (planId) => {
+    // Implementation of fetchPlanRationale function
   };
 
   return (
@@ -243,10 +224,11 @@ function SubscriptionPage() {
       align="center"
       justify="center"
       p={4}
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundImage={`url(${subscriptionsBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
+      backgroundRepeat="no-repeat"
       position="relative"
       _before={{
         content: '""',
@@ -261,24 +243,32 @@ function SubscriptionPage() {
     >
       <Box
         maxW="container.xl"
+        width="100%"
         py={8}
+        px={{ base: 2, md: 8 }}
         position="relative"
         zIndex={2}
       >
-        <Flex justify="space-between" align="center" mb={8}>
+        <HStack justify="space-between" align="center" mb={8}>
           <Button
             leftIcon={<FaArrowLeft />}
             onClick={() => navigate(-1)}
             variant="ghost"
+            mr={4}
           >
             Back
           </Button>
-          <Heading as="h1" size="xl" color={headingColor}>
-            <FaCreditCard style={{ display: 'inline-block', marginRight: '0.5rem' }} />
-            Subscription Plans
-          </Heading>
-          <Box w="136px" />
-        </Flex>
+        </HStack>
+
+        <Heading size="xl" color={headingColor} mb={2} textAlign="center">
+          <FaCreditCard style={{ display: 'inline-block', marginRight: '0.5rem' }} />
+          Subscription Plans
+        </Heading>
+
+        <Text color={mutedTextColor} fontSize="lg" textAlign="center" mb={6}>
+          Unlock exclusive savings and features tailored to your energy needs!
+        </Text>
+
         <Alert status="info" mb={8} borderRadius="md">
           <AlertIcon />
           Choose the plan that best fits your energy management needs
@@ -286,7 +276,24 @@ function SubscriptionPage() {
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8}>
           {subscriptionPlans.map((plan) => (
             <motion.div key={plan.id} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} whileHover={{ scale: 1.05, boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.1)' }} style={{ height: '100%' }}>
-              <Box p={6} borderWidth="1px" borderRadius="md" bg={newCardBg} boxShadow="lg" _hover={{ boxShadow: 'xl' }} display="flex" flexDirection="column" alignItems="center" justifyContent="flex-start" height="100%" minH="340px" maxW="320px" mx="auto" backdropFilter="blur(10px)" borderColor={selectedPlans.includes(plan.id) ? 'green.500' : newBorderColor}>
+              <Box
+                p={6}
+                borderWidth="1px"
+                borderRadius="md"
+                bg={glassCardBg}
+                boxShadow="lg"
+                _hover={{ boxShadow: 'xl' }}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="flex-start"
+                height="100%"
+                minH="340px"
+                maxW="320px"
+                mx="auto"
+                backdropFilter="blur(15px)"
+                borderColor={selectedPlans.includes(plan.id) ? 'green.500' : glassBorderColor}
+              >
                 <VStack spacing={4} align="stretch" height="100%">
                   <Flex align="center" justify="center">
                     {plan.id.includes('basic') && <FaBolt size="24px" color="blue" />}
@@ -304,6 +311,7 @@ function SubscriptionPage() {
                     ))}
                   </VStack>
                   <Button onClick={() => handleSelectPlan(plan)} colorScheme={selectedPlans.includes(plan.id) ? 'red' : 'green'} width="full">{selectedPlans.includes(plan.id) ? 'Unselect' : 'Select'}</Button>
+                  <Button onClick={() => fetchPlanRationale(plan.id)}>Get Rationale</Button>
                 </VStack>
                 {selectedPlans.includes(plan.id) && (
                   <Box mt={4}>
@@ -311,7 +319,7 @@ function SubscriptionPage() {
                       <Spinner size="md" />
                     ) : rationale[plan.id]?.message ? (
                       <Tooltip label={rationale[plan.id].message} hasArrow placement="top">
-                        <Text color="gray.600" fontSize="sm">
+                        <Text color={mutedTextColor} fontSize="sm">
                           {rationale[plan.id].message.slice(0, 50)}...
                         </Text>
                       </Tooltip>

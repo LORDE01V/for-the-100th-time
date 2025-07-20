@@ -1,3 +1,10 @@
+import sys
+import os
+
+# Get the absolute path to the project root (for-the-100th-time directory)
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, project_root)
+
 from flask import Flask, request, jsonify, redirect, make_response
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -21,6 +28,14 @@ from app import create_app
 from hugging_services import HuggingFaceChatbot
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
+from support import connect_db
+from Energy_optimizer.agent import EnergyUsageOptimizerAgent
+
+# Add the Backend directory and its parent to the Python path
+backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
+parent_dir = os.path.dirname(backend_dir)  # Parent directory: for-the-100th-time
+sys.path.append(backend_dir)  # Add Backend
+sys.path.append(parent_dir)  # Add for-the-100th-time, to ensure subpackages are accessible
 
 
 # Load environment variables (same as support.py)
@@ -48,25 +63,30 @@ flask_app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
 flask_app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
 flask_app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
-# Initialize extensions
+# Initialize CORS properly in one place
 CORS(flask_app, 
-     resources={r"/api/*": {"origins": "http://localhost:3000"}},
-     expose_headers=["Authorization"],
-     supports_credentials=True)
+     resources={r"/api/*": {
+         "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000"],
+         "supports_credentials": True,
+         "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
+         "expose_headers": ["Authorization"],
+         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+     }}
+)
 jwt = JWTManager(flask_app)
 
 # Register blueprints
 flask_app.register_blueprint(home_bp)
 flask_app.register_blueprint(auth_bp, name='auth_bp')
 
-# Add after request handler
-@flask_app.after_request
-def add_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-    return response
+# Remove the after_request handler entirely to avoid conflicts
+# @flask_app.after_request
+# def add_cors_headers(response):
+#     response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+#     response.headers['Access-Control-Allow-Credentials'] = 'true'
+#     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+#     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+#     return response
 
 # Database connection helper (PostgreSQL)
 def get_db():
@@ -107,12 +127,12 @@ def flask_register():
             if cur.fetchone():
                 return jsonify({'success': False, 'message': 'Email already exists'}), 400
 
-            # Create user without phone
-            hashed_pw = generate_password_hash(data['password'])
+            # Create user with proper hash length
+            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
             cur.execute(
                 """INSERT INTO users (email, password_hash, full_name, phone)
                 VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (data['email'], hashed_pw, data['name'], phone)
+                (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
             )
             user_data = cur.fetchone()
             conn.commit()
@@ -136,40 +156,34 @@ def flask_register():
 
 @flask_app.route('/api/auth/login', methods=['POST'])
 def flask_login():
-    conn = None
     try:
         data = request.get_json()
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        email = data.get('email')
+        email = data.get('email', '').lower()  # Force lowercase
         password = data.get('password')
 
-        if not all([email, password]):
-            return jsonify({'success': False, 'message': 'Email and password required'}), 400
+        if not email or not password:
+            return jsonify({'success': False, 'message': 'Missing credentials'}), 400
 
         conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+        with conn.cursor() as cur:
+            cur.execute('''
+                SELECT id, password_hash, full_name 
+                FROM users 
+                WHERE email = %s
+            ''', (email,))
+            user = cur.fetchone()
 
-        cur = conn.cursor()
-
-        # Check credentials (PostgreSQL users table)
-        cur.execute('SELECT id, email, password_hash, full_name FROM users WHERE email = %s', (email,))
-        user = cur.fetchone()
-
-        if user and check_password_hash(user[2], password):  # user[2] = password_hash
-            access_token = create_access_token(identity=user[0])  # user[0] = id
-            return jsonify({
-                'success': True,
-                'token': access_token,
-                'user': {
-                    'id': user[0],
-                    'name': user[3],  # full_name
-                    'email': user[1]
-                },
-                'redirect': '/'  # Simple frontend route
-            })
+            if user and check_password_hash(user[1], password):
+                access_token = create_access_token(identity=user[0])
+                return jsonify({
+                    'success': True,
+                    'token': access_token,
+                    'user': {
+                        'id': user[0],
+                        'name': user[2],
+                        'email': email
+                    }
+                }), 200
 
         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
@@ -318,4 +332,9 @@ async def chat_endpoint(chat_message: ChatMessage):
 
 # ================= RUN BOTH APPS =================
 if __name__ == '__main__':
-    flask_app.run(port=5000)
+    port = int(os.getenv('PORT', 5000))
+    flask_app.run(host='0.0.0.0', port=port, debug=True)
+
+conn, cur = connect_db()
+if conn: print("✅ Database connection successful")
+else: print("❌ Database connection failed")

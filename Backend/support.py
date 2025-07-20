@@ -6,6 +6,8 @@ import pandas as pd
 import plotly.express as px
 import json
 import datetime
+import logging
+import sys
 
 # Load environment variables
 load_dotenv()
@@ -13,18 +15,47 @@ load_dotenv()
 # ================== DATABASE CONNECTION ==================
 def connect_db():
     """Connect to PostgreSQL database"""
+    password = os.getenv('DB_PASSWORD', '')
+    if not password:
+        raise ValueError("DB_PASSWORD environment variable must be set.")
     try:
         conn = psycopg2.connect(
             host=os.getenv('DB_HOST', 'localhost'),
             database=os.getenv('DB_NAME', 'Fintech_Solar'),
             user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', ''),
+            password=password,
             port=os.getenv('DB_PORT', '5432')
         )
         return conn, conn.cursor()
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
         return None, None
+
+# Add the get_db function here, right after the connect_db function
+def get_db():
+    try:
+        db_host = os.getenv('DB_HOST', 'localhost')  # Default to 'localhost' if not set
+        db_name = os.getenv('DB_NAME', 'Fintech_Solar')  # Default if not set
+        db_user = os.getenv('DB_USER', 'postgres')  # Default if not set
+        db_password = os.getenv('DB_PASSWORD', '')  # Check for password
+        db_port = os.getenv('DB_PORT', '5432')  # Default port
+        
+        if not db_password:
+            logging.error('DB_PASSWORD is not set in your .env file. Please add it and try again.')
+            raise ValueError('DB_PASSWORD environment variable must be set.')
+        
+        conn = psycopg2.connect(
+            host=db_host,
+            database=db_name,
+            user=db_user,
+            password=db_password,
+            port=db_port
+        )
+        logging.info('Database connection successful.')
+        return conn
+    except OperationalError as e:
+        logging.error(f'Database connection failed: {str(e)}. Please verify your .env file settings.')
+        raise  # Re-raise for the caller to handle
 
 # ================== CORE FUNCTIONS ==================
 def execute_query(operation=None, query=None, params=None):
@@ -46,29 +77,42 @@ def execute_query(operation=None, query=None, params=None):
             return cur.fetchone()[0] if cur.description else None
     except Exception as e:
         conn.rollback()
-        print(f"🚨 Query failed: {e}\nQuery: {query}")
+        logging.error("Query failed: %s - Query: %s", str(e), query)
         raise
     finally:
         if cur: cur.close()
         if conn: conn.close()
 
 # ================== USER OPERATIONS ==================
-def create_user(email, password_hash, full_name=None, phone=None, is_installer=False):
+def create_user(email, password_hash, full_name=None):
     """Create a new user account"""
     query = """
-    INSERT INTO users (email, password_hash, full_name, phone)
-    VALUES (%s, %s, %s, %s) RETURNING id
+    INSERT INTO users (email, password_hash, full_name)
+    VALUES (%s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (email, password_hash, full_name, phone))
+    return execute_query('insert', query, (email, password_hash, full_name))
 
 def get_user_by_email(email):
     """Get user by email address"""
-    query = "SELECT id, email, password_hash, full_name, phone FROM users WHERE email = %s"
+    query = "SELECT id, email, password_hash, full_name FROM users WHERE email = %s"
     result = execute_query('search', query, (email,))
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name', 'phone']
+        columns = ['id', 'email', 'password_hash', 'full_name']
         return dict(zip(columns, result[0]))
     return None
+
+def update_user_by_id(user_id, email=None, full_name=None, surname=None, phone_number=None, address=None):
+    query = """
+    UPDATE users 
+    SET email = COALESCE(%s, email), 
+        full_name = COALESCE(%s, full_name), 
+        surname = COALESCE(%s, surname), 
+        phone_number = COALESCE(%s, phone_number), 
+        address = COALESCE(%s, address)
+    WHERE id = %s RETURNING id
+    """
+    params = (email, full_name, surname, phone_number, address, user_id)
+    return execute_query('search', query, params) is not None
 
 # ================== SOLAR SYSTEM OPERATIONS ==================
 def add_solar_system(installer_id, capacity_kw, components=None, installation_date=None):
@@ -150,9 +194,14 @@ def initialize_db():
             email VARCHAR(255) UNIQUE NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
             full_name VARCHAR(100),
-            phone VARCHAR(20),
+            surname VARCHAR(100),
+            phone_number VARCHAR(20),
+            address TEXT,
             is_installer BOOLEAN DEFAULT FALSE
         )""")
+        
+        # Add this to ensure the column is altered if it exists with the wrong type
+        cur.execute("ALTER TABLE users ALTER COLUMN password_hash TYPE VARCHAR(255);")
         
         cur.execute("""
         CREATE TABLE IF NOT EXISTS solar_systems (

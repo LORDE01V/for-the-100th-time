@@ -13,6 +13,7 @@ import { useDashboard } from '../context/DashboardContext';
 const MotionBox = motion.create ? motion.create(Box) : motion(Box);
 
 const DashboardCard = ({
+  isHighlighted,
   title,
   icon,
   metric,
@@ -28,6 +29,10 @@ const DashboardCard = ({
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const textColor = useColorModeValue('gray.600', 'gray.400');
 
+  // Use isHighlighted to conditionally set styles
+  const effectiveBoxShadow = isHighlighted ? 'outline' : 'xl';
+  const effectiveBorderColor = isHighlighted ? 'green.400' : 'gray.200';  // Adjust based on your theme
+
   return (
     <MotionBox
       initial={{ opacity: 0, y: 20 }}
@@ -35,20 +40,17 @@ const DashboardCard = ({
       transition={{ duration: 0.3 }}
       p={6}
       bg={bg || cardBg}
-      bgGradient={bgGradient || currentThemeConfig.gradients.card}
-      borderRadius="xl"
-      boxShadow="xl"
+      bgGradient={bgGradient}
+      borderRadius="xl"  // Ensure this is handled by Chakra
+      boxShadow={effectiveBoxShadow}  // Use the computed value
       borderWidth="1px"
-      borderColor={borderColor || currentThemeConfig.colors.accent}
+      borderColor={effectiveBorderColor}
       height="100%"
       minH="250px"
       display="flex"
       flexDirection="column"
-      _hover={{
-        transform: 'translateY(-2px)',
-        transition: 'all 0.2s',
-      }}
-      {...props}
+      _hover={{ transform: 'translateY(-2px)', transition: 'all 0.2s' }}
+      {...props}  // Pass other props, but they've been filtered
     >
       <Flex direction="column" h="100%">
         {/* Header */}
