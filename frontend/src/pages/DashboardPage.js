@@ -15,7 +15,7 @@ import {
   useColorModeValue,
   HStack, // Add HStack import
 } from '@chakra-ui/react';
-import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaMoon, FaSun, FaArrowLeft } from 'react-icons/fa';
+import { FaComments, FaSun, FaArrowLeft } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
 import EnergyModeToggle from '../components/widgets/EnergyModeToggle';

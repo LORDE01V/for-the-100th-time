@@ -18,10 +18,10 @@ const DailyForecast = ({ location }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-  const currentHour = new Date().getHours();
 
+  // Get user location on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    // Get user location on mount
     if (!userLocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setUserLocation({
@@ -34,7 +34,7 @@ const DailyForecast = ({ location }) => {
         }
       );
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const fetchDailyForecast = async () => {

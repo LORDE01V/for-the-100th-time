@@ -6,7 +6,6 @@ import {
   IconButton,
   HStack,
   Tooltip,
-  Spinner,
   Alert,
   AlertIcon,
 } from '@chakra-ui/react';

@@ -32,6 +32,7 @@ const SolarOutput = ({ location }) => {
   const [userLocation, setUserLocation] = useState(null);
 
   // Get user location on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!userLocation) {
       navigator.geolocation.getCurrentPosition(
@@ -45,7 +46,7 @@ const SolarOutput = ({ location }) => {
         }
       );
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const fetchHourlyForecast = async () => {

@@ -14,7 +14,6 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { FaPaperPlane, FaTimes, FaCommentDots, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
-import RecordRTC from 'recordrtc';
 // Replaced local image import with a placeholder URL
 // If you have a specific image, you'll need to host it or use a base64 string (not recommended for large images)
 const langaImage = "https://placehold.co/150x150/008080/ffffff?text=Langa";
@@ -64,10 +63,6 @@ const SupportBot = () => {
   const [typing, setTyping] = useState(false); // State for "Bot is typing..."
   const [hasSpokenLangaGreeting, setHasSpokenLangaGreeting] = useState(false);
   const [isMuted, setIsMuted] = useState(false); // Mute/unmute state
-
-  // For recording with RecordRTC
-  const [recorder, setRecorder] = useState(null);
-  const [isRecording, setIsRecording] = useState(false);
 
   // --- Langa Voice Logic ---
   const [isSpeaking, setIsSpeaking] = useState(false); // For animation
@@ -209,88 +204,6 @@ const SupportBot = () => {
         updated.push({ text: botReply, sender: 'bot' });
       }
       return updated;
-    });
-  };
-
-  // Handle voice recording button
-  const handleVoiceRecording = () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
-    }
-  };
-
-  // Start WAV recording using RecordRTC
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const newRecorder = new RecordRTC(stream, {
-        type: 'audio',
-        mimeType: 'audio/wav',
-        recorderType: RecordRTC.StereoAudioRecorder,
-        desiredSampRate: 16000
-      });
-      newRecorder.startRecording();
-      setRecorder(newRecorder);
-      setIsRecording(true);
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-      toast({
-        title: 'Error',
-        description: 'Could not access microphone',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  // Stop recording and send to backend
-  const stopRecording = () => {
-    if (!recorder) return;
-    recorder.stopRecording(async () => {
-      setIsRecording(false);
-      const audioBlob = recorder.getBlob();
-
-      // Send to the backend
-      const formData = new FormData();
-      formData.append('audio', audioBlob, 'my_recording.wav');
-
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/voice-to-text`, {
-          method: 'POST',
-          body: formData
-        });
-        if (!response.ok) {
-          throw new Error('Voice processing failed');
-        }
-
-        const data = await response.json();
-        if (data.text) {
-          // Instead of sending immediately, insert into input field:
-          setInputMessage(data.text); // <--- This puts the transcribed text in the input box
-          // Optionally, you could auto-send:
-          // await handleSendMessage(data.text);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to process voice message',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      } finally {
-        setIsLoading(false);
-      }
-
-      // Cleanup
-      recorder.reset();
-      recorder.destroy();
-      setRecorder(null);
     });
   };
 
@@ -485,7 +398,7 @@ const SupportBot = () => {
               borderRadius="full"
               mr={2}
               _focus={{ borderColor: "teal.400" }}
-              disabled={isLoading || isRecording} /* Disable during loading/recording */
+              disabled={isLoading} /* Disable during loading/recording */
             />
             <Button
               onClick={handleMicClick}
@@ -501,7 +414,7 @@ const SupportBot = () => {
               icon={<FaPaperPlane />}
               onClick={() => handleSendMessage()}
               isLoading={isLoading}
-              disabled={isLoading || !inputMessage.trim() || isRecording} /* Disable during loading/recording or if no text */
+              disabled={isLoading || !inputMessage.trim()} /* Disable during loading/recording or if no text */
               borderRadius="full"
             />
           </Flex>
