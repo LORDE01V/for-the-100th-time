@@ -45,7 +45,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:5000",
+  "proxy": "https://for-the-100th-time-1.onrender.com",
   "eslintConfig": {
     "extends": [
       "react-app",

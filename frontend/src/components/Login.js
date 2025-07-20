@@ -45,7 +45,7 @@ function Login() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google?action=login`;
+    window.location.href = `https://for-the-100th-time-1.onrender.com/api/auth/google?action=login`;
   };
 
   return (

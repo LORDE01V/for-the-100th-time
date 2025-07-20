@@ -49,7 +49,7 @@ function DashboardPage() {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/areas');
+        const response = await fetch('https://for-the-100th-time-1.onrender.com/api/areas');
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
