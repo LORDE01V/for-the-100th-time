@@ -98,8 +98,28 @@ function TopUpPage() {
   
     fetchBalance();
   }, []);
+
+
+  useEffect(() => {
+    const fetchAutoTopUpSettings = async () => {
+      if (!user?.id) return;
+      try {
+        const response = await api.get('/api/user/auto-topup-settings', {
+          params: { user_id: user.id }
+        });
+        const data = response.data;
+        setIsAutoTopUpEnabled(!!data.is_auto_topup);
+        setMinBalance(data.min_balance ? data.min_balance.toString() : '');
+        setAutoTopUpAmount(data.auto_topup_amount ? data.auto_topup_amount.toString() : '');
+        setAutoTopUpFrequency(data.auto_topup_frequency || 'weekly');
+      } catch (error) {
+        // Optionally handle error
+      }
+    };
+    fetchAutoTopUpSettings();
+  }, [user]); 
   // Handler for Auto-Top-Up settings
-  const handleAutoTopUpSave = () => {
+  const handleAutoTopUpSave = async () => {
     if (!minBalance || !autoTopUpAmount) {
       toast({
         title: 'Missing Information',
@@ -110,10 +130,17 @@ function TopUpPage() {
       });
       return;
     }
-
-    // Simulate saving Auto-Top-Up settings
+  
     setIsProcessing(true);
-    setTimeout(() => {
+    try {
+      //const response =
+       await api.post('/api/user/auto-topup-settings', {
+        user_id: user?.id,
+        is_auto_topup: true,
+        min_balance: parseFloat(minBalance),
+        auto_topup_amount: parseFloat(autoTopUpAmount),
+        auto_topup_frequency: autoTopUpFrequency,
+      });
       setIsProcessing(false);
       setIsAutoTopUpEnabled(true);
       onClose();
@@ -124,7 +151,16 @@ function TopUpPage() {
         duration: 5000,
         isClosable: true,
       });
-    }, 1500);
+    } catch (error) {
+      setIsProcessing(false);
+      toast({
+        title: 'Failed to Save Settings',
+        description: error.response?.data?.error || 'Could not save auto top-up settings.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   // Handler for the Top-Up button click
@@ -154,41 +190,64 @@ function TopUpPage() {
       promo_code: promoCode,
       voucher_code: voucherCode,
       transaction_type: transactionType,
-      is_auto_topup: isAutoTopUpEnabled,
-      min_balance: isAutoTopUpEnabled ? parseFloat(minBalance) : null,
-      auto_topup_amount: isAutoTopUpEnabled ? parseFloat(autoTopUpAmount) : null,
-      auto_topup_frequency: isAutoTopUpEnabled ? autoTopUpFrequency : null,
+      
     };
   
-    try {
-      const response = await api.post('/api/user/topup', data); // API endpoint to update balance
-      if (response.status === 200 && response.data.success) {
-        setBalance(`R${response.data.newBalance.toFixed(2)}`);
+    
+      try {
+        const response = await api.post('/api/user/topup', data);
+        console.log('Top-up response:', response);
+        if (response.status === 200 && response.data.success) {
+          const newBalanceRaw = response.data.newBalance;
+      const newBalance = Number(newBalanceRaw);
+      if (isNaN(newBalance)) {
+        toast({
+          title: 'Payment Succeeded, but...',
+          description: `Could not parse new balance: ${newBalanceRaw}`,
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
+        });
+        setBalance('R0.00');
+      } else {
+        setBalance(`R${newBalance.toFixed(2)}`);
         toast({
           title: 'Success!',
-          description: `New balance: R${(parseFloat(balance.replace('R', '')) + topUpAmount).toFixed(2)}`, // Corrected here
+          description: `New balance: R${newBalance.toFixed(2)}`,
           status: 'success',
           duration: 5000,
           isClosable: true,
         });
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        'Payment service unavailable';
-  
-      toast({
-        title: 'Payment Failed',
-        description: errorMessage,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+        
+        } else {
+          // If the response is not as expected, show an error
+          toast({
+            title: 'Payment Failed',
+            description: response.data?.message || 'Unexpected response from server',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.error('Top-up error:', error);
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          'Payment service unavailable';
+    
+        toast({
+          title: 'Payment Failed',
+          description: errorMessage,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      } finally {
+        setIsProcessing(false);
+      }
+    }; 
 
   // Render loading spinner if user is being checked (though ProtectedRoute handles the redirect)
   if (!user) {

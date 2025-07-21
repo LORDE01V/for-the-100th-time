@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api';
+import api, { auth } from '../services/api'; // Import api
 
 // Import Chakra UI Components
 import {
@@ -27,32 +27,49 @@ import { FaArrowLeft } from 'react-icons/fa';
 
 import notificationBackground from '../assets/images/notification.png';
 
+// Helper to map backend data to frontend format
+const mapNotification = (notif) => {
+  const message = notif.message.toLowerCase();
+  let status = 'info'; // Default status
+  if (message.includes('expense') || message.includes('success') || message.includes('top-up')) {
+    status = 'success';
+  } else if (message.includes('low balance')) {
+    status = 'warning';
+  } else if (message.includes('failed')) {
+    status = 'error';
+  }
+
+  return {
+    id: notif.id,
+    status: status,
+    title: notif.title || 'New Notification', // Use a title from backend or a default
+    description: notif.message,
+    isDismissed: notif.is_read || false,
+    created_at: notif.created_at,
+  };
+};
+
 function NotificationsPage() {
   const navigate = useNavigate();
   const toast = useToast();
-  const user = auth.getCurrentUser();
+  
+  // State to hold user, notifications, and loading status
+  const [user, setUser] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Color mode values
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const headingColor = useColorModeValue('gray.800', 'white');
   const textColor = useColorModeValue('gray.600', 'gray.400');
-
-  // New color mode values for the card, moved to top level
   const cardBg = useColorModeValue('white', 'rgba(0, 0, 0, 0.6)');
   const cardBorderColor = useColorModeValue('gray.200', 'gray.600');
   const cardColor = useColorModeValue('gray.800', 'white');
 
-  // Dummy notification data
-  const [notifications, setNotifications] = useState([
-    { id: 1, status: 'warning', title: 'Low Balance', description: 'Your energy credit is running low. Top up soon!', isDismissed: false },
-    { id: 2, status: 'info', title: 'System Update', description: 'Scheduled maintenance tonight at 2 AM.', isDismissed: false },
-    { id: 3, status: 'success', title: 'Top-Up Successful', description: 'Your R200 top-up was successful.', isDismissed: false },
-    { id: 4, status: 'error', title: 'Payment Failed', description: 'Your recent payment failed. Please check your details.', isDismissed: false },
-  ]);
-
-  // Redirect if not authenticated
+  // Set user once on component mount to prevent loops
   useEffect(() => {
-    if (!user) {
+    const currentUser = auth.getCurrentUser();
+    if (!currentUser) {
       navigate('/login');
       toast({
         title: 'Authentication required',
@@ -61,10 +78,37 @@ function NotificationsPage() {
         duration: 3000,
         isClosable: true,
       });
+    } else {
+      setUser(currentUser);
     }
-  }, [user, navigate, toast]);
+  }, [navigate, toast]);
+
+  // Fetch notifications from the API when the user is available
+  useEffect(() => {
+    if (!user?.id) return;
+
+    setLoading(true);
+    api.get('/api/user/notifications', { params: { user_id: user.id } })
+      .then(response => {
+        const mappedNotifications = response.data.notifications.map(mapNotification);
+        setNotifications(mappedNotifications);
+      })
+      .catch(error => {
+        toast({
+          title: 'Failed to fetch notifications',
+          description: error.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [user, toast]);
 
   const handleDismissNotification = (id) => {
+    // This is a client-side dismiss only. For persistence, you'd call an API here.
     setNotifications(notifications.map(notif =>
       notif.id === id ? { ...notif, isDismissed: true } : notif
     ));
@@ -72,7 +116,7 @@ function NotificationsPage() {
 
   const activeNotifications = notifications.filter(notif => !notif.isDismissed);
 
-  if (!user) {
+  if (loading || !user) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg={bgColor}>
         <Spinner size="xl" color="blue.500" />
@@ -100,7 +144,6 @@ function NotificationsPage() {
       }}
     >
       <Container maxW="container.xl" py={8} position="relative" zIndex={2}>
-        {/* Header with Back to Home button */}
         <HStack justify="space-between" align="center" mb={8}>
            <Button
             leftIcon={<FaArrowLeft />}

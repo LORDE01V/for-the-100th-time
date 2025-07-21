@@ -284,6 +284,21 @@ def update_user_balance(user_id, amount):
         return insert_result[0][0]
     raise Exception("Failed to update or insert user balance")
 
+
+def save_auto_topup_settings(user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency):
+    query = """
+    INSERT INTO topup_settings (user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency)
+    VALUES (%s, %s, %s, %s, %s)
+    ON CONFLICT (user_id) DO UPDATE SET
+        is_auto_topup = EXCLUDED.is_auto_topup,
+        min_balance = EXCLUDED.min_balance,
+        auto_topup_amount = EXCLUDED.auto_topup_amount,
+        auto_topup_frequency = EXCLUDED.auto_topup_frequency,
+        updated_at = CURRENT_TIMESTAMP
+    RETURNING id
+    """
+    return execute_query('insert', query, (user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency))
+
 # Initialize database tables when module loads
 def initialize_db():
     conn, cur = connect_db()
@@ -442,6 +457,27 @@ def initialize_db():
             FOREIGN KEY (user_id) REFERENCES users(id) 
 ); 
         """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS expenses (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                amount NUMERIC(10, 2) NOT NULL,
+                category VARCHAR(50) NOT NULL,
+                status VARCHAR(20) DEFAULT 'Paid'
+            );
+        """)
+
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS notifications (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                message TEXT NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                is_read BOOLEAN DEFAULT FALSE
+    );
+""")
+
         if conn:
             conn.commit()
         print("✅ Database tables initialized")

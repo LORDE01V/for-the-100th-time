@@ -35,6 +35,8 @@ from app.routes.userprofile import profile_bp
 from app.routes.notification_preference import notifications_bp
 from app.routes.events_calendar import events_calendar_bp
 from app.routes.topup import topup_bp
+from Backend.app.routes.expenses import expenses_bp
+from app.routes.expensenotifications import expensenotifications_bp
 from Backend.support import update_user_balance
 
 
@@ -91,6 +93,8 @@ flask_app.register_blueprint(profile_bp)
 flask_app.register_blueprint(notifications_bp, url_prefix='/notifications')
 flask_app.register_blueprint(events_calendar_bp)
 flask_app.register_blueprint(topup_bp, url_prefix='/api')
+flask_app.register_blueprint(expenses_bp, url_prefix='/api')
+flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
 
 
 # Remove the after_request handler entirely to avoid conflicts
