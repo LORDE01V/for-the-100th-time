@@ -10,7 +10,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from flask_cors import CORS, cross_origin
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
-CORS(auth_bp, origins=["*"], supports_credentials=True)  # Remove strict CORS here
+CORS(auth_bp, origins=["https://gridx-frrontend.onrender.com"], supports_credentials=True)  # Remove strict CORS here
 
 # Configure logging
 logging.basicConfig(
@@ -136,7 +136,7 @@ def logout():
     return create_response("Logged out successfully")
 
 @auth_bp.route('/login', methods=['POST'])
-@cross_origin(origins="*", supports_credentials=True)
+@cross_origin(origins=["https://gridx-frrontend.onrender.com"], supports_credentials=True)
 def login():
     # Always succeed and return a fake user and token for now
     return jsonify({
@@ -150,7 +150,7 @@ def login():
     }), 200
 
 @auth_bp.route('/register', methods=['POST'])
-@cross_origin(origins="*", supports_credentials=True)
+@cross_origin(origins=["https://gridx-frrontend.onrender.com"], supports_credentials=True)
 def register():
     # Always succeed and return a fake user and token
     return jsonify({
