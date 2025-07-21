@@ -288,7 +288,7 @@ class HuggingFaceChatbot:
 chatbot = HuggingFaceChatbot() # Initialize your actual chatbot here
 
 # ================= FASTAPI APP =================
-app = FastAPI(title="Lumina Solar FastAPI")
+app = FastAPI()
 
 # Configure CORS for development
 app.add_middleware(
