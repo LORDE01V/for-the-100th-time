@@ -150,6 +150,7 @@ def login():
     }), 200
 
 @auth_bp.route('/register', methods=['POST'])
+@cross_origin(origins="*", supports_credentials=True)
 def register():
     # Always succeed and return a fake user and token
     return jsonify({
