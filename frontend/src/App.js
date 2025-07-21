@@ -10,21 +10,14 @@ import { auth } from './services/api';
 import Supportbot from './components/Supportbot';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ChakraProvider } from '@chakra-ui/react';
-import theme from './theme';
-import { DashboardProvider } from './context/DashboardContext';
-import { SubscriptionProvider } from './context/SubscriptionContext';
-
-import LandingPage from './pages/LandingPage';
-import RegisterPage from './pages/RegisterPage';
-import LoginPage from './pages/LoginPage';
-import AboutPage from './pages/AboutPage';
-import OAuthCallbackHandler from './pages/OAuthCallbackHandler';
+import { TransactionsProvider } from './context/TransactionsContext';
+// Import your components and contexts
 import HomePage from './pages/HomePage';
-import DashboardPage from './pages/DashboardPage';
-import TopUpPage from './pages/TopUpPage';
-import SettingsPage from './pages/SettingsPage';
-import ImpactPage from './pages/ImpactPage';
 import ExpensesPage from './pages/ExpensesPage';
+import TopUpPage from './pages/TopUpPage';
+import DashboardPage from './pages/DashboardPage';
+import ImpactPage from './pages/ImpactPage';
+import SettingsPage from './pages/SettingsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import SupportPage from './pages/SupportPage';
 import ForumPage from './pages/ForumPage';

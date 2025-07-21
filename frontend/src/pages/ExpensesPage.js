@@ -61,12 +61,12 @@ const ExpensesPage = () => {
       position="relative"
       _before={{
         content: '""',
-        position: "absolute",
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        bg: "rgba(0, 0, 0, 0.5)",
+        bg: 'rgba(0, 0, 0, 0.5)',
         zIndex: 1,
       }}
     >
@@ -103,7 +103,7 @@ const ExpensesPage = () => {
                 <Text fontSize="lg" fontWeight="bold" color={textColor}>Total Expenses</Text>
               </Flex>
               <Text fontSize="2xl" fontWeight="bold" color={summaryTextColor}>
-                R{expenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}
+                R{totalExpenses.toFixed(2)}
               </Text>
             </Box>
 
@@ -195,4 +195,4 @@ const ExpensesPage = () => {
   );
 };
 
-export default ExpensesPage;
+export default ExpensesPage; 

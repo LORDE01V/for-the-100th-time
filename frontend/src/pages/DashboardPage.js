@@ -28,6 +28,9 @@ import ActivityReport from '../components/widgets/ActivityReport';
 import AITipsPanel from '../components/AITipsPanel';
 import ErrorBoundary from '../components/ErrorBoundary';
 import DashboardCard from '../components/DashboardCard';
+import FaultDetection from '../components/FaultDetection'; // Import FaultDetection component
+import FaultVisualization from '../components/FaultVisualization';
+import { LineChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Line, Legend } from 'recharts';
 import ThemeSwitcher from '../components/widgets/ThemeSwitcher';
 import { useSubscription } from '../context/SubscriptionContext';
 import LoadsheddingStatus from '../components/widgets/LoadsheddingStatus'; // Correct import path

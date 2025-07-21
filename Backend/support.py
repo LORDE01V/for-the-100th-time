@@ -3,14 +3,16 @@ from psycopg2 import OperationalError
 import os
 from dotenv import load_dotenv
 import logging
+import sys
+ 
 
 # Load environment variables
 load_dotenv()
-
+ 
 # ================== DATABASE CONNECTION ==================
 def connect_db():
     """Connect to PostgreSQL database"""
-    password = os.getenv('DB_PASSWORD', '')
+    password = os.getenv('DB_PASSWORD')
     if not password:
         raise ValueError("DB_PASSWORD environment variable must be set.")
     try:
@@ -67,6 +69,12 @@ def execute_query(operation=None, query=None, params=None):
         elif operation == 'insert':
             conn.commit()
             return cur.fetchone()[0] if cur.description else None
+        elif operation == 'update':
+            conn.commit()
+            return True
+        elif operation == 'delete':
+            conn.commit()
+            return True
     except Exception as e:
         if conn:
             conn.rollback()
@@ -75,192 +83,186 @@ def execute_query(operation=None, query=None, params=None):
     finally:
         if cur: cur.close()
         if conn: conn.close()
-
+ 
 # ================== USER OPERATIONS ==================
-def create_user(email, password_hash, full_name=None):
+def create_user(email, password_hash, full_name=None, phone=None):
     """Create a new user account"""
     query = """
-    INSERT INTO users (email, password_hash, full_name)
-    VALUES (%s, %s, %s) RETURNING id
+    INSERT INTO users (email, password_hash, full_name, phone)
+    VALUES (%s, %s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (email, password_hash, full_name))
+    return execute_query('insert', query, (email, password_hash, full_name, phone))
 
 def get_user_by_email(email):
     """Get user by email address"""
-    query = "SELECT id, email, password_hash, full_name FROM users WHERE email = %s"
+    query = "SELECT id, email, password_hash, full_name, phone, onboarded FROM users WHERE email = %s"
     result = execute_query('search', query, (email,))
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name']
-        return dict(zip(columns, result[0]))
+        # Map result to a dictionary with appropriate keys
+        columns = [desc[0] for desc in cur.description] # Get column names from cursor description
+        return dict(zip(columns, result[0])) if result else None
     return None
 
-def get_user_by_id(user_id):
-    """Get user by ID"""
+def update_user_by_id(user_id, full_name=None, password_hash=None, phone=None, onboarded=None):
+    """Update user information by ID."""
+    updates = []
+    params = []
+    
+    if full_name is not None:
+        updates.append("full_name = %s")
+        params.append(full_name)
+    if password_hash is not None:
+        updates.append("password_hash = %s")
+        params.append(password_hash)
+    if phone is not None:
+        updates.append("phone = %s")
+        params.append(phone)
+    if onboarded is not None:
+        updates.append("onboarded = %s")
+        params.append(onboarded)
+
+    if not updates:
+        return False # No updates to perform
+
+    query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
+    params.append(user_id)
+    
     try:
-        user_id = int(user_id)
-    except Exception:
-        return None
-    query = "SELECT id, email, password_hash, full_name FROM users WHERE id = %s"
-    result = execute_query('search', query, (user_id,))
-    if result:
-        columns = ['id', 'email', 'password_hash', 'full_name']
-        return dict(zip(columns, result[0]))
-    return None
-
-def get_user_by_email_or_id(identifier):
-    """Try by id first, then by email"""
-    user = get_user_by_id(identifier)
-    if user:
-        return user
-    return get_user_by_email(identifier)
-
-def update_user_by_id(user_id, email=None, full_name=None):
-    query = """
-    UPDATE users 
-    SET email = COALESCE(%s, email), 
-        full_name = COALESCE(%s, full_name)
-    WHERE id = %s RETURNING id
-    """
-    params = (email, full_name, user_id)
-    return execute_query('search', query, params) is not None
-
-def create_user_from_google(user_info):
-    """Create user from Google OAuth info"""
-    return create_user(
-        email=user_info['email'],
-        password_hash=None,
-        full_name=user_info.get('name', '')
-    )
-
-# ================== SOLAR SYSTEM OPERATIONS ==================
-def add_solar_system(installer_id, capacity_kw, components=None, installation_date=None):
-    """Add a new solar system installation"""
-    query = """
-    INSERT INTO solar_systems (installer_id, capacity_kw, components, installation_date)
-    VALUES (%s, %s, %s, %s) RETURNING id
-    """
-    return execute_query('insert', query, (installer_id, capacity_kw, components, installation_date))
-
-# ================== CONTRACT OPERATIONS ==================
-def create_contract(user_id, system_id, monthly_payment, total_cost, start_date, end_date=None):
-    """Create a new solar contract"""
-    query = """
-    INSERT INTO solar_contracts 
-    (user_id, system_id, monthly_payment, total_cost, start_date, end_date)
-    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id
-    """
-    return execute_query('insert', query, 
-                       (user_id, system_id, monthly_payment, total_cost, start_date, end_date))
-
-def get_user_contracts(user_id):
-    """Get all contracts for a user"""
-    query = """
-    SELECT sc.*, ss.capacity_kw, ss.components 
-    FROM solar_contracts sc
-    JOIN solar_systems ss ON sc.system_id = ss.id
-    WHERE sc.user_id = %s
-    """
-    return execute_query('search', query, (user_id,))
-
-# ================== PAYMENT OPERATIONS ==================
-def record_payment(contract_id, amount, payment_method):
-    """Record a payment and update contract balance"""
-    conn, cur = connect_db()
-    try:
-        cur.execute("BEGIN")
-        # Record payment
-        cur.execute("""
-        INSERT INTO payments (contract_id, amount, payment_method)
-        VALUES (%s, %s, %s)
-        """, (contract_id, amount, payment_method))
-        # Update contract balance
-        cur.execute("""
-        UPDATE solar_contracts 
-        SET payments_made = payments_made + %s
-        WHERE id = %s
-        """, (amount, contract_id))
-        conn.commit()
-        return True
+        return execute_query('update', query, tuple(params))
     except Exception as e:
-        conn.rollback()
-        print(f"🚨 Payment failed: {e}")
+        logging.error(f"Error updating user {user_id}: {e}")
         return False
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
-
-def get_payment_history(contract_id):
-    """Get payment history for a contract"""
-    query = """
-    SELECT id, amount, payment_date, payment_method 
-    FROM payments 
-    WHERE contract_id = %s
-    ORDER BY payment_date DESC
-    """
-    return execute_query('search', query, (contract_id,))
 
 # ================== DB INITIALIZATION ==================
 def initialize_db():
-    conn, cur = connect_db()
-    try:
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            email VARCHAR(255) UNIQUE NOT NULL,
-            password_hash VARCHAR(255),
-            full_name VARCHAR(100)
-        )""")
-        cur.execute("ALTER TABLE users ALTER COLUMN password_hash TYPE VARCHAR(255);")
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS solar_systems (
-            id SERIAL PRIMARY KEY,
-            installer_id INTEGER REFERENCES users(id),
-            capacity_kw DECIMAL(5,2) NOT NULL,
-            components TEXT,
-            installation_date DATE
-        )""")
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS solar_contracts (
-            id SERIAL PRIMARY KEY,
-            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-            system_id INTEGER REFERENCES solar_systems(id),
-            monthly_payment DECIMAL(10,2) NOT NULL,
-            total_cost DECIMAL(10,2) NOT NULL,
-            payments_made DECIMAL(10,2) DEFAULT 0.0,
-            start_date DATE NOT NULL,
-            end_date DATE,
-            is_active BOOLEAN DEFAULT TRUE,
-            CONSTRAINT valid_payment CHECK (monthly_payment > 0 AND total_cost > monthly_payment)
-        )""")
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS payments (
-            id SERIAL PRIMARY KEY,
-            contract_id INTEGER REFERENCES solar_contracts(id) ON DELETE CASCADE,
-            amount DECIMAL(10,2) NOT NULL,
-            payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            payment_method VARCHAR(50)
-        )""")
-        conn.commit()
-        print("✅ Database tables initialized")
-    except Exception as e:
-        conn.rollback()
-        print(f"🚨 Database initialization failed: {e}")
-        raise
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
-
-# Initialize when imported
-initialize_db()
-
-# Test connection when run directly
-if __name__ == "__main__":
+    conn = None
+    cur = None
     try:
         conn, cur = connect_db()
-        print("✅ Database connection successful!")
-        cur.execute("SELECT version()")
-        print("PostgreSQL version:", cur.fetchone()[0])
+        if not conn or not cur:
+            raise Exception("Database connection not established.")
+
+        # Create 'users' table
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                full_name VARCHAR(100),
+                phone VARCHAR(20),
+                onboarded BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        
+        # Add 'onboarded' column if it doesn't exist
+        try:
+            cur.execute("ALTER TABLE users ADD COLUMN onboarded BOOLEAN DEFAULT FALSE;")
+            conn.commit()
+            logging.info("Column 'onboarded' added to 'users' table.")
+        except psycopg2.errors.DuplicateColumn:
+            conn.rollback() # Rollback the failed ALTER TABLE if column already exists
+            logging.info("Column 'onboarded' already exists in 'users' table.")
+        except Exception as e:
+            conn.rollback()
+            logging.error(f"Error altering 'users' table: {e}")
+            raise # Re-raise other exceptions for proper handling
+
+        # Create 'transactions' table
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS transactions (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                amount DECIMAL(10, 2) NOT NULL,
+                transaction_type VARCHAR(50) NOT NULL,
+                transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                status VARCHAR(50) DEFAULT 'Completed',
+                promo_code VARCHAR(100),
+                voucher_code VARCHAR(100),
+                is_auto_topup BOOLEAN DEFAULT FALSE,
+                min_balance DECIMAL(10, 2),
+                auto_topup_amount DECIMAL(10, 2),
+                auto_topup_frequency VARCHAR(50),
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            );
+        """)
+
+        conn.commit()
+        logging.info("Database tables initialized/updated successfully.")
+        return True
     except Exception as e:
-        print("🚨 Database connection failed:", e)
+        if conn:
+            conn.rollback()
+        logging.error(f"Database initialization failed: {e}")
+        return False
     finally:
-        if conn: conn.close()
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+# ================== TOP-UP AND TRANSACTION FUNCTIONS ==================
+
+def record_transaction(user_id, amount, transaction_type, status='Completed', promo_code=None, voucher_code=None, is_auto_topup=False, min_balance=None, auto_topup_amount=None, auto_topup_frequency=None):
+    """
+    Records a new transaction in the database.
+    """
+    query = """
+    INSERT INTO transactions (user_id, amount, transaction_type, transaction_date, status, promo_code, voucher_code, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency)
+    VALUES (%s, %s, %s, NOW(), %s, %s, %s, %s, %s, %s, %s) RETURNING id;
+    """
+    params = (user_id, amount, transaction_type, status, promo_code, voucher_code, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency)
+    try:
+        transaction_id = execute_query('insert', query, params)
+        logging.info(f"Transaction recorded: ID {transaction_id} for user {user_id}, amount {amount}")
+        return transaction_id
+    except Exception as e:
+        logging.error(f"Error recording transaction for user {user_id}: {e}")
+        raise
+
+def get_user_transactions(user_id):
+    """
+    Retrieves all transactions for a given user.
+    """
+    query = "SELECT * FROM transactions WHERE user_id = %s ORDER BY transaction_date DESC;"
+    try:
+        transactions_raw = execute_query('search', query, (user_id,))
+        if transactions_raw:
+            # Get column names from the cursor description to create dictionaries
+            conn, cur = connect_db()
+            cur.execute(query, (user_id,))
+            column_names = [desc[0] for desc in cur.description]
+            cur.close()
+            conn.close()
+            
+            transactions = []
+            for row in transactions_raw:
+                transactions.append(dict(zip(column_names, row)))
+            return transactions
+        return []
+    except Exception as e:
+        logging.error(f"Error retrieving transactions for user {user_id}: {e}")
+        return []
+
+def get_all_transactions():
+    """
+    Retrieves all transactions from the database (for admin use or overview).
+    """
+    query = "SELECT * FROM transactions ORDER BY transaction_date DESC;"
+    try:
+        transactions_raw = execute_query('search', query)
+        if transactions_raw:
+            conn, cur = connect_db()
+            cur.execute(query)
+            column_names = [desc[0] for desc in cur.description]
+            cur.close()
+            conn.close()
+            
+            transactions = []
+            for row in transactions_raw:
+                transactions.append(dict(zip(column_names, row)))
+            return transactions
+        return []
+    except Exception as e:
+        logging.error(f"Error retrieving all transactions: {e}")
+        return []

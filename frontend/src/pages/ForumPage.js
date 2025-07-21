@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-comment-textnodes */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaPaperPlane, FaComments } from 'react-icons/fa';
 import {
@@ -10,6 +10,7 @@ import {
   Text,
   Textarea,
   VStack,
+  Spinner, // Ensure Spinner is imported only once
   useColorModeValue,
   useToast,
   Collapse,
@@ -17,10 +18,7 @@ import {
   ListItem,
   SimpleGrid,
   Icon,
-  Spinner,
   Tooltip,
-  Container,
-  Avatar,
 } from '@chakra-ui/react';
 import forumBackground from '../assets/images/Forum_page.png';
 
@@ -57,8 +55,8 @@ const ForumPage = () => {
     }
   }, [selectedTopic]);
 
-  // Mock data for forum topics
-  const topics = [
+  // Mock data for dummyTopics
+  const dummyTopics = useMemo(() => [
     {
       id: 1,
       title: 'Solar Panel Maintenance Tips',
@@ -1125,90 +1123,28 @@ const ForumPage = () => {
       lastActivity: '2024-03-03',
       replies: 5,
       posts: [
-        {
-          name: "Ayanda",
-          avatarColor: "teal.500",
-          message: "Solar water heaters save money long-term. This is a significant financial benefit."
-        },
-        {
-          name: "Sipho",
-          avatarColor: "orange.400",
-          message: "Maintenance advice for tanks. This is crucial for the longevity of your water heater."
-        },
-        {
-          name: "Lerato",
-          avatarColor: "purple.500",
-          message: "Heat pump options compared. This is a more efficient and environmentally friendly option."
-        },
-        {
-          name: "Thabo",
-          avatarColor: "blue.400",
-          message: "Insulation wraps for pipes. This is one of the most effective ways to reduce heat loss."
-        },
-        {
-          name: "Zanele",
-          avatarColor: "pink.400",
-          message: "Energy ratings to check. This is important for understanding the efficiency of your water heater."
-        },
-        {
-          name: "Nomsa",
-          avatarColor: "green.500",
-          message: "Installation costs broken down. This is a key consideration for any home improvement project."
-        },
-        {
-          name: "Sibusiso",
-          avatarColor: "red.400",
-          message: "Rebates and incentives. This can significantly reduce your costs."
-        },
-        {
-          name: "Kagiso",
-          avatarColor: "yellow.500",
-          message: "User tips for efficiency. This includes regular maintenance and optimizing settings."
-        },
-        {
-          name: "Naledi",
-          avatarColor: "cyan.500",
-          message: "Tankless vs. traditional systems. This is a trade-off between upfront cost and long-term savings."
-        },
-        {
-          name: "Mpho",
-          avatarColor: "indigo.500",
-          message: "Environmental benefits. This is a crucial consideration for any water heating solution."
-        },
-        {
-          name: "Ayanda",
-          avatarColor: "teal.500",
-          message: "Monitoring water usage. This helps you understand your water consumption and identify leaks."
-        },
-        {
-          name: "Sipho",
-          avatarColor: "orange.400",
-          message: "Common issues and fixes. This allows you to identify and address problems quickly."
-        },
-        {
-          name: "Lerato",
-          avatarColor: "purple.500",
-          message: "Integration with smart homes. This allows for more efficient and convenient water management."
-        },
-        {
-          name: "Thabo",
-          avatarColor: "blue.400",
-          message: "Longevity and warranties. This ensures your investment is protected."
-        },
-        {
-          name: "Zanele",
-          avatarColor: "pink.400",
-          message: "Success stories from users. This can inspire you and guide your decision-making."
-        }
+        'Post 1: Solar water heaters save money long-term.',
+        'Post 2: Maintenance advice for tanks.',
+        'Post 3: Heat pump options compared.',
+        'Post 4: Insulation wraps for pipes.',
+        'Post 5: Energy ratings to check.',
+        'Post 6: Installation costs broken down.',
+        'Post 7: Rebates and incentives.',
+        'Post 8: User tips for efficiency.',
+        'Post 9: Tankless vs. traditional systems.',
+        'Post 10: Environmental benefits.',
+        'Post 11: Monitoring water usage.',
+        'Post 12: Common issues and fixes.',
+        'Post 13: Integration with smart homes.',
+        'Post 14: Longevity and warranties.',
+        'Post 15: Success stories from users.'
       ]
     }
-  ];
+  ]);
 
-  const summarizePost = (message) => {
-    const firstSentence = message.split('.')[0] || message;
-    return firstSentence.length > 50 
-      ? `${firstSentence.substring(0, 47)}...` 
-      : firstSentence;
+  const mockSummarize = (posts) => {
+    // Simple mock function to generate a bullet-point summary from posts
+    return posts.map((post, index) => `- Point ${index + 1}: ${post}`).join('\n');
   };
 
   const handlePostMessage = () => {
@@ -1226,16 +1162,12 @@ const ForumPage = () => {
     const userName = localStorage.getItem('forumUserName') || 'You';
     const topicId = selectedTopic.id;
 
-    // Edit: Now that replies is defined, this will work correctly
     const newReplies = { ...replies };
     if (!newReplies[topicId]) newReplies[topicId] = [];
     const reply = { name: userName, message: newMessage, timestamp: Date.now() };
     newReplies[topicId].push(reply);
 
-    setReplies(newReplies);  // Now setReplies is defined and can be used
-
-    // Save to localStorage
-    localStorage.setItem(`forumReplies_${topicId}`, JSON.stringify(newReplies[topicId]));
+    setReplies(newReplies);
 
     toast({
       title: 'Message Posted',
@@ -1263,13 +1195,7 @@ const ForumPage = () => {
 
     setIsLoading(true);
     try {
-      const mockedSummary = selectedTopic.posts
-        .map(post => {
-          const summary = summarizePost(post.message);
-          return summary.length > 120 ? `${summary.substring(0, 120)}...` : summary;
-        })
-        .filter(Boolean);
-
+      const mockedSummary = mockSummarize(selectedTopic.posts);
       setSummary(mockedSummary);
     } catch (error) {
       console.error('Summarization error:', error);
@@ -1293,10 +1219,21 @@ const ForumPage = () => {
       setTone('neutral');
       return;
     }
-    // Simple mock: positive if contains "good", negative if "bad", else neutral
-    if (/good|great|excellent|love|awesome/i.test(newMessage)) setTone('positive');
-    else if (/bad|terrible|hate|awful|poor/i.test(newMessage)) setTone('negative');
-    else setTone('neutral');
+    setIsCheckingTone(true);
+    setTone(null);
+    try {
+      const response = await api.post('/api/ai/sentiment', { text: newMessage });
+      setTone(response.data.tone);
+    } catch (error) {
+      toast({
+        title: 'Failed to check tone. Please try again.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsCheckingTone(false);
+    }
   };
 
   const renderTone = () => {
@@ -1314,8 +1251,8 @@ const ForumPage = () => {
   };
 
   const renderTopicsList = () => (
-    <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={8} w='100%'>
-      {topics.map((topic) => (
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w='full'>
+      {dummyTopics.map((topic) => (
         <Box
           key={topic.id}
           p={6}
@@ -1531,14 +1468,14 @@ const ForumPage = () => {
             {selectedTopic ? 'Back to Topics' : 'Back to Home'}
           </Button>
 
-          <VStack spacing={8} align="stretch">
-            <Heading size="xl" textAlign="center" color={textColor}>
-              🌍 Community Forum
-            </Heading>
-            {selectedTopic ? renderTopicDiscussion() : renderTopicsList()}
-          </VStack>
-        </Box>
-      </Container>
+        <VStack spacing={8} align="stretch">
+          <Heading size="xl">Community Forum</Heading>
+          {selectedTopic 
+            ? renderTopicDiscussion() 
+            : renderTopicsList()
+          }
+        </VStack>
+    </Box>
     </Box>
   );
 };

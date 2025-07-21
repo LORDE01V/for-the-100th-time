@@ -5,17 +5,26 @@ import os
 from datetime import datetime
 import re
 import requests
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, render_template, send_from_directory, session, redirect, url_for
 from flask_cors import CORS
 from chat_interface import EnhancedChatbot
-import logging
 from authlib.integrations.flask_client import OAuth
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from app.routes.auth import auth_bp
+from Energy_optimizer.agent import EnergyUsageOptimizerAgent
+from sys import stdout
+from support import initialize_db, get_db
+from app.routes.home import home_bp
+from app.routes.email import email_bp
 from functools import lru_cache
 import time
 from huggingface_agent import query_mistral
+import logging
 from app.routes.ai_agent import ai_agent_bp
+from app.routes.ai_suggestions import ai_suggestions_bp
+from app.routes.loadshedding import loadshedding_bp
+from app.routes.topup import topup_bp
+
 
 # SSL workaround for dev
 try:
@@ -45,7 +54,7 @@ app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
 
 # Configure CORS
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": ["https://gridx-frrontend.onrender.com", "http://localhost:3000", "http://192.168.18.3:3000"]}})
 
 # Initialize OAuth
 oauth = OAuth(app)
@@ -61,18 +70,49 @@ oauth.register(
     client_kwargs={'scope': 'openid email profile'}
 )
 
+# JWT Configuration
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "default_jwt_secret_key")
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600  # 1 hour
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 2592000  # 30 days
 jwt = JWTManager(app)
 
+# Register blueprints
 app.register_blueprint(auth_bp)
+app.register_blueprint(home_bp)
+app.register_blueprint(email_bp)
 app.register_blueprint(ai_agent_bp)
+app.register_blueprint(ai_suggestions_bp)
+app.register_blueprint(loadshedding_bp)
+app.register_blueprint(topup_bp)
 
+# Initialize database
+if not initialize_db():
+    raise Exception("Database initialization failed. Please check your database connection.")
+
+# Home route
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+# Serve static files
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
+
+# Error handling
+def handle_error(e):
+    return jsonify(error=str(e)), 500
+
+app.errorhandler(404)(handle_error)
+
+# Chatbot initialization. Keeping EnhancedChatbot as it was from HEAD.
 chatbot = EnhancedChatbot()
+
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
     try:
-        data = request.json
+        data = request.get_json() or {}
         message = data.get('message', '')
         if not message:
             return jsonify({'error': 'Message field is required'}), 400

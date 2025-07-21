@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api'; // Assuming auth service is still used
+import api, { auth } from '../services/api';  // Corrected import for the api object
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -56,11 +56,11 @@ function generateImpactReportPDF() {
 function ImpactPage() {
   const navigate = useNavigate();
   const toast = useToast();
-  const user = auth.getCurrentUser();
+  const user = auth.getCurrentUser();  // Now auth is defined
   const [quote, setQuote] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [rating, setRating] = useState(0);
+  // Removed unused 'rating' variable
   const [testimonials, setTestimonials] = useState(() => {
     // Ignore localStorage for now to always show the new profiles
     return [
@@ -82,23 +82,16 @@ function ImpactPage() {
     ];
   });
 
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name) {
-      toast({ title: 'Error', description: 'Name is required.', status: 'error', duration: 3000, isClosable: true });
-      return;
-    }
-    if (!email || !isValidEmail(email)) {
-      toast({ title: 'Error', description: 'A valid Email is required.', status: 'error', duration: 3000, isClosable: true });
-      return;
-    }
-    if (!quote) {
-      toast({ title: 'Error', description: 'Testimonial is required.', status: 'error', duration: 3000, isClosable: true });
+    if (!name || !email || !quote) {
+      toast({
+        title: 'Error',
+        description: 'All fields are required.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
     
@@ -123,7 +116,7 @@ function ImpactPage() {
     setName('');
     setEmail('');
     setQuote('');
-    setRating(0);
+    // Removed unused 'rating' variable
   };
 
   // Move all useColorModeValue calls to the top level

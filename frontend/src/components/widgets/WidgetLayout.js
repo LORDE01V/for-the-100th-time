@@ -30,7 +30,9 @@ const WidgetLayout = () => {
     themeSwitcher: 'Theme Settings',
     energyAvatar: 'Energy Profile',
     solarOutput: 'Solar Output',
-    weeklyHeatmap: 'Usage Heatmap'
+    weeklyHeatmap: 'Usage Heatmap',
+    faultDetection: 'Fault Detection',
+    faultVisualization: 'Fault Visualization'
   };
 
   return (

@@ -7,6 +7,7 @@ const api = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json'
     },
     timeout: 20000, // 20 second timeout
     withCredentials: true, // Added for JWT cookies
@@ -46,9 +47,15 @@ api.interceptors.response.use(
                 localStorage.setItem('token', newToken);
                 error.config.headers.Authorization = `Bearer ${newToken}`;
                 return api(error.config);
+                const refreshResponse = await api.post('/api/auth/refresh');
+                const newToken = refreshResponse.data.token;
+                localStorage.setItem('token', newToken);
+                error.config.headers.Authorization = `Bearer ${newToken}`;
+                return api(error.config);
             } catch (refreshError) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
+                window.location.href = '/login';
                 window.location.href = '/login';
             }
         }
@@ -56,7 +63,7 @@ api.interceptors.response.use(
     }
 );
 
-// Auth API calls with improved error handling
+// Auth API calls
 export const auth = {
     login: async (email, password) => {
         try {

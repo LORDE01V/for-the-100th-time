@@ -155,6 +155,9 @@ export const defaultWidgetLayout = {
   themeSwitcher: true,
   energyAvatar: true,
   solarOutput: true,
+  faultDetection: true,
+  faultVisualization: true
+
 };
 
 // Expand activityReportData with more mock entries

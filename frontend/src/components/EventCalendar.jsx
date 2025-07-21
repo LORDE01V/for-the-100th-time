@@ -25,6 +25,7 @@ import {
   ChevronRightIcon,
 } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../services/api'; // Import the API service
 
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -103,11 +104,25 @@ const EventCalendar = () => {
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
 
   useEffect(() => {
-    const savedEvents = localStorage.getItem('calendarEvents');
-    if (savedEvents) {
-      setEvents(JSON.parse(savedEvents));
-    }
-  }, []);
+    const fetchEvents = async () => {
+      try {
+        const response = await api.get('/api/events');
+        setEvents(response.data);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        toast({
+          title: 'Error fetching events',
+          description: 'Could not load events from the server.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+          position: 'bottom',
+        });
+      }
+    };
+
+    fetchEvents();
+  }, [toast]);  // Added missing dependency
 
   const handlePrev = () => {
     if (currentMonth === 0) {
@@ -141,13 +156,8 @@ const EventCalendar = () => {
     onOpen();
   };
 
-  const saveEvent = () => {
-    // Validate all required fields
-    if (!eventData.title.trim() || 
-        !eventData.start || 
-        !eventData.end || 
-        !eventData.description.trim() || 
-        !eventData.location.trim()) {
+  const saveEvent = async () => {
+    if (!eventData.title.trim() || !eventData.start || !eventData.end || !eventData.description.trim() || !eventData.location.trim()) {
       toast({
         title: 'Missing required fields',
         description: 'Please fill in all event details',
@@ -159,95 +169,67 @@ const EventCalendar = () => {
       return;
     }
 
-    const updated = { 
-      ...events, 
-      [selectedDate]: eventData 
-    };
-    setEvents(updated);
-    localStorage.setItem('calendarEvents', JSON.stringify(updated));
-    onClose();
-    
-    toast({
-      title: 'Event created',
-      description: 'Your event has been successfully saved',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-      position: 'bottom',
-    });
+    try {
+      const updatedEvent = { ...eventData };
+      if (events[selectedDate]) {
+        await api.put(`/api/events/${selectedDate}`, updatedEvent);  // PUT for updates
+      } else {
+        await api.post('/api/events', updatedEvent);  // POST for new events
+      }
+      const response = await api.get('/api/events');  // Refetch to sync
+      setEvents(response.data);
+      onClose();
+      toast({
+        title: 'Event saved',
+        description: 'Your event has been successfully saved to the server.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    } catch (error) {
+      console.error('Error saving event:', error);
+      toast({
+        title: 'Error saving event',
+        description: 'Could not save the event to the server.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    }
   };
 
-  // Add ref for tracking deleted event
-  const deletedEventRef = useRef(null);
-
   // Modify deleteEvent function
-  const deleteEvent = () => {
+  const deleteEvent = async () => {
     if (deleteConfirmationText.toLowerCase() !== 'delete') return;
 
-    // Store deleted event before removal
-    deletedEventRef.current = {
-      key: selectedDate,
-      event: events[selectedDate]
-    };
-
-    const updated = { ...events };
-    delete updated[selectedDate];
-    setEvents(updated);
-    localStorage.setItem('calendarEvents', JSON.stringify(updated));
-    
-    setDeleteConfirmationText('');
-    onDeleteClose();
-    onClose();
-    
-    toast({
-      title: 'Event deleted',
-      description: 'Click Undo to restore it',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-      position: 'bottom',
-      onCloseComplete: () => {
-        // Clear the ref when toast closes
-        deletedEventRef.current = null;
-      },
-      render: ({ onClose }) => (
-        <Box
-          color="white"
-          p={3}
-          bg="blue.500"
-          borderRadius="md"
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Text>Event deleted. Click Undo to restore it</Text>
-          <Button
-            size="sm"
-            colorScheme="blue"
-            variant="ghost"
-            onClick={() => {
-              if (deletedEventRef.current) {
-                const { key, event } = deletedEventRef.current;
-                setEvents(prev => ({
-                  ...prev,
-                  [key]: event
-                }));
-                localStorage.setItem('calendarEvents', 
-                  JSON.stringify({
-                    ...events,
-                    [key]: event
-                  })
-                );
-                deletedEventRef.current = null;
-                onClose();
-              }
-            }}
-          >
-            Undo
-          </Button>
-        </Box>
-      )
-    });
+    try {
+      await api.delete(`/api/events/${selectedDate}`);  // DELETE from server
+      const response = await api.get('/api/events');  // Refetch to sync
+      setEvents(response.data);
+      setDeleteConfirmationText('');
+      onDeleteClose();
+      onClose();
+      toast({
+        title: 'Event deleted',
+        description: 'The event has been removed from the server.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      toast({
+        title: 'Error deleting event',
+        description: 'Could not delete the event from the server.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    }
   };
 
   const renderCalendar = (dateBg, dateColor) => {

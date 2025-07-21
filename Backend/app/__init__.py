@@ -6,6 +6,8 @@ from datetime import timedelta
 from dotenv import load_dotenv
 from flask_cors import CORS
 from app.routes.topup import topup_bp
+from app.routes.ai_suggestions import ai_suggestions_bp
+from app.routes.loadshedding import loadshedding_bp
 
 # Load environment variables
 load_dotenv()
@@ -17,15 +19,17 @@ def create_app():
     app = Flask(__name__,
                 template_folder='templates')
     
-    # Enhanced CORS configuration
+    # Unified CORS configuration to allow frontend on Render and local development
     CORS(app, resources={r"/*": {  # Apply to all routes
         "origins": [
+            "https://gridx-frrontend.onrender.com", # Your deployed frontend
             "http://localhost:3000",
             "http://localhost:5000",
-            "http://127.0.0.1:3000"
+            "http://127.0.0.1:3000",
+            "http://192.168.18.3:3000" # Add if needed for local network testing
         ],
         "supports_credentials": True,
-        "allow_headers": ["*"],
+        "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }})
     
@@ -57,10 +61,18 @@ def create_app():
         }
     )
     
-    # Register no blueprints for isolation
-    # from .routes.auth import auth_bp
-    # app.register_blueprint(auth_bp)
-    # app.register_blueprint(topup_bp)
-    # from .routes.ai_agent import ai_agent_bp
-    # app.register_blueprint(ai_agent_bp)
+    # Register blueprints (combining from both branches)
+    from .routes.auth import auth_bp
+    from .routes.ai_agent import ai_agent_bp
+    from .routes.home import home_bp
+    from .routes.email import email_bp
+
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(topup_bp)
+    app.register_blueprint(ai_agent_bp)
+    app.register_blueprint(home_bp)
+    app.register_blueprint(email_bp)
+    app.register_blueprint(ai_suggestions_bp)
+    app.register_blueprint(loadshedding_bp)
+
     return app
