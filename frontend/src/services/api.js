@@ -47,15 +47,9 @@ api.interceptors.response.use(
                 localStorage.setItem('token', newToken);
                 error.config.headers.Authorization = `Bearer ${newToken}`;
                 return api(error.config);
-                const refreshResponse = await api.post('/api/auth/refresh');
-                const newToken = refreshResponse.data.token;
-                localStorage.setItem('token', newToken);
-                error.config.headers.Authorization = `Bearer ${newToken}`;
-                return api(error.config);
             } catch (refreshError) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                window.location.href = '/login';
                 window.location.href = '/login';
             }
         }

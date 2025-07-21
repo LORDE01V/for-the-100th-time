@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-comment-textnodes */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaPaperPlane, FaComments } from 'react-icons/fa';
 import {
@@ -19,8 +19,11 @@ import {
   SimpleGrid,
   Icon,
   Tooltip,
+  Avatar, // Added Avatar import
+  Container, // Added Container import
 } from '@chakra-ui/react';
 import forumBackground from '../assets/images/Forum_page.png';
+import api from '../services/api'; // Added API import
 
 const ForumPage = () => {
   const toast = useToast();
@@ -37,6 +40,7 @@ const ForumPage = () => {
   const [replies, setReplies] = useState({});
   const [tone, setTone] = useState(null);
   const [isSummarized, setIsSummarized] = useState(false);
+  const [isCheckingTone, setIsCheckingTone] = useState(false); // Declared isCheckingTone state
 
   const cardBg = useColorModeValue('white', 'rgba(0, 0, 0, 0.6)');
   const postBg = useColorModeValue('gray.50', 'gray.700');
@@ -1213,10 +1217,14 @@ const ForumPage = () => {
 
   const handleShowFullPosts = () => setIsSummarized(false);
 
-  const handleCheckTone = () => {
-    const wordCount = newMessage.trim().split(/\s+/).length;
-    if (wordCount < 8) {
-      setTone('neutral');
+  const handleCheckTone = async () => {
+    if (!newMessage.trim()) {
+      toast({
+        title: 'Please enter a message to check the tone.',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
     setIsCheckingTone(true);
@@ -1329,7 +1337,7 @@ const ForumPage = () => {
                       />
                       <Box>
                         <Text fontWeight="bold" color={cardTextColor}>{post.name}</Text>
-                        <Text color={cardTextColor}>{isSummarized ? summarizePost(post.message) : post.message}</Text>
+                        <Text color={cardTextColor}>{isSummarized ? mockSummarize(post.message) : post.message}</Text> // Changed summarizePost to mockSummarize
                         {post.timestamp && (
                           <Text fontSize="xs" color={metaTextColor} mt={1}>
                             {new Date(post.timestamp).toLocaleString()}
@@ -1401,7 +1409,7 @@ const ForumPage = () => {
               isDisabled={!newMessage.trim()}
               mr={2}
             >
-              {isLoading ? <Spinner size="xs" /> : 'Check Tone'}
+              {isCheckingTone ? <Spinner size="xs" /> : 'Check Tone'}
             </Button>
             {renderTone()}
           </Flex>
@@ -1476,6 +1484,7 @@ const ForumPage = () => {
           }
         </VStack>
     </Box>
+    </Container>
     </Box>
   );
 };
