@@ -187,8 +187,7 @@ def login():
             'user': {
                 'email': user['email'],
                 'name': user['full_name']
-            },
-            'redirect': url_for('home.home_page')
+            }
         })
         # Assuming set_access_cookies is defined elsewhere or needs to be imported
         # from flask_jwt_extended import set_access_cookies

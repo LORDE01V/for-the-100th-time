@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, topUp, autoTopUp } from '../services/api';
+import api from '../services/api';  // Import the API service to resolve the 'api' not defined error
 import { FaArrowLeft } from 'react-icons/fa';
 import {
     Box,
@@ -169,47 +170,61 @@ function TopUpPage() {
             return;
         }
 
-        setIsProcessing(true);
-
-        try {
-            const payload = {
-                amount: topUpAmount,
-                type: transactionType,
-                promoCode,
-                voucherCode,
-            };
-
-            const topUpResult = await topUp.process(payload);
-
-            if (topUpResult && typeof topUpResult.new_balance !== 'undefined') {
-                setCurrentBalance(topUpResult.new_balance);
-            } else {
-                throw new Error('Invalid balance received from server');
-            }
-
-            setAmount('');
-            setPromoCode('');
-            setVoucherCode('');
-
-            toast({
-                title: `${transactionType === 'topup' ? 'Top-Up' : 'Recharge'} Successful!`,
-                description: `Your new balance is R${topUpResult.new_balance.toFixed(2)}.`,
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            });
-        } catch (error) {
-            toast({
-                title: 'Error',
-                description: 'Failed to process top-up.',
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
-        } finally {
-            setIsProcessing(false);
-        }
+    setIsProcessing(true);
+  
+    const data = {
+        user_id: user?.id,  // Using optional chaining for safety
+        amount: topUpAmount,
+        promo_code: promoCode,
+        voucher_code: voucherCode,
+        transaction_type: transactionType,
+        is_auto_topup: isAutoTopUpEnabled,
+        min_balance: isAutoTopUpEnabled ? parseFloat(minBalance) : null,
+        auto_topup_amount: isAutoTopUpEnabled ? parseFloat(autoTopUpAmount) : null,
+        auto_topup_frequency: isAutoTopUpEnabled ? autoTopUpFrequency : null,
     };
+
+    try {
+        // Explicitly ensure headers are set, though api.js should handle it
+        const response = await api.post('/api/topup', data, {
+          headers: {
+            'Content-Type': 'application/json',  // Enforce header as per standards
+          },
+        });
+      
+      if (response.status === 200 && response.data.success) {
+        // Update balance and show success
+        setCurrentBalance(prev => prev + topUpAmount);
+        toast({
+          title: 'Success!',
+          description: `New balance: R${(currentBalance + topUpAmount).toFixed(2)}`,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        throw new Error(response.data.error || 'Payment failed');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 
+                           error.response?.data?.error || 
+                           error.message ||  // For network errors
+                           'Payment service unavailable';
+      
+      toast({
+        title: 'Payment Failed',
+        description: errorMessage,  // More detailed error message
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      
+      // Log error for debugging
+      console.error('Top-up error details:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
     if (!user) {
         return (
