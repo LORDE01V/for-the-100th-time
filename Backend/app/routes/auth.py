@@ -136,7 +136,7 @@ def logout():
     return create_response("Logged out successfully")
 
 @auth_bp.route('/login', methods=['POST'])
-@cross_origin(origin='http://localhost:3000', supports_credentials=True)
+@cross_origin(origins="*", supports_credentials=True)
 def login():
     # Always succeed and return a fake user and token for now
     return jsonify({
