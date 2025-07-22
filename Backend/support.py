@@ -319,13 +319,10 @@ def save_auto_topup_settings(user_id, is_auto_topup, min_balance, auto_topup_amo
 
 # Initialize database tables when module loads
 def initialize_db():
-    conn, cur = connect_db()
-    if not cur:
-        raise Exception("Database connection failed. Cursor is None")
     try:
         conn, cur = connect_db()
         if not conn or not cur:
-            raise Exception("Database connection not established.")
+            raise Exception("Database connection failed")
 
         # Create 'users' table
         cur.execute("""
@@ -496,14 +493,15 @@ def initialize_db():
         if conn:
             conn.commit()
         print("✅ Database tables initialized")
+        return True
     except Exception as e:
-        if conn:
-            conn.rollback()
         print(f"🚨 Database initialization failed: {e}")
-        raise
+        # Optionally, log this error to a file for debugging
+        return False  # Return False instead of raising an exception
     finally:
-        if cur: cur.close()
-        if conn: conn.close()
+        if conn:
+            cur.close()
+            conn.close()
 
 # Initialize when imported
 initialize_db()

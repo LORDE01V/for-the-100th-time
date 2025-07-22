@@ -1,5 +1,9 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from flask import Blueprint, request, jsonify, session
-from Backend.support import get_user_balance, update_user_balance, save_auto_topup_settings, execute_query
+from support import get_user_balance, update_user_balance, save_auto_topup_settings, execute_query
 
 
 topup_bp = Blueprint('topup', __name__)
