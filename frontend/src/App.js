@@ -36,6 +36,8 @@ import PersonalUserPage from './pages/PersonalUserPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import FaultDetails from './pages/FaultDetails';
+import LoadSheddingPage from './pages/LoadSheddingPage'; // Import LoadSheddingPage
+import ThemeToggleButton from './components/ThemeToggleButton'; // Import ThemeToggleButton
 // Protected Route component
 const ProtectedRoute = () => {
   const user = auth.getCurrentUser();

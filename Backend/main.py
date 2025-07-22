@@ -28,7 +28,6 @@ import uvicorn
 from flask import Blueprint, url_for, session
 from email_utils import send_welcome_email
 from app import create_app
-from hugging_services import HuggingFaceChatbot
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
 from support import connect_db
@@ -89,7 +88,7 @@ jwt = JWTManager(flask_app)
 
 # Register blueprints
 flask_app.register_blueprint(home_bp)
-#flask_app.register_blueprint(auth_bp, name='auth_bp')
+flask_app.register_blueprint(auth_bp, name='auth_blueprint', url_prefix='/api/auth')
 flask_app.register_blueprint(support_bp)
 flask_app.register_blueprint(community_stories_bp)
 flask_app.register_blueprint(profile_bp)

@@ -3006,3 +3006,17 @@ What do you need?
  * Running on http://127.0.0.1:5000
 2025-07-19 21:28:31,670 - INFO - [33mPress CTRL+C to quit[0m
 2025-07-19 21:28:31,675 - INFO -  * Restarting with stat
+2025-07-22 17:05:39,127 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-22 17:05:39,128 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-22 17:05:39,131 - INFO -  * Restarting with stat
+2025-07-22 17:05:41,957 - WARNING -  * Debugger is active!
+2025-07-22 17:05:42,005 - INFO -  * Debugger PIN: 127-471-634
+2025-07-22 17:06:04,835 - INFO - 127.0.0.1 - - [22/Jul/2025 17:06:04] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-22 17:06:05,883 - INFO - 127.0.0.1 - - [22/Jul/2025 17:06:05] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-22 17:06:05,894 - INFO - 127.0.0.1 - - [22/Jul/2025 17:06:05] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-07-22 17:06:06,134 - INFO - 127.0.0.1 - - [22/Jul/2025 17:06:06] "[33mGET /api/auth/user HTTP/1.1[0m" 404 -
+2025-07-22 17:07:17,932 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\nathiiniice\\for-the-100th-time\\Backend\\main.py', reloading
+2025-07-22 17:07:18,218 - INFO -  * Restarting with stat

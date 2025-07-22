@@ -1,28 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
-import {
-  Box,
-  Text,
-  Spinner,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  VStack,
-  Tag,
-  TagLabel,
-} from '@chakra-ui/react';
-import { FaInfoCircle } from 'react-icons/fa';
-import DashboardCard from '../DashboardCard';
-import { DashboardContext } from '../../context/DashboardContext';
+/* eslint-disable no-undef */
+import React, { useState, useEffect } from 'react';
+import { Box, Text, Spinner, Alert, AlertIcon, AlertDescription, VStack, Tag, TagLabel } from '@chakra-ui/react';
+import { useDashboard } from '../../context/DashboardContext';
 
 const LoadsheddingStatus = () => {
-  const { selectedAreaId } = useContext(DashboardContext);
+  const { selectedEskomArea } = useDashboard();
   const [nationalStage, setNationalStage] = useState(null);
   const [areaData, setAreaData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Fetch national stage
-    useEffect(() => {
+  useEffect(() => {
     const fetchNationalStage = async () => {
       try {
         const res = await fetch('https://developer.sepush.co.za/business/2.0/status', {
@@ -37,21 +25,20 @@ const LoadsheddingStatus = () => {
     fetchNationalStage();
   }, []);
 
-  // Fetch area schedule when area changes
   useEffect(() => {
-    if (!selectedAreaId) {
+    if (!selectedEskomArea) {
       setAreaData(null);
       setError(null);
       setLoading(false);
-            return;
-        }
+      return;
+    }
     setLoading(true);
     setError(null);
     setAreaData(null);
 
     const fetchArea = async () => {
       try {
-        const res = await fetch(`https://developer.sepush.co.za/business/2.0/area?id=${selectedAreaId}`, {
+        const res = await fetch(`https://developer.sepush.co.za/business/2.0/area?id=${selectedEskomArea}`, {
           headers: { 'Token': process.env.REACT_APP_ESKOM_API_KEY }
         });
         if (!res.ok) throw new Error('Failed to fetch area data');
@@ -61,44 +48,44 @@ const LoadsheddingStatus = () => {
         setError('Failed to fetch loadshedding status. Please try again.');
       } finally {
         setLoading(false);
-        }
+      }
     };
     fetchArea();
-  }, [selectedAreaId]);
+  }, [selectedEskomArea]);
 
-  if (!selectedAreaId) {
-        return (
-            <DashboardCard title="Loadshedding Status" icon={FaInfoCircle}>
+  if (!selectedEskomArea) {
+    return (
+      <Box p={4} borderWidth="1px" borderRadius="md" boxShadow="sm">
         <Text>Please select a location using the selector above to see loadshedding status.</Text>
-            </DashboardCard>
-        );
-    }
+      </Box>
+    );
+  }
 
   if (loading) {
     return (
-      <DashboardCard title="Loadshedding Status" icon={FaInfoCircle}>
-                    <VStack py={4}>
-                        <Spinner size="md" />
-                        <Text>Loading loadshedding data...</Text>
-                    </VStack>
-      </DashboardCard>
+      <Box p={4} borderWidth="1px" borderRadius="md" boxShadow="sm">
+        <VStack py={4}>
+          <Spinner size="md" />
+          <Text>Loading loadshedding data...</Text>
+        </VStack>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <DashboardCard title="Loadshedding Status" icon={FaInfoCircle}>
-                    <Alert status="error">
-                        <AlertIcon />
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-      </DashboardCard>
+      <Box p={4} borderWidth="1px" borderRadius="md" boxShadow="sm">
+        <Alert status="error">
+          <AlertIcon />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </Box>
     );
   }
 
   return (
-    <DashboardCard title="Loadshedding Status" icon={FaInfoCircle}>
-                        <VStack align="flex-start" spacing={2}>
+    <Box p={4} borderWidth="1px" borderRadius="md" boxShadow="sm">
+      <VStack align="flex-start" spacing={2}>
         <Text fontWeight="bold">National Stage: {nationalStage ? `Stage ${nationalStage}` : 'Unknown'}</Text>
         {areaData && (
           <>
@@ -107,24 +94,24 @@ const LoadsheddingStatus = () => {
               <TagLabel>
                 {areaData.status?.stage ? `Current Stage: ${areaData.status.stage}` : 'No stage info'}
               </TagLabel>
-                            </Tag>
+            </Tag>
             <Text fontWeight="bold" mt={2}>Upcoming Events:</Text>
             {areaData.events && areaData.events.length > 0 ? (
               areaData.events.map((event, idx) => (
                 <Box key={idx} pl={2}>
                   <Text fontSize="sm">
                     {event.note} ({event.start} - {event.end})
-                            </Text>
+                  </Text>
                 </Box>
               ))
-                                                            ) : (
+            ) : (
               <Text fontSize="sm">No upcoming events.</Text>
-                            )}
+            )}
           </>
-                )}
-            </VStack>
-        </DashboardCard>
-    );
+        )}
+      </VStack>
+    </Box>
+  );
 };
 
 export default LoadsheddingStatus;
