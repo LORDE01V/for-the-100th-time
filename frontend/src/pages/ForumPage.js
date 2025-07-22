@@ -23,6 +23,7 @@ import {
   Avatar,
 } from '@chakra-ui/react';
 import forumBackground from '../assets/images/Forum_page.png';
+import * as api from '../services/api'; // Import the API service
 
 const ForumPage = () => {
   const toast = useToast();
@@ -31,7 +32,11 @@ const ForumPage = () => {
   const textColor = useColorModeValue('gray.800', 'white');
   const subTextColor = useColorModeValue('gray.600', 'gray.300');
   const metaTextColor = useColorModeValue('gray.500', 'gray.400');
-  
+  const cardBg = useColorModeValue('white', 'gray.800');
+  const cardTextColor = useColorModeValue('gray.800', 'white');
+  const borderCol = useColorModeValue('gray.200', 'gray.700');
+  const postBg = useColorModeValue('gray.50', 'gray.700');
+
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [summary, setSummary] = useState(null);
@@ -1286,6 +1291,10 @@ const ForumPage = () => {
     }
   };
 
+  const handleShowFullPosts = () => {
+    setIsSummarized(false);
+  };
+
   const renderTone = () => {
     if (!tone) return null;
     let color = 'gray.400', label = 'Neutral', emoji = '😐';
@@ -1526,6 +1535,7 @@ const ForumPage = () => {
           }
         </VStack>
       </Box>
+    </Container>
     </Box>
   );
 };
