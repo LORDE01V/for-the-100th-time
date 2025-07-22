@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { ChakraProvider, extendTheme, ColorModeScript } from '@chakra-ui/react';
 import { NavigationProvider } from './context/NavigationContext';
-import OneSignal from 'react-onesignal';
 import { DashboardProvider } from "./context/DashboardContext";
 
 // Extend the default theme to configure color mode
@@ -15,22 +14,20 @@ const config = {
 
 const theme = extendTheme({ config });
 
-// Initialize OneSignal here, once for the entire app
-if (!window.OneSignal || !window.OneSignal._initCalled) {
-  OneSignal.init({
-    appId: process.env.REACT_APP_ONESIGNAL_APP_ID,
-    allowLocalhostAsSecureOrigin: true,
-    notifyButton: {
-      enable: true,
-    },
-    // autoResubscribe: true,
-  }).then(() => {
-    // You can add more OneSignal logic here, e.g., prompt for push notifications
-    // OneSignal.showSlidedownPrompt();
-  }).catch((error) => {
-    // Handle error if needed
-  });
-}
+// Initialize OneSignal here (commented out if causing issues)
+// if (!window.OneSignal || !window.OneSignal._initCalled) {
+//   OneSignal.init({
+//     appId: process.env.REACT_APP_ONESIGNAL_APP_ID,
+//     allowLocalhostAsSecureOrigin: true,
+//     notifyButton: {
+//       enable: true,
+//     },
+//   }).then(() => {
+//     // OneSignal.showSlidedownPrompt();  // Uncomment if needed
+//   }).catch((error) => {
+//     console.error('OneSignal initialization error:', error);
+//   });
+// }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
