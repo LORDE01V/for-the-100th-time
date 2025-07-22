@@ -2949,3 +2949,52 @@ What do you need?
 2025-07-18 10:06:55,649 - WARNING - Unknown option passed to Flask-CORS: origin
 2025-07-18 10:06:55,863 - INFO - 127.0.0.1 - - [18/Jul/2025 10:06:55] "POST /api/auth/login HTTP/1.1" 200 -
 >>>>>>> 130eee850821471921ea07067d2c152574a3223e
+2025-07-19 21:10:28,691 - INFO - Starting Flask app on port 5000
+2025-07-19 21:10:28,827 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-19 21:10:28,827 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-19 21:10:28,831 - INFO -  * Restarting with stat
+2025-07-19 21:10:31,652 - INFO - Starting Flask app on port 5000
+2025-07-19 21:10:31,754 - WARNING -  * Debugger is active!
+2025-07-19 21:10:31,760 - INFO -  * Debugger PIN: 770-890-533
+2025-07-19 21:11:15,884 - INFO - 127.0.0.1 - - [19/Jul/2025 21:11:15] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-07-19 21:11:36,810 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-19 21:11:36,814 - INFO - 127.0.0.1 - - [19/Jul/2025 21:11:36] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-19 21:11:37,139 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-19 21:11:37,143 - INFO - 127.0.0.1 - - [19/Jul/2025 21:11:37] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-19 21:11:37,166 - INFO - 127.0.0.1 - - [19/Jul/2025 21:11:37] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-07-19 21:11:37,395 - INFO - 127.0.0.1 - - [19/Jul/2025 21:11:37] "[31m[1mGET /api/auth/user HTTP/1.1[0m" 422 -
+2025-07-19 21:11:51,332 - INFO - 127.0.0.1 - - [19/Jul/2025 21:11:51] "[31m[1mPOST /api/subscribe HTTP/1.1[0m" 405 -
+2025-07-19 21:13:52,095 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\GriddX-inprogress\\for-the-100th-time\\Backend\\main.py', reloading
+2025-07-19 21:13:52,345 - INFO -  * Restarting with stat
+2025-07-19 21:13:56,209 - INFO - Starting Flask app on port 5000
+2025-07-19 21:13:56,402 - WARNING -  * Debugger is active!
+2025-07-19 21:13:56,412 - INFO -  * Debugger PIN: 770-890-533
+2025-07-19 21:14:16,676 - INFO - 127.0.0.1 - - [19/Jul/2025 21:14:16] "[31m[1mPOST /api/subscribe HTTP/1.1[0m" 405 -
+2025-07-19 21:14:36,598 - INFO - 127.0.0.1 - - [19/Jul/2025 21:14:36] "[31m[1mPOST /api/subscribe HTTP/1.1[0m" 405 -
+2025-07-19 21:17:13,894 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\GriddX-inprogress\\for-the-100th-time\\Backend\\app\\routes\\email_subscription.py', reloading
+2025-07-19 21:17:14,199 - INFO -  * Restarting with stat
+2025-07-19 21:17:17,924 - INFO - Starting Flask app on port 5000
+2025-07-19 21:17:18,046 - WARNING -  * Debugger is active!
+2025-07-19 21:17:18,052 - INFO -  * Debugger PIN: 770-890-533
+2025-07-19 21:17:53,316 - INFO - Starting Flask app on port 5000
+2025-07-19 21:17:53,461 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-19 21:17:53,462 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-19 21:17:53,465 - INFO -  * Restarting with stat
+2025-07-19 21:17:55,929 - INFO - Starting Flask app on port 5000
+2025-07-19 21:17:56,038 - WARNING -  * Debugger is active!
+2025-07-19 21:17:56,043 - INFO -  * Debugger PIN: 770-890-533
+2025-07-19 21:18:18,280 - INFO - 127.0.0.1 - - [19/Jul/2025 21:18:18] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-07-19 21:21:02,342 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-19 21:21:02,345 - INFO - 127.0.0.1 - - [19/Jul/2025 21:21:02] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-19 21:21:02,659 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-19 21:21:02,661 - INFO - 127.0.0.1 - - [19/Jul/2025 21:21:02] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-19 21:21:02,671 - INFO - 127.0.0.1 - - [19/Jul/2025 21:21:02] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-07-19 21:21:02,914 - INFO - 127.0.0.1 - - [19/Jul/2025 21:21:02] "[31m[1mGET /api/auth/user HTTP/1.1[0m" 422 -
+2025-07-19 21:21:13,357 - INFO - 127.0.0.1 - - [19/Jul/2025 21:21:13] "[31m[1mPOST /api/subscribe HTTP/1.1[0m" 405 -
+2025-07-19 21:28:31,448 - INFO - Starting Flask app on port 5000
+2025-07-19 21:28:31,668 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-19 21:28:31,670 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-19 21:28:31,675 - INFO -  * Restarting with stat

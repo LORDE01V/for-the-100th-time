@@ -30,6 +30,7 @@ from email_utils import send_welcome_email
 from app import create_app
 from app.routes.voice_to_text import voice_to_text_bp
 from app.routes.ai_agent import ai_agent_bp
+from app.routes.email_subscription import email_subscription_bp
 
 # Add the Backend directory and its parent to the Python path
 backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
@@ -80,6 +81,7 @@ jwt = JWTManager(flask_app)
 # flask_app.register_blueprint(ai_agent_bp)
 flask_app.register_blueprint(ai_agent_bp)
 flask_app.register_blueprint(voice_to_text_bp)
+flask_app.register_blueprint(email_subscription_bp, url_prefix='/api')
 
 # Remove the after_request handler entirely to avoid conflicts
 # @flask_app.after_request
