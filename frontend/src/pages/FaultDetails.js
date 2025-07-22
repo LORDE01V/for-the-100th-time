@@ -10,6 +10,8 @@ const FaultDetails = () => {
 
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const headingColor = useColorModeValue('gray.800', 'white'); // Define heading color
+  const textColor = useColorModeValue('gray.600', 'gray.400'); // Define text color
 
   if (!panel) {
     return (
@@ -81,10 +83,10 @@ const FaultDetails = () => {
         </Button>
       </HStack>
 
-      <Heading as="h3" size="md" mb={4} color={useColorModeValue('gray.800', 'white')} textAlign="center">
+      <Heading as="h3" size="md" mb={4} color={headingColor} textAlign="center">
         Fault Details
       </Heading>
-      <Text color={useColorModeValue('gray.600', 'gray.400')} fontSize="lg" textAlign="center" mb={6}>
+      <Text color={textColor} fontSize="lg" textAlign="center" mb={6}>
         Resolve faults quickly and keep your energy system running smoothly!
       </Text>
       <Text mb={4}><strong>Status:</strong> {panel.status}</Text>

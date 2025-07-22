@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import { Bot } from 'lucide-react';
 import backgroundVideo from '../assets/videos/Slowed-GridX-Video.mp4';
+import OneSignal from 'react-onesignal';
 
 import {
   Box,
@@ -212,20 +213,44 @@ function HomePage() {
             <Box mt={12} bg={newsletterBg} p={6} borderRadius="lg" boxShadow="md">
               <Heading size="md" mb={2}>Subscribe to Energy Updates</Heading>
               <Text mb={4} color={textColor}>Get the latest energy-saving tips and offers straight to your inbox.</Text>
-              <Grid templateColumns={{ base: '1fr', md: '3fr 1fr' }} gap={4}>
+              <Grid templateColumns={{ base: '1fr', md: '3fr 1fr' }} gap={4} mb={4}>
                 <Input
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <Button colorScheme="blue" onClick={() => {
+                <Button colorScheme="blue" onClick={async () => {
                   if (email.includes('@')) {
-                    toast({ title: 'Subscribed!', description: 'Check your inbox.', status: 'success', duration: 5000, isClosable: true });
+                    try {
+                      const res = await fetch('/api/subscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email }),
+                      });
+                      const data = await res.json();
+                      if (res.ok && data.success) {
+                        toast({ title: 'Subscribed!', description: 'Check your inbox.', status: 'success', duration: 5000, isClosable: true });
+                      } else {
+                        toast({ title: 'Subscription Failed', description: data.error || 'Could not subscribe.', status: 'error', duration: 5000, isClosable: true });
+                      }
+                    } catch (err) {
+                      toast({ title: 'Network Error', description: 'Could not subscribe.', status: 'error', duration: 5000, isClosable: true });
+                    }
                   } else {
                     toast({ title: 'Invalid Email', description: 'Please enter a valid email.', status: 'error', duration: 3000, isClosable: true });
                   }
                 }}>Subscribe</Button>
               </Grid>
+              <Button colorScheme="teal" variant="outline" onClick={async () => {
+                try {
+                  await OneSignal.showSlidedownPrompt();
+                  toast({ title: 'Push Notification', description: 'Check your browser prompt to enable notifications.', status: 'info', duration: 5000, isClosable: true });
+                } catch (err) {
+                  toast({ title: 'Push Notification Error', description: 'Could not prompt for notifications.', status: 'error', duration: 5000, isClosable: true });
+                }
+              }}>
+                Enable Push Notifications
+              </Button>
             </Box>
 
             {/* Logout Button */}

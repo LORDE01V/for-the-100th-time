@@ -9,44 +9,13 @@ from flask import Flask, request, jsonify, render_template, send_from_directory,
 from flask_cors import CORS
 from chat_interface import EnhancedChatbot
 from authlib.integrations.flask_client import OAuth
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
-from app.routes.auth import auth_bp
-from Energy_optimizer.agent import EnergyUsageOptimizerAgent
-from sys import stdout
-from support import initialize_db, get_db
-from app.routes.home import home_bp
-from app.routes.email import email_bp
-from functools import lru_cache
-import time
-from huggingface_agent import query_mistral
-import logging
-from app.routes.ai_agent import ai_agent_bp
-from app.routes.ai_suggestions import ai_suggestions_bp
-from app.routes.loadshedding import loadshedding_bp
-from app.routes.topup import topup_bp
+from flask_jwt_extended import JWTManager
+import datetime
+from db_utils import create_topup_table  # Import the new function
+from app.routes.topup import topup_bp  # Add this import
+from app.routes.recommendation_plan import recommendation_bp
 
-
-# SSL workaround for dev
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-else:
-    ssl._create_default_https_context = _create_unverified_https_context
-
-env_path = Path(__file__).resolve().parent / '.env'
-load_dotenv(dotenv_path=env_path)
-
-# Debug checks for environment variables
-print("🔍 OPEN_METEO_API_URL:", os.getenv("OPEN_METEO_API_URL"))
-print("🔍 FLASK_SECRET_KEY:", os.getenv("FLASK_SECRET_KEY"))
-print("🔍 JWT_SECRET_KEY:", os.getenv("JWT_SECRET_KEY"))
-print("🔍 ONESIGNAL_APP_ID:", os.getenv("ONESIGNAL_APP_ID"))
-print("🔍 ONESIGNAL_API_KEY:", os.getenv("ONESIGNAL_API_KEY"))
-print("ESKOMSEPUSH_API_KEY:", os.getenv("ESKOMSEPUSH_API_KEY")) # Keep this as it's used
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+# Set up logging to console only
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
@@ -539,4 +508,5 @@ def get_loadshedding():
 
 if __name__ == '__main__':
     logger.info("Starting Flask app on port 5000")
+    app.register_blueprint(recommendation_bp)
     app.run(debug=True, port=5000)

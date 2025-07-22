@@ -61,18 +61,10 @@ def create_app():
         }
     )
     
-    # Register blueprints (combining from both branches)
+    # Register blueprints
     from .routes.auth import auth_bp
-    from .routes.ai_agent import ai_agent_bp
-    from .routes.home import home_bp
-    from .routes.email import email_bp
-
     app.register_blueprint(auth_bp)
-    app.register_blueprint(topup_bp)
-    app.register_blueprint(ai_agent_bp)
-    app.register_blueprint(home_bp)
-    app.register_blueprint(email_bp)
-    app.register_blueprint(ai_suggestions_bp)
-    app.register_blueprint(loadshedding_bp)
-
-    return app
+    #app.register_blueprint(topup_bp)
+    
+    
+    return app 

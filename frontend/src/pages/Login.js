@@ -13,26 +13,19 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/auth/login', { email, password }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      // Handle successful login, e.g., redirect or store token
-      if (response.data.success) {
-        console.log('Login successful');
-        // Add navigation logic here, e.g., window.location.href = '/dashboard';
+      await api.post('/api/auth/login', { email, password });
+      // ...handle successful login...
+    } catch (err) {
+      if (err.response?.data?.message === 'Account does not exist. Please register.') {
+        alert('Account does not exist. Please register.');
+        // Optionally, redirect to register page
+        // navigate('/register');
+      } else {
+        alert('Login failed. Please check your credentials.');
       }
-    } catch (error) {
-      console.error('Login error:', error);
-      // Show error toast or message
-      toast({
-        title: 'Login failed',
-        description: error.response ? error.response.data.message : 'Failed to connect to the server',
-        status: 'error',
-        isClosable: true,
-      });
     }
+                                                        // Implement login logic here
+    
   };
 
   const handlePasswordReset = async (e) => {

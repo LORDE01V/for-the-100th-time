@@ -2,46 +2,19 @@ import psycopg2
 from psycopg2 import sql
 import os
 from dotenv import load_dotenv
-from support import connect_db
+from support import initialize_db
 import sys
 
 load_dotenv()
 
 def init_db():
+    """Initialize PostgreSQL database with required tables"""
     conn, cur = connect_db()
-    if conn is None:
-        print("Failed to connect to the database in init_db.")
-        return False
+    if not conn or not cur:
+        raise Exception("Database connection failed")
 
     try:
-        # Create users table
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                password_hash VARCHAR(255) NOT NULL,
-                full_name VARCHAR(100),
-                phone VARCHAR(20),
-                onboarded BOOLEAN DEFAULT FALSE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        """)
-        print("Table 'users' ensured.")
-
-        # Add the 'onboarded' column if it doesn't exist
-        # This is a safe way to add a column without dropping the table
-        try:
-            cur.execute("ALTER TABLE users ADD COLUMN onboarded BOOLEAN DEFAULT FALSE;")
-            print("Column 'onboarded' added to 'users' table.")
-        except psycopg2.errors.DuplicateColumn:
-            conn.rollback() # Rollback the failed transaction if column already exists
-            print("Column 'onboarded' already exists in 'users' table.")
-        except Exception as e:
-            conn.rollback()
-            print(f"Error adding 'onboarded' column: {e}")
-            raise
-
-        # Create transactions table
+        # Example table creation logic
         cur.execute("""
             CREATE TABLE IF NOT EXISTS transactions (
                 id SERIAL PRIMARY KEY,

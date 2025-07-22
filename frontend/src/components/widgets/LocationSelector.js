@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types'; // Import PropTypes
 import {
   Box,
   Input,
@@ -234,3 +235,7 @@ const LocationSelector = ({ onLocationChange }) => {
 };
 
 export default LocationSelector;
+
+LocationSelector.propTypes = {
+  onLocationChange: PropTypes.func.isRequired,
+};

@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {
   Text,
   SimpleGrid,
@@ -34,7 +36,7 @@ const DailyForecast = ({ location }) => {
         }
       );
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userLocation]);
 
   useEffect(() => {
     const fetchDailyForecast = async () => {
@@ -78,7 +80,7 @@ const DailyForecast = ({ location }) => {
     };
 
     fetchDailyForecast();
-  }, [location]);
+  }, [location, userLocation]); // Added userLocation as a dependency
 
   const getIcon = (icon) => {
     switch (icon) {
@@ -168,4 +170,12 @@ const DailyForecast = ({ location }) => {
   );
 };
 
-export default DailyForecast; 
+export default DailyForecast;
+
+DailyForecast.propTypes = {
+  location: PropTypes.shape({
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
+    label: PropTypes.string,
+  }),
+}; 

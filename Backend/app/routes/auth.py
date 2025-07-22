@@ -8,9 +8,12 @@ import logging
 from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, create_refresh_token, decode_token
 from flask_cors import CORS, cross_origin
+from flask import jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
-CORS(auth_bp, supports_credentials=True) # Unified CORS is configured in app/__init__.py
+#CORS(auth_bp, origins=["*"], supports_credentials=True)  # Remove strict CORS here
 
 # Configure logging
 logging.basicConfig(
@@ -139,37 +142,51 @@ def logout():
     session.pop('user_id', None)
     return jsonify({"message": "Logged out"}), 200
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
+@cross_origin(origins='http://localhost:3000', supports_credentials=True)
 def login():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-    
-    logger.info(f"Attempting login for email: {email}")
-    user = get_user_by_email(email)
-
-    if not user:
-        logger.error(f"User not found for email: {email}")
-        return jsonify({"message": "Invalid credentials"}), 401
-
-    # Log password lengths for debugging without exposing actual passwords
-    logger.info(f"Verifying password: Incoming password length {len(password) if password else 0}, Stored hash length {len(user['password_hash']) if user['password_hash'] else 0}")
-
-    if user and check_password_hash(user['password_hash'], password):
-        access_token = create_access_token(identity=user['email'])
-        refresh_token = create_refresh_token(identity=user['email'])
-        logger.info(f"User {email} logged in successfully.")
-        return jsonify(
-            message="Login successful",
-            access_token=access_token,
-            refresh_token=refresh_token,
-            user={"id": user["id"], "email": user["email"], "name": user["full_name"], "onboarded": user["onboarded"]},
-            redirect='/dashboard'  # Redirect to dashboard on successful login
-        ), 200
-    else:
-        logger.error(f"Failed login attempt for email: {email}")
-        return jsonify({"message": "Invalid credentials"}), 401
-
+    if request.method == 'OPTIONS':
+        return create_response("OK", 200)
+    try:
+        data = request.get_json()
+        if not data or not isinstance(data, dict):
+            logging.error('No valid JSON data received in login request')
+            return create_response('Invalid credentials', 400)
+        
+        email = data.get('email', '').lower()
+        password = data.get('password')
+        
+        if not email or not password:
+            logging.error('Missing or invalid email/password in data')
+            return create_response('Invalid credentials', 400)
+        
+        try:
+            user = get_user_by_email(email)
+            if not user:
+                logging.error(f'User not found for email: {email}')
+                return create_response('Invalid credentials', 401)
+            
+            if not check_password_hash(user['password_hash'], password):
+                logging.error(f'Password mismatch for email: {email}')
+                return create_response('Invalid credentials', 401)
+            
+            access_token = create_access_token(identity=str(user['id']))
+            return jsonify({
+                'success': True,
+                'user': {
+                    'id': user['id'],  
+                    'email': user['email'],
+                    'name': user['full_name']
+                },
+                'access_token': access_token,  # Change 'token' to 'access_token'
+                'redirect': url_for('home.home_page')
+            })
+        except Exception as db_error:
+            logging.error(f'Database error during login: {str(db_error)}')
+            return create_response('Failed to connect to the server. Please check database settings.', 500)
+    except Exception as e:
+        logging.error(f'Login error: {str(e)}')
+        return create_response('Login failed', 500)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -234,20 +251,76 @@ def check_token():
     else:
         return jsonify(logged_in=False), 200
 
-@auth_bp.route('/reset-password', methods=['POST'])
-def reset_password():
+@auth_bp.route('/change-password', methods=['POST'])
+@jwt_required()
+def change_password():
     data = request.get_json()
-    email = data.get('email')
+    print("Incoming Request Data:", data)  # Log the incoming request data
+
+    old_password = data.get('old_password')
     new_password = data.get('new_password')
 
-    if not email or not new_password:
-        return jsonify({"message": "Missing email or new password"}), 400
+    if not old_password or not new_password:
+        return jsonify({'message': 'Old and new password are required'}), 400
 
-    user = get_user_by_email(email)
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    user_id = get_jwt_identity()
 
-    hashed_password = generate_password_hash(new_password)
-    if update_user_by_id(user['id'], user['full_name'], hashed_password, user['onboarded']):
-        return jsonify({"message": "Password reset successfully"}), 200
-    return jsonify({"message": "Password reset failed"}), 500 
+    conn = get_db()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT password_hash FROM users WHERE id = %s", (int(user_id),))
+            user = cur.fetchone()
+            if not user or not check_password_hash(user[0], old_password):
+                return jsonify({'message': 'Old password is incorrect'}), 400
+
+            new_hash = generate_password_hash(new_password)
+            cur.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_hash, int(user_id)))
+            conn.commit()
+
+        return jsonify({'message': 'Password updated successfully'}), 200
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'message': 'Failed to update password'}), 500
+    finally:
+        if conn:
+            conn.close()
+
+
+# Route to delete account
+
+
+# Route to delete account
+@auth_bp.route('/delete-account', methods=['DELETE'])
+@jwt_required()
+def delete_account():
+    user_id = get_jwt_identity()
+    conn = get_db()
+    with conn.cursor() as cur:
+        # Delete the user (and cascade to related data if your schema supports it)
+        cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+    return jsonify({'message': 'Account deleted successfully'}), 200
+
+# Route to handle login
+# @auth_bp.route('/login', methods=['POST'])
+# def login():
+#     data = request.get_json()
+#     email = data.get('email')
+#     password = data.get('password')
+
+#     if not email or not password:
+#         return jsonify({'message': 'Email and password are required'}), 400
+
+#     user = User.query.filter_by(email=email).first()
+
+#     if not user:
+#         return jsonify({'message': 'Account does not exist. Please create a new account.'}), 404
+
+#     # Check password
+#     if not check_password_hash(user.password, password):
+#         return jsonify({'message': 'Invalid credentials'}), 401
+
+#     # Generate token (assuming a token generation function exists)
+#     token = generate_token(user)
+
+#     return jsonify({'message': 'Login successful', 'token': token}), 200

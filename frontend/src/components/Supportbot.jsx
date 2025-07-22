@@ -398,7 +398,7 @@ const SupportBot = () => {
               borderRadius="full"
               mr={2}
               _focus={{ borderColor: "teal.400" }}
-              disabled={isLoading} /* Disable during loading/recording */
+              disabled={isLoading || isListening} /* Disable during loading/recording */
             />
             <Button
               onClick={handleMicClick}
@@ -414,7 +414,7 @@ const SupportBot = () => {
               icon={<FaPaperPlane />}
               onClick={() => handleSendMessage()}
               isLoading={isLoading}
-              disabled={isLoading || !inputMessage.trim()} /* Disable during loading/recording or if no text */
+              disabled={isLoading || !inputMessage.trim() || isListening} /* Disable during loading/recording or if no text */
               borderRadius="full"
             />
           </Flex>

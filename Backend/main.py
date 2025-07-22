@@ -4,7 +4,7 @@ import os
 import requests # Import requests library
 import json
 import secrets
-from datetime import timedelta, datetime # Keep if needed for token expiration or timestamps
+import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer
@@ -13,23 +13,22 @@ from pydantic import BaseModel
 from typing import Optional, List
 import threading
 import uvicorn
-import psycopg2
-from psycopg2 import OperationalError, sql
-from werkzeug.security import generate_password_hash, check_password_hash # For password handling
-# Assuming get_db and execute_query are in support.py or db_utils.py
-from support import get_db, execute_query, create_user, get_user_by_email, update_user_by_id # Import necessary user ops from support
-from functools import lru_cache # For caching Eskom areas
-import logging # For unified logging
+from flask import Blueprint, url_for, session
+from email_utils import send_welcome_email
+from app import create_app
+from app.routes.home import home_bp
+from app.routes.auth import auth_bp
+from support import connect_db
+from app.routes.support import support_bp 
+from app.routes.community_stories import community_stories_bp
+from app.routes.userprofile import profile_bp
+from app.routes.notification_preference import notifications_bp
+from app.routes.events_calendar import events_calendar_bp
+from app.routes.topup import topup_bp
+from Backend.app.routes.expenses import expenses_bp
+from app.routes.expensenotifications import expensenotifications_bp
+from Backend.support import update_user_balance
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
 
 # Add the Backend directory and its parent to the Python path
 backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
@@ -42,17 +41,289 @@ sys.path.append(parent_dir)  # Add for-the-100th-time, to ensure subpackages are
 load_dotenv()
 
 # Configuration (use environment variables for secrets in production)
-SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32)) # General secret key
-JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32)) # Specific JWT key
+SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
 
-# ================= FastAPI APP =================
-app = FastAPI(
-    title="Solar Optimizer Backend API",
-    description="API for energy optimization, loadshedding, and user management.",
-    version="1.0.0"
+# ================= FLASK APP =================
+# Rename existing app to flask_app
+flask_app = create_app()  # Use factory app
+flask_app.config.update(
+    SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev'),
+    SESSION_COOKIE_NAME='session',
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=False,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_TYPE='filesystem'
 )
+flask_app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
+flask_app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+flask_app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
+flask_app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
+flask_app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
+flask_app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+flask_app.config['JWT_HEADER_TYPE'] = 'Bearer' 
 
-# Configure CORS globally for FastAPI
+# Initialize CORS properly in one place
+CORS(flask_app, 
+     resources={r"/api/*": {
+         "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000"],
+         "supports_credentials": True,
+         "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin","X-Requested-With"],
+         #"expose_headers": ["Authorization"],
+         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+     }}
+)
+jwt = JWTManager(flask_app)
+
+# Register blueprints
+flask_app.register_blueprint(home_bp)
+flask_app.register_blueprint(auth_bp, name='auth_blueprint', url_prefix='/api/auth')
+flask_app.register_blueprint(support_bp)
+flask_app.register_blueprint(community_stories_bp)
+flask_app.register_blueprint(profile_bp)
+flask_app.register_blueprint(notifications_bp, url_prefix='/notifications')
+flask_app.register_blueprint(events_calendar_bp)
+flask_app.register_blueprint(topup_bp, url_prefix='/api')
+flask_app.register_blueprint(expenses_bp, url_prefix='/api')
+flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
+
+
+# Remove the after_request handler entirely to avoid conflicts
+# @flask_app.after_request
+# def add_cors_headers(response):
+#     response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+#     response.headers['Access-Control-Allow-Credentials'] = 'true'
+#     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+#     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+#     return response
+
+# Database connection helper (PostgreSQL)
+def get_db():
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv('DB_HOST', 'localhost'),
+            database=os.getenv('DB_NAME', 'Fintech_Solar'),
+            user=os.getenv('DB_USER', 'postgres'),
+            password=os.getenv('DB_PASSWORD', 'your_password_here'),
+            port=os.getenv('DB_PORT', '5432')
+        )
+        return conn
+    except OperationalError as e:
+        print(f"🚨 Database connection failed: {e}")
+        return None
+
+# Auth routes (updated for PostgreSQL)
+@flask_app.route('/api/auth/register', methods=['POST'])
+def flask_register():
+    conn = None
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not all(key in data for key in ['name', 'email', 'password']):
+            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+
+        # Get optional phone or set None
+        phone = data.get('phone', None)
+
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+
+        with conn.cursor() as cur:
+            # Check existing user
+            cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
+            if cur.fetchone():
+                return jsonify({'success': False, 'message': 'Email already exists'}), 400
+
+            # Create user with proper hash length
+            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
+            cur.execute(
+                """INSERT INTO users (email, password_hash, full_name, phone)
+                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+                (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
+            )
+            user_data = cur.fetchone()
+            if not user_data:
+                return jsonify({'success': False, 'message': 'Failed to create user'}), 500
+            conn.commit()
+
+        send_welcome_email(data['email'], data['name'])
+
+        return jsonify({
+            'success': True,
+            'user': {
+                'id': user_data[0],
+                'email': user_data[1],
+                'name': user_data[2]
+            }
+        }), 201
+
+    except Exception as e:
+        print(f"Registration Error: {str(e)}")
+        return jsonify({'success': False, 'message': 'Registration failed'}), 500
+    finally:
+        if conn: conn.close()
+
+@flask_app.route('/api/auth/login', methods=['POST'])
+def flask_login():
+    try:
+        data = request.get_json()
+        email = data.get('email', '').lower()  # Force lowercase
+        password = data.get('password')
+
+        if not email or not password:
+            return jsonify({'success': False, 'message': 'Missing credentials'}), 400
+
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+        with conn.cursor() as cur:
+            cur.execute('''
+                SELECT id, password_hash, full_name 
+                FROM users 
+                WHERE email = %s
+            ''', (email,))
+            user = cur.fetchone()
+
+            if user and check_password_hash(user[1], password):
+                access_token = create_access_token(identity=user[0])
+                return jsonify({
+                    'success': True,
+                    'token': access_token,
+                    'user': {
+                        'id': user[0],
+                        'name': user[2],
+                        'email': email
+                    }
+                }), 200
+
+        return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+
+    except Exception as e:
+        flask_app.logger.error(f"Login error: {str(e)}")
+        return jsonify({'success': False, 'message': 'Login failed'}), 500
+    finally:
+        if conn:
+            conn.close()
+
+@flask_app.route('/api/topup', methods=['OPTIONS'])
+def handle_topup_options():
+    response = make_response()
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Allow-Credentials'] = 'true' 
+    return response
+
+
+@flask_app.route('/api/topup', methods=['POST'])
+def api_topup():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid request body'}), 400
+    user_id = data.get('user_id')
+    amount = data.get('amount')
+    new_balance = update_user_balance(user_id, amount)
+    return jsonify({'newBalance': new_balance, 'success': True})
+
+
+
+
+@flask_app.route('/api/solar/systems', methods=['POST'])
+@jwt_required()
+def flask_create_solar_system():
+    """Handle solar system installations"""
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    # Add validation and call support.py's add_solar_system()
+    # ... implementation ...
+    return jsonify({'message': 'Solar system creation not implemented yet'}), 501
+
+@flask_app.route('/api/contracts', methods=['POST'])
+@jwt_required()
+def flask_create_solar_contract():
+    """Handle contract creation"""
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    # Add validation and call support.py's create_contract()
+    # ... implementation ...
+    return jsonify({'message': 'Contract creation not implemented yet'}), 501
+
+@flask_app.route('/api/payments', methods=['POST'])
+@jwt_required()
+def flask_record_payment():
+    """Handle payment processing"""
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    # Add validation and call support.py's record_payment()
+    # ... implementation ...
+    return jsonify({'message': 'Payment recording not implemented yet'}), 501
+
+@flask_app.route('/api/contracts', methods=['GET'])
+@jwt_required()
+def flask_get_contracts():
+    """Get user's solar contracts"""
+    current_user = get_jwt_identity()
+    # Add authorization and call support.py's get_user_contracts()
+    # ... implementation ...
+    return jsonify({'message': 'Get contracts not implemented yet'}), 501
+
+@flask_app.errorhandler(404)
+def not_found(e):
+    return jsonify(error="Route not found"), 404
+
+# Initialize Hugging Face API details
+HUGGINGFACE_API_KEY = os.getenv('HUGGINGFACE_API_KEY') # Make sure you set this env var
+MISTRAL_MODEL_ID = os.getenv('MISTRAL_MODEL_ID', 'mistralai/Mistral-7B-Instruct-v0.1')
+HUGGINGFACE_API_URL = f"https://api-inference.huggingface.co/models/{MISTRAL_MODEL_ID}"
+
+headers = {
+    "Authorization": f"Bearer {HUGGINGFACE_API_KEY}",
+    "Content-Type": "application/json"
+}
+
+# Replace DummyChatbot with a class that queries Hugging Face
+class HuggingFaceChatbot:
+    def get_response(self, message):
+        payload = {
+            "inputs": message,
+            "parameters": {
+                "max_new_tokens": 150, # Adjust as needed
+                "temperature": 0.7,    # Adjust for creativity
+                "return_full_text": False # Get only the generated part
+            },
+            "options": {
+                "wait_for_model": True # Wait if the model is loading
+            }
+        }
+        try:
+            response = requests.post(HUGGINGFACE_API_URL, headers=headers, json=payload)
+            response.raise_for_status() # Raise an exception for HTTP errors (4xx or 5xx)
+            result = response.json()
+            if isinstance(result, list) and result:
+                # Assuming the response structure from inference API
+                # Mistral-7B-Instruct-v0.1 typically returns a list of dicts with 'generated_text'
+                generated_text = result[0].get('generated_text', '').strip()
+                # The model might echo the prompt back, so we need to clean it
+                # A simple way for instruct models is to look for the model's response part
+                if generated_text.startswith(message):
+                    generated_text = generated_text[len(message):].strip()
+                return generated_text if generated_text else "I couldn't generate a specific response. Can you try again?"
+            return "I received an unexpected response from the AI model."
+        except requests.exceptions.RequestException as e:
+            print(f"Hugging Face API Error: {e}")
+            return "I'm having trouble connecting to my AI brain right now. Please try again later."
+        except Exception as e:
+            print(f"Chatbot processing error: {e}")
+            return "An internal error occurred while processing your request."
+
+chatbot = HuggingFaceChatbot() # Initialize your actual chatbot here
+
+# ================= FASTAPI APP =================
+app = FastAPI(title="Lumina Solar FastAPI")
+
+# Configure CORS for development
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://gridx-frrontend.onrender.com", "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5000", "http://192.168.18.3:5000"], # Add all necessary origins
@@ -90,238 +361,674 @@ async def register_user(user: UserRegister):
     conn = None
     try:
         conn = get_db()
-        if not conn:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database connection error")
+        if not conn:  # Check if connection failed
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+            
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
+            if cur.fetchone():
+                raise HTTPException(status_code=400, detail="Email exists")
 
-        existing_user = get_user_by_email(user.email.lower())
-        if existing_user:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists")
-
-        hashed_pw = generate_password_hash(user.password, method='pbkdf2:sha256', salt_length=8)
-        
-        user_id = create_user(user.email.lower(), hashed_pw, user.name, user.phone)
-        if user_id:
-            return {"message": "User registered successfully", "user_id": user_id}
-        else:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create user")
+            hashed_pw = generate_password_hash(user.password)
+            cur.execute(
+                """INSERT INTO users (email, password_hash, full_name, phone)
+                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+                (user.email, hashed_pw, user.name, user.phone)
+            )
+            user_data = cur.fetchone()
+            conn.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Account deleted successfully'
+            })
+            
+    # except Exception as e:
+    #         # Rollback in case of error
+    #         if conn:  # Ensure conn is not None before rollback
+    #             conn.rollback()
+    #         print(f"Error during account deletion: {str(e)}")
+    #         raise
+            
     except Exception as e:
-        logger.error(f"Error during registration: {e}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        print(f"Delete account error: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to delete account'}), 500
     finally:
-        if conn:
-            conn.close()
+        if 'conn' in locals():
+            if 'cur' in locals(): cur.close()
+            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
+                conn.close()
 
-@app.post("/api/auth/login")
-async def login_user(user_login: UserLogin):
+# Forum routes
+@flask_app.route('/api/forum/topics', methods=['GET'])
+@jwt_required()
+def get_forum_topics():
+    try:
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+
+        cur = conn.cursor()
+        
+        # Get all topics with author info and reply count
+        cur.execute('''
+            SELECT 
+                t.id,
+                t.title,
+                t.content,
+                t.created_at,
+                u.full_name as author_name,
+                u.id as author_id,
+                COUNT(r.id) as reply_count,
+                COALESCE(MAX(r.created_at), t.created_at) as last_activity
+            FROM forum_topics t
+            LEFT JOIN users u ON t.user_id = u.id
+            LEFT JOIN forum_replies r ON t.id = r.topic_id
+            GROUP BY t.id, u.full_name, u.id
+            ORDER BY last_activity DESC
+        ''')
+        
+        topics = []
+        for row in cur.fetchall():
+            topics.append({
+                'id': row[0],
+                'title': row[1],
+                'content': row[2],
+                'created_at': row[3].isoformat(),
+                'author': {
+                    'id': row[5],
+                    'name': row[4]
+                },
+                'posts': row[6] + 1,  # Include the original post in count
+                'last_activity': row[7].isoformat()
+            })
+        
+        return jsonify({
+            'success': True,
+            'topics': topics
+        })
+
+    except Exception as e:
+        print(f"Error fetching forum topics: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to fetch forum topics'}), 500
+    finally:
+        if 'conn' in locals():
+            if 'cur' in locals(): cur.close()
+            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
+                conn.close()
+
+
+@flask_app.route('/api/stories', methods=['POST'])
+@jwt_required()
+def submit_story():
+    """API endpoint to submit a story"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not all(key in data for key in ['username', 'email', 'story']):
+            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+        
+        username = data['username']
+        email = data['email']
+        story = data['story']
+        
+        # Add story to the database
+        story_id = add_story(username, email, story)
+        if not story_id:
+            return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
+        
+        return jsonify({'success': True, 'story_id': story_id}), 201
+    
+    except Exception as e:
+        print(f"Error submitting story: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
+
+@flask_app.route('/api/forum/topics', methods=['POST'])
+@jwt_required()
+def create_forum_topic():
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        title = data.get('title')
+        content = data.get('content')
+
+        if not all([title, content]):
+            return jsonify({'success': False, 'message': 'Title and content are required'}), 400
+
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+
+        cur = conn.cursor()
+        
+        # Create new topic
+        cur.execute('''
+            INSERT INTO forum_topics (user_id, title, content)
+            VALUES (%s, %s, %s)
+            RETURNING id, created_at
+        ''', (user_id, title, content))
+        
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            return jsonify({'success': False, 'message': 'Failed to create topic'}), 500
+        topic_id, created_at = result
+        
+        # Get author info
+        cur.execute('SELECT full_name FROM users WHERE id = %s', (user_id,))
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            return jsonify({'success': False, 'message': 'Failed to retrieve author name'}), 500
+        author_name = result[0]
+        
+        return jsonify({
+            'success': True,
+            'topic': {
+                'id': topic_id,
+                'title': title,
+                'content': content,
+                'created_at': created_at.isoformat(),
+                'author': {
+                    'id': user_id,
+                    'name': author_name
+                },
+                'posts': 1,
+                'last_activity': created_at.isoformat()
+            }
+        }), 201
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn: conn.close()
+
+@app.post("/fastapi/auth/login")
+async def fastapi_login(user: UserLogin, topic_id: int):
+    """FastAPI version of /api/auth/login"""
     conn = None
     try:
         conn = get_db()
         if not conn:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database connection error")
+            return jsonify({'success': False, 'message': 'Database error'}), 500
 
-        user = get_user_by_email(user_login.email.lower())
-        if not user or not check_password_hash(user['password_hash'], user_login.password):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+        cur = conn.cursor()
+        
+        # Get topic with author info
+        cur.execute('''
+            SELECT 
+                t.id,
+                t.title,
+                t.content,
+                t.created_at,
+                u.id as author_id,
+                u.full_name as author_name
+            FROM forum_topics t
+            JOIN users u ON t.user_id = u.id
+            WHERE t.id = %s
+        ''', (topic_id,))
 
-        # In a real app, you'd generate a proper JWT here
-        # For now, just return a success message
-        return {"message": "Login successful", "user": {"email": user["email"], "name": user["full_name"]}}
-    except Exception as e:
-        logger.error(f"Error during login: {e}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    finally:
-        if conn:
-            conn.close()
-
-class HuggingFaceChatbot:
-    def __init__(self):
-        self.api_url = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
-        self.headers = {"Authorization": f"Bearer {os.getenv('HF_API_TOKEN')}"}
-
-    def query(self, payload):
-        response = requests.post(self.api_url, headers=self.headers, json=payload)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-        return response.json()
-
-    def get_response(self, message):
-        output = self.query({
-            "inputs": message,
+        
+        topic = cur.fetchone()
+        if not topic:
+            return jsonify({'success': False, 'message': 'Topic not found'}), 404
+        
+        # Get all replies for the topic
+        cur.execute('''
+            SELECT 
+                r.id,
+                r.content,
+                r.created_at,
+                u.id as author_id,
+                u.full_name as author_name
+            FROM forum_replies r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.topic_id = %s
+            ORDER BY r.created_at ASC
+        ''', (topic_id,))
+        
+        replies = []
+        for row in cur.fetchall():
+            replies.append({
+                'id': row[0],
+                'content': row[1],
+                'created_at': row[2].isoformat(),
+                'author': {
+                    'id': row[3],
+                    'name': row[4]
+                }
+            })
+        
+        return jsonify({
+            'success': True,
+            'topic': {
+                'id': topic[0],
+                'title': topic[1],
+                'content': topic[2],
+                'created_at': topic[3].isoformat(),
+                'author': {
+                    'id': topic[4],
+                    'name': topic[5]
+                },
+                'replies': replies
+            }
         })
-        # Assuming the response format is a list of dicts with 'generated_text'
-        if isinstance(output, list) and output and 'generated_text' in output[0]:
-            return output[0]['generated_text']
-        return "Sorry, I couldn't get a response from the AI."
 
-hf_chatbot = HuggingFaceChatbot()
+    except Exception as e:
+        print(f"Error fetching forum topic: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to fetch forum topic'}), 500
+    finally:
+        if 'conn' in locals():
+            if 'cur' in locals(): cur.close()
+            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
+                conn.close()
+
+@flask_app.route('/api/forum/topics/<int:topic_id>/replies', methods=['POST'])
+@jwt_required()
+def create_forum_reply(topic_id):
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        content = data.get('content')
+        if not content:
+            return jsonify({'success': False, 'message': 'Content is required'}), 400
+
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+
+        cur = conn.cursor()
+        
+        # Verify topic exists
+        cur.execute('SELECT id FROM forum_topics WHERE id = %s', (topic_id,))
+        if not cur.fetchone():
+            return jsonify({'success': False, 'message': 'Topic not found'}), 404
+        
+        # Create reply
+        cur.execute('''
+            INSERT INTO forum_replies (topic_id, user_id, content)
+            VALUES (%s, %s, %s)
+            RETURNING id, created_at
+        ''', (topic_id, user_id, content))
+        
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            return jsonify({'success': False, 'message': 'Failed to create reply'}), 500
+        reply_id, created_at = result
+        
+        # Get author info
+        cur.execute('SELECT full_name FROM users WHERE id = %s', (user_id,))
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            return jsonify({'success': False, 'message': 'Failed to retrieve author name'}), 500
+        author_name = result[0]
+        
+        return jsonify({
+            'success': True,
+            'reply': {
+                'id': reply_id,
+                'content': content,
+                'created_at': created_at.isoformat(),
+                'author': {
+                    'id': user_id,
+                    'name': author_name
+                }
+            }
+        }), 201
+
+    except Exception as e:
+        print(f"Error creating forum reply: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to create forum reply'}), 500
+    finally:
+        if 'conn' in locals():
+            if 'cur' in locals(): cur.close()
+            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
+                conn.close()
+
+
+# GET /api/events - Fetch all events
+@flask_app.route('/api/events', methods=['GET'])
+@jwt_required()
+def get_events():
+    try:
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute("SELECT date, title, start, end, description, location, event_type FROM events")
+        events = cur.fetchall()
+
+        # Convert events to a dictionary
+        events_dict = {
+            event[0]: {
+                "title": event[1],
+                "start": event[2],
+                "end": event[3],
+                "description": event[4],
+                "location": event[5],
+                "eventType": event[6]
+            }
+            for event in events
+        }
+
+        return jsonify(events_dict), 200
+    except Exception as e:
+        print(f"Error fetching events: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to fetch events'}), 500
+
+# POST /api/events - Save a new event
+@flask_app.route('/api/events', methods=['POST'])
+@jwt_required()
+def save_event():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        # Extract event details
+        date = data.get('date')
+        title = data.get('title')
+        start = data.get('start')
+        end = data.get('end')
+        description = data.get('description')
+        location = data.get('location')
+        event_type = data.get('eventType')
+
+        # Validate required fields
+        if not all([date, title, start, end, description, location, event_type]):
+            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO events (date, title, start, end, description, location, event_type)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (date) DO UPDATE
+            SET title = EXCLUDED.title,
+                start = EXCLUDED.start,
+                end = EXCLUDED.end,
+                description = EXCLUDED.description,
+                location = EXCLUDED.location,
+                event_type = EXCLUDED.event_type
+            """,
+            (date, title, start, end, description, location, event_type)
+        )
+        conn.commit()
+
+        return jsonify({'success': True, 'message': 'Event saved successfully'}), 201
+    except Exception as e:
+        print(f"Error saving event: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to save event'}), 500
+
+# DELETE /api/events/<date> - Delete an event for a specific date
+@flask_app.route('/api/events/<date>', methods=['DELETE'])
+@jwt_required()
+def delete_event(date):
+    try:
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute("DELETE FROM events WHERE date = %s", (date,))
+        if cur.rowcount == 0:
+            return jsonify({'success': False, 'message': 'Event not found'}), 404
+
+        conn.commit()
+        return jsonify({'success': True, 'message': 'Event deleted successfully'}), 200
+    except Exception as e:
+        print(f"Error deleting event: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to delete event'}), 500
+
+
+
+@flask_app.route('/api/support/ticket', methods=['POST', 'OPTIONS'])
+@jwt_required()
+def handle_support_ticket():
+    if request.method == 'OPTIONS':
+        return '', 200
+        
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        print("=== Support Ticket Creation Debug ===")
+        print(f"User ID: {user_id}")
+        print(f"Request Data: {data}")
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        subject = data.get('subject')
+        message = data.get('message')
+
+        if not all([subject, message]):
+            return jsonify({'success': False, 'message': 'Subject and message are required'}), 400
+
+        try:
+            priority = data.get('priority', 'low')
+            ticket_id = create_support_ticket(user_id, subject, message, priority)
+            return jsonify({
+                'success': True,
+                'message': 'Support ticket created successfully',
+                'ticket_id': ticket_id
+            }), 201
+
+        except Exception as e:
+            print(f"Database error: {str(e)}")
+            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
+
+    except Exception as e:
+        print(f"Create support ticket error: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to create support ticket'}), 500
+
+@flask_app.route('/api/payment-methods', methods=['POST'])
+@jwt_required()
+def add_payment_method():
+    try:
+        # Debug logging
+        print("=== Payment Method Creation Request Debug ===")
+        print("Request Headers:", dict(request.headers))
+        print("Request Data:", request.get_json())
+        
+        user_id = get_jwt_identity()
+        print("User ID:", user_id)
+        
+        data = request.get_json()
+        if not data:
+            print("No data received in request")
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        # Validate required fields
+        required_fields = ['type', 'cardNumber', 'expiryDate', 'cardHolderName']
+        for field in required_fields:
+            if field not in data:
+                print(f"Missing required field: {field}")
+                return jsonify({
+                    'success': False,
+                    'message': f'Missing required field: {field}'
+                }), 400
+
+        # Convert frontend field names to backend field names
+        payment_data = {
+            'payment_type': data['type'],
+            'card_number': data['cardNumber'],
+            'expiry_date': data['expiryDate'],
+            'card_holder_name': data['cardHolderName'],
+            'is_default': data.get('isDefault', False)
+        }
+
+        print("Processed payment data:", payment_data)
+
+        # Save payment method
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+        cur = conn.cursor()
+        try:
+            result = save_payment_method(
+                user_id=user_id,
+                payment_type=payment_data['payment_type'],
+                card_number=payment_data['card_number'],
+                expiry_date=payment_data['expiry_date'],
+                card_holder_name=payment_data['card_holder_name'],
+                is_default=payment_data['is_default']
+            )
+
+            print("Save payment method result:", result)
+
+            if result:
+                # Create notification for successful payment method addition
+                try:
+                    # Create notification
+                    cur.execute('''
+                        INSERT INTO notifications (user_id, title, message, type)
+                        VALUES (%s, %s, %s, %s)
+                    ''', (
+                        user_id,
+                        'Payment Method Added',
+                        f'Successfully added a new {payment_data["payment_type"]} payment method.',
+                        'success'
+                    ))
+                    conn.commit()
+                except Exception as e:
+                    print(f"Error creating notification: {str(e)}")
+                    conn.rollback()
+
+            return jsonify({
+                'success': True,
+                'message': 'Payment method saved successfully',
+                'payment_method_id': result
+            })
+        except Exception as e:
+            print("Error saving payment method:", str(e))
+            import traceback
+            print("Traceback:", traceback.format_exc())
+            return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        print("Error saving payment method:", str(e))
+        import traceback
+        print("Traceback:", traceback.format_exc())
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@flask_app.route('/api/payment-methods', methods=['GET'])
+@jwt_required()
+def get_payment_methods():
+    try:
+        user_id = get_jwt_identity()
+        payment_methods = fetch_user_payment_methods(user_id)
+        
+        # Format the payment methods for the frontend
+        formatted_methods = []
+        
+        # Check if payment_methods is not None and is iterable
+        if payment_methods:
+            for method in payment_methods:
+                try:
+                    formatted_method = {
+                        'id': method['id'],  # Assuming id is the first column
+                        'payment_type': method['payment_type'],
+                        'card_number': method['card_number'],
+                        'expiry_date': method['expiry_date'].strftime('%m/%y') if method['expiry_date'] else None,
+                        'card_holder_name': method['card_holder_name'],
+                        'is_default': method['is_default'],
+                        'created_at': method['created_at'].isoformat() if method['created_at'] else None  # Add created_at
+                    }
+                    formatted_methods.append(formatted_method)
+                except (IndexError, AttributeError) as e:
+                    print(f"Error formatting payment method: {str(e)}")
+                    continue
+        
+        print("Debug - Formatted payment methods:", formatted_methods)  # Debug log
+        
+        return jsonify({
+            'success': True,
+            'payment_methods': formatted_methods
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn: conn.close()
+
+
+class ChatMessage(BaseModel):
+    message: str
+    history: List[dict]
 
 @app.post("/api/chat")
 async def chat_endpoint(chat_message: ChatMessage):
     try:
-        response_text = hf_chatbot.get_response(chat_message.message)
-        return {"response": response_text}
+        response = chatbot.get_response(chat_message.message)
+        return {"response": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-ESKOM_API_KEY = os.getenv('ESKOMSEPUSH_API_KEY')
-ESKOM_API_BASE_URL = "https://loadshedding.eskom.sepush.co.za/api/v2"
+# Correctly defining and handling the Flask /api/ai-agent route
+@flask_app.route('/api/ai-agent', methods=['POST'])
+def ai_agent_openrouter():
+    data = request.get_json(force=True, silent=True)
+    if not data or 'prompt' not in data or not data['prompt'].strip():
+        return jsonify({'response': 'Prompt is required'}), 400
+    prompt = data['prompt'].strip()
 
-@app.get("/api/loadshedding/national-status")
-async def get_national_status():
-    try:
-        response = requests.get(f"{ESKOM_API_BASE_URL}/status", headers={'token': ESKOM_API_KEY})
-        response.raise_for_status()
-        data = response.json()
-        return {"data": data}
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Eskom API request failed: {e}")
-        raise HTTPException(status_code=500, detail="Could not retrieve national loadshedding status.")
+    # Guardrails: Only answer energy/solar/forecast/loadshedding/dashboard queries
+    allowed_keywords = [
+        'energy', 'solar', 'forecast', 'loadshedding', 'dashboard', 'usage', 'optimizer', 'battery', 'panel', 'grid', 'power', 'consumption', 'generation', 'saving', 'outage', 'electricity', 'renewable', 'weather', 'sunlight', 'pv', 'inverter', 'subscription', 'tariff', 'billing', 'alert', 'notification', 'report', 'trend', 'ai', 'suggestion', 'tip', 'support', 'device', 'area', 'location', 'status', 'schedule', 'time', 'history', 'performance', 'maintenance', 'capacity', 'storage', 'efficiency', 'cost', 'payment', 'topup', 'transaction', 'user', 'profile', 'account', 'login', 'register', 'plan', 'upgrade', 'downgrade', 'settings', 'help', 'faq', 'contact', 'feedback', 'optimizer', 'optimizer agent', 'optimizer model', 'optimizer suggestion', 'optimizer plan', 'optimizer forecast', 'optimizer dashboard', 'optimizer usage', 'optimizer report', 'optimizer tip', 'optimizer support', 'optimizer device', 'optimizer area', 'optimizer location', 'optimizer status', 'optimizer schedule', 'optimizer time', 'optimizer history', 'optimizer performance', 'optimizer maintenance', 'optimizer capacity', 'optimizer storage', 'optimizer efficiency', 'optimizer cost', 'optimizer payment', 'optimizer topup', 'optimizer transaction', 'optimizer user', 'optimizer profile', 'optimizer account', 'optimizer login', 'optimizer register', 'optimizer plan', 'optimizer upgrade', 'optimizer downgrade', 'optimizer settings', 'optimizer help', 'optimizer faq', 'optimizer contact', 'optimizer feedback'
+    ]
+    prompt_lower = prompt.lower()
+    if not any(kw in prompt_lower for kw in allowed_keywords):
+        return jsonify({'response': "I'm only trained to assist with Solar Optimizer App queries like energy usage, solar data, forecast, and loadshedding. Please ask something related to that."}), 200
 
-@lru_cache(maxsize=128)
-def _get_eskom_areas_cached(text, eskom_api_key):
-    try:
-        response = requests.get(f"{ESKOM_API_BASE_URL}/areas_search?text={text}", headers={'token': eskom_api_key})
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Eskom areas search API request failed: {e}")
-        raise HTTPException(status_code=500, detail="Could not retrieve Eskom areas.")
+    OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
+    if not OPENROUTER_API_KEY:
+        return jsonify({'response': 'OpenRouter API key not set in environment.'}), 500
 
-@app.get("/api/loadshedding/area")
-async def get_area_schedule(area_id: Optional[str] = None, lat: Optional[float] = None, lon: Optional[float] = None):
     try:
-        if area_id:
-            response = requests.get(f"{ESKOM_API_BASE_URL}/area?id={area_id}", headers={'token': ESKOM_API_KEY})
-        elif lat and lon:
-            response = requests.get(f"{ESKOM_API_BASE_URL}/area?lat={lat}&lon={lon}", headers={'token': ESKOM_API_KEY})
+        api_url = 'https://openrouter.ai/api/v1/chat/completions'
+        headers = {
+            'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+            'HTTP-Referer': 'http://localhost:3000',
+            'Content-Type': 'application/json'
+        }
+        payload = {
+            'model': 'mistralai/mistral-small-3.2-24b-instruct',
+            'messages': [
+                { 'role': 'user', 'content': prompt }
+            ]
+        }
+        resp = requests.post(api_url, headers=headers, data=json.dumps(payload), timeout=60)
+        if resp.status_code == 200:
+            result = resp.json()
+            # OpenRouter returns choices[0].message.content
+            answer = None
+            if 'choices' in result and result['choices'] and 'message' in result['choices'][0]:
+                answer = result['choices'][0]['message'].get('content', '').strip()
+            if answer:
+                return jsonify({'response': answer}), 200
+            else:
+                return jsonify({'response': 'No answer found from OpenRouter.'}), 200
         else:
-            raise HTTPException(status_code=400, detail="Please provide an area_id or latitude and longitude.")
-
-        response.raise_for_status()
-        data = response.json()
-        return {"data": data}
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Eskom area schedule API request failed: {e}")
-        raise HTTPException(status_code=500, detail="Could not retrieve loadshedding schedule for the specified area.")
-
-OPEN_METEO_API_URL = os.getenv('OPEN_METEO_API_URL')
-
-@app.get("/api/weather")
-async def get_weather(lat: Optional[float] = None, lon: Optional[float] = None, areaId: Optional[str] = None):
-    if not lat or not lon:
-        if areaId:
-            # Fallback to Nominatim for coordinates if only areaId is provided
-            nominatim_url = f"https://nominatim.openstreetmap.org/search?q={areaId}&format=json&limit=1"
-            try:
-                geo_response = requests.get(nominatim_url, headers={'User-Agent': 'SolarOptimizerApp/1.0'})
-                geo_response.raise_for_status()
-                geo_data = geo_response.json()
-                if geo_data:
-                    lat = float(geo_data[0]['lat'])
-                    lon = float(geo_data[0]['lon'])
-                else:
-                    raise HTTPException(status_code=404, detail="Area not found for weather data.")
-            except requests.exceptions.RequestException as e:
-                logger.error(f"Nominatim API request failed: {e}")
-                raise HTTPException(status_code=500, detail="Could not get coordinates for the area.")
-        else:
-            raise HTTPException(status_code=400, detail="Latitude and longitude or an areaId are required.")
-
-    params = {
-        "latitude": lat,
-        "longitude": lon,
-        "hourly": "temperature_2m,apparent_temperature,precipitation,rain,weathercode,cloudcover,windspeed_10m",
-        "daily": "weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum",
-        "current_weather": "true",
-        "timezone": "auto"
-    }
-    try:
-        response = requests.get(OPEN_METEO_API_URL, params=params)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Open-Meteo API request failed: {e}")
-        raise HTTPException(status_code=500, detail="Could not retrieve weather data.")
-
-# Placeholder for AI Suggestions (from Flask app.routes.ai_suggestions.py)
-@app.get("/api/ai-suggestions")
-async def get_ai_suggestions():
-    # This was a Flask route. Placeholder for now.
-    # Integrate logic from app.services.ai_service.py if needed.
-    return {"message": "AI Suggestions endpoint - Not implemented in FastAPI yet.", "suggestions": []}
-
-# Placeholder for AI Agent (from Flask app.routes.ai_agent.py)
-@app.post("/api/ai-agent")
-async def handle_ai_agent_fastapi(request_data: dict):
-    # This was a Flask route from app.routes.ai_agent.py. Placeholder for now.
-    # Integrate the full logic including GREETINGS, FAREWELLS, system_prompt, and OpenRouter API call.
-    return {"message": "AI Agent endpoint - Not implemented in FastAPI yet.", "response": "Hello! How can I help you today?"}
-
-from utils.onesignal_helper import send_push_notification
-
-@app.post("/api/notify/test")
-async def test_push_notification_fastapi(message_data: dict):
-    player_id = message_data.get("player_id")
-    heading = message_data.get("heading", "Test Notification")
-    content = message_data.get("content", "This is a test notification from FastAPI.")
-
-    if not player_id:
-        raise HTTPException(status_code=400, detail="player_id is required.")
-
-    try:
-        response_data = send_push_notification(player_id, heading, content)
-        return {"message": "Test notification sent successfully", "response": response_data}
+            return jsonify({'response': f'OpenRouter error: {resp.status_code} - {resp.text}'}), 500
     except Exception as e:
-        logger.error(f"Failed to send test push notification: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to send notification: {e}")
-
-@app.post("/api/notifications/send")
-async def send_notification_fastapi(message_data: dict):
-    player_id = message_data.get("player_id")
-    heading = message_data.get("heading", "New Notification")
-    content = message_data.get("content", "You have a new message.")
-
-    if not player_id:
-        raise HTTPException(status_code=400, detail="player_id is required.")
-
-    try:
-        response_data = send_push_notification(player_id, heading, content)
-        return {"message": "Notification sent successfully", "response": response_data}
-    except Exception as e:
-        logger.error(f"Failed to send push notification: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to send notification: {e}")
+        return jsonify({'response': f'Error contacting OpenRouter: {str(e)}'}), 500
 
 
-# Placeholder for AI Plan Suggestion (from Flask app.routes.ai_suggestions.py -> suggest_plan)
-@app.post("/api/ai/suggest-plan")
-async def suggest_plan_fastapi(data: dict):
-    # Re-implementing Flask's suggest_plan logic
-    # This should interact with an AI model to suggest a plan based on usage data.
-    # For now, it's a simple placeholder.
-    usage_hours = data.get("usage_hours", 0)
-    device_count = data.get("device_count", 0)
-
-    # Simple mock logic for demonstration
-    if usage_hours > 100 or device_count > 5:
-        suggested_plan = "Premium Plan"
-    else:
-        suggested_plan = "Basic Plan"
-
-    return {"message": "Plan suggestion generated", "suggested_plan": suggested_plan}
-
-@app.post("/api/log")
-async def log_message_fastapi(log_entry: dict):
-    level = log_entry.get("level", "info").upper()
-    message = log_entry.get("message", "No message provided.")
-    
-    if level == "INFO":
-        logger.info(message)
-    elif level == "WARNING":
-        logger.warning(message)
-    elif level == "ERROR":
-        logger.error(message)
-    elif level == "DEBUG":
-        logger.debug(message)
-    else:
-        logger.info(f"Unknown log level {level}: {message}")
-
-    return {"status": "success", "message": "Log received"}
+# ================= RUN BOTH APPS =================
+if __name__ == '__main__':
+    print("=== Registered routes ===")
+    for rule in flask_app.url_map.iter_rules():
+        print(rule)
+    print("=========================")
+    flask_app.run(host='0.0.0.0', port=5000, debug=True)

@@ -5,33 +5,33 @@ import { FaArrowLeft, FaMoneyBill, FaChartLine, FaCalendarAlt } from 'react-icon
 
 // Import Chakra UI Components
 import {
-    Box,
-    Flex,
-    Heading,
-    Text,
-    FormControl,
-    FormLabel,
-    Input,
-    Button,
-    VStack,
-    useToast,
-    useColorModeValue,
-    Spinner,
-    HStack,
-    Divider,
-    Alert,
-    AlertIcon,
-    AlertTitle,
-    AlertDescription,
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ModalCloseButton,
-    Select
+  Box,
+  Flex,
+  Heading,
+  Text,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  VStack,
+  useToast, // For displaying messages
+  useColorModeValue, // For light/dark mode styling
+  Spinner, // Added Spinner for loading state
+  HStack, // Added HStack for horizontal back button layout
+  Divider,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  Select
 } from '@chakra-ui/react';
 import { useTransactions } from '../context/TransactionsContext'; // Import the hook
 import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs
@@ -40,17 +40,16 @@ import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resoluti
 import api from '../services/api';
 
 function TopUpPage() {
-    const navigate = useNavigate();
-    const toast = useToast();
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const { addTransaction } = useTransactions(); // Destructure addTransaction from context
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // State for form fields and balance
-  const [currentBalance, setCurrentBalance] = useState(150.50); // Mock initial balance
-  const [amount, setAmount] = useState(''); // Amount to top-up
-  const [promoCode, setPromoCode] = useState(''); // Optional promo code
-  const [voucherCode, setVoucherCode] = useState(''); // Optional voucher code
-  const [isProcessing, setIsProcessing] = useState(false); // Loading state for top-up button
+  const [balance, setBalance] = useState('R0.00'); // Default balance
+  const [amount, setAmount] = useState('');
+  const [promoCode, setPromoCode] = useState('');
+  const [voucherCode, setVoucherCode] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false); // Corrected typo
 
   // New state for Auto-Top-Up
   const [isAutoTopUpEnabled, setIsAutoTopUpEnabled] = useState(false);
@@ -58,15 +57,16 @@ function TopUpPage() {
   const [autoTopUpAmount, setAutoTopUpAmount] = useState('');
   const [autoTopUpFrequency, setAutoTopUpFrequency] = useState('weekly');
 
-    const [transactionType, setTransactionType] = useState('topup');
+  const [transactionType, setTransactionType] = useState('topup'); // New state for transaction type
 
-    const user = auth.getCurrentUser();
+  const user = auth.getCurrentUser(); // Get current user data
 
-    const bgColor = useColorModeValue('gray.50', 'gray.800');
-    const textColor = useColorModeValue('gray.700', 'gray.200');
-    const headingColor = useColorModeValue('gray.800', 'white');
-    const buttonColorScheme = useColorModeValue('green', 'teal');
-    const spinnerColor = useColorModeValue('blue.500', 'blue.300');
+  // Chakra UI hook for dynamic colors based on color mode
+  const bgColor = useColorModeValue('gray.50', 'gray.800');
+  const textColor = useColorModeValue('gray.700', 'gray.200');
+  const headingColor = useColorModeValue('gray.800', 'white');
+  const buttonColorScheme = useColorModeValue('green', 'teal'); // Use green/teal for top-up
+  const spinnerColor = useColorModeValue('blue.500', 'blue.300');
 
   // Styles for the glassmorphism effect on the form Box
   const glassmorphismBoxStyles = {
@@ -76,14 +76,52 @@ function TopUpPage() {
     borderRadius: 'lg', // Rounded corners
   };
 
-    useEffect(() => {
-        if (!user) {
-            navigate('/login');
-        }
-    }, [user, navigate]);
+  // Basic check if user data is available. ProtectedRoute handles the main redirection,
+  // but this can help if the user object is null for some reason after landing here.
+   // Effect runs on component mount and if user/navigate changes
+   useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
+
+
+
+   useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const response = await api.get('/api/user/balance'); // API endpoint to fetch balance
+        setBalance(`R${response.data.balance.toFixed(2)}`);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+      }
+    };
+  
+    fetchBalance();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchAutoTopUpSettings = async () => {
+      if (!user?.id) return;
+      try {
+        const response = await api.get('/api/user/auto-topup-settings', {
+          params: { user_id: user.id }
+        });
+        const data = response.data;
+        setIsAutoTopUpEnabled(!!data.is_auto_topup);
+        setMinBalance(data.min_balance ? data.min_balance.toString() : '');
+        setAutoTopUpAmount(data.auto_topup_amount ? data.auto_topup_amount.toString() : '');
+        setAutoTopUpFrequency(data.auto_topup_frequency || 'weekly');
+      } catch (error) {
+        // Optionally handle error
+      }
+    };
+    fetchAutoTopUpSettings();
+  }, [user]); 
   // Handler for Auto-Top-Up settings
-  const handleAutoTopUpSave = () => {
+  const handleAutoTopUpSave = async () => {
     if (!minBalance || !autoTopUpAmount) {
       toast({
         title: 'Missing Information',
@@ -94,10 +132,17 @@ function TopUpPage() {
       });
       return;
     }
-
-    // Simulate saving Auto-Top-Up settings
+  
     setIsProcessing(true);
-    setTimeout(() => {
+    try {
+      //const response =
+       await api.post('/api/user/auto-topup-settings', {
+        user_id: user?.id,
+        is_auto_topup: true,
+        min_balance: parseFloat(minBalance),
+        auto_topup_amount: parseFloat(autoTopUpAmount),
+        auto_topup_frequency: autoTopUpFrequency,
+      });
       setIsProcessing(false);
       setIsAutoTopUpEnabled(true);
       onClose();
@@ -108,114 +153,149 @@ function TopUpPage() {
         duration: 5000,
         isClosable: true,
       });
-    }, 1500);
+    } catch (error) {
+      setIsProcessing(false);
+      toast({
+        title: 'Failed to Save Settings',
+        description: error.response?.data?.error || 'Could not save auto top-up settings.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   // Handler for the Top-Up button click
+  // const handleTopUp = async (e) => {
+  //   e.preventDefault();
+  
   const handleTopUp = async (e) => {
     e.preventDefault();
   
     const topUpAmount = parseFloat(amount);
     if (isNaN(topUpAmount) || topUpAmount <= 0) {
-        toast({
-            title: 'Invalid Amount',
-            description: 'Please enter a valid positive amount.',
-            status: 'warning',
-            duration: 3000,
-            isClosable: true,
-        });
-        return;
+      toast({
+        title: 'Invalid Amount',
+        description: 'Please enter a valid positive amount.',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
     }
-
+  
     setIsProcessing(true);
   
     const data = {
-        user_id: user?.id,  // Using optional chaining for safety
-        amount: topUpAmount,
-        promo_code: promoCode,
-        voucher_code: voucherCode,
-        transaction_type: transactionType,
-        is_auto_topup: isAutoTopUpEnabled,
-        min_balance: isAutoTopUpEnabled ? parseFloat(minBalance) : null,
-        auto_topup_amount: isAutoTopUpEnabled ? parseFloat(autoTopUpAmount) : null,
-        auto_topup_frequency: isAutoTopUpEnabled ? autoTopUpFrequency : null,
-    };
-
-    try {
-        const response = await api.post('/api/topup', data); // Remove manual CSRF handling
+      user_id: user?.id, // Using optional chaining for safety
+      amount: topUpAmount,
+      promo_code: promoCode,
+      voucher_code: voucherCode,
+      transaction_type: transactionType,
       
-      if (response.status === 200 && response.data.success) {
-        // Update balance and show success
-        setCurrentBalance(prev => prev + topUpAmount);
-        addTransaction({ // Add new transaction to context
-            id: uuidv4(), // Generate unique ID
-            date: new Date().toISOString().split('T')[0],
-            amount: topUpAmount,
-            type: transactionType,
-            status: 'Completed'
+    };
+  
+    
+      try {
+        const response = await api.post('/api/user/topup', data);
+        console.log('Top-up response:', response);
+        if (response.status === 200 && response.data.success) {
+          const newBalanceRaw = response.data.newBalance;
+      const newBalance = Number(newBalanceRaw);
+      if (isNaN(newBalance)) {
+        toast({
+          title: 'Payment Succeeded, but...',
+          description: `Could not parse new balance: ${newBalanceRaw}`,
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
         });
+        setBalance('R0.00');
+      } else {
+        setBalance(`R${newBalance.toFixed(2)}`);
         toast({
           title: 'Success!',
-          description: `New balance: R${(currentBalance + topUpAmount).toFixed(2)}`,
+          description: `New balance: R${newBalance.toFixed(2)}`,
           status: 'success',
           duration: 5000,
           isClosable: true,
         });
       }
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 
-                      error.response?.data?.error || 
-                      'Payment service unavailable';
-      
-      toast({
-        title: 'Payment Failed',
-        description: errorMessage,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsProcessing(false);
-      setAmount('');
-      setPromoCode('');
-      setVoucherCode('');
-    }
-  };
+        
+        } else {
+          // If the response is not as expected, show an error
+          toast({
+            title: 'Payment Failed',
+            description: response.data?.message || 'Unexpected response from server',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.error('Top-up error:', error);
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          'Payment service unavailable';
+    
+        toast({
+          title: 'Payment Failed',
+          description: errorMessage,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      } finally {
+        setIsProcessing(false);
+      }
+    }; 
 
-    return (
-        <Box
-            minH="100vh"
-            backgroundImage={`url(${topUpBackground})`}
-            backgroundSize="cover"
-            backgroundPosition="center"
-            backgroundRepeat="no-repeat"
-            position="relative"
-            _before={{
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                bg: 'rgba(0, 0, 0, 0.5)',
-                zIndex: 1,
-            }}
-        >
-            <Flex
-                align="center"
-                justify="center"
-                minH="100vh"
-                py={10}
-                position="relative"
-                zIndex={2}
-            >
-                <Box
-                    p={8}
-                    maxWidth="md"
-                    width="100%"
-                    {...glassmorphismBoxStyles}
-                >
-         <HStack justify="space-between" align="center" mb={8}>
+  // Render loading spinner if user is being checked (though ProtectedRoute handles the redirect)
+  if (!user) {
+        return (
+            <Flex minH="100vh" align="center" justify="center" bg={bgColor}>
+                <Spinner size="xl" color={spinnerColor} />
+            </Flex>
+        );
+    }
+
+  return (
+    <Flex
+      minH="100vh"
+      align="center"
+      justify="center"
+      p={4}
+      backgroundImage={`url(${topUpBackground})`}  // Replace gradient with the new image
+      backgroundSize="cover"
+      backgroundPosition="center"
+      backgroundAttachment="fixed"
+      position="relative"
+      _before={{
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          bg: 'rgba(0, 0, 0, 0.5)',  // Semi-transparent overlay for readability
+          zIndex: 1,
+      }}
+    >
+      <Box
+        maxW="md"
+        w="full"
+        {...glassmorphismBoxStyles}  // Existing glassmorphism styles
+        boxShadow="md"
+        borderRadius="lg"
+        p={6}
+        textAlign="center"
+        position="relative"
+        zIndex={2}
+        backdropFilter="blur(16px)"  // Increase blur for stronger glassmorphism effect
+      >
+         {/* Back to Home Button in HStack */}
+         <HStack justify="space-between" w="full" mb={8} align="center">
              <Button
                leftIcon={<FaArrowLeft />}
                variant="ghost"
@@ -226,16 +306,19 @@ function TopUpPage() {
              </Button>
          </HStack>
 
-                <Heading as="h2" size="xl" mb={6} color={headingColor} textAlign="center">
-                    Top-Up / Recharge
-                </Heading>
+        {/* Main Heading placed below the HStack */}
+        <Heading as="h2" size="xl" mb={6} color={headingColor} textAlign="center">
+          Top-Up / Recharge
+        </Heading>
 
-                <Box mb={6}>
-                    <Text fontSize="md" color={textColor}>Current Energy Credit Balance:</Text>
-                    <Text fontSize="3xl" fontWeight="bold" color={textColor}>
-                        R{currentBalance.toFixed(2)}
-                    </Text>
-                </Box>
+        {/* Current Balance Display */}
+        <Box mb={6}>
+            <Text fontSize="md" color={textColor}>Current Energy Credit Balance:</Text>
+            <Text fontSize="3xl" fontWeight="bold" color={textColor}>
+                {balance} {/* Display balance formatted */}
+</Text>
+        </Box>
+
 
         <VStack as="form" spacing={4} onSubmit={handleTopUp} noValidate>
           {/* Transaction Type Selection */}
@@ -285,21 +368,24 @@ function TopUpPage() {
             />
           </FormControl>
 
-                    <Button
-                        type="submit"
-                        colorScheme={buttonColorScheme}
-                        size="lg"
-                        fontSize="md"
-                        isLoading={isProcessing}
-                        loadingText="Processing..."
-                        w="full"
-                        mt={4}
-                    >
-                        {transactionType === 'topup' ? 'Top-Up Now' : 'Recharge Now'}
-                    </Button>
-                </VStack>
 
-                <Divider my={6} />
+          {/* Top-Up Button */}
+          <Button
+            type="submit"
+            colorScheme={buttonColorScheme}
+            size="lg"
+            fontSize="md"
+            isLoading={isProcessing}
+            loadingText="Processing..."
+            w="full"
+            mt={4}
+          >
+            {transactionType === 'topup' ? 'Top-Up Now' : 'Recharge Now'}
+          </Button>
+        </VStack>
+
+        {/* Divider */}
+        <Divider my={6} />
 
         {/* Auto Top-Up Section */}
         <Box>
@@ -324,63 +410,66 @@ function TopUpPage() {
             </Button>
           )}
         </Box>
-                </Box>
-            </Flex>
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent bg={glassmorphismBoxStyles.bg} backdropFilter={glassmorphismBoxStyles.backdropFilter}>
-                    <ModalHeader color={headingColor}>Auto Top-Up Settings</ModalHeader>
-                    <ModalCloseButton color={textColor} />
-                    <ModalBody>
-                        <VStack spacing={4}>
-                            <FormControl id="min-balance" isRequired>
-                                <FormLabel color={textColor}>Minimum Balance (ZAR)</FormLabel>
-                                <Input
-                                    type="number"
-                                    placeholder="e.g., 50.00"
-                                    value={minBalance}
-                                    onChange={(e) => setMinBalance(e.target.value)}
-                                    step="0.01"
-                                    min="0"
-                                    color={textColor}
-                                />
-                            </FormControl>
-                            <FormControl id="auto-top-up-amount" isRequired>
-                                <FormLabel color={textColor}>Auto Top-Up Amount (ZAR)</FormLabel>
-                                <Input
-                                    type="number"
-                                    placeholder="e.g., 100.00"
-                                    value={autoTopUpAmount}
-                                    onChange={(e) => setAutoTopUpAmount(e.target.value)}
-                                    step="0.01"
-                                    min="0"
-                                    color={textColor}
-                                />
-                            </FormControl>
-                            <FormControl id="auto-top-up-frequency">
-                                <FormLabel color={textColor}>Frequency</FormLabel>
-                                <Select
-                                    value={autoTopUpFrequency}
-                                    onChange={(e) => setAutoTopUpFrequency(e.target.value)}
-                                    color={textColor}
-                                >
-                                    <option value="daily">Daily</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly">Monthly</option>
-                                </Select>
-                            </FormControl>
-                        </VStack>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button variant="ghost" onClick={onClose} color={textColor} _hover={{ bg: useColorModeValue('gray.100', 'whiteAlpha.200') }}>Cancel</Button>
-                        <Button colorScheme="blue" onClick={handleAutoTopUpSave} ml={3} isLoading={isProcessing}>
-                            Save Settings
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-        </Box>
-    );
+
+        {/* Auto Top-Up Modal */}
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Auto Top-Up Settings</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl>
+                  <FormLabel>Minimum Balance (R)</FormLabel>
+                  <Input
+                    type="number"
+                    placeholder="e.g., 100"
+                    value={minBalance}
+                    onChange={(e) => setMinBalance(e.target.value)}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Auto Top-Up Amount (R)</FormLabel>
+                  <Input
+                    type="number"
+                    placeholder="e.g., 200"
+                    value={autoTopUpAmount}
+                    onChange={(e) => setAutoTopUpAmount(e.target.value)}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Frequency</FormLabel>
+                  <Select
+                    value={autoTopUpFrequency}
+                    onChange={(e) => setAutoTopUpFrequency(e.target.value)}
+                  >
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                  </Select>
+                </FormControl>
+              </VStack>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="green"
+                onClick={handleAutoTopUpSave}
+                isLoading={isProcessing}
+              >
+                Save Settings
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Box>
+    </Flex>
+  );
 }
 
 export default TopUpPage;
