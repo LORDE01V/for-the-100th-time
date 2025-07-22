@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { ChakraProvider, extendTheme, ColorModeScript } from '@chakra-ui/react';
 import { NavigationProvider } from './context/NavigationContext';
@@ -14,7 +14,7 @@ const config = {
 
 const theme = extendTheme({ config });
 
-// Initialize OneSignal here (commented out if causing issues)
+// Remove the entire OneSignal block
 // if (!window.OneSignal || !window.OneSignal._initCalled) {
 //   OneSignal.init({
 //     appId: process.env.REACT_APP_ONESIGNAL_APP_ID,
@@ -23,7 +23,7 @@ const theme = extendTheme({ config });
 //       enable: true,
 //     },
 //   }).then(() => {
-//     // OneSignal.showSlidedownPrompt();  // Uncomment if needed
+//     // OneSignal.showSlidedownPrompt();
 //   }).catch((error) => {
 //     console.error('OneSignal initialization error:', error);
 //   });
