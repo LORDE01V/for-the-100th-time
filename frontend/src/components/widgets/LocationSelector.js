@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types'; // Import PropTypes
 import {
   Box,
   Input,
@@ -6,7 +7,6 @@ import {
   IconButton,
   HStack,
   Tooltip,
-  Spinner,
   Alert,
   AlertIcon,
 } from '@chakra-ui/react';
@@ -235,3 +235,7 @@ const LocationSelector = ({ onLocationChange }) => {
 };
 
 export default LocationSelector;
+
+LocationSelector.propTypes = {
+  onLocationChange: PropTypes.func.isRequired,
+};

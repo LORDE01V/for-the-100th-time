@@ -114,14 +114,15 @@ def get_user_by_email_or_id(identifier):
         return user
     return get_user_by_email(identifier)
 
-def update_user_by_id(user_id, email=None, full_name=None):
+def update_user_by_id(user_id, email=None, full_name=None, phone_number=None):
     query = """
     UPDATE users 
     SET email = COALESCE(%s, email), 
-        full_name = COALESCE(%s, full_name)
+        full_name = COALESCE(%s, full_name),
+        phone_number = COALESCE(%s, phone_number)
     WHERE id = %s RETURNING id
     """
-    params = (email, full_name, user_id)
+    params = (email, full_name, phone_number, user_id)
     return execute_query('search', query, params) is not None
 
 def create_user_from_google(user_info):
@@ -208,9 +209,10 @@ def initialize_db():
             id SERIAL PRIMARY KEY,
             email VARCHAR(255) UNIQUE NOT NULL,
             password_hash VARCHAR(255),
-            full_name VARCHAR(100)
+            full_name VARCHAR(100),
+            phone_number VARCHAR(20)
         )""")
-        cur.execute("ALTER TABLE users ALTER COLUMN password_hash TYPE VARCHAR(255);")
+        cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone_number VARCHAR(20);") # Add phone_number column if it doesn't exist
         cur.execute("""
         CREATE TABLE IF NOT EXISTS solar_systems (
             id SERIAL PRIMARY KEY,

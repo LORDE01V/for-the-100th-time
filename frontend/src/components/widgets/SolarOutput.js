@@ -21,6 +21,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import DashboardCard from '../DashboardCard';
+import PropTypes from 'prop-types';
 
 const SolarOutput = ({ location }) => {
   const textColor = useColorModeValue('gray.600', 'gray.400');
@@ -29,23 +30,6 @@ const SolarOutput = ({ location }) => {
   const [error, setError] = useState(null);
   const [currentEfficiency, setCurrentEfficiency] = useState(0);
   const [peakEfficiency, setPeakEfficiency] = useState(0);
-  const [userLocation, setUserLocation] = useState(null);
-
-  // Get user location on mount
-  useEffect(() => {
-    if (!userLocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setUserLocation({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
-        }),
-        (err) => {
-          // If denied, fallback to selectedArea
-          setUserLocation(null);
-        }
-      );
-    }
-  }, []);
 
   useEffect(() => {
     const fetchHourlyForecast = async () => {
@@ -181,4 +165,12 @@ const SolarOutput = ({ location }) => {
   );
 };
 
-export default SolarOutput; 
+export default SolarOutput;
+
+SolarOutput.propTypes = {
+  location: PropTypes.shape({
+    latitude: PropTypes.number.isRequired,
+    longitude: PropTypes.number.isRequired,
+    label: PropTypes.string,
+  }).isRequired,
+}; 

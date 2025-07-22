@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {
   Text,
   SimpleGrid,
@@ -18,7 +19,6 @@ const DailyForecast = ({ location }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-  const currentHour = new Date().getHours();
 
   useEffect(() => {
     // Get user location on mount
@@ -34,7 +34,7 @@ const DailyForecast = ({ location }) => {
         }
       );
     }
-  }, []);
+  }, [userLocation]);
 
   useEffect(() => {
     const fetchDailyForecast = async () => {
@@ -78,7 +78,7 @@ const DailyForecast = ({ location }) => {
     };
 
     fetchDailyForecast();
-  }, [location]);
+  }, [location, userLocation]); // Added userLocation as a dependency
 
   const getIcon = (icon) => {
     switch (icon) {
@@ -168,4 +168,12 @@ const DailyForecast = ({ location }) => {
   );
 };
 
-export default DailyForecast; 
+export default DailyForecast;
+
+DailyForecast.propTypes = {
+  location: PropTypes.shape({
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
+    label: PropTypes.string,
+  }),
+}; 
