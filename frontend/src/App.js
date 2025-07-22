@@ -11,7 +11,16 @@ import Supportbot from './components/Supportbot';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ChakraProvider } from '@chakra-ui/react';
 import { TransactionsProvider } from './context/TransactionsContext';
+import { DashboardProvider } from './context/DashboardContext';
+import { SubscriptionProvider } from './context/SubscriptionContext';
+import theme from './theme';
+
 // Import your components and contexts
+import LandingPage from './pages/LandingPage';
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import AboutPage from './pages/AboutPage';
+import OAuthCallbackHandler from './pages/OAuthCallbackHandler';
 import HomePage from './pages/HomePage';
 import ExpensesPage from './pages/ExpensesPage';
 import TopUpPage from './pages/TopUpPage';

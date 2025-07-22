@@ -60,7 +60,7 @@ function ImpactPage() {
   const [quote, setQuote] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  // Removed unused 'rating' variable
+  const [rating, setRating] = useState(0); // Added rating state
   const [testimonials, setTestimonials] = useState(() => {
     // Ignore localStorage for now to always show the new profiles
     return [
@@ -257,7 +257,7 @@ function ImpactPage() {
                   <Flex align="center" mb={4}>
                     <Avatar src={testimonial.avatar} name={testimonial.name} size="xl" mr={4} />
                     <VStack align="start" flex="1">
-                      <Text fontSize="lg" fontStyle="italic" color={textColor}>{testimonial.quote}"</Text>
+                      <Text fontSize="lg" fontStyle="italic" color={textColor}>{testimonial.quote}</Text>
                       <HStack mt={2}>
                         {Array(5).fill('').map((_, starIndex) => (
                           <MotionIcon
@@ -325,7 +325,7 @@ function ImpactPage() {
           <Divider my={8} />
 
           <Box bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)">
-            <Heading as="h2" size="lg" mb={4}>Communities We've Reached</Heading>
+            <Heading as="h2" size="lg" mb={4}>Communities We&apos;ve Reached</Heading>
             <ImpactMapPreview />
           </Box>
         </Stack>

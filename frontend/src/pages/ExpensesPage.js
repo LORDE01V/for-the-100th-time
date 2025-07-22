@@ -44,6 +44,8 @@ const ExpensesPage = () => {
     }
   ]);
 
+  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+
   const headingColor = useColorModeValue('gray.800', 'white');
   const textColor = useColorModeValue('gray.800', 'white');
   const subTextColor = useColorModeValue('gray.600', 'white');
