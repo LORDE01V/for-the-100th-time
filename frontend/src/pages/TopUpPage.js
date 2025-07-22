@@ -43,11 +43,11 @@ function TopUpPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // State for form fields and balance
-  const [currentBalance, setCurrentBalance] = useState(150.50); // Mock initial balance
-  const [amount, setAmount] = useState(''); // Amount to top-up
-  const [promoCode, setPromoCode] = useState(''); // Optional promo code
-  const [voucherCode, setVoucherCode] = useState(''); // Optional voucher code
-  const [isProcessing, setIsProcessing] = useState(false); // Loading state for top-up button
+  const [balance, setBalance] = useState('R0.00'); // Default balance
+  const [amount, setAmount] = useState('');
+  const [promoCode, setPromoCode] = useState('');
+  const [voucherCode, setVoucherCode] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false); // Corrected typo
 
   // New state for Auto-Top-Up
   const [isAutoTopUpEnabled, setIsAutoTopUpEnabled] = useState(false);
@@ -76,14 +76,50 @@ function TopUpPage() {
 
   // Basic check if user data is available. ProtectedRoute handles the main redirection,
   // but this can help if the user object is null for some reason after landing here.
-  useEffect(() => {
-      if (!user) {
-          navigate('/login');
-      }
-  }, [user, navigate]); // Effect runs on component mount and if user/navigate changes
+   // Effect runs on component mount and if user/navigate changes
+   useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
+
+
+
+   useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const response = await api.get('/api/user/balance'); // API endpoint to fetch balance
+        setBalance(`R${response.data.balance.toFixed(2)}`);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+      }
+    };
+  
+    fetchBalance();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchAutoTopUpSettings = async () => {
+      if (!user?.id) return;
+      try {
+        const response = await api.get('/api/user/auto-topup-settings', {
+          params: { user_id: user.id }
+        });
+        const data = response.data;
+        setIsAutoTopUpEnabled(!!data.is_auto_topup);
+        setMinBalance(data.min_balance ? data.min_balance.toString() : '');
+        setAutoTopUpAmount(data.auto_topup_amount ? data.auto_topup_amount.toString() : '');
+        setAutoTopUpFrequency(data.auto_topup_frequency || 'weekly');
+      } catch (error) {
+        // Optionally handle error
+      }
+    };
+    fetchAutoTopUpSettings();
+  }, [user]); 
   // Handler for Auto-Top-Up settings
-  const handleAutoTopUpSave = () => {
+  const handleAutoTopUpSave = async () => {
     if (!minBalance || !autoTopUpAmount) {
       toast({
         title: 'Missing Information',
@@ -94,10 +130,17 @@ function TopUpPage() {
       });
       return;
     }
-
-    // Simulate saving Auto-Top-Up settings
+  
     setIsProcessing(true);
-    setTimeout(() => {
+    try {
+      //const response =
+       await api.post('/api/user/auto-topup-settings', {
+        user_id: user?.id,
+        is_auto_topup: true,
+        min_balance: parseFloat(minBalance),
+        auto_topup_amount: parseFloat(autoTopUpAmount),
+        auto_topup_frequency: autoTopUpFrequency,
+      });
       setIsProcessing(false);
       setIsAutoTopUpEnabled(true);
       onClose();
@@ -108,69 +151,103 @@ function TopUpPage() {
         duration: 5000,
         isClosable: true,
       });
-    }, 1500);
+    } catch (error) {
+      setIsProcessing(false);
+      toast({
+        title: 'Failed to Save Settings',
+        description: error.response?.data?.error || 'Could not save auto top-up settings.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   // Handler for the Top-Up button click
+  // const handleTopUp = async (e) => {
+  //   e.preventDefault();
+  
   const handleTopUp = async (e) => {
     e.preventDefault();
   
     const topUpAmount = parseFloat(amount);
     if (isNaN(topUpAmount) || topUpAmount <= 0) {
-        toast({
-            title: 'Invalid Amount',
-            description: 'Please enter a valid positive amount.',
-            status: 'warning',
-            duration: 3000,
-            isClosable: true,
-        });
-        return;
+      toast({
+        title: 'Invalid Amount',
+        description: 'Please enter a valid positive amount.',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
     }
-
+  
     setIsProcessing(true);
   
     const data = {
-        user_id: user?.id,  // Using optional chaining for safety
-        amount: topUpAmount,
-        promo_code: promoCode,
-        voucher_code: voucherCode,
-        transaction_type: transactionType,
-        is_auto_topup: isAutoTopUpEnabled,
-        min_balance: isAutoTopUpEnabled ? parseFloat(minBalance) : null,
-        auto_topup_amount: isAutoTopUpEnabled ? parseFloat(autoTopUpAmount) : null,
-        auto_topup_frequency: isAutoTopUpEnabled ? autoTopUpFrequency : null,
-    };
-
-    try {
-        const response = await api.post('/api/topup', data); // Remove manual CSRF handling
+      user_id: user?.id, // Using optional chaining for safety
+      amount: topUpAmount,
+      promo_code: promoCode,
+      voucher_code: voucherCode,
+      transaction_type: transactionType,
       
-      if (response.status === 200 && response.data.success) {
-        // Update balance and show success
-        setCurrentBalance(prev => prev + topUpAmount);
+    };
+  
+    
+      try {
+        const response = await api.post('/api/user/topup', data);
+        console.log('Top-up response:', response);
+        if (response.status === 200 && response.data.success) {
+          const newBalanceRaw = response.data.newBalance;
+      const newBalance = Number(newBalanceRaw);
+      if (isNaN(newBalance)) {
+        toast({
+          title: 'Payment Succeeded, but...',
+          description: `Could not parse new balance: ${newBalanceRaw}`,
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
+        });
+        setBalance('R0.00');
+      } else {
+        setBalance(`R${newBalance.toFixed(2)}`);
         toast({
           title: 'Success!',
-          description: `New balance: R${(currentBalance + topUpAmount).toFixed(2)}`,
+          description: `New balance: R${newBalance.toFixed(2)}`,
           status: 'success',
           duration: 5000,
           isClosable: true,
         });
       }
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 
-                      error.response?.data?.error || 
-                      'Payment service unavailable';
-      
-      toast({
-        title: 'Payment Failed',
-        description: errorMessage,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+        
+        } else {
+          // If the response is not as expected, show an error
+          toast({
+            title: 'Payment Failed',
+            description: response.data?.message || 'Unexpected response from server',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.error('Top-up error:', error);
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          'Payment service unavailable';
+    
+        toast({
+          title: 'Payment Failed',
+          description: errorMessage,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      } finally {
+        setIsProcessing(false);
+      }
+    }; 
 
   // Render loading spinner if user is being checked (though ProtectedRoute handles the redirect)
   if (!user) {
@@ -236,8 +313,8 @@ function TopUpPage() {
         <Box mb={6}>
             <Text fontSize="md" color={textColor}>Current Energy Credit Balance:</Text>
             <Text fontSize="3xl" fontWeight="bold" color={textColor}>
-                R{currentBalance.toFixed(2)} {/* Display balance formatted */}
-            </Text>
+                {balance} {/* Display balance formatted */}
+</Text>
         </Box>
 
 

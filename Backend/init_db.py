@@ -38,11 +38,27 @@ def init_db_tables():
 
 def init_db():
     """Initialize PostgreSQL database with required tables"""
+    conn, cur = connect_db()
+    if not conn or not cur:
+        raise Exception("Database connection failed")
+
     try:
-        initialize_db()  # Use the existing function from support.py
+        # Example table creation logic
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS example_table (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL
+        )
+        """)
+        conn.commit()
         print("✅ PostgreSQL tables initialized successfully!")
     except Exception as e:
+        conn.rollback()
         print(f"🚨 Initialization failed: {e}")
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
 
 if __name__ == '__main__':
-    init_db()
+    initialize_db()

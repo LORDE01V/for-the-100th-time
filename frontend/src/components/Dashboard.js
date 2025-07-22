@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api';
+import { auth, fetchRecommendationPlan } from '../services/api';
+import { useEffect, useState } from 'react';
 
 // Chakra UI
 import {
@@ -39,60 +41,91 @@ const ChakraIcon = ({ icon, ...props }) => {
   return <Icon as={ChakraComp} {...props} />;
 };
 
-function DashboardPage() {
-  const navigate = useNavigate();
-  const user = auth.getCurrentUser();
-  const [selectedArea, setSelectedArea] = useState(null); // State for selected area
-  const [areas, setAreas] = useState([]); // State for available areas
-  const { setEnabledWidgets } = useContext(DashboardContext);
+function DashboardPage() { // Renamed component to DashboardPage
+    const navigate = useNavigate();
+    const user = auth.getCurrentUser(); // Get user data
 
-  useEffect(() => {
-    const fetchAreas = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/areas');
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+    const [recommendationPlan, setRecommendationPlan] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadRecommendationPlan = async () => {
+            try {
+                const data = await fetchRecommendationPlan();
+                if (data.success) {
+                    setRecommendationPlan(data.plan);
+                } else {
+                    setError(data.message || 'No recommendation plan available');
+                }
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        loadRecommendationPlan();
+    }, []);
+
+    // Placeholder data - replace with actual data fetching if needed
+    const dashboardData = {
+        batteryLevel: '85%',
+        powerStatus: 'Stable',
+        contract: {
+            id: 'CNT-2025-001',
+            status: 'ACTIVE',
+            progress: 33, // in percentage
+            paymentsMade: 4,
+            totalPayments: 12
         }
-        const data = await response.json();
-        setAreas(data);
-      } catch (error) {
-        console.error("Error fetching areas:", error);
-      }
     };
-    fetchAreas();
-  }, []);
-
-  const dashboardData = {
-    batteryLevel: '85%',
-    powerStatus: 'Stable',
-    contract: {
-      id: 'CNT-2025-001',
-      status: 'ACTIVE',
-      progress: 33,
-      paymentsMade: 4,
-      totalPayments: 12,
-    },
-  };
 
   const handleLogout = () => {
     auth.logout();
     navigate('/login');
   };
 
-  const cardBg = useColorModeValue('white', 'gray.700');
-  const textColor = useColorModeValue('gray.700', 'gray.200');
-  const bgColor = useColorModeValue('gray.50', 'gray.800');
+    const handleBackClick = () => {
+        navigate('/'); // Redirects to the homepage
+    };
 
-  return (
-    <Box maxW="1200px" mx="auto" p={[4, 6, 8]} minH="100vh" bg={bgColor}>
-      <Flex justify="space-between" align="center" mb={8} pt={4}>
-        <Box>
-          <Heading as="h1" size="xl" color={textColor}>
-            Welcome back, {user?.name}
-          </Heading>
-          <Text fontSize="sm" color="gray.500">Your financial dashboard</Text>
-        </Box>
-      </Flex>
+    const handleIconClick = () => {
+        navigate('/settings'); // Example: Navigate to settings page
+    };
+
+    const cardBg = useColorModeValue('white', 'gray.700'); // Card background based on color mode
+    const textColor = useColorModeValue('gray.700', 'gray.200'); // Text color
+    const bgColor = useColorModeValue('gray.50', 'gray.800'); // Overall background color
+
+    return (
+        <Box maxW="1200px" mx="auto" p={[4, 6, 8]} minH="100vh" bg={bgColor} position="relative"> {/* Centered container */}
+
+            {/* Top-Left Icon */}
+            <Box
+                position="fixed"
+                top="20px"
+                left="20px"
+                zIndex="1000"
+                cursor="pointer"
+                p={3}
+                bg={useColorModeValue('white', 'rgba(0, 0, 0, 0.6)')} // Frosted glass effect
+                backdropFilter="blur(16px)"
+                border="1px solid"
+                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderRadius="full"
+                boxShadow="lg"
+                onClick={handleIconClick}
+            >
+                <Icon as={BatteryCharging} boxSize={6} color="blue.500" />
+            </Box>
+
+            {/* Header / Welcome Bar */}
+            <Flex justify="space-between" align="center" mb={8} pt={4}> {/* Added padding top */}
+                <Box>
+                    <Heading as="h1" size="xl" color={textColor}>
+                        Welcome back, {user?.name}
+                    </Heading>
+                    <Text fontSize="sm" color="gray.500">Your financial dashboard</Text> {/* Subtitle */}
+                </Box>
+            </Flex>
 
       {/* Dashboard Cards */}
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mb={8}>
@@ -108,93 +141,109 @@ function DashboardPage() {
           </Text>
         </Box>
 
-        {/* Power Status */}
-        <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
-          <HStack mb={2}>
-            <ChakraIcon icon={Zap} boxSize={6} color="green.500" />
-            <Heading as="h3" size="md" color={textColor}>Power Status</Heading>
-          </HStack>
-          <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-            {dashboardData.powerStatus}
-          </Text>
-        </Box>
+                {/* Power Status Block */}
+                <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
+                    <HStack mb={2}>
+                        <ChakraIcon icon={Zap} boxSize={6} color="green.500" />
+                        <Heading as="h3" size="md" color={textColor}>Power Status</Heading>
+                    </HStack>
+                    <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+                        {dashboardData.powerStatus}
+                    </Text>
+                </Box>
 
-        {/* Area Selection Dropdown */}
-        <Box p={4} boxShadow="md" borderRadius="lg" bg={cardBg}>
-          <FormControl>
-            <FormLabel htmlFor="area-select" color={textColor}>Select Loadshedding Area</FormLabel>
-            <Select
-              id="area-select"
-              placeholder="Select an area"
-              onChange={(e) => {
-                const selectedId = e.target.value;
-                const area = areas.find(a => String(a.id) === selectedId);
-                setSelectedArea(area || null);
-              }}
-              value={selectedArea ? selectedArea.id : ""}
-            >
-              {areas.map((area) => (
-                <option key={area.id} value={area.id}>
-                  {area.name}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
+                {/* Live Contract Block */}
+                <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg} gridColumn={{ base: 'span 1', lg: 'span 3' }}> {/* Span full width on larger screens */}
+                    <Flex justify="space-between" align="center" mb={4}>
+                        <HStack>
+                            <ChakraIcon icon={FileText} boxSize={6} color="blue.600" />
+                            <Heading as="h3" size="md" color={textColor}>Live Contract</Heading>
+                        </HStack>
+                        <Badge colorScheme="green" variant="solid" borderRadius="full" px={3} py={1} fontSize="xs">
+                            <HStack spacing={1} alignItems="center">
+                                <ChakraIcon icon={CircleDot} boxSize={2.5} fill="currentColor" />
+                                <Text>LIVE</Text>
+                            </HStack>
+                        </Badge>
+                    </Flex>
 
-        {/* Loadshedding Widget Here */}
-        <Box p={4} boxShadow="md" borderRadius="lg" bg={cardBg} gridColumn={{ base: 'span 1', lg: 'span 1' }}>
-          <LoadsheddingStatus selectedArea={selectedArea} />
-        </Box>
+                    <VStack spacing={4} align="stretch" fontSize="sm" color={textColor}>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Contract ID</Text>
+                            <Text>{dashboardData.contract.id}</Text>
+                        </HStack>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Status</Text>
+                            <Badge colorScheme="green" variant="subtle">{dashboardData.contract.status}</Badge>
+                        </HStack>
+                        <Box>
+                            <Text fontWeight="medium" mb={1}>Progress</Text>
+                            <Progress value={dashboardData.contract.progress} size="sm" colorScheme="blue" hasStripe isAnimated borderRadius="full" />
+                            <Text fontSize="xs" color="gray.500" mt={1}>
+                                {dashboardData.contract.paymentsMade}/{dashboardData.contract.totalPayments} payments
+                            </Text>
+                        </Box>
+                    </VStack>
+                </Box>
 
-        {/* Live Contract Section */}
-        <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg} gridColumn={{ base: 'span 1', lg: 'span 3' }}>
-          <Flex justify="space-between" align="center" mb={4}>
-            <HStack>
-              <ChakraIcon icon={FileText} boxSize={6} color="blue.600" />
-              <Heading as="h3" size="md" color={textColor}>Live Contract</Heading>
-            </HStack>
-            <Badge colorScheme="green" variant="solid" borderRadius="full" px={3} py={1} fontSize="xs">
-              <HStack spacing={1} alignItems="center">
-                <ChakraIcon icon={CircleDot} boxSize={2.5} fill="currentColor"/>
-                <Text>LIVE</Text>
-              </HStack>
-            </Badge>
-          </Flex>
+                {/* Additional sections */}
+                <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg} gridColumn={{ base: 'span 1', md: 'span 2', lg: 'span 1' }}>
+                    <Heading as="h3" size="md" mb={2} color={textColor}>Additional Info</Heading>
+                    <Text fontSize="sm" color={textColor}>This is another section for more content or charts.</Text>
+                </Box>
 
-          <VStack spacing={4} align="stretch" fontSize="sm" color={textColor}>
-            <HStack justify="space-between">
-              <Text fontWeight="medium">Contract ID</Text>
-              <Text>{dashboardData.contract.id}</Text>
-            </HStack>
-            <HStack justify="space-between">
-              <Text fontWeight="medium">Status</Text>
-              <Badge colorScheme="green" variant="subtle">{dashboardData.contract.status}</Badge>
-            </HStack>
-            <Box>
-              <Text fontWeight="medium" mb={1}>Progress</Text>
-              <Progress value={dashboardData.contract.progress} size="sm" colorScheme="blue" hasStripe isAnimated borderRadius="full"/>
-              <Text fontSize="xs" color="gray.500" mt={1}>
-                {dashboardData.contract.paymentsMade}/{dashboardData.contract.totalPayments} payments
-              </Text>
+                <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
+                    <Heading as="h3" size="md" mb={2} color={textColor}>Stats Overview</Heading>
+                    <Text fontSize="sm" color={textColor}>Stats can go here.</Text>
+                </Box>
+            </SimpleGrid>
+
+            {/* Recommendation Plan Section */}
+            <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg} mt={8}>
+                <Heading as="h3" size="md" mb={4} color={textColor}>
+                    Recommendation Plan
+                </Heading>
+                {error ? (
+                    <Text color="red.500">{error}</Text>
+                ) : recommendationPlan ? (
+                    <VStack spacing={4} align="stretch" fontSize="sm" color={textColor}>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Plan Name</Text>
+                            <Text>{recommendationPlan.name}</Text>
+                        </HStack>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Description</Text>
+                            <Text>{recommendationPlan.description}</Text>
+                        </HStack>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Price</Text>
+                            <Text>${recommendationPlan.price}</Text>
+                        </HStack>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Features</Text>
+                            <Text>{recommendationPlan.features.join(', ')}</Text>
+                        </HStack>
+                    </VStack>
+                ) : (
+                    <Text>Loading...</Text>
+                )}
             </Box>
-          </VStack>
-        </Box>
 
-        {/* Optional Extra Sections */}
-        <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
-          <Heading as="h3" size="md" mb={2} color={textColor}>Stats Overview</Heading>
-          <Text fontSize="sm" color={textColor}>Stats can go here.</Text>
-        </Box>
-      </SimpleGrid>
+            {/* Logout Button */}
+            <Flex justify="center" mt={8}>
+                <Button colorScheme="red" onClick={handleLogout} size="sm" width="fit-content">
+                    Logout
+                </Button>
+            </Flex>
 
-      <Flex justify="center" mt={8}>
-        <Button colorScheme="red" onClick={handleLogout} size="sm" width="fit-content">
-          Logout
-        </Button>
-      </Flex>
-    </Box>
-  );
+            {/* Back Button */}
+            <Flex justify="center" mt={8}>
+                <Button colorScheme="blue" onClick={handleBackClick} size="sm" width="fit-content">
+                    Back
+                </Button>
+            </Flex>
+        </Box>
+    );
 }
 
 export default DashboardPage;

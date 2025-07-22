@@ -8,8 +8,10 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 20000, // 20 second timeout
-    withCredentials: true, // Added for JWT cookies
+    timeout: 30000, // 10-second timeout
+    withCredentials: true, // Include cookies in requests
+    xsrfCookieName: 'csrftoken',  // Add CSRF protection
+    xsrfHeaderName: 'X-CSRFToken'
 });
 
 // Add a request interceptor to add the auth token to requests
@@ -56,7 +58,7 @@ api.interceptors.response.use(
     }
 );
 
-// Auth API calls with improved error handling
+// Auth API calls
 export const auth = {
     login: async (email, password) => {
         try {
@@ -131,9 +133,8 @@ export const auth = {
 // MOCK: Intercept /api/ai/sentiment for local dev/demo
 if (window.location.hostname === 'localhost') {
     const originalPost = api.post;
-    api.post = async function(url, data, ...args) {
+    api.post = async function (url, data, ...args) {
         if (url === '/api/ai/sentiment') {
-            // Simulate network delay
             await new Promise(res => setTimeout(res, 800));
             const text = (data.text || '').toLowerCase();
             let tone = 'neutral';

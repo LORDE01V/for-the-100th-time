@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-comment-textnodes */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaPaperPlane, FaComments } from 'react-icons/fa';
 import {
@@ -10,6 +10,7 @@ import {
   Text,
   Textarea,
   VStack,
+  Spinner, // Ensure Spinner is imported only once
   useColorModeValue,
   useToast,
   Collapse,
@@ -17,7 +18,6 @@ import {
   ListItem,
   SimpleGrid,
   Icon,
-  Spinner,
   Tooltip,
   Container,
   Avatar,
@@ -41,25 +41,8 @@ const ForumPage = () => {
   const [isSummarized, setIsSummarized] = useState(false);
   const [isCheckingTone, setIsCheckingTone] = useState(false);
 
-  const cardBg = useColorModeValue('white', 'rgba(0, 0, 0, 0.6)');
-  const postBg = useColorModeValue('gray.50', 'gray.700');
-  const cardTextColor = useColorModeValue('gray.800', 'white');
-  const borderCol = useColorModeValue('gray.200', 'gray.600');
-
-  useEffect(() => {
-    if (selectedTopic) {
-      const saved = localStorage.getItem(`forumReplies_${selectedTopic.id}`);
-      if (saved) {
-        setReplies((prev) => ({
-          ...prev,
-          [selectedTopic.id]: JSON.parse(saved)
-        }));
-      }
-    }
-  }, [selectedTopic]);
-
-  // Mock data for forum topics
-  const topics = [
+  // Mock data for dummyTopics
+  const dummyTopics = useMemo(() => [
     {
       id: 1,
       title: 'Solar Panel Maintenance Tips',
@@ -1203,7 +1186,7 @@ const ForumPage = () => {
         }
       ]
     }
-  ];
+  ]);
 
   const mockSummarize = (message) => {
     const firstSentence = message.split('.')[0] || message;
@@ -1227,16 +1210,12 @@ const ForumPage = () => {
     const userName = localStorage.getItem('forumUserName') || 'You';
     const topicId = selectedTopic.id;
 
-    // Edit: Now that replies is defined, this will work correctly
     const newReplies = { ...replies };
     if (!newReplies[topicId]) newReplies[topicId] = [];
     const reply = { name: userName, message: newMessage, timestamp: Date.now() };
     newReplies[topicId].push(reply);
 
-    setReplies(newReplies);  // Now setReplies is defined and can be used
-
-    // Save to localStorage
-    localStorage.setItem(`forumReplies_${topicId}`, JSON.stringify(newReplies[topicId]));
+    setReplies(newReplies);
 
     toast({
       title: 'Message Posted',
@@ -1264,13 +1243,7 @@ const ForumPage = () => {
 
     setIsLoading(true);
     try {
-      const mockedSummary = selectedTopic.posts
-        .map(post => {
-          const summary = mockSummarize(post.message);
-          return summary.length > 120 ? `${summary.substring(0, 120)}...` : summary;
-        })
-        .filter(Boolean);
-
+      const mockedSummary = mockSummarize(selectedTopic.posts);
       setSummary(mockedSummary);
     } catch (error) {
       console.error('Summarization error:', error);
@@ -1286,20 +1259,31 @@ const ForumPage = () => {
     }
   };
 
-  const handleShowFullPosts = () => setIsSummarized(false);
-
-  const handleCheckTone = () => {
-    setIsCheckingTone(true); // Set isCheckingTone to true
-    const wordCount = newMessage.trim().split(/\s+/).length;
-    if (wordCount < 8) {
-      setTone('neutral');
-    } else {
-      // Simple mock: positive if contains "good", negative if "bad", else neutral
-      if (/good|great|excellent|love|awesome/i.test(newMessage)) setTone('positive');
-      else if (/bad|terrible|hate|awful|poor/i.test(newMessage)) setTone('negative');
-      else setTone('neutral');
+  const handleCheckTone = async () => {
+    if (!newMessage.trim()) {
+      toast({
+        title: 'Please enter some text to check the tone.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
     }
-    setIsCheckingTone(false); // Set isCheckingTone to false after tone check
+    setIsCheckingTone(true);
+    setTone(null);
+    try {
+      const response = await api.post('/api/ai/sentiment', { text: newMessage });
+      setTone(response.data.tone);
+    } catch (error) {
+      toast({
+        title: 'Failed to check tone. Please try again.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsCheckingTone(false);
+    }
   };
 
   const renderTone = () => {
@@ -1317,8 +1301,8 @@ const ForumPage = () => {
   };
 
   const renderTopicsList = () => (
-    <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={8} w='100%'>
-      {topics.map((topic) => (
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w='full'>
+      {dummyTopics.map((topic) => (
         <Box
           key={topic.id}
           p={6}
@@ -1534,14 +1518,14 @@ const ForumPage = () => {
             {selectedTopic ? 'Back to Topics' : 'Back to Home'}
           </Button>
 
-          <VStack spacing={8} align="stretch">
-            <Heading size="xl" textAlign="center" color={textColor}>
-              🌍 Community Forum
-            </Heading>
-            {selectedTopic ? renderTopicDiscussion() : renderTopicsList()}
-          </VStack>
-        </Box>
-      </Container>
+        <VStack spacing={8} align="stretch">
+          <Heading size="xl">Community Forum</Heading>
+          {selectedTopic 
+            ? renderTopicDiscussion() 
+            : renderTopicsList()
+          }
+        </VStack>
+      </Box>
     </Box>
   );
 };

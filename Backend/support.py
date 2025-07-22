@@ -57,6 +57,8 @@ def execute_query(operation=None, query=None, params=None):
         raise Exception("Database connection failed")
 
     try:
+        if not query:
+            raise ValueError("Query cannot be None or empty")
         if params:
             cur.execute(query, params)
         else:
@@ -66,7 +68,8 @@ def execute_query(operation=None, query=None, params=None):
             return cur.fetchall()
         elif operation == 'insert':
             conn.commit()
-            return cur.fetchone()[0] if cur.description else None
+            result = cur.fetchone()
+            return result[0] if result and cur.description else None
     except Exception as e:
         if conn:
             conn.rollback()
@@ -167,6 +170,8 @@ def get_user_contracts(user_id):
 def record_payment(contract_id, amount, payment_method):
     """Record a payment and update contract balance"""
     conn, cur = connect_db()
+    if not cur:
+        raise Exception("Database connection failed. Cursor is None")
     try:
         cur.execute("BEGIN")
         # Record payment
@@ -180,10 +185,16 @@ def record_payment(contract_id, amount, payment_method):
         SET payments_made = payments_made + %s
         WHERE id = %s
         """, (amount, contract_id))
-        conn.commit()
+        
+
+        if conn:
+            conn.commit()
+        else:
+            raise Exception("Database connection failed. Connection is None")
         return True
     except Exception as e:
-        conn.rollback()
+        if conn:
+            conn.rollback()
         print(f"🚨 Payment failed: {e}")
         return False
     finally:
@@ -200,9 +211,116 @@ def get_payment_history(contract_id):
     """
     return execute_query('search', query, (contract_id,))
 
-# ================== DB INITIALIZATION ==================
+
+def save_support_request(name, email, subject, message):
+    query = """
+    INSERT INTO support_requests (name, email, subject, message)
+    VALUES (%s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (name, email, subject, message))
+
+def save_community_story(user_name, story_text, rating):
+    query = """
+    INSERT INTO community_stories (user_name, story_text, rating)
+    VALUES (%s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (user_name, story_text, rating))
+
+
+def get_all_community_stories():
+    query = """
+    SELECT id, user_name, story_text, rating, created_at
+    FROM community_stories
+    ORDER BY created_at DESC
+    """
+    return execute_query('select', query)
+
+def save_profile_details(full_name, surname, email, phone_number, address):
+    query = """
+    INSERT INTO users (full_name, surname, email, phone_number, address)
+    VALUES (%s, %s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (full_name, surname, email, phone_number, address))
+
+def create_event(title, start, end, description, location, event_type):
+    """Insert a new event into the events table."""
+    query = """
+    INSERT INTO events_calendar (title, start, "end", description, location, event_type)
+    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;
+    """
+    print(f"Creating event with: {title}, {start}, {end}, {description}, {location}, {event_type}")
+    return execute_query('insert', query, (title, start, end, description, location, event_type))
+
+def get_all_events():
+    """Retrieve all events from the events table."""
+    query = "SELECT id, title, start, \"end\", description, location, event_type FROM events_calendar;"
+    result = execute_query('search', query)
+    columns = ['id', 'title', 'start', 'end', 'description', 'location', 'event_type']
+    if result:
+        return [dict(zip(columns, row)) for row in result]
+    
+
+
+def delete_event(event_id):
+    """Delete an event by its ID."""
+    query = "DELETE FROM events_calendar WHERE id = %s;"
+    execute_query('insert', query, (event_id,))
+
+def get_user_balance(user_id):
+    """Fetch the current balance for a user."""
+    query = "SELECT current_balance FROM topup_settings WHERE user_id = %s"
+    result = execute_query('search', query, (user_id,))
+    if result:
+        return result[0][0]  # Return the balance
+    return 0.0  # Default to 0.0 if no balance is found
+
+def update_user_balance(user_id, amount):
+    print(f"Updating balance for user_id={user_id}, amount={amount}")
+    # First, try to update the balance
+    query = """
+    UPDATE topup_settings
+    SET current_balance = current_balance + %s, updated_at = CURRENT_TIMESTAMP
+    WHERE user_id = %s
+    RETURNING current_balance
+    """
+    result = execute_query('search', query, (amount, user_id))
+    print(f"Update result: {result}")
+    if result:
+        return result[0][0]  # Return the updated balance
+
+    # If no row was updated, insert a new row for this user
+    print("No existing topup_settings row for user, inserting new row...")
+    insert_query = """
+    INSERT INTO topup_settings (user_id, current_balance)
+    VALUES (%s, %s)
+    RETURNING current_balance
+    """
+    insert_result = execute_query('search', insert_query, (user_id, amount))
+    print(f"Insert result: {insert_result}")
+    if insert_result:
+        return insert_result[0][0]
+    raise Exception("Failed to update or insert user balance")
+
+
+def save_auto_topup_settings(user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency):
+    query = """
+    INSERT INTO topup_settings (user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency)
+    VALUES (%s, %s, %s, %s, %s)
+    ON CONFLICT (user_id) DO UPDATE SET
+        is_auto_topup = EXCLUDED.is_auto_topup,
+        min_balance = EXCLUDED.min_balance,
+        auto_topup_amount = EXCLUDED.auto_topup_amount,
+        auto_topup_frequency = EXCLUDED.auto_topup_frequency,
+        updated_at = CURRENT_TIMESTAMP
+    RETURNING id
+    """
+    return execute_query('insert', query, (user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency))
+
+# Initialize database tables when module loads
 def initialize_db():
     conn, cur = connect_db()
+    if not cur:
+        raise Exception("Database connection failed. Cursor is None")
     try:
         cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -242,10 +360,139 @@ def initialize_db():
             payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             payment_method VARCHAR(50)
         )""")
-        conn.commit()
+
+        
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS support_requests (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            subject VARCHAR(255),
+            message TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS community_stories (
+            id SERIAL PRIMARY KEY,
+            user_name VARCHAR(100) NOT NULL,
+            story_text TEXT NOT NULL,
+            rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS profiledetails (
+            id INTEGER PRIMARY KEY,
+            full_name TEXT NOT NULL,
+            surname TEXT NOT NULL,
+            email TEXT,
+            phone_number TEXT,
+            address TEXT
+        )
+    """)
+ 
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS notification_preference (
+            user_id INTEGER PRIMARY KEY,
+            receive_sms BOOLEAN NOT NULL DEFAULT TRUE,
+            receive_email BOOLEAN NOT NULL DEFAULT TRUE,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+""")
+
+        cur.execute("""
+        CREATE OR REPLACE FUNCTION update_updated_at_column()
+        RETURNS TRIGGER AS $$
+        BEGIN
+            NEW.updated_at = CURRENT_TIMESTAMP;
+            RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+""")
+
+        cur.execute("""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+            SELECT 1
+            FROM pg_trigger
+            WHERE tgname = 'set_updated_at'
+        ) THEN
+            CREATE TRIGGER set_updated_at
+            BEFORE UPDATE ON notification_preference
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+        END IF;
+        END;
+        $$;
+    """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS events_calendar (
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            start TIMESTAMP NOT NULL,
+            "end" TIMESTAMP NOT NULL,
+            description TEXT NOT NULL,
+            location VARCHAR(255) NOT NULL,
+            event_type VARCHAR(50) NOT NULL
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS topup_transactions (
+            id SERIAL PRIMARY KEY,                     
+            user_id INTEGER NOT NULL,                  
+            amount DECIMAL(10, 2) NOT NULL,            
+            promo_code VARCHAR(50),                    
+            voucher_code VARCHAR(50),                  
+            transaction_type VARCHAR(50) NOT NULL,              
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+);
+""")
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS topup_settings (
+            id SERIAL PRIMARY KEY,                     
+            user_id INTEGER NOT NULL UNIQUE, 
+            current_balance DECIMAL(10, 2) DEFAULT 0.0,          
+            is_auto_topup BOOLEAN DEFAULT FALSE,      
+            min_balance DECIMAL(10, 2),                
+            auto_topup_amount DECIMAL(10, 2),          
+            auto_topup_frequency VARCHAR(50),         
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+            FOREIGN KEY (user_id) REFERENCES users(id) 
+); 
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS expenses (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                amount NUMERIC(10, 2) NOT NULL,
+                category VARCHAR(50) NOT NULL,
+                status VARCHAR(20) DEFAULT 'Paid'
+            );
+        """)
+
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS notifications (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                message TEXT NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                is_read BOOLEAN DEFAULT FALSE
+    );
+""")
+
+        if conn:
+            conn.commit()
         print("✅ Database tables initialized")
     except Exception as e:
-        conn.rollback()
+        if conn:
+            conn.rollback()
         print(f"🚨 Database initialization failed: {e}")
         raise
     finally:
@@ -259,10 +506,19 @@ initialize_db()
 if __name__ == "__main__":
     try:
         conn, cur = connect_db()
+        if not conn or not cur:
+            raise Exception("Database connection failed. Connection or cursor is None")
         print("✅ Database connection successful!")
         cur.execute("SELECT version()")
-        print("PostgreSQL version:", cur.fetchone()[0])
+        result = cur.fetchone()
+        if result:
+            print("PostgreSQL version: ", result[0])
+        else:
+            print("🚨 Failed to get PosstgreSQl version.")
+
     except Exception as e:
         print("🚨 Database connection failed:", e)
     finally:
+        if cur: cur.close()
         if conn: conn.close()
+        

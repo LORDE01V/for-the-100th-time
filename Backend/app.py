@@ -11,33 +11,12 @@ from chat_interface import EnhancedChatbot
 import logging
 from authlib.integrations.flask_client import OAuth
 from flask_jwt_extended import JWTManager
-from app.routes.auth import auth_bp
-from functools import lru_cache
-import time
-from huggingface_agent import query_mistral
-from app.routes.ai_agent import ai_agent_bp
+import datetime
+from db_utils import create_topup_table  # Import the new function
+from app.routes.topup import topup_bp  # Add this import
+from app.routes.recommendation_plan import recommendation_bp
 
-# SSL workaround for dev
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-else:
-    ssl._create_default_https_context = _create_unverified_https_context
-
-env_path = Path(__file__).resolve().parent / '.env'
-load_dotenv(dotenv_path=env_path)
-
-# Debug checks for environment variables
-print("🔍 OPEN_METEO_API_URL:", os.getenv("OPEN_METEO_API_URL"))
-print("🔍 FLASK_SECRET_KEY:", os.getenv("FLASK_SECRET_KEY"))
-print("🔍 JWT_SECRET_KEY:", os.getenv("JWT_SECRET_KEY"))
-print("🔍 ONESIGNAL_APP_ID:", os.getenv("ONESIGNAL_APP_ID"))
-print("🔍 ONESIGNAL_API_KEY:", os.getenv("ONESIGNAL_API_KEY"))
-print("ESKOMSEPUSH_API_KEY:", os.getenv("ESKOMSEPUSH_API_KEY")) # Keep this as it's used
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+# Set up logging to console only
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
@@ -72,7 +51,7 @@ chatbot = EnhancedChatbot()
 @app.route('/api/chat', methods=['POST'])
 def chat():
     try:
-        data = request.json
+        data = request.get_json() or {}
         message = data.get('message', '')
         if not message:
             return jsonify({'error': 'Message field is required'}), 400
@@ -499,4 +478,5 @@ def get_loadshedding():
 
 if __name__ == '__main__':
     logger.info("Starting Flask app on port 5000")
+    app.register_blueprint(recommendation_bp)
     app.run(debug=True, port=5000)

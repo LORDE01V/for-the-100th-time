@@ -12,7 +12,20 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // Implement login logic here
+    try {
+      await api.post('/api/auth/login', { email, password });
+      // ...handle successful login...
+    } catch (err) {
+      if (err.response?.data?.message === 'Account does not exist. Please register.') {
+        alert('Account does not exist. Please register.');
+        // Optionally, redirect to register page
+        // navigate('/register');
+      } else {
+        alert('Login failed. Please check your credentials.');
+      }
+    }
+                                                        // Implement login logic here
+    
   };
 
   const handlePasswordReset = async (e) => {

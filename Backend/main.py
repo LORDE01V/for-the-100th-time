@@ -28,9 +28,20 @@ import uvicorn
 from flask import Blueprint, url_for, session
 from email_utils import send_welcome_email
 from app import create_app
-from app.routes.voice_to_text import voice_to_text_bp
-from app.routes.ai_agent import ai_agent_bp
-from app.routes.email_subscription import email_subscription_bp
+from hugging_services import HuggingFaceChatbot
+from app.routes.home import home_bp
+from app.routes.auth import auth_bp
+from support import connect_db
+from app.routes.support import support_bp 
+from app.routes.community_stories import community_stories_bp
+from app.routes.userprofile import profile_bp
+from app.routes.notification_preference import notifications_bp
+from app.routes.events_calendar import events_calendar_bp
+from app.routes.topup import topup_bp
+from Backend.app.routes.expenses import expenses_bp
+from app.routes.expensenotifications import expensenotifications_bp
+from Backend.support import update_user_balance
+
 
 # Add the Backend directory and its parent to the Python path
 backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
@@ -62,26 +73,32 @@ flask_app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
 flask_app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
 flask_app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
 flask_app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+flask_app.config['JWT_HEADER_TYPE'] = 'Bearer' 
 
 # Initialize CORS properly in one place
 CORS(flask_app, 
      resources={r"/api/*": {
          "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000"],
          "supports_credentials": True,
-         "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
-         "expose_headers": ["Authorization"],
+         "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin","X-Requested-With"],
+         #"expose_headers": ["Authorization"],
          "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
      }}
 )
 jwt = JWTManager(flask_app)
 
 # Register blueprints
-# flask_app.register_blueprint(home_bp)
-# flask_app.register_blueprint(auth_bp, name='auth_bp')
-# flask_app.register_blueprint(ai_agent_bp)
-flask_app.register_blueprint(ai_agent_bp)
-flask_app.register_blueprint(voice_to_text_bp)
-flask_app.register_blueprint(email_subscription_bp, url_prefix='/api')
+flask_app.register_blueprint(home_bp)
+#flask_app.register_blueprint(auth_bp, name='auth_bp')
+flask_app.register_blueprint(support_bp)
+flask_app.register_blueprint(community_stories_bp)
+flask_app.register_blueprint(profile_bp)
+flask_app.register_blueprint(notifications_bp, url_prefix='/notifications')
+flask_app.register_blueprint(events_calendar_bp)
+flask_app.register_blueprint(topup_bp, url_prefix='/api')
+flask_app.register_blueprint(expenses_bp, url_prefix='/api')
+flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
+
 
 # Remove the after_request handler entirely to avoid conflicts
 # @flask_app.after_request
@@ -139,6 +156,8 @@ def flask_register():
                 (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
             )
             user_data = cur.fetchone()
+            if not user_data:
+                return jsonify({'success': False, 'message': 'Failed to create user'}), 500
             conn.commit()
 
         send_welcome_email(data['email'], data['name'])
@@ -169,6 +188,8 @@ def flask_login():
             return jsonify({'success': False, 'message': 'Missing credentials'}), 400
 
         conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
         with conn.cursor() as cur:
             cur.execute('''
                 SELECT id, password_hash, full_name 
@@ -192,11 +213,34 @@ def flask_login():
         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
     except Exception as e:
-        flask_app.logger.error(f"Login error: {str(e)}") # Changed app.logger to flask_app.logger
+        flask_app.logger.error(f"Login error: {str(e)}")
         return jsonify({'success': False, 'message': 'Login failed'}), 500
     finally:
         if conn:
             conn.close()
+
+@flask_app.route('/api/topup', methods=['OPTIONS'])
+def handle_topup_options():
+    response = make_response()
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Allow-Credentials'] = 'true' 
+    return response
+
+
+@flask_app.route('/api/topup', methods=['POST'])
+def api_topup():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid request body'}), 400
+    user_id = data.get('user_id')
+    amount = data.get('amount')
+    new_balance = update_user_balance(user_id, amount)
+    return jsonify({'newBalance': new_balance, 'success': True})
+
+
+
 
 @flask_app.route('/api/solar/systems', methods=['POST'])
 @jwt_required()
@@ -321,6 +365,9 @@ async def fastapi_register(user: UserRegister):
     conn = None
     try:
         conn = get_db()
+        if not conn:  # Check if connection failed
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+            
         with conn.cursor() as cur:
             cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
             if cur.fetchone():
@@ -334,37 +381,586 @@ async def fastapi_register(user: UserRegister):
             )
             user_data = cur.fetchone()
             conn.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Account deleted successfully'
+            })
+            
+    # except Exception as e:
+    #         # Rollback in case of error
+    #         if conn:  # Ensure conn is not None before rollback
+    #             conn.rollback()
+    #         print(f"Error during account deletion: {str(e)}")
+    #         raise
+            
+    except Exception as e:
+        print(f"Delete account error: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to delete account'}), 500
+    finally:
+        if 'conn' in locals():
+            if 'cur' in locals(): cur.close()
+            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
+                conn.close()
 
-        return {
-            "success": True,
-            "user": {"id": user_data[0], "email": user_data[1], "name": user_data[2]}
-        }
+# Forum routes
+@flask_app.route('/api/forum/topics', methods=['GET'])
+@jwt_required()
+def get_forum_topics():
+    try:
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+
+        cur = conn.cursor()
+        
+        # Get all topics with author info and reply count
+        cur.execute('''
+            SELECT 
+                t.id,
+                t.title,
+                t.content,
+                t.created_at,
+                u.full_name as author_name,
+                u.id as author_id,
+                COUNT(r.id) as reply_count,
+                COALESCE(MAX(r.created_at), t.created_at) as last_activity
+            FROM forum_topics t
+            LEFT JOIN users u ON t.user_id = u.id
+            LEFT JOIN forum_replies r ON t.id = r.topic_id
+            GROUP BY t.id, u.full_name, u.id
+            ORDER BY last_activity DESC
+        ''')
+        
+        topics = []
+        for row in cur.fetchall():
+            topics.append({
+                'id': row[0],
+                'title': row[1],
+                'content': row[2],
+                'created_at': row[3].isoformat(),
+                'author': {
+                    'id': row[5],
+                    'name': row[4]
+                },
+                'posts': row[6] + 1,  # Include the original post in count
+                'last_activity': row[7].isoformat()
+            })
+        
+        return jsonify({
+            'success': True,
+            'topics': topics
+        })
+
+    except Exception as e:
+        print(f"Error fetching forum topics: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to fetch forum topics'}), 500
+    finally:
+        if 'conn' in locals():
+            if 'cur' in locals(): cur.close()
+            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
+                conn.close()
+
+
+@flask_app.route('/api/stories', methods=['POST'])
+@jwt_required()
+def submit_story():
+    """API endpoint to submit a story"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not all(key in data for key in ['username', 'email', 'story']):
+            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+        
+        username = data['username']
+        email = data['email']
+        story = data['story']
+        
+        # Add story to the database
+        story_id = add_story(username, email, story)
+        if not story_id:
+            return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
+        
+        return jsonify({'success': True, 'story_id': story_id}), 201
+    
+    except Exception as e:
+        print(f"Error submitting story: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
+
+@flask_app.route('/api/forum/topics', methods=['POST'])
+@jwt_required()
+def create_forum_topic():
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        title = data.get('title')
+        content = data.get('content')
+
+        if not all([title, content]):
+            return jsonify({'success': False, 'message': 'Title and content are required'}), 400
+
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+
+        cur = conn.cursor()
+        
+        # Create new topic
+        cur.execute('''
+            INSERT INTO forum_topics (user_id, title, content)
+            VALUES (%s, %s, %s)
+            RETURNING id, created_at
+        ''', (user_id, title, content))
+        
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            return jsonify({'success': False, 'message': 'Failed to create topic'}), 500
+        topic_id, created_at = result
+        
+        # Get author info
+        cur.execute('SELECT full_name FROM users WHERE id = %s', (user_id,))
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            return jsonify({'success': False, 'message': 'Failed to retrieve author name'}), 500
+        author_name = result[0]
+        
+        return jsonify({
+            'success': True,
+            'topic': {
+                'id': topic_id,
+                'title': title,
+                'content': content,
+                'created_at': created_at.isoformat(),
+                'author': {
+                    'id': user_id,
+                    'name': author_name
+                },
+                'posts': 1,
+                'last_activity': created_at.isoformat()
+            }
+        }), 201
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         if conn: conn.close()
 
 @app.post("/fastapi/auth/login")
-async def fastapi_login(user: UserLogin):
+async def fastapi_login(user: UserLogin, topic_id: int):
     """FastAPI version of /api/auth/login"""
     conn = None
     try:
         conn = get_db()
-        with conn.cursor() as cur:
-            cur.execute(
-                'SELECT id, email, password_hash, full_name FROM users WHERE email = %s',
-                (user.email,)
-            )
-            db_user = cur.fetchone()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
 
-            if db_user and check_password_hash(db_user[2], user.password):
-                token = create_access_token(identity=db_user[0])
-                return {
-                    "success": True,
-                    "token": token,
-                    "user": {"id": db_user[0], "name": db_user[3], "email": db_user[1]}
+        cur = conn.cursor()
+        
+        # Get topic with author info
+        cur.execute('''
+            SELECT 
+                t.id,
+                t.title,
+                t.content,
+                t.created_at,
+                u.id as author_id,
+                u.full_name as author_name
+            FROM forum_topics t
+            JOIN users u ON t.user_id = u.id
+            WHERE t.id = %s
+        ''', (topic_id,))
+
+        
+        topic = cur.fetchone()
+        if not topic:
+            return jsonify({'success': False, 'message': 'Topic not found'}), 404
+        
+        # Get all replies for the topic
+        cur.execute('''
+            SELECT 
+                r.id,
+                r.content,
+                r.created_at,
+                u.id as author_id,
+                u.full_name as author_name
+            FROM forum_replies r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.topic_id = %s
+            ORDER BY r.created_at ASC
+        ''', (topic_id,))
+        
+        replies = []
+        for row in cur.fetchall():
+            replies.append({
+                'id': row[0],
+                'content': row[1],
+                'created_at': row[2].isoformat(),
+                'author': {
+                    'id': row[3],
+                    'name': row[4]
                 }
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+            })
+        
+        return jsonify({
+            'success': True,
+            'topic': {
+                'id': topic[0],
+                'title': topic[1],
+                'content': topic[2],
+                'created_at': topic[3].isoformat(),
+                'author': {
+                    'id': topic[4],
+                    'name': topic[5]
+                },
+                'replies': replies
+            }
+        })
+
+    except Exception as e:
+        print(f"Error fetching forum topic: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to fetch forum topic'}), 500
+    finally:
+        if 'conn' in locals():
+            if 'cur' in locals(): cur.close()
+            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
+                conn.close()
+
+@flask_app.route('/api/forum/topics/<int:topic_id>/replies', methods=['POST'])
+@jwt_required()
+def create_forum_reply(topic_id):
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        content = data.get('content')
+        if not content:
+            return jsonify({'success': False, 'message': 'Content is required'}), 400
+
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+
+        cur = conn.cursor()
+        
+        # Verify topic exists
+        cur.execute('SELECT id FROM forum_topics WHERE id = %s', (topic_id,))
+        if not cur.fetchone():
+            return jsonify({'success': False, 'message': 'Topic not found'}), 404
+        
+        # Create reply
+        cur.execute('''
+            INSERT INTO forum_replies (topic_id, user_id, content)
+            VALUES (%s, %s, %s)
+            RETURNING id, created_at
+        ''', (topic_id, user_id, content))
+        
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            return jsonify({'success': False, 'message': 'Failed to create reply'}), 500
+        reply_id, created_at = result
+        
+        # Get author info
+        cur.execute('SELECT full_name FROM users WHERE id = %s', (user_id,))
+        result = cur.fetchone()
+        if not result:  # Ensure the query returned a result
+            return jsonify({'success': False, 'message': 'Failed to retrieve author name'}), 500
+        author_name = result[0]
+        
+        return jsonify({
+            'success': True,
+            'reply': {
+                'id': reply_id,
+                'content': content,
+                'created_at': created_at.isoformat(),
+                'author': {
+                    'id': user_id,
+                    'name': author_name
+                }
+            }
+        }), 201
+
+    except Exception as e:
+        print(f"Error creating forum reply: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to create forum reply'}), 500
+    finally:
+        if 'conn' in locals():
+            if 'cur' in locals(): cur.close()
+            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
+                conn.close()
+
+
+# GET /api/events - Fetch all events
+@flask_app.route('/api/events', methods=['GET'])
+@jwt_required()
+def get_events():
+    try:
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute("SELECT date, title, start, end, description, location, event_type FROM events")
+        events = cur.fetchall()
+
+        # Convert events to a dictionary
+        events_dict = {
+            event[0]: {
+                "title": event[1],
+                "start": event[2],
+                "end": event[3],
+                "description": event[4],
+                "location": event[5],
+                "eventType": event[6]
+            }
+            for event in events
+        }
+
+        return jsonify(events_dict), 200
+    except Exception as e:
+        print(f"Error fetching events: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to fetch events'}), 500
+
+# POST /api/events - Save a new event
+@flask_app.route('/api/events', methods=['POST'])
+@jwt_required()
+def save_event():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        # Extract event details
+        date = data.get('date')
+        title = data.get('title')
+        start = data.get('start')
+        end = data.get('end')
+        description = data.get('description')
+        location = data.get('location')
+        event_type = data.get('eventType')
+
+        # Validate required fields
+        if not all([date, title, start, end, description, location, event_type]):
+            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO events (date, title, start, end, description, location, event_type)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (date) DO UPDATE
+            SET title = EXCLUDED.title,
+                start = EXCLUDED.start,
+                end = EXCLUDED.end,
+                description = EXCLUDED.description,
+                location = EXCLUDED.location,
+                event_type = EXCLUDED.event_type
+            """,
+            (date, title, start, end, description, location, event_type)
+        )
+        conn.commit()
+
+        return jsonify({'success': True, 'message': 'Event saved successfully'}), 201
+    except Exception as e:
+        print(f"Error saving event: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to save event'}), 500
+
+# DELETE /api/events/<date> - Delete an event for a specific date
+@flask_app.route('/api/events/<date>', methods=['DELETE'])
+@jwt_required()
+def delete_event(date):
+    try:
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute("DELETE FROM events WHERE date = %s", (date,))
+        if cur.rowcount == 0:
+            return jsonify({'success': False, 'message': 'Event not found'}), 404
+
+        conn.commit()
+        return jsonify({'success': True, 'message': 'Event deleted successfully'}), 200
+    except Exception as e:
+        print(f"Error deleting event: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to delete event'}), 500
+
+
+
+@flask_app.route('/api/support/ticket', methods=['POST', 'OPTIONS'])
+@jwt_required()
+def handle_support_ticket():
+    if request.method == 'OPTIONS':
+        return '', 200
+        
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        print("=== Support Ticket Creation Debug ===")
+        print(f"User ID: {user_id}")
+        print(f"Request Data: {data}")
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        subject = data.get('subject')
+        message = data.get('message')
+
+        if not all([subject, message]):
+            return jsonify({'success': False, 'message': 'Subject and message are required'}), 400
+
+        try:
+            priority = data.get('priority', 'low')
+            ticket_id = create_support_ticket(user_id, subject, message, priority)
+            return jsonify({
+                'success': True,
+                'message': 'Support ticket created successfully',
+                'ticket_id': ticket_id
+            }), 201
+
+        except Exception as e:
+            print(f"Database error: {str(e)}")
+            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
+
+    except Exception as e:
+        print(f"Create support ticket error: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to create support ticket'}), 500
+
+@flask_app.route('/api/payment-methods', methods=['POST'])
+@jwt_required()
+def add_payment_method():
+    try:
+        # Debug logging
+        print("=== Payment Method Creation Request Debug ===")
+        print("Request Headers:", dict(request.headers))
+        print("Request Data:", request.get_json())
+        
+        user_id = get_jwt_identity()
+        print("User ID:", user_id)
+        
+        data = request.get_json()
+        if not data:
+            print("No data received in request")
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+
+        # Validate required fields
+        required_fields = ['type', 'cardNumber', 'expiryDate', 'cardHolderName']
+        for field in required_fields:
+            if field not in data:
+                print(f"Missing required field: {field}")
+                return jsonify({
+                    'success': False,
+                    'message': f'Missing required field: {field}'
+                }), 400
+
+        # Convert frontend field names to backend field names
+        payment_data = {
+            'payment_type': data['type'],
+            'card_number': data['cardNumber'],
+            'expiry_date': data['expiryDate'],
+            'card_holder_name': data['cardHolderName'],
+            'is_default': data.get('isDefault', False)
+        }
+
+        print("Processed payment data:", payment_data)
+
+        # Save payment method
+        conn = get_db()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+        cur = conn.cursor()
+        try:
+            result = save_payment_method(
+                user_id=user_id,
+                payment_type=payment_data['payment_type'],
+                card_number=payment_data['card_number'],
+                expiry_date=payment_data['expiry_date'],
+                card_holder_name=payment_data['card_holder_name'],
+                is_default=payment_data['is_default']
+            )
+
+            print("Save payment method result:", result)
+
+            if result:
+                # Create notification for successful payment method addition
+                try:
+                    # Create notification
+                    cur.execute('''
+                        INSERT INTO notifications (user_id, title, message, type)
+                        VALUES (%s, %s, %s, %s)
+                    ''', (
+                        user_id,
+                        'Payment Method Added',
+                        f'Successfully added a new {payment_data["payment_type"]} payment method.',
+                        'success'
+                    ))
+                    conn.commit()
+                except Exception as e:
+                    print(f"Error creating notification: {str(e)}")
+                    conn.rollback()
+
+            return jsonify({
+                'success': True,
+                'message': 'Payment method saved successfully',
+                'payment_method_id': result
+            })
+        except Exception as e:
+            print("Error saving payment method:", str(e))
+            import traceback
+            print("Traceback:", traceback.format_exc())
+            return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        print("Error saving payment method:", str(e))
+        import traceback
+        print("Traceback:", traceback.format_exc())
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@flask_app.route('/api/payment-methods', methods=['GET'])
+@jwt_required()
+def get_payment_methods():
+    try:
+        user_id = get_jwt_identity()
+        payment_methods = fetch_user_payment_methods(user_id)
+        
+        # Format the payment methods for the frontend
+        formatted_methods = []
+        
+        # Check if payment_methods is not None and is iterable
+        if payment_methods:
+            for method in payment_methods:
+                try:
+                    formatted_method = {
+                        'id': method['id'],  # Assuming id is the first column
+                        'payment_type': method['payment_type'],
+                        'card_number': method['card_number'],
+                        'expiry_date': method['expiry_date'].strftime('%m/%y') if method['expiry_date'] else None,
+                        'card_holder_name': method['card_holder_name'],
+                        'is_default': method['is_default'],
+                        'created_at': method['created_at'].isoformat() if method['created_at'] else None  # Add created_at
+                    }
+                    formatted_methods.append(formatted_method)
+                except (IndexError, AttributeError) as e:
+                    print(f"Error formatting payment method: {str(e)}")
+                    continue
+        
+        print("Debug - Formatted payment methods:", formatted_methods)  # Debug log
+        
+        return jsonify({
+            'success': True,
+            'payment_methods': formatted_methods
+        })
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:

@@ -57,10 +57,10 @@ def create_app():
         }
     )
     
-    # Register no blueprints for isolation
-    # from .routes.auth import auth_bp
-    # app.register_blueprint(auth_bp)
-    # app.register_blueprint(topup_bp)
-    # from .routes.ai_agent import ai_agent_bp
-    # app.register_blueprint(ai_agent_bp)
-    return app
+    # Register blueprints
+    from .routes.auth import auth_bp
+    app.register_blueprint(auth_bp)
+    #app.register_blueprint(topup_bp)
+    
+    
+    return app 

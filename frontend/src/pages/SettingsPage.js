@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api'; // Assuming auth service is still used
-
+import api from '../services/api';
 // Import Chakra UI Components
 import {
   Box,
@@ -96,139 +96,131 @@ function SettingsPage() {
 
   // Handle Password Change Submission (Mock API call)
   const handleChangePassword = async (e) => {
-      e.preventDefault();
-      setPasswordErrors({}); // Clear previous errors
-      setPasswordChangeStatus(null); // Clear previous status
+    e.preventDefault();
+    setPasswordErrors({});
+    setPasswordChangeStatus(null);
 
-      // Basic validation
-      const errors = {};
-      if (!oldPassword) errors.oldPassword = 'Old password is required';
-      if (!newPassword) {
-           errors.newPassword = 'New password is required';
-      } else if (newPassword.length < 6) {
-          errors.newPassword = 'New password must be at least 6 characters long';
-      }
-      if (!confirmNewPassword) {
-          errors.confirmNewPassword = 'Confirm new password is required';
-      } else if (newPassword !== confirmNewPassword) {
-          errors.confirmNewPassword = 'Passwords do not match';
-      }
+    // Basic validation
+    const errors = {};
+    if (!oldPassword) errors.oldPassword = 'Old password is required';
+    if (!newPassword) {
+        errors.newPassword = 'New password is required';
+    } else if (newPassword.length < 6) {
+        errors.newPassword = 'New password must be at least 6 characters long';
+    }
+    if (!confirmNewPassword) {
+        errors.confirmNewPassword = 'Confirm new password is required';
+    } else if (newPassword !== confirmNewPassword) {
+        errors.confirmNewPassword = 'Passwords do not match';
+    }
 
-      if (Object.keys(errors).length > 0) {
-          setPasswordErrors(errors);
-           setPasswordChangeStatus({ status: 'error', message: 'Please fix the errors above' });
-          return;
-      }
+    if (Object.keys(errors).length > 0) {
+        setPasswordErrors(errors);
+        setPasswordChangeStatus({ status: 'error', message: 'Please fix the errors above' });
+        return;
+    }
 
+    setPasswordChangeLoading(true);
 
-      setPasswordChangeLoading(true);
+    try {
+        const requestData = {
+            old_password: oldPassword,
+            new_password: newPassword,
+        };
+        console.log('Request Data:', requestData); // Log the request data
 
+        await api.post('/api/auth/change-password', requestData);
+
+        toast({
+            title: 'Password Updated',
+            description: 'Your password has been updated successfully.',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+        });
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+        setPasswordChangeStatus({ status: 'success', message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Error Response:', error.response?.data); // Log the error response
+        toast({
+            title: 'Password Change Failed',
+            description: error.response?.data?.message || error.message || 'There was an error changing your password.',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+        });
+        setPasswordChangeStatus({ status: 'error', message: error.response?.data?.message || 'Password change failed' });
+    } finally {
+        setPasswordChangeLoading(false);
+        setTimeout(() => setPasswordChangeStatus(null), 5000);
+    }
+}; 
+
+useEffect(() => {
+    const fetchPreferences = async () => {
       try {
-          // --- MOCK API CALL FOR CHANGE PASSWORD ---
-          console.log('Attempting to change password:', { oldPassword, newPassword });
-          await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
-
-          // Simulate success or failure
-          const success = true; // Change to false to test error
-
-          if (success) {
-              toast({
-                  title: 'Password Updated',
-                  description: 'Your password has been updated successfully.',
-                  status: 'success',
-                  duration: 3000,
-                  isClosable: true,
-              });
-              // Clear form fields on success
-              setOldPassword('');
-              setNewPassword('');
-              setConfirmNewPassword('');
-              setPasswordChangeStatus({ status: 'success', message: 'Password updated successfully' });
-          } else {
-               toast({
-                  title: 'Password Change Failed',
-                  description: 'There was an error changing your password. Please try again later.',
-                  status: 'error',
-                  duration: 3000,
-                  isClosable: true,
-              });
-              setPasswordChangeStatus({ status: 'error', message: 'Password change failed' });
-          }
-
+        const response = await api.get('/notifications/preferences');
+        setReceiveSms(response.data.receiveSms);
+        setReceiveEmail(response.data.receiveEmail);
       } catch (error) {
-          console.error('Password change error:', error);
-           toast({
-              title: 'Error Occurred',
-              description: error.message || 'Could not change password',
-              status: 'error',
-              duration: 5000,
-              isClosable: true,
-          });
-          setPasswordChangeStatus({ status: 'error', message: 'An error occurred' });
-      } finally {
-          setPasswordChangeLoading(false);
-           // Hide status message after a few seconds
-           setTimeout(() => setPasswordChangeStatus(null), 5000);
+        console.error('Error fetching preferences:', error);
       }
-  };
+    };
+    fetchPreferences();
+  }, []);
 
   // Handle Preferences Save (Mock API call)
-   const handleSavePreferences = async () => {
-       setPreferencesSaving(true);
-       setPreferencesStatus(null); // Clear previous status
-       try {
-           // --- MOCK API CALL FOR SAVING PREFERENCES ---
-           console.log('Saving preferences:', { receiveSms, receiveEmail });
-
-           await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-
-           toast({
-               title: 'Preferences Saved',
-               description: 'Your preferences have been saved successfully.',
-               status: 'success',
-               duration: 3000,
-               isClosable: true,
-           });
-            setPreferencesStatus({ status: 'success', message: 'Preferences saved successfully' });
-
-       } catch (error) {
-           console.error('Preferences save error:', error);
-            toast({
-               title: 'Error Occurred',
-               description: error.message || 'Could not save preferences',
-               status: 'error',
-               duration: 5000,
-               isClosable: true,
-           });
-            setPreferencesStatus({ status: 'error', message: 'Failed to save preferences' });
-       } finally {
-           setPreferencesSaving(false);
-           // Hide status message after a few seconds
-           setTimeout(() => setPreferencesStatus(null), 5000);
-       }
-   };
+  const handleSavePreferences = async () => {
+    setPreferencesSaving(true);
+    setPreferencesStatus(null); // Clear previous status
+    try {
+      await api.post('/notifications/preferences', {
+        receiveSms,
+        receiveEmail,
+      });
+      toast({
+        title: 'Preferences Saved',
+        description: 'Your preferences have been saved successfully.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      setPreferencesStatus({ status: 'success', message: 'Preferences saved successfully' });
+    } catch (error) {
+      console.error('Preferences save error:', error);
+      toast({
+        title: 'Error Occurred',
+        description: error.message || 'Could not save preferences',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      setPreferencesStatus({ status: 'error', message: 'Failed to save preferences' });
+    } finally {
+      setPreferencesSaving(false);
+      setTimeout(() => setPreferencesStatus(null), 5000);
+    }
+  };
 
 
   // Handle Delete Account
+ 
   const handleDeleteAccount = async () => {
-      // --- MOCK DELETE ACCOUNT PROCESS ---
-      console.log('Deleting account for user:', user?.email);
-      // In a real app: Call delete API, then clear auth token and redirect
-
-      onClose(); // Close the confirmation modal
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-
-      auth.logout(); // Clear auth token (assuming this clears localStorage)
-       toast({
-           title: 'Account Deleted',
-           description: 'Your account has been deleted successfully.',
-           status: 'success',
-           duration: 3000,
-           isClosable: true,
-       });
-      navigate('/login'); // Redirect to login page
-      // --- END MOCK PROCESS ---
+    if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) return;
+    try {
+      // Assumes JWT is sent via Authorization header or cookie
+      await api.delete('/api/auth/delete-account');
+      // Clear user state (context, localStorage, etc.)
+      localStorage.clear();
+      // Redirect to landing page
+      navigate('/');
+    } catch (err) {
+      alert('Failed to delete account. Please try again.');
+    }
   };
+
 
 
   // Render loading spinner while user is being checked or data is loading initially

@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+//dashboard without the faultvisualization
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/jsx-no-comment-textnodes */
+/* eslint-disable react/jsx-no-undef */
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   SimpleGrid,
@@ -28,6 +32,9 @@ import ActivityReport from '../components/widgets/ActivityReport';
 import AITipsPanel from '../components/AITipsPanel';
 import ErrorBoundary from '../components/ErrorBoundary';
 import DashboardCard from '../components/DashboardCard';
+import FaultDetection from '../components/FaultDetection'; // Import FaultDetection component
+import FaultVisualization from '../components/FaultVisualization';
+import { LineChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Line, Legend } from 'recharts';
 import ThemeSwitcher from '../components/widgets/ThemeSwitcher';
 import { useSubscription } from '../context/SubscriptionContext';
 import LoadsheddingStatus from '../components/widgets/LoadsheddingStatus'; // Correct import path
@@ -88,18 +95,7 @@ function DashboardContent() {
   const cardBg = useColorModeValue('white', 'gray.800');
 
   if (!enabledWidgets || enabledWidgets.length === 0) {
-    setEnabledWidgets([
-      'EnergyModeToggle',
-      'BudgetDial',
-      'ThemeSwitcher',
-      'SolarOutput',
-      'DailyForecast',
-      'WidgetLayout',
-      'EnergyAvatar',
-      'ActivityReport',
-      'AITipsPanel',
-      'LoadsheddingStatus'
-    ]);
+    setEnabledWidgets(['EnergyModeToggle', 'BudgetDial', 'ThemeSwitcher', 'SolarOutput', 'DailyForecast', 'WidgetLayout', 'EnergyAvatar', 'ActivityReport', 'AITipsPanel', 'FaultDetection','FaultVisualization']);
   }
 
   const glassCardStyle = {
@@ -396,8 +392,14 @@ function DashboardContent() {
                   </motion.div>
                 </ErrorBoundary>
               )}
-              {/* Loadshedding Status Widget */}
-              {enabledWidgets.includes('LoadsheddingStatus') && (
+              {enabledWidgets.includes('FaultDetection') && (
+                <ErrorBoundary>
+                  <Box bg={cardBg} p={6} borderRadius="2xl" boxShadow="md" _hover={{ boxShadow: "lg" }}>
+                   <FaultDetection />
+                    </Box>
+                 </ErrorBoundary>
+              )}
+               {enabledWidgets.includes('FaultVisualization') && (
                 <ErrorBoundary>
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -411,12 +413,11 @@ function DashboardContent() {
                     _hover={{ boxShadow: "lg" }}
                   >
                     <Box {...glassCardStyle}>
-                      {/* LoadsheddingStatus now gets selectedEskomArea from DashboardContext */}
-                      <LoadsheddingStatus />
+                      <FaultVisualization />
                     </Box>
                   </motion.div>
                 </ErrorBoundary>
-              )}
+               )}
             </SimpleGrid>
           </Box>
         </Flex>

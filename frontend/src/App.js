@@ -35,9 +35,7 @@ import AISuggestions from './pages/AISuggestions';
 import PersonalUserPage from './pages/PersonalUserPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
-import LoadSheddingPage from './pages/LoadSheddingPage';
-import ThemeToggleButton from './components/ThemeToggleButton';
-
+import FaultDetails from './pages/FaultDetails';
 // Protected Route component
 const ProtectedRoute = () => {
   const user = auth.getCurrentUser();
@@ -80,6 +78,7 @@ function App() {
                   <Route path="/subscription" element={<SubscriptionPage />} />
                   <Route path="/ai-suggestions" element={<AISuggestions />} />
                   <Route path="/personal-user" element={<PersonalUserPage />} />
+                  <Route path="/fault-details" element={<FaultDetails />} /> {/* Fault Details route */}
                 </Route>
 
                 {/* Static Pages */}
