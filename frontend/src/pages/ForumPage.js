@@ -39,6 +39,7 @@ const ForumPage = () => {
   const [replies, setReplies] = useState({});
   const [tone, setTone] = useState(null);
   const [isSummarized, setIsSummarized] = useState(false);
+  const [isCheckingTone, setIsCheckingTone] = useState(false);
 
   const cardBg = useColorModeValue('white', 'rgba(0, 0, 0, 0.6)');
   const postBg = useColorModeValue('gray.50', 'gray.700');
@@ -1204,7 +1205,7 @@ const ForumPage = () => {
     }
   ];
 
-  const summarizePost = (message) => {
+  const mockSummarize = (message) => {
     const firstSentence = message.split('.')[0] || message;
     return firstSentence.length > 50 
       ? `${firstSentence.substring(0, 47)}...` 
@@ -1265,7 +1266,7 @@ const ForumPage = () => {
     try {
       const mockedSummary = selectedTopic.posts
         .map(post => {
-          const summary = summarizePost(post.message);
+          const summary = mockSummarize(post.message);
           return summary.length > 120 ? `${summary.substring(0, 120)}...` : summary;
         })
         .filter(Boolean);
@@ -1288,15 +1289,17 @@ const ForumPage = () => {
   const handleShowFullPosts = () => setIsSummarized(false);
 
   const handleCheckTone = () => {
+    setIsCheckingTone(true); // Set isCheckingTone to true
     const wordCount = newMessage.trim().split(/\s+/).length;
     if (wordCount < 8) {
       setTone('neutral');
-      return;
+    } else {
+      // Simple mock: positive if contains "good", negative if "bad", else neutral
+      if (/good|great|excellent|love|awesome/i.test(newMessage)) setTone('positive');
+      else if (/bad|terrible|hate|awful|poor/i.test(newMessage)) setTone('negative');
+      else setTone('neutral');
     }
-    // Simple mock: positive if contains "good", negative if "bad", else neutral
-    if (/good|great|excellent|love|awesome/i.test(newMessage)) setTone('positive');
-    else if (/bad|terrible|hate|awful|poor/i.test(newMessage)) setTone('negative');
-    else setTone('neutral');
+    setIsCheckingTone(false); // Set isCheckingTone to false after tone check
   };
 
   const renderTone = () => {
@@ -1392,7 +1395,7 @@ const ForumPage = () => {
                       />
                       <Box>
                         <Text fontWeight="bold" color={cardTextColor}>{post.name}</Text>
-                        <Text color={cardTextColor}>{isSummarized ? summarizePost(post.message) : post.message}</Text>
+                        <Text color={cardTextColor}>{isSummarized ? mockSummarize(post.message) : post.message}</Text>
                         {post.timestamp && (
                           <Text fontSize="xs" color={metaTextColor} mt={1}>
                             {new Date(post.timestamp).toLocaleString()}
@@ -1464,7 +1467,7 @@ const ForumPage = () => {
               isDisabled={!newMessage.trim()}
               mr={2}
             >
-              {isLoading ? <Spinner size="xs" /> : 'Check Tone'}
+              {isCheckingTone ? <Spinner size="xs" /> : 'Check Tone'}
             </Button>
             {renderTone()}
           </Flex>

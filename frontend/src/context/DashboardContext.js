@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext } from "react";
+import PropTypes from 'prop-types'; // Import PropTypes
 
 export const DashboardContext = createContext();
 
@@ -108,6 +109,10 @@ export const DashboardProvider = ({ children }) => {
         {children}
     </DashboardContext.Provider>
   );
+};
+
+DashboardProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export const useDashboard = () => useContext(DashboardContext); 
