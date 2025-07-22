@@ -1,7 +1,7 @@
 const handleLogin = async (e) => {
   e.preventDefault();
   try {
-    const response = await fetch('https://for-the-100th-time-1.onrender.com/api/auth/login', {
+    const response = await fetch('https://gridx-backend.onrender.com/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

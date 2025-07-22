@@ -13,19 +13,27 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/auth/login', { email, password });
+      const response = await fetch('https://gridx-backend.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.message === 'Account does not exist. Please register.') {
+          alert('Account does not exist. Please register.');
+          // Optionally, redirect to register page
+          // navigate('/register');
+        } else {
+          throw new Error(`Login failed: ${response.statusText}`);
+        }
+      }
       // ...handle successful login...
     } catch (err) {
-      if (err.response?.data?.message === 'Account does not exist. Please register.') {
-        alert('Account does not exist. Please register.');
-        // Optionally, redirect to register page
-        // navigate('/register');
-      } else {
-        alert('Login failed. Please check your credentials.');
-      }
+      alert('Login failed. Please check your credentials.');
     }
-                                                        // Implement login logic here
-    
   };
 
   const handlePasswordReset = async (e) => {

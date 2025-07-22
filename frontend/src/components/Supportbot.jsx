@@ -118,7 +118,7 @@ const SupportBot = () => {
   const userBgColor = useColorModeValue('blue.100', 'blue.800');
   const textColor = useColorModeValue('black', 'white');
 
-  const API_BASE_URL = 'https://for-the-100th-time-1.onrender.com';
+  const API_BASE_URL = "https://gridx-backend.onrender.com";  // Updated from "https://for-the-100th-time-1.onrender.com"
 
   // Scroll to the latest message whenever messages state updates
   useEffect(() => {

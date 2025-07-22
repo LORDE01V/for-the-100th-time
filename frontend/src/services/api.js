@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = "https://for-the-100th-time-1.onrender.com";
+const API_URL = "https://gridx-backend.onrender.com";
 
 // Create an axios instance with default config
 const api = axios.create({

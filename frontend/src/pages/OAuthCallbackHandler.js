@@ -25,7 +25,7 @@ const OAuthCallbackHandler = () => {
 
         // Fallback to session check
         console.log('Checking session...');
-        const response = await fetch('https://for-the-100th-time-1.onrender.com/api/auth/user', {
+        const response = await fetch('https://gridx-backend.onrender.com/api/auth/user', {
           credentials: 'include',
           headers: {
             'Accept': 'application/json',

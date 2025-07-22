@@ -45,7 +45,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://for-the-100th-time-1.onrender.com",
+  "proxy": "https://gridx-backend.onrender.com",
   "eslintConfig": {
     "extends": [
       "react-app",
