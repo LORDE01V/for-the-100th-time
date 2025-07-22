@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
-import App from './App';
+import App from './App.js';  // Updated to include .js extension
 import { ChakraProvider, extendTheme, ColorModeScript } from '@chakra-ui/react';
-import { NavigationProvider } from './context/NavigationContext';
-import { DashboardProvider } from "./context/DashboardContext";
+import { NavigationProvider } from './context/NavigationContext.js';  // Updated to include .js extension
+import { DashboardProvider } from "./context/DashboardContext.js";  // Updated to include .js extension
 
 // Extend the default theme to configure color mode
 const config = {
