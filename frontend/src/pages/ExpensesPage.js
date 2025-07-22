@@ -97,6 +97,8 @@ const ExpensesPage = () => {
     );
   }
 
+  const totalExpenses = expenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
+
   return (
     <Box
       minH="100vh"
