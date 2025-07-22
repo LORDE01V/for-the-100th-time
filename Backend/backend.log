@@ -24,3 +24,66 @@
 2025-07-21 12:52:24,532 - INFO - Attempting login for email: sleigh.ndo@gmail.com
 2025-07-21 12:52:24,647 - INFO - Verifying password: Incoming password length 9, Stored hash length 162
 2025-07-21 12:52:25,042 - INFO - 127.0.0.1 - - [21/Jul/2025 12:52:25] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-21 12:55:17,435 - INFO - 127.0.0.1 - - [21/Jul/2025 12:55:17] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-07-21 12:55:17,445 - INFO - 127.0.0.1 - - [21/Jul/2025 12:55:17] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-07-21 12:55:32,860 - INFO - 127.0.0.1 - - [21/Jul/2025 12:55:32] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-07-21 12:55:33,177 - INFO - 127.0.0.1 - - [21/Jul/2025 12:55:33] "[33mOPTIONS /api/auto-topup/settings HTTP/1.1[0m" 404 -
+2025-07-21 12:55:40,295 - INFO - 127.0.0.1 - - [21/Jul/2025 12:55:40] "OPTIONS /api/topup HTTP/1.1" 200 -
+2025-07-21 12:55:40,602 - INFO - 127.0.0.1 - - [21/Jul/2025 12:55:40] "POST /api/topup HTTP/1.1" 200 -
+2025-07-21 13:00:40,463 - INFO - 127.0.0.1 - - [21/Jul/2025 13:00:40] "OPTIONS /api/topup HTTP/1.1" 200 -
+2025-07-21 13:00:40,774 - INFO - 127.0.0.1 - - [21/Jul/2025 13:00:40] "POST /api/topup HTTP/1.1" 200 -
+2025-07-21 13:00:47,519 - INFO - 127.0.0.1 - - [21/Jul/2025 13:00:47] "[31m[1mGET /api/auth/user HTTP/1.1[0m" 401 -
+2025-07-21 13:00:47,838 - INFO - 127.0.0.1 - - [21/Jul/2025 13:00:47] "[31m[1mGET /api/auth/user HTTP/1.1[0m" 401 -
+2025-07-21 14:01:24,775 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.10.63:5000
+2025-07-21 14:01:24,776 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-21 14:01:24,780 - INFO -  * Restarting with stat
+2025-07-21 14:01:50,630 - WARNING -  * Debugger is active!
+2025-07-21 14:01:50,636 - INFO -  * Debugger PIN: 118-877-436
+2025-07-21 14:05:24,347 - INFO - 127.0.0.1 - - [21/Jul/2025 14:05:24] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:05:24,659 - INFO - Attempting login for email: sleigh.ndo@gmail.com
+2025-07-21 14:05:24,757 - INFO - Verifying password: Incoming password length 9, Stored hash length 162
+2025-07-21 14:05:24,902 - INFO - 127.0.0.1 - - [21/Jul/2025 14:05:24] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:07:19,883 - INFO - 127.0.0.1 - - [21/Jul/2025 14:07:19] "OPTIONS /api/topup HTTP/1.1" 200 -
+2025-07-21 14:07:20,192 - INFO - 127.0.0.1 - - [21/Jul/2025 14:07:20] "POST /api/topup HTTP/1.1" 200 -
+2025-07-21 14:15:38,971 - INFO -  * Detected change in 'C:\\Users\\sleig\\GriddX.rar.1\\GriddX\\for-the-100th-time\\Backend\\main.py', reloading
+2025-07-21 14:15:40,007 - INFO -  * Restarting with stat
+2025-07-21 14:16:21,336 - WARNING -  * Debugger is active!
+2025-07-21 14:16:21,340 - INFO -  * Debugger PIN: 118-877-436
+2025-07-21 14:17:08,751 - INFO - 127.0.0.1 - - [21/Jul/2025 14:17:08] "[33mOPTIONS /api/transactions HTTP/1.1[0m" 404 -
+2025-07-21 14:17:08,753 - INFO - 127.0.0.1 - - [21/Jul/2025 14:17:08] "[33mOPTIONS /api/transactions HTTP/1.1[0m" 404 -
+2025-07-21 14:18:44,802 - INFO -  * Detected change in 'C:\\Users\\sleig\\GriddX.rar.1\\GriddX\\for-the-100th-time\\Backend\\main.py', reloading
+2025-07-21 14:18:46,049 - INFO -  * Restarting with stat
+2025-07-21 14:18:56,555 - WARNING -  * Debugger is active!
+2025-07-21 14:18:56,558 - INFO -  * Debugger PIN: 118-877-436
+2025-07-21 14:18:58,055 - INFO - 127.0.0.1 - - [21/Jul/2025 14:18:58] "[33mOPTIONS /api/transactions HTTP/1.1[0m" 404 -
+2025-07-21 14:18:58,060 - INFO - 127.0.0.1 - - [21/Jul/2025 14:18:58] "[33mOPTIONS /api/transactions HTTP/1.1[0m" 404 -
+2025-07-21 14:19:04,412 - INFO - 127.0.0.1 - - [21/Jul/2025 14:19:04] "[33mOPTIONS /api/transactions HTTP/1.1[0m" 404 -
+2025-07-21 14:19:04,717 - INFO - 127.0.0.1 - - [21/Jul/2025 14:19:04] "[33mOPTIONS /api/transactions HTTP/1.1[0m" 404 -
+2025-07-21 14:21:35,919 - INFO -  * Detected change in 'C:\\Users\\sleig\\GriddX.rar.1\\GriddX\\for-the-100th-time\\Backend\\main.py', reloading
+2025-07-21 14:21:37,001 - INFO -  * Restarting with stat
+2025-07-21 14:21:46,973 - WARNING -  * Debugger is active!
+2025-07-21 14:21:46,975 - INFO -  * Debugger PIN: 118-877-436
+2025-07-21 14:23:47,415 - INFO - 127.0.0.1 - - [21/Jul/2025 14:23:47] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:23:47,741 - INFO - Attempting login for email: sleigh.ndo@gmail.com
+2025-07-21 14:23:47,830 - INFO - Verifying password: Incoming password length 9, Stored hash length 162
+2025-07-21 14:23:47,975 - INFO - 127.0.0.1 - - [21/Jul/2025 14:23:47] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:27:04,994 - INFO - 127.0.0.1 - - [21/Jul/2025 14:27:04] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:27:05,309 - INFO - Attempting login for email: sleigh.ndo@gmail.com
+2025-07-21 14:27:05,465 - INFO - Verifying password: Incoming password length 9, Stored hash length 162
+2025-07-21 14:27:05,602 - INFO - 127.0.0.1 - - [21/Jul/2025 14:27:05] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:28:16,026 - INFO - 127.0.0.1 - - [21/Jul/2025 14:28:16] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:28:16,338 - INFO - Attempting login for email: sleigh.ndo@gmail.com
+2025-07-21 14:28:16,493 - INFO - Verifying password: Incoming password length 9, Stored hash length 162
+2025-07-21 14:28:16,631 - INFO - 127.0.0.1 - - [21/Jul/2025 14:28:16] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:29:26,168 - INFO - 127.0.0.1 - - [21/Jul/2025 14:29:26] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:29:26,478 - INFO - Attempting login for email: sleigh.ndo@gmail.com
+2025-07-21 14:29:26,531 - INFO - Verifying password: Incoming password length 9, Stored hash length 162
+2025-07-21 14:29:26,674 - INFO - 127.0.0.1 - - [21/Jul/2025 14:29:26] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-21 14:40:05,615 - INFO - 127.0.0.1 - - [21/Jul/2025 14:40:05] "[33mOPTIONS /api/api/auth/login HTTP/1.1[0m" 404 -
+2025-07-21 17:17:24,030 - INFO -  * Detected change in 'C:\\Users\\sleig\\GriddX.rar.1\\GriddX\\for-the-100th-time\\Backend\\main.py', reloading
+2025-07-21 17:17:25,556 - INFO -  * Restarting with stat
+2025-07-21 17:17:36,262 - WARNING -  * Debugger is active!
+2025-07-21 17:17:36,264 - INFO -  * Debugger PIN: 118-877-436
