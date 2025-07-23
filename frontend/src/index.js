@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App.js';  // Ensure .js extension
 import { ChakraProvider, extendTheme, ColorModeScript } from '@chakra-ui/react';
 import { NavigationProvider } from './context/NavigationContext.js';  // Ensure .js extension
-import { DashboardProvider } from './context/DashboardContext.js';  // Ensure .js extension
+import DashboardContext from './context/DashboardContext.js';  // Ensure .js extension
 
 // Extend the default theme to configure color mode
 const config = {
