@@ -3020,3 +3020,37 @@ What do you need?
 2025-07-22 17:06:06,134 - INFO - 127.0.0.1 - - [22/Jul/2025 17:06:06] "[33mGET /api/auth/user HTTP/1.1[0m" 404 -
 2025-07-22 17:07:17,932 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\nathiiniice\\for-the-100th-time\\Backend\\main.py', reloading
 2025-07-22 17:07:18,218 - INFO -  * Restarting with stat
+2025-07-22 17:20:21,313 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-22 17:20:21,314 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-22 17:20:21,317 - INFO -  * Restarting with stat
+2025-07-22 17:20:24,269 - WARNING -  * Debugger is active!
+2025-07-22 17:20:24,285 - INFO -  * Debugger PIN: 127-471-634
+2025-07-22 17:21:27,997 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:27] "OPTIONS /api/user/balance HTTP/1.1" 200 -
+2025-07-22 17:21:28,007 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:28] "OPTIONS /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:28,012 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:28] "OPTIONS /api/user/balance HTTP/1.1" 200 -
+2025-07-22 17:21:28,020 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:28] "OPTIONS /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:28,592 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:28] "GET /api/user/balance HTTP/1.1" 200 -
+2025-07-22 17:21:28,643 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:28] "GET /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:28,736 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:28] "GET /api/user/balance HTTP/1.1" 200 -
+2025-07-22 17:21:29,104 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:29] "GET /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:32,529 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:32] "GET /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:33,157 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:33] "OPTIONS /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:33,480 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:33] "GET /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:33,703 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:33] "GET /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:35,008 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:35] "GET /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:35,144 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:35] "OPTIONS /api/user/topup HTTP/1.1" 200 -
+2025-07-22 17:21:37,110 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:37] "POST /api/user/topup HTTP/1.1" 200 -
+2025-07-22 17:21:37,451 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:37] "GET /api/user/auto-topup-settings?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:41,183 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:41] "OPTIONS /api/user/latest-topup?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:41,503 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:41] "OPTIONS /api/user/expenses?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:41,731 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:41] "GET /api/user/latest-topup?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:21:41,947 - INFO - 127.0.0.1 - - [22/Jul/2025 17:21:41] "GET /api/user/expenses?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:22:03,291 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:03] "OPTIONS /api/user/notifications?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:22:03,586 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:03] "GET /api/user/notifications?user_id=2 HTTP/1.1" 200 -
+2025-07-22 17:22:21,833 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:21] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-22 17:22:22,149 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:22] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-22 17:22:30,484 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:30] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-22 17:22:30,489 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:30] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
