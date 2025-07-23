@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
-import App from './App.js';  // Updated to include .js extension
+import App from './App.js';  // Ensure .js extension
 import { ChakraProvider, extendTheme, ColorModeScript } from '@chakra-ui/react';
-import { NavigationProvider } from './context/NavigationContext.js';  // Updated to include .js extension
-import { DashboardProvider } from "./context/DashboardContext.js";  // Updated to include .js extension
+import { NavigationProvider } from './context/NavigationContext.js';  // Ensure .js extension
+import { DashboardProvider } from './context/DashboardContext.js';  // Ensure .js extension
 
 // Extend the default theme to configure color mode
 const config = {
@@ -14,7 +14,7 @@ const config = {
 
 const theme = extendTheme({ config });
 
-// Remove the entire OneSignal block
+// Remove the entire OneSignal block (if not needed)
 // if (!window.OneSignal || !window.OneSignal._initCalled) {
 //   OneSignal.init({
 //     appId: process.env.REACT_APP_ONESIGNAL_APP_ID,
