@@ -203,7 +203,7 @@ function GroupBuying() {
     }
   
     try {
-      const response = await fetch('http://localhost:5000/campaigns/join', {
+      const response = await fetch('https://backend-0igj.onrender.com/campaigns/join', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

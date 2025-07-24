@@ -47,7 +47,7 @@ const SupportBot = () => {
     setTyping(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/chat', {
+      const response = await fetch('https://backend-0igj.onrender.com/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ const SupportBot = () => {
 
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:5000/api/voice-to-text', {
+        const response = await fetch('https://backend-0igj.onrender.comapi/voice-to-text', {
           method: 'POST',
           body: formData
         });

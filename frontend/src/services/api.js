@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 // eslint-disable-next-line no-unused-vars
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_URL = process.env.REACT_APP_API_URL || "https://backend-0igj.onrender.com";
 
 // Create an axios instance with default config
 const api = axios.create({
-    baseURL: process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000',  // Remove /api from default
+    baseURL: process.env.REACT_APP_BACKEND_URL || 'https://backend-0igj.onrender.com',  // Remove /api from default
     headers: {
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',

@@ -113,7 +113,7 @@ function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-0igj.onrender.com';
     window.location.href = `${backendUrl}/api/auth/google?action=login`;
   };
 

@@ -99,7 +99,7 @@ const handleContactSubmit = async (e) => {
   e.preventDefault();
   setIsSubmitting(true);
   try {
-    const response = await fetch('http://localhost:5000/api/support', {
+    const response = await fetch('https://backend-0igj.onrender.com/api/support', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, subject, message }),
