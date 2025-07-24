@@ -908,8 +908,11 @@ async def chat_endpoint(chat_message: ChatMessage):
         raise HTTPException(status_code=500, detail=str(e))
 
 # ================= RUN BOTH APPS =================
-if __name__ == '__main__':
-    flask_app.run(host='0.0.0.0', port=5000, debug=True)
+import os
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))  # 10000 is a fallback
+    app.run(host="0.0.0.0", port=port)
 
 conn = connect_db()
 if conn:
