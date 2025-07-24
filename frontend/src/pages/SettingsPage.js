@@ -28,6 +28,8 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
+//import { mapNotification } from './NotificationsPage'; // Adjust the path as needed
+
 
 // Import icons - Added FaArrowLeft import here
 import { FaArrowLeft } from 'react-icons/fa';
@@ -92,10 +94,32 @@ function SettingsPage() {
           return dateString;
       }
   };
+  
+ 
 
+// Define mapNotification locally
+const mapNotification = (notif) => {
+    const message = notif.message.toLowerCase();
+    let status = 'info'; // Default status
+    if (message.includes('expense') || message.includes('success') || message.includes('top-up')) {
+        status = 'success';
+    } else if (message.includes('low balance')) {
+        status = 'warning';
+    } else if (message.includes('failed')) {
+        status = 'error';
+    }
 
-  // Handle Password Change Submission (Mock API call)
-  const handleChangePassword = async (e) => {
+    return {
+        id: notif.id,
+        status: status,
+        title: notif.title || 'New Notification', // Use a title from backend or a default
+        description: notif.message,
+        isDismissed: notif.is_read || false,
+        created_at: notif.created_at,
+    };
+};
+
+const handleChangePassword = async (e) => {
     e.preventDefault();
     setPasswordErrors({});
     setPasswordChangeStatus(null);
@@ -138,6 +162,12 @@ function SettingsPage() {
             duration: 3000,
             isClosable: true,
         });
+
+        // Trigger re-fetch of notifications
+        const response = await api.get('/api/user/notifications', { params: { user_id: auth.getCurrentUser().id } });
+        const mappedNotifications = response.data.notifications.map(mapNotification);
+        console.log('Fetched Notifications:', mappedNotifications); // Log notifications for debugging
+
         setOldPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
@@ -156,7 +186,7 @@ function SettingsPage() {
         setPasswordChangeLoading(false);
         setTimeout(() => setPasswordChangeStatus(null), 5000);
     }
-}; 
+};
 
 useEffect(() => {
     const fetchPreferences = async () => {

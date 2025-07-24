@@ -1,3 +1,5 @@
+
+
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   Box,
@@ -187,18 +189,60 @@ function GroupBuying() {
     });
   };
 
-  const handleJoinCampaign = (campaignId) => {
-    console.log(`Joining campaign with ID: ${campaignId}`);
-    setOngoingCampaigns(ongoingCampaigns.map(campaign =>
-        campaign.id === campaignId ? { ...campaign, participants: campaign.participants + 1 } : campaign
-    ));
-    toast({
-      title: 'Joined Campaign!',
-      description: 'You have successfully joined the group buying campaign.',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
+  const handleJoinCampaign = async (campaignId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast({
+        title: 'Error',
+        description: 'You are not logged in.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+  
+    try {
+      const response = await fetch('http://localhost:5000/campaigns/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ campaign_id: campaignId }),
+      });
+  
+      if (response.ok) {
+        setOngoingCampaigns(ongoingCampaigns.map(campaign =>
+          campaign.id === campaignId ? { ...campaign, participants: campaign.participants + 1 } : campaign
+        ));
+        toast({
+          title: 'Joined Campaign!',
+          description: 'You have successfully joined the group buying campaign.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: 'Failed to Join Campaign',
+          description: errorData.error || 'An error occurred.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error joining campaign:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to connect to the server.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleCreateCampaign = (e) => {

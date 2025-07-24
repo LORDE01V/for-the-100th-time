@@ -290,13 +290,23 @@ def change_password():
     conn = get_db()
     try:
         with conn.cursor() as cur:
+            # Verify old password
             cur.execute("SELECT password_hash FROM users WHERE id = %s", (int(user_id),))
             user = cur.fetchone()
             if not user or not check_password_hash(user[0], old_password):
                 return jsonify({'message': 'Old password is incorrect'}), 400
 
+            # Update password
             new_hash = generate_password_hash(new_password)
             cur.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_hash, int(user_id)))
+            conn.commit()
+
+            # Add notification for password change
+            notification_message = "Your password has been updated successfully."
+            cur.execute(
+                "INSERT INTO notifications (user_id, message) VALUES (%s, %s)",
+                (int(user_id), notification_message)
+            )
             conn.commit()
 
         return jsonify({'message': 'Password updated successfully'}), 200
@@ -306,11 +316,6 @@ def change_password():
     finally:
         if conn:
             conn.close()
-
-
-# Route to delete account
-
-
 # Route to delete account
 @auth_bp.route('/delete-account', methods=['DELETE'])
 @jwt_required()

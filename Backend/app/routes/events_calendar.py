@@ -1,11 +1,12 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from Backend.support import create_event, get_all_events, delete_event
 
 events_calendar_bp = Blueprint('events_calendar', __name__)
 
-# ... existing code ...
 
 @events_calendar_bp.route('/api/events_calendar', methods=['POST'])
+@jwt_required()
 def create_event_route():
     try:
         # Parse incoming JSON data
@@ -20,10 +21,10 @@ def create_event_route():
         # Validate field types (example: start and end should be valid timestamps)
         try:
             from datetime import datetime
-            datetime.strptime(data['start'], '%Y-%m-%d %H:%M:%S')
-            datetime.strptime(data['end'], '%Y-%m-%d %H:%M:%S')
+            datetime.strptime(data['start'], '%Y-%m-%dT%H:%M')
+            datetime.strptime(data['end'], '%Y-%m-%dT%H:%M')
         except ValueError:
-            return jsonify({'error': 'Invalid date format for start or end. Use YYYY-MM-DD HH:MM:SS'}), 400
+            return jsonify({'error': 'Invalid date format for start or end. Use YYYY-MM-DDTHH:MM'}), 400
 
         # Call the create_event function to save the event
         event_id = create_event(
@@ -43,11 +44,10 @@ def create_event_route():
         return jsonify({'error': f'Failed to create event: {str(e)}'}), 500
 
 @events_calendar_bp.route('/api/events_calendar', methods=['GET'])
+@jwt_required()
 def get_events_route():
-    events = get_all_events()
-    return jsonify(events)
-
-@events_calendar_bp.route('/api/events_calendar/<int:event_id>', methods=['DELETE'])
-def delete_event_route(event_id):
-    delete_event(event_id)
-    return '', 204
+    try:
+        events = get_all_events()
+        return jsonify(events), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch events: {str(e)}'}), 500

@@ -38,8 +38,11 @@ from app.routes.topup import topup_bp
 from Backend.app.routes.expenses import expenses_bp
 from app.routes.expensenotifications import expensenotifications_bp
 from Backend.support import update_user_balance
-
-
+from app.routes.group_buying import group_buying_bp
+#from Backend.support import add_story
+# from Backend.support import create_support_ticket
+# from Backend.support import save_payment_method
+# from Backend.support import fetch_user_payment_methods
 # Add the Backend directory and its parent to the Python path
 backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
 parent_dir = os.path.dirname(backend_dir)  # Parent directory: for-the-100th-time
@@ -95,6 +98,7 @@ flask_app.register_blueprint(events_calendar_bp)
 flask_app.register_blueprint(topup_bp, url_prefix='/api')
 flask_app.register_blueprint(expenses_bp, url_prefix='/api')
 flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
+flask_app.register_blueprint(group_buying_bp)
 
 
 # Remove the after_request handler entirely to avoid conflicts
@@ -408,31 +412,6 @@ def get_forum_topics():
                 conn.close()
 
 
-@flask_app.route('/api/stories', methods=['POST'])
-@jwt_required()
-def submit_story():
-    """API endpoint to submit a story"""
-    try:
-        data = request.get_json()
-        
-        # Validate required fields
-        if not all(key in data for key in ['username', 'email', 'story']):
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-        
-        username = data['username']
-        email = data['email']
-        story = data['story']
-        
-        # Add story to the database
-        story_id = add_story(username, email, story)
-        if not story_id:
-            return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
-        
-        return jsonify({'success': True, 'story_id': story_id}), 201
-    
-    except Exception as e:
-        print(f"Error submitting story: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
 
 @flask_app.route('/api/forum/topics', methods=['POST'])
 @jwt_required()
