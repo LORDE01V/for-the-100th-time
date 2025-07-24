@@ -125,43 +125,54 @@ def get_db():
         return None
 
 # Auth routes (updated for PostgreSQL)
+from flask import request, jsonify
+import traceback
+
 @flask_app.route('/api/auth/register', methods=['POST'])
 def flask_register():
     conn = None
     try:
         data = request.get_json()
+        print("Received registration data:", data)
         
-        # Validate required fields
         if not all(key in data for key in ['name', 'email', 'password']):
+            print("Missing required fields")
             return jsonify({'success': False, 'message': 'Missing required fields'}), 400
 
-        # Get optional phone or set None
         phone = data.get('phone', None)
 
         conn = get_db()
         if not conn:
+            print("Database connection error")
             return jsonify({'success': False, 'message': 'Database error'}), 500
 
         with conn.cursor() as cur:
-            # Check existing user
+            print("Checking for existing user...")
             cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
             if cur.fetchone():
+                print("Email already exists")
                 return jsonify({'success': False, 'message': 'Email already exists'}), 400
 
-            # Create user with proper hash length
-            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
+            print("Inserting new user...")
+            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)
             cur.execute(
                 """INSERT INTO users (email, password_hash, full_name, phone)
                 VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
+                (data['email'].lower(), hashed_pw, data['name'], phone)
             )
             user_data = cur.fetchone()
             if not user_data:
+                print("Failed to create user")
                 return jsonify({'success': False, 'message': 'Failed to create user'}), 500
             conn.commit()
 
-        send_welcome_email(data['email'], data['name'])
+        try:
+            print("Sending welcome email...")
+            send_welcome_email(data['email'], data['name'])
+        except Exception as email_error:
+            print("Failed to send welcome email:", email_error)
 
+        print("Registration successful:", user_data)
         return jsonify({
             'success': True,
             'user': {
@@ -173,6 +184,7 @@ def flask_register():
 
     except Exception as e:
         print(f"Registration Error: {str(e)}")
+        traceback.print_exc()
         return jsonify({'success': False, 'message': 'Registration failed'}), 500
     finally:
         if conn:
