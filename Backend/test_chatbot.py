@@ -1,4 +1,4 @@
-from hugging_services import HuggingFaceChatbot
+
 
 def test_chatbot():
     # Initialize the chatbot

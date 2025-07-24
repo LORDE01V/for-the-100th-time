@@ -25,7 +25,6 @@ import uvicorn
 from flask import Blueprint, url_for, session
 from email_utils import send_welcome_email
 from app import create_app
-from hugging_services import HuggingFaceChatbot
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
 from support import connect_db
