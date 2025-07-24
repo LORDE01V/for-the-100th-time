@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, topUp, autoTopUp } from '../services/api';
+import { auth } from '../services/api'; // Assuming auth service is still used
 import { FaArrowLeft } from 'react-icons/fa'; // Import FaArrowLeft
 
 // Import Chakra UI Components
@@ -34,17 +34,20 @@ import {
   Select
 } from '@chakra-ui/react';
 
+import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png';  // Import the new background image
+import api from '../services/api';
+
 function TopUpPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // State for form fields and balance
-  const [currentBalance, setCurrentBalance] = useState(0); // Changed from 150.50 to 0
-  const [amount, setAmount] = useState(''); // Amount to top-up
-  const [promoCode, setPromoCode] = useState(''); // Optional promo code
-  const [voucherCode, setVoucherCode] = useState(''); // Optional voucher code
-  const [isProcessing, setIsProcessing] = useState(false); // Loading state for top-up button
+  const [balance, setBalance] = useState('R0.00'); // Default balance
+  const [amount, setAmount] = useState('');
+  const [promoCode, setPromoCode] = useState('');
+  const [voucherCode, setVoucherCode] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false); // Corrected typo
 
   // New state for Auto-Top-Up
   const [isAutoTopUpEnabled, setIsAutoTopUpEnabled] = useState(false);
@@ -71,177 +74,180 @@ function TopUpPage() {
     borderRadius: 'lg', // Rounded corners
   };
 
-  // New state for auto top-up settings
-  const [autoTopUpSettings, setAutoTopUpSettings] = useState(null);
-  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
-
   // Basic check if user data is available. ProtectedRoute handles the main redirection,
   // but this can help if the user object is null for some reason after landing here.
-  useEffect(() => {
-      if (!user) {
-          navigate('/login');
-      }
-  }, [user, navigate]); // Effect runs on component mount and if user/navigate changes
-
-  // Wrap fetchAutoTopUpSettings in useCallback
-  const fetchAutoTopUpSettings = useCallback(async () => {
-    try {
-        setIsLoadingSettings(true);
-        const response = await autoTopUp.getSettings();
-        console.log('Auto top-up settings response:', response);
-        
-        if (response.success) {
-            // Always set the settings, even if they're empty
-            setAutoTopUpSettings(response.settings);
-            
-            // Only set enabled if we have settings and they're enabled
-            const isEnabled = response.settings?.is_enabled || false;
-            setIsAutoTopUpEnabled(isEnabled);
-            
-            // If we have settings, update the form fields
-            if (response.settings) {
-                setMinBalance(response.settings.min_balance?.toString() || '');
-                setAutoTopUpAmount(response.settings.top_up_amount?.toString() || '');
-                setAutoTopUpFrequency(response.settings.frequency || 'weekly');
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching auto top-up settings:', error);
-        toast({
-            title: 'Error',
-            description: error.response?.data?.message || 'Failed to fetch auto top-up settings',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-        });
-    } finally {
-        setIsLoadingSettings(false);
+   // Effect runs on component mount and if user/navigate changes
+   useEffect(() => {
+    if (!user) {
+      navigate('/login');
     }
-  }, [toast]);
+  }, [user, navigate]);
 
-  // Update the useEffect to use the memoized function
+
+
+
+   useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const response = await api.get('/api/user/balance'); // API endpoint to fetch balance
+        setBalance(`R${response.data.balance.toFixed(2)}`);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+      }
+    };
+  
+    fetchBalance();
+  }, []);
+
+
   useEffect(() => {
+    const fetchAutoTopUpSettings = async () => {
+      if (!user?.id) return;
+      try {
+        const response = await api.get('/api/user/auto-topup-settings', {
+          params: { user_id: user.id }
+        });
+        const data = response.data;
+        setIsAutoTopUpEnabled(!!data.is_auto_topup);
+        setMinBalance(data.min_balance ? data.min_balance.toString() : '');
+        setAutoTopUpAmount(data.auto_topup_amount ? data.auto_topup_amount.toString() : '');
+        setAutoTopUpFrequency(data.auto_topup_frequency || 'weekly');
+      } catch (error) {
+        // Optionally handle error
+      }
+    };
     fetchAutoTopUpSettings();
-  }, [fetchAutoTopUpSettings]);
-
-  // Update the handleAutoTopUpSave function
+  }, [user]); 
+  // Handler for Auto-Top-Up settings
   const handleAutoTopUpSave = async () => {
     if (!minBalance || !autoTopUpAmount) {
-        toast({
-            title: 'Missing Information',
-            description: 'Please fill in all required fields for Auto Top-Up.',
-            status: 'warning',
-            duration: 3000,
-            isClosable: true,
-        });
-        return;
+      toast({
+        title: 'Missing Information',
+        description: 'Please fill in all required fields for Auto Top-Up.',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
     }
-
+  
     setIsProcessing(true);
-
     try {
-        console.log('Saving auto top-up settings:', {
-            minBalance,
-            autoTopUpAmount,
-            autoTopUpFrequency
-        });
-
-        const response = await autoTopUp.saveSettings({
-            minBalance: parseFloat(minBalance),
-            autoTopUpAmount: parseFloat(autoTopUpAmount),
-            autoTopUpFrequency
-        });
-
-        if (response.success) {
-            setAutoTopUpSettings(response.settings);
-            setIsAutoTopUpEnabled(true);
-            onClose();
-            toast({
-                title: 'Auto Top-Up Enabled',
-                description: `Your account will be topped up with R${autoTopUpAmount} when balance falls below R${minBalance}.`,
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            });
-        }
+      //const response =
+       await api.post('/api/user/auto-topup-settings', {
+        user_id: user?.id,
+        is_auto_topup: true,
+        min_balance: parseFloat(minBalance),
+        auto_topup_amount: parseFloat(autoTopUpAmount),
+        auto_topup_frequency: autoTopUpFrequency,
+      });
+      setIsProcessing(false);
+      setIsAutoTopUpEnabled(true);
+      onClose();
+      toast({
+        title: 'Auto Top-Up Enabled',
+        description: `Your account will be topped up with R${autoTopUpAmount} when balance falls below R${minBalance}.`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error) {
-        console.error('Error saving auto top-up settings:', error);
-        toast({
-            title: 'Error',
-            description: error.response?.data?.message || 'Failed to save auto top-up settings',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-        });
-    } finally {
-        setIsProcessing(false);
+      setIsProcessing(false);
+      toast({
+        title: 'Failed to Save Settings',
+        description: error.response?.data?.error || 'Could not save auto top-up settings.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
-  // Modify the handleTopUp function
+  // Handler for the Top-Up button click
+  // const handleTopUp = async (e) => {
+  //   e.preventDefault();
+  
   const handleTopUp = async (e) => {
     e.preventDefault();
-
+  
     const topUpAmount = parseFloat(amount);
     if (isNaN(topUpAmount) || topUpAmount <= 0) {
-        toast({
-            title: 'Invalid Amount',
-            description: 'Please enter a valid positive amount.',
-            status: 'warning',
-            duration: 3000,
-            isClosable: true,
-        });
-        return;
+      toast({
+        title: 'Invalid Amount',
+        description: 'Please enter a valid positive amount.',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
     }
-
+  
     setIsProcessing(true);
-
-    try {
-        // Process the top-up (which now includes expense creation)
-        const payload = {
-            amount: topUpAmount,
-            type: transactionType,
-            promoCode,
-            voucherCode,
-            subject: 'Your subject here', // Add this field if required
-        };
-
-        const topUpResult = await topUp.process(payload);
-
-        // Log the response for debugging
-        console.log('Top-up result:', topUpResult);
-
-        // Update balance - Add null check
-        if (topUpResult && typeof topUpResult.new_balance !== 'undefined') {
-            setCurrentBalance(topUpResult.new_balance);
-        } else {
-            throw new Error('Invalid balance received from server');
-        }
-
-        setAmount('');
-        setPromoCode('');
-        setVoucherCode('');
-
+  
+    const data = {
+      user_id: user?.id, // Using optional chaining for safety
+      amount: topUpAmount,
+      promo_code: promoCode,
+      voucher_code: voucherCode,
+      transaction_type: transactionType,
+      
+    };
+  
+    
+      try {
+        const response = await api.post('/api/user/topup', data);
+        console.log('Top-up response:', response);
+        if (response.status === 200 && response.data.success) {
+          const newBalanceRaw = response.data.newBalance;
+      const newBalance = Number(newBalanceRaw);
+      if (isNaN(newBalance)) {
         toast({
-            title: `${transactionType === 'topup' ? 'Top-Up' : 'Recharge'} Successful!`,
-            description: `Your new balance is R${topUpResult.new_balance.toFixed(2)}.`,
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
+          title: 'Payment Succeeded, but...',
+          description: `Could not parse new balance: ${newBalanceRaw}`,
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
         });
-    } catch (error) {
-        console.error('Error in top-up:', error);
+        setBalance('R0.00');
+      } else {
+        setBalance(`R${newBalance.toFixed(2)}`);
         toast({
-            title: 'Error',
-            description: 'Failed to process top-up.',
+          title: 'Success!',
+          description: `New balance: R${newBalance.toFixed(2)}`,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+        
+        } else {
+          // If the response is not as expected, show an error
+          toast({
+            title: 'Payment Failed',
+            description: response.data?.message || 'Unexpected response from server',
             status: 'error',
             duration: 5000,
             isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.error('Top-up error:', error);
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          'Payment service unavailable';
+    
+        toast({
+          title: 'Payment Failed',
+          description: errorMessage,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
         });
-    } finally {
+      } finally {
         setIsProcessing(false);
-    }
-  };
+      }
+    }; 
 
   // Render loading spinner if user is being checked (though ProtectedRoute handles the redirect)
   if (!user) {
@@ -258,32 +264,33 @@ function TopUpPage() {
       align="center"
       justify="center"
       p={4}
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)" // Your gradient
+      backgroundImage={`url(${topUpBackground})`}  // Replace gradient with the new image
       backgroundSize="cover"
       backgroundPosition="center"
-      backgroundAttachment="fixed" // Fix background during scroll
-      position="relative" // Needed for the pseudo-element overlay
-      _before={{ // Semi-transparent overlay for readability
+      backgroundAttachment="fixed"
+      position="relative"
+      _before={{
           content: '""',
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          bg: 'rgba(0, 0, 0, 0.5)', // Dark overlay (adjust opacity as needed)
-          zIndex: 1, // Ensure overlay is behind content
+          bg: 'rgba(0, 0, 0, 0.5)',  // Semi-transparent overlay for readability
+          zIndex: 1,
       }}
     >
       <Box
         maxW="md"
         w="full"
-        {...glassmorphismBoxStyles} // Apply glassmorphism styles here
-        boxShadow="md" // Keep or adjust shadow as needed
-        borderRadius="lg" // Keep or adjust border radius
+        {...glassmorphismBoxStyles}  // Existing glassmorphism styles
+        boxShadow="md"
+        borderRadius="lg"
         p={6}
         textAlign="center"
-        position="relative" // Needed for zIndex
-        zIndex={2} // Ensure content is above overlay
+        position="relative"
+        zIndex={2}
+        backdropFilter="blur(16px)"  // Increase blur for stronger glassmorphism effect
       >
          {/* Back to Home Button in HStack */}
          <HStack justify="space-between" w="full" mb={8} align="center">
@@ -306,16 +313,19 @@ function TopUpPage() {
         <Box mb={6}>
             <Text fontSize="md" color={textColor}>Current Energy Credit Balance:</Text>
             <Text fontSize="3xl" fontWeight="bold" color={textColor}>
-                R{currentBalance.toFixed(2)} {/* Display balance formatted */}
-            </Text>
+                {balance} {/* Display balance formatted */}
+</Text>
         </Box>
 
 
         <VStack as="form" spacing={4} onSubmit={handleTopUp} noValidate>
           {/* Transaction Type Selection */}
-          <FormControl>
+          <FormControl id="transaction-type">
             <FormLabel>Transaction Type</FormLabel>
-            <Select value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
+            <Select
+              value={transactionType}
+              onChange={(e) => setTransactionType(e.target.value)}
+            >
               <option value="topup">Top-Up</option>
               <option value="recharge">Recharge</option>
             </Select>
@@ -324,13 +334,25 @@ function TopUpPage() {
           {/* Amount Input */}
           <FormControl id="top-up-amount">
             <FormLabel>Amount (ZAR)</FormLabel>
-            <Input type="number" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} step="0.01" min="0" />
+            <Input
+              type="number" // Use number type for currency
+              placeholder="Enter amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              step="0.01" // Allow decimal values
+              min="0" // Ensure positive amount
+            />
           </FormControl>
 
           {/* Optional Promo Code Input */}
           <FormControl id="promo-code">
             <FormLabel>Promo Code (Optional)</FormLabel>
-            <Input type="text" placeholder="Enter promo code" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} />
+            <Input
+              type="text"
+              placeholder="Enter promo code"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+            />
           </FormControl>
 
            {/* Optional Voucher Code Input */}
@@ -369,18 +391,13 @@ function TopUpPage() {
             Auto Top-Up Settings
           </Heading>
           
-          {isLoadingSettings ? (
-            <Flex justify="center" align="center" p={4}>
-                <Spinner size="sm" mr={2} />
-                <Text>Loading settings...</Text>
-            </Flex>
-          ) : isAutoTopUpEnabled ? (
-            <Alert status="success" mb={4}>
+          {isAutoTopUpEnabled ? (
+            <Alert status="success" mb={4} bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(10px)" borderRadius="md">
               <AlertIcon />
               <Box>
                 <AlertTitle>Auto Top-Up is Active</AlertTitle>
                 <AlertDescription>
-                  Your account will be topped up with R{autoTopUpSettings?.top_up_amount} when balance falls below R{autoTopUpSettings?.min_balance}.
+                  Your account will be topped up with R{autoTopUpAmount} when balance falls below R{minBalance}.
                 </AlertDescription>
               </Box>
             </Alert>
@@ -395,7 +412,6 @@ function TopUpPage() {
             variant="outline"
             w="full"
             onClick={onOpen}
-            isLoading={isProcessing}
           >
             {isAutoTopUpEnabled ? "Modify Auto Top-Up" : "Set Up Auto Top-Up"}
           </Button>

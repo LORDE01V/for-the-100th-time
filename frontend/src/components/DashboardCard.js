@@ -13,6 +13,7 @@ import { useDashboard } from '../context/DashboardContext';
 const MotionBox = motion.create ? motion.create(Box) : motion(Box);
 
 const DashboardCard = ({
+  isHighlighted,
   title,
   icon,
   metric,
@@ -21,12 +22,17 @@ const DashboardCard = ({
   children,
   bg,
   bgGradient,
+  planDetails, // New prop for detailed plan information
   ...props
 }) => {
   const { currentThemeConfig } = useDashboard();
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const textColor = useColorModeValue('gray.600', 'gray.400');
+
+  // Use isHighlighted to conditionally set styles
+  const effectiveBoxShadow = isHighlighted ? 'outline' : 'xl';
+  const effectiveBorderColor = isHighlighted ? 'green.400' : 'gray.200';  // Adjust based on your theme
 
   return (
     <MotionBox
@@ -35,20 +41,17 @@ const DashboardCard = ({
       transition={{ duration: 0.3 }}
       p={6}
       bg={bg || cardBg}
-      bgGradient={bgGradient || currentThemeConfig.gradients.card}
-      borderRadius="xl"
-      boxShadow="xl"
+      bgGradient={bgGradient}
+      borderRadius="xl"  // Ensure this is handled by Chakra
+      boxShadow={effectiveBoxShadow}  // Use the computed value
       borderWidth="1px"
-      borderColor={borderColor || currentThemeConfig.colors.accent}
+      borderColor={effectiveBorderColor}
       height="100%"
       minH="250px"
       display="flex"
       flexDirection="column"
-      _hover={{
-        transform: 'translateY(-2px)',
-        transition: 'all 0.2s',
-      }}
-      {...props}
+      _hover={{ transform: 'translateY(-2px)', transition: 'all 0.2s' }}
+      {...props}  // Pass other props, but they've been filtered
     >
       <Flex direction="column" h="100%">
         {/* Header */}
@@ -94,6 +97,18 @@ const DashboardCard = ({
         <Box flex="1" mt={2} color={currentThemeConfig.colors.text}>
           {children}
         </Box>
+
+        {/* Plan Details (if provided) */}
+        {planDetails && (
+          <Box mt={4} p={4} bg="gray.100" borderRadius="md">
+            <Heading as="h4" size="sm" mb={2}>
+              Plan Details
+            </Heading>
+            <Text fontSize="sm" color={textColor}>
+              {planDetails}
+            </Text>
+          </Box>
+        )}
 
         {/* Footer (if provided) */}
         {footer && (

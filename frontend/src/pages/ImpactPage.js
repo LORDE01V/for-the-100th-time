@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api'; // Assuming auth service is still used
-
-// Import Chakra UI Components
+import { auth } from '../services/api';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Calendar from 'react-calendar';
 import {
   Box,
   Flex,
@@ -20,62 +22,170 @@ import {
   Avatar,
   Stack,
   Icon,
-  HStack
+  HStack,
+  IconButton,
+  Input,
+  VStack,
+  Textarea
 } from '@chakra-ui/react';
+import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft, FaDownload, FaStar } from 'react-icons/fa';
+import { jsPDF } from "jspdf";
+import { motion } from 'framer-motion';
+import './ImpactPage.css';
+import EventCalendar from '../components/EventCalendar';
+import ImpactMapPreview from '../components/ImpactMapPreview';
+import impactBackground from '../assets/images/page_impact.png';
+import axios from 'axios';
 
-// Import Icons from react-icons
-import { FaSolarPanel, FaUsers, FaLeaf, FaArrowLeft } from 'react-icons/fa';
+function generateImpactReportPDF() {
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text("Gridx Impact Report", 20, 20);
+
+  doc.setFontSize(12);
+  doc.text("Total Solar Energy Provided: 1.2M kWh saved", 20, 40);
+  doc.text("Households Served: 4,300+ families empowered", 20, 50);
+  doc.text("CO₂ Emissions Reduced: 620 tons offset", 20, 60);
+
+  doc.save("impact_report.pdf");
+}
+
+const DUMMY_TESTIMONIALS = [
+  { name: 'Emily Johnson', quote: 'GridX made solar simple for my family!', avatar: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167', rating: 5 },
+  { name: 'Michael Smith', quote: 'Fantastic support and easy to use.', avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91', rating: 4 },
+  { name: 'Jessica Brown', quote: 'I love tracking my energy savings.', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5 },
+  { name: 'David Wilson', quote: 'Solar energy has never been easier.', avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', rating: 5 },
+  { name: 'Ashley Miller', quote: 'GridX is a game changer for my home.', avatar: 'https://images.unsplash.com/photo-1464983953574-0892a716854b', rating: 4 },
+  { name: 'Matthew Davis', quote: 'Highly recommend to anyone going solar.', avatar: 'https://images.unsplash.com/photo-1519340333755-c2f6c58f5c4b', rating: 5 },
+  { name: 'Hannah Moore', quote: 'Easy to use and very informative.', avatar: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308', rating: 4 },
+  { name: 'Christopher Taylor', quote: 'Great for monitoring my energy use.', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d', rating: 5 },
+  { name: 'Lauren Anderson', quote: 'The best app for solar households.', avatar: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167', rating: 5 },
+  { name: 'Daniel Thomas', quote: 'I appreciate the detailed analytics.', avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91', rating: 4 },
+  { name: 'Olivia Jackson', quote: 'My bills have dropped thanks to Gridx.', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5 },
+  { name: 'James White', quote: 'Setup was quick and painless.', avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', rating: 5 },
+  { name: 'Samantha Harris', quote: 'I love seeing my energy impact.', avatar: 'https://images.unsplash.com/photo-1464983953574-0892a716854b', rating: 4 },
+  { name: 'Benjamin Martin', quote: 'GridX is the future of home energy.', avatar: 'https://images.unsplash.com/photo-1519340333755-c2f6c58f5c4b', rating: 5 },
+  { name: 'Grace Lee', quote: 'So easy, even my kids use it!', avatar: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308', rating: 5 }
+];
 
 function ImpactPage() {
   const navigate = useNavigate();
   const toast = useToast();
-
   const user = auth.getCurrentUser();
+  const [quote, setQuote] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [rating, setRating] = useState(0);
+  const [testimonials, setTestimonials] = useState(DUMMY_TESTIMONIALS);
 
-  // Move useColorModeValue calls to the top level
+  // Helper to fetch backend stories and map to testimonial structure
+  const fetchBackendStories = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/community-stories');
+      console.log('Fetched stories:', response.data); 
+      return response.data.map(story => ({
+        name: story.user_name,
+        quote: story.story_text,
+        rating: story.rating,
+        avatar: 'https://via.placeholder.com/150',
+      }));
+    } catch (error) {
+      console.error('Failed to fetch community stories:', error);
+      return [];
+    }
+  };
+
+  // On mount, fetch backend stories and append to dummy testimonials
+  useEffect(() => {
+    const fetchStories = async () => {
+      const backendStories = await fetchBackendStories();
+      console.log('Fetched stories on load:', backendStories);
+      setTestimonials([...DUMMY_TESTIMONIALS, ...backendStories]);
+    };
+    fetchStories();
+  }, []);
+
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // On submit, POST to backend and re-fetch all backend stories
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name) {
+      toast({ title: 'Error', description: 'Name is required.', status: 'error', duration: 3000, isClosable: true });
+      return;
+    }
+    if (!email || !isValidEmail(email)) {
+      toast({ title: 'Error', description: 'A valid Email is required.', status: 'error', duration: 3000, isClosable: true });
+      return;
+    }
+    if (!quote) {
+      toast({ title: 'Error', description: 'Testimonial is required.', status: 'error', duration: 3000, isClosable: true });
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:5000/api/community-stories', {
+        user_name: name,
+        story_text: quote,
+        rating: rating,
+      });
+      // Re-fetch all backend stories and append to dummy testimonials
+      const backendStories = await fetchBackendStories();
+      setTestimonials([...DUMMY_TESTIMONIALS, ...backendStories]);
+      console.log('Updated testimonials:', [...DUMMY_TESTIMONIALS, ...backendStories]);
+      toast({ title: 'Story Submitted', description: 'Your story has been submitted successfully!', status: 'success', duration: 3000, isClosable: true });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Submission failed.', status: 'error', duration: 3000, isClosable: true });
+      console.error('Submission error:', error);
+    }
+
+    setName('');
+    setEmail('');
+    setQuote('');
+    setRating(0);
+  };
+
   const bgColor = useColorModeValue('gray.50', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'whiteAlpha.900');
   const statColor = useColorModeValue('teal.500', 'teal.300');
-  const testimonialBg = useColorModeValue('white', 'gray.800');
   const testimonialBorderColor = useColorModeValue('gray.200', 'gray.600');
   const headingColor = useColorModeValue('gray.800', 'white');
+  const subTextColor = useColorModeValue('gray.600', 'whiteAlpha.700');
+  const MotionIcon = motion(Icon);
 
-  // Redirect if user is not logged in
   useEffect(() => {
-      if (!user) {
-          navigate('/login');
-          toast({
-               title: 'Authentication required.',
-               description: "Please log in to view the impact.",
-               status: 'warning',
-               duration: 3000,
-               isClosable: true,
-          });
-      }
+    if (!user) {
+      navigate('/login');
+      toast({
+        title: 'Authentication required.',
+        description: "Please log in to view the impact.",
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   }, [user, navigate, toast]);
 
-  // Mock data (replace with actual data fetching later)
+  useEffect(() => {
+    console.log('Number of testimonials:', testimonials.length);
+  }, [testimonials]);
+
   const impactStats = [
     { label: 'Total Solar Energy Provided', value: '1.2M kWh saved', icon: FaSolarPanel },
     { label: 'Households Served', value: '4,300+ families empowered', icon: FaUsers },
     { label: 'CO₂ Emissions Reduced', value: '620 tons offset', icon: FaLeaf },
   ];
 
-  const testimonials = [
-    {
-      name: 'Sarah M.',
-      quote: 'This app has made managing my solar energy so easy! I can see my impact and top up credits effortlessly.',
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1361&q=80',
-    },
-    {
-      name: 'John D.',
-      quote: 'Empowering my community through clean energy has never been more accessible. Great initiative!',
-      avatar: 'https://images.unsplash.com/photo-1544005313-94cdfd42a3b9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1361&q=80',
-    },
-    // Add more testimonials here
-  ];
+  const handleRate = (testimonialIndex, newRating) => {
+    const updatedTestimonials = [...testimonials];
+    updatedTestimonials[testimonialIndex].rating = newRating;
+    setTestimonials(updatedTestimonials);
+  };
 
-  // Render loading spinner while user is being checked
   if (!user) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg={bgColor}>
@@ -87,20 +197,22 @@ function ImpactPage() {
   return (
     <Box
       minH="100vh"
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      width="100vw"
+      backgroundImage={`url(${impactBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
+      backgroundRepeat="no-repeat"
       backgroundAttachment="fixed"
       position="relative"
       _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          bg: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 1,
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        bg: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 1,
       }}
     >
       <Box p={[4, 6, 8]} maxWidth="1200px" mx="auto" color={textColor} position="relative" zIndex={2}>
@@ -113,6 +225,13 @@ function ImpactPage() {
           >
             Back to Home
           </Button>
+          <Button
+            onClick={() => window.print()}
+            colorScheme="teal"
+            leftIcon={<FaDownload />}
+          >
+            Print Page
+          </Button>
         </HStack>
 
         <Heading as="h1" size="xl" color={headingColor} mb={6}>
@@ -120,7 +239,6 @@ function ImpactPage() {
         </Heading>
 
         <Stack spacing={10}>
-          {/* Impact Stats Section */}
           <Box>
             <Heading as="h2" size="lg" mb={4}>Impact Statistics</Heading>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
@@ -128,17 +246,19 @@ function ImpactPage() {
                 <Box
                   key={index}
                   p={6}
+                  bg="rgba(255, 255, 255, 0.1)"
+                  backdropFilter="blur(10px)"
+                  border="1px solid rgba(255, 255, 255, 0.2)"
                   boxShadow="md"
                   borderRadius="lg"
-                  bg={testimonialBg} // Using testimonialBg for card background
-                  borderColor={testimonialBorderColor} // Using testimonialBorderColor for card border
+                  borderColor={testimonialBorderColor}
                   borderWidth="1px"
                 >
                   <Flex align="center" mb={2}>
                     <Icon as={stat.icon} w={8} h={8} color={statColor} mr={3} />
                     <Stat>
                       <StatLabel fontSize="md">{stat.label}</StatLabel>
-                      <StatNumber fontSize="2xl" fontWeight="bold">{stat.value}</StatNumber>
+                      <StatNumber>{stat.value}</StatNumber>
                     </Stat>
                   </Flex>
                 </Box>
@@ -148,35 +268,81 @@ function ImpactPage() {
 
           <Divider />
 
-          {/* Community Testimonials Section */}
           <Box>
             <Heading as="h2" size="lg" mb={4}>Community Voices</Heading>
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+            <Slider
+              dots={true}
+              infinite={true}
+              speed={500}
+              slidesToShow={1}
+              slidesToScroll={1}
+              autoplay={true}
+              autoplaySpeed={3000}
+              accessibility={true}
+            >
               {testimonials.map((testimonial, index) => (
-                <Box
-                  key={index}
-                  p={6}
-                  boxShadow="md"
-                  borderRadius="lg"
-                  bg={testimonialBg}
-                  borderColor={testimonialBorderColor}
-                  borderWidth="1px"
-                >
-                  <Flex>
-                    <Avatar name={testimonial.name} src={testimonial.avatar} mr={4} />
-                    <Stack spacing={3}>
-                      <Text fontStyle="italic">"{testimonial.quote}"</Text>
-                      <Text fontWeight="bold">- {testimonial.name}</Text>
-                    </Stack>
+                <Box key={testimonial.name + index} p={6} bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)" borderWidth="1px" borderColor={testimonialBorderColor} borderRadius="lg" boxShadow="md">
+                  <Flex align="center" mb={4}>
+                    <Avatar src={testimonial.avatar} name={testimonial.name} size="xl" mr={4} />
+                    <VStack align="start" flex="1">
+                      <Text fontSize="lg" fontStyle="italic" color={textColor}>{testimonial.quote}"</Text>
+                      <HStack mt={2}>
+                        {Array(5).fill('').map((_, starIndex) => (
+                          <MotionIcon
+                            as={FaStar}
+                            key={starIndex}
+                            color={starIndex < testimonial.rating ? 'yellow.400' : 'gray.300'}
+                            boxSize={6}
+                            onClick={() => handleRate(index, starIndex + 1)}
+                            cursor="pointer"
+                            initial={{ scale: 1 }}
+                            animate={testimonial.rating === 5 && starIndex === 4 ? { scale: [1, 1.5, 1], rotate: [0, 360, 0], transition: { duration: 0.5 } } : { scale: 1 }}
+                          />
+                        ))}
+                      </HStack>
+                      <Text fontWeight="bold" fontSize="md" color={subTextColor}>{testimonial.name}</Text>
+                    </VStack>
                   </Flex>
                 </Box>
               ))}
-            </SimpleGrid>
+            </Slider>
           </Box>
 
           <Divider />
 
-          {/* Why It Matters Section */}
+          <Box mt={8} p={6} bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)" borderRadius="lg" boxShadow="md">
+            <Heading as="h2" size="lg" mb={4} color={headingColor}>Share Your Story</Heading>
+            <form onSubmit={handleSubmit}>
+              <VStack spacing={4} align="stretch">
+                <Input placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input placeholder="Your Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Textarea placeholder="Share your story..." value={quote} onChange={(e) => setQuote(e.target.value)} />
+                <HStack justify="center">
+                  {Array(5).fill('').map((_, starIndex) => (
+                    <Icon
+                      as={FaStar}
+                      key={starIndex}
+                      color={starIndex < rating ? 'yellow.400' : 'gray.300'}
+                      boxSize={6}
+                      cursor="pointer"
+                      onClick={() => setRating(starIndex + 1)}
+                    />
+                  ))}
+                </HStack>
+                <Button type="submit" colorScheme="teal">Submit Story</Button>
+              </VStack>
+            </form>
+          </Box>
+
+          <Divider />
+
+          <Box>
+            <Heading as="h2" size="lg" mb={4}>Upcoming Events Calendar</Heading>
+            <EventCalendar />
+          </Box>
+
+          <Divider />
+
           <Box textAlign="center">
             <Heading as="h2" size="lg" mb={4}>Why Solar + Fintech Matters</Heading>
             <Text fontSize="lg" maxWidth="800px" mx="auto">
@@ -184,7 +350,39 @@ function ImpactPage() {
             </Text>
           </Box>
 
+          <Divider my={8} />
+
+          <Box bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)">
+            <Heading as="h2" size="lg" mb={4}>Communities We've Reached</Heading>
+            <ImpactMapPreview />
+          </Box>
         </Stack>
+      </Box>
+
+      <Box
+        position="fixed"
+        bottom="90px"
+        right="24px"
+        zIndex="9999"
+      >
+        <IconButton
+          aria-label="Download Impact Report"
+          icon={<FaDownload />}
+          size="lg"
+          colorScheme="teal"
+          isRound
+          boxShadow="lg"
+          onClick={() => {
+            generateImpactReportPDF();
+            toast({
+              title: 'Report downloaded',
+              description: 'Your impact report has been downloaded successfully.',
+              status: 'success',
+              duration: 3000,
+              isClosable: true,
+            });
+          }}
+        />
       </Box>
     </Box>
   );

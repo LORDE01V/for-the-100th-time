@@ -1,3 +1,5 @@
+
+
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   Box,
@@ -41,10 +43,14 @@ import { useNavigate } from 'react-router-dom';
 import batteryBankImage from '../assets/images/battery_bank_10_kwh.png';
 import inverterImage from '../assets/images/inverter__5kw_hybrid.png';
 import solarPanelImage from '../assets/images/solar_panel_350w.png';
+import groupBuyingBackground from '../assets/images/group_buying.png';  // Import the background image
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Create a motion component for Text
-const MotionText = motion(Text);
+const MotionText = motion.create(Text);
+
+// Change this line:
+// const MotionBox = motion.create(Box);
 
 function GroupBuying() {
   const toast = useToast();
@@ -153,12 +159,19 @@ function GroupBuying() {
   const inputBorderColor = useColorModeValue('gray.300', 'gray.600');
 
   // Define colors for glassmorphism effect on cards
-  const glassCardBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(26, 32, 44, 0.15)');
   const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
   const glassBoxShadow = useColorModeValue('0 4px 12px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.5)'); // Adjust shadow for depth
 
   // Define hover box shadow using useColorModeValue at the top level
   const hoverBoxShadow = useColorModeValue('0 8px 16px rgba(0, 0, 0, 0.2)', '0 8px 16px rgba(0, 0, 0, 0.6)');
+
+  // At the top of the component, after existing useColorModeValue definitions 
+  const cardBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(0, 0, 0, 0.6)');
+  const cardBoxShadow = useColorModeValue('md', 'xl');
+  const cardBorderRadius = useColorModeValue('lg', 'xl');
+  const cardBackdropFilter = useColorModeValue('none', 'blur(16px)');
+  const cardBorder = useColorModeValue('1px solid rgba(255, 255, 255, 0.2)', '1px solid gray.600');
+  const cardColor = useColorModeValue('gray.800', 'white'); // ... existing code ... 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -176,18 +189,60 @@ function GroupBuying() {
     });
   };
 
-  const handleJoinCampaign = (campaignId) => {
-    console.log(`Joining campaign with ID: ${campaignId}`);
-    setOngoingCampaigns(ongoingCampaigns.map(campaign =>
-        campaign.id === campaignId ? { ...campaign, participants: campaign.participants + 1 } : campaign
-    ));
-    toast({
-      title: 'Joined Campaign!',
-      description: 'You have successfully joined the group buying campaign.',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
+  const handleJoinCampaign = async (campaignId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast({
+        title: 'Error',
+        description: 'You are not logged in.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+  
+    try {
+      const response = await fetch('http://localhost:5000/campaigns/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ campaign_id: campaignId }),
+      });
+  
+      if (response.ok) {
+        setOngoingCampaigns(ongoingCampaigns.map(campaign =>
+          campaign.id === campaignId ? { ...campaign, participants: campaign.participants + 1 } : campaign
+        ));
+        toast({
+          title: 'Joined Campaign!',
+          description: 'You have successfully joined the group buying campaign.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: 'Failed to Join Campaign',
+          description: errorData.error || 'An error occurred.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error joining campaign:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to connect to the server.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleCreateCampaign = (e) => {
@@ -255,10 +310,11 @@ function GroupBuying() {
   return (
     <Box
       minH="100vh"
-      backgroundImage="linear-gradient(to bottom right, #FF8C42, #4A00E0)"
+      backgroundImage={`url(${groupBuyingBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
+      backgroundRepeat="no-repeat"  // Added to prevent repetition
       position="relative"
       _before={{
           content: '""',
@@ -313,9 +369,14 @@ function GroupBuying() {
               return (
                 <Card
                   key={campaign.id}
-                  bg={glassCardBg}
+                  bg={cardBg}
+                  boxShadow={cardBoxShadow}
+                  borderRadius={cardBorderRadius}
+                  backdropFilter={cardBackdropFilter}
+                  border={cardBorder}
+                  color={cardColor}
                   borderWidth="1px"
-                  borderColor={glassBorderColor}
+                  borderColor={glassBorderColor} // Ensure no duplicates
                   boxShadow={glassBoxShadow}
                   borderRadius="lg"
                   backdropFilter="blur(10px)"
@@ -342,7 +403,7 @@ function GroupBuying() {
 
                     <VStack spacing={3} align="stretch">
                       <HStack justify="space-between">
-                        <Text color={textColor}>
+                        <Text color={cardColor}>
                           <Icon as={FaTag} mr={2} />
                           Original: R{campaign.originalPrice}
                         </Text>
@@ -357,11 +418,11 @@ function GroupBuying() {
                         Group Price: R{campaign.groupPrice}
                       </Text>
 
-                      <Text color={textColor} noOfLines={2}>{campaign.description}</Text>
+                      <Text color={cardColor} noOfLines={2}>{campaign.description}</Text>
 
                       <HStack>
                         <Icon as={FaUsers} />
-                        <Text color={textColor}>
+                        <Text color={cardColor}>
                           {campaign.participants} of {campaign.goal} joined
                         </Text>
                       </HStack>
@@ -370,7 +431,7 @@ function GroupBuying() {
 
                       <HStack>
                         <Icon as={FaClock} />
-                        <Text color={textColor}>{campaign.timeLeft}</Text>
+                        <Text color={cardColor}>{campaign.timeLeft}</Text>
                       </HStack>
 
                       <Button
