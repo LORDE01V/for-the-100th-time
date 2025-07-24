@@ -910,7 +910,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))  # 10000 is a fallback
     app.run(host="0.0.0.0", port=port)
 
-conn = connect_db()
+conn, cursor = connect_db()
 if conn:
     print("✅ Database connection successful")
     conn.close()
