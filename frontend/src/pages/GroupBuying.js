@@ -377,9 +377,9 @@ function GroupBuying() {
                   color={cardColor}
                   borderWidth="1px"
                   borderColor={glassBorderColor} // Ensure no duplicates
-                  boxShadow={glassBoxShadow}
-                  borderRadius="lg"
-                  backdropFilter="blur(10px)"
+                  // boxShadow={glassBoxShadow}
+                  // borderRadius="lg"
+                  // backdropFilter="blur(10px)"
                   transition="all 0.3s ease-in-out"
                   _hover={{
                     transform: 'translateY(-5px)',

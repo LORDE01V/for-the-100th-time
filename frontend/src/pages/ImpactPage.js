@@ -4,7 +4,7 @@ import { auth } from '../services/api';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Calendar from 'react-calendar';
+//import Calendar from 'react-calendar';
 import {
   Box,
   Flex,

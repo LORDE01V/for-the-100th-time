@@ -9,7 +9,7 @@ console.log('Imported background image:', backgroundImage);  // Debug log for im
 function PrivacyPolicyPage() {
   const navigate = useNavigate();
   const overlayBg = useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(0, 0, 0, 0.15)');
-  const textColor = useColorModeValue('gray.700', 'gray.100');
+  //const textColor = useColorModeValue('gray.700', 'gray.100');
   const headingColor = useColorModeValue('gray.800', 'white');
   const listColor = useColorModeValue('gray.600', 'gray.300');
   const privacyBoxBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');

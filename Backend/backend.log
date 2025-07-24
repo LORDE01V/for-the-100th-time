@@ -12655,3 +12655,64 @@ LINE 4:             transaction_type, is_auto_topup, min_balance,
 2025-07-24 09:48:46,177 - INFO - 127.0.0.1 - - [24/Jul/2025 09:48:46] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
 2025-07-24 09:48:46,378 - INFO - 127.0.0.1 - - [24/Jul/2025 09:48:46] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
 2025-07-24 09:48:47,973 - INFO - 127.0.0.1 - - [24/Jul/2025 09:48:47] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:04:26,100 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-07-24 11:04:26,101 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 11:04:26,123 - INFO -  * Restarting with stat
+2025-07-24 11:04:38,223 - WARNING -  * Debugger is active!
+2025-07-24 11:04:38,236 - INFO -  * Debugger PIN: 130-474-514
+2025-07-24 11:29:06,857 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\main.py', reloading
+2025-07-24 11:29:07,887 - INFO -  * Restarting with stat
+2025-07-24 11:29:50,536 - WARNING -  * Debugger is active!
+2025-07-24 11:29:50,540 - INFO -  * Debugger PIN: 130-474-514
+2025-07-24 11:33:03,766 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-07-24 11:33:03,767 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 11:33:03,772 - INFO -  * Restarting with stat
+2025-07-24 11:33:13,185 - WARNING -  * Debugger is active!
+2025-07-24 11:33:13,200 - INFO -  * Debugger PIN: 130-474-514
+2025-07-24 11:37:18,541 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\main.py', reloading
+2025-07-24 11:37:20,031 - INFO -  * Restarting with stat
+2025-07-24 11:37:36,595 - WARNING -  * Debugger is active!
+2025-07-24 11:37:36,610 - INFO -  * Debugger PIN: 130-474-514
+2025-07-24 11:44:18,182 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-07-24 11:44:18,185 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 11:44:18,194 - INFO -  * Restarting with stat
+2025-07-24 11:44:32,665 - WARNING -  * Debugger is active!
+2025-07-24 11:44:32,677 - INFO -  * Debugger PIN: 130-474-514
+2025-07-24 11:46:12,452 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-07-24 11:46:12,455 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 11:46:12,458 - INFO -  * Restarting with stat
+2025-07-24 11:46:23,022 - WARNING -  * Debugger is active!
+2025-07-24 11:46:23,026 - INFO -  * Debugger PIN: 130-474-514
+2025-07-24 11:47:00,934 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:00] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-24 11:47:01,656 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:01] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-24 11:47:06,373 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:06] "OPTIONS /api/user/balance HTTP/1.1" 200 -
+2025-07-24 11:47:06,717 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:06] "OPTIONS /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:06,949 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:06] "GET /api/user/balance HTTP/1.1" 200 -
+2025-07-24 11:47:07,456 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:07] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:09,311 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:09] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:11,262 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:11] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:11,667 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:11] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:11,905 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:11] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:12,241 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:12] "OPTIONS /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:12,325 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:12] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:13,883 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:13] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:23,739 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:23] "OPTIONS /api/user/balance HTTP/1.1" 200 -
+2025-07-24 11:47:24,017 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:24] "GET /api/user/balance HTTP/1.1" 200 -
+2025-07-24 11:47:24,050 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:24] "OPTIONS /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:24,423 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:24] "GET /api/user/auto-topup-settings?user_id=21 HTTP/1.1" 200 -
+2025-07-24 11:47:47,591 - INFO - 127.0.0.1 - - [24/Jul/2025 11:47:47] "[33mGET /api/community-stories HTTP/1.1[0m" 404 -
+2025-07-24 11:48:12,661 - INFO - 127.0.0.1 - - [24/Jul/2025 11:48:12] "OPTIONS /api/community-stories HTTP/1.1" 200 -
+2025-07-24 11:48:13,035 - INFO - 127.0.0.1 - - [24/Jul/2025 11:48:13] "POST /api/community-stories HTTP/1.1" 200 -
+2025-07-24 11:48:13,348 - INFO - 127.0.0.1 - - [24/Jul/2025 11:48:13] "[33mGET /api/community-stories HTTP/1.1[0m" 404 -

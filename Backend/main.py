@@ -176,7 +176,8 @@ def flask_register():
         print(f"Registration Error: {str(e)}")
         return jsonify({'success': False, 'message': 'Registration failed'}), 500
     finally:
-        if conn: conn.close()
+        if conn:
+            conn.close()
 
 @flask_app.route('/api/auth/login', methods=['POST'])
 def flask_login():
@@ -910,6 +911,9 @@ async def chat_endpoint(chat_message: ChatMessage):
 if __name__ == '__main__':
     flask_app.run(host='0.0.0.0', port=5000, debug=True)
 
-conn, cur = connect_db()
-if conn: print("✅ Database connection successful")
-else: print("❌ Database connection failed")
+conn = connect_db()
+if conn:
+    print("✅ Database connection successful")
+    conn.close()
+else:
+    print("❌ Database connection failed")
