@@ -2,16 +2,16 @@ import React, { useState, useEffect, useMemo } from "react";
 import "./AISuggestions.css";
 import SavingsChart from '../components/SavingsChart';
 import SuggestionTrendChart from '../components/SuggestionTrendChart';
-import { 
-  Box, 
-  Tooltip, 
-  Container, 
-  Badge, 
-  Button, 
-  HStack, 
-  Text, 
-  Flex, 
-  Alert, 
+import {
+  Box,
+  Tooltip,
+  Container,
+  Badge,
+  Button,
+  HStack,
+  Text,
+  Flex,
+  Alert,
   AlertIcon,
   Heading,
   useToast,
@@ -22,23 +22,26 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Link,
-  Textarea,
+  Textarea, // Remove Link from here
   Select,
   VStack,
-  Progress
+  Progress,
+  Link
 } from '@chakra-ui/react';
-import { 
-  WarningTwoIcon, 
-  InfoIcon, 
-  CheckCircleIcon, 
-  ArrowDownIcon, 
+import { Link as RouterLink } from 'react-router-dom';
+import {
+  WarningTwoIcon,
+  InfoIcon,
+  CheckCircleIcon,
+  ArrowDownIcon,
   TimeIcon,
   RepeatIcon,
   BellIcon,
   CopyIcon,
-  ExternalLinkIcon
+  ExternalLinkIcon,
+  ArrowBackIcon // Import ArrowBackIcon for the back button
 } from '@chakra-ui/icons';
+import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png';
 
 const AISuggestions = () => {
   const [suggestions, setSuggestions] = useState([]);
@@ -366,500 +369,539 @@ const AISuggestions = () => {
   };
 
   return (
-    <Container maxW="5xl" py={8} style={{ background: '#181A20', minHeight: '100vh', borderRadius: '16px', boxShadow: '0 4px 32px rgba(0,0,0,0.2)' }}>
-      <h1 style={{ color: '#F7FAFC', textAlign: 'center', marginBottom: '30px' }}>AI Suggestions</h1>
-      {/* Goal Tracking Section */}
-      <Box mb={6} p={4} bg="#23272F" borderRadius="md" border="1px solid #38B2AC" color="#F7FAFC">
-        <HStack spacing={4} align="center">
-          <Text fontWeight="bold">Monthly Savings Goal:</Text>
-          <input
-            type="number"
-            min="0"
-            value={goal}
-            onChange={e => handleGoalChange(Number(e.target.value))}
-            style={{
-              width: '100px',
-              padding: '6px',
-              borderRadius: '6px',
-              border: '1px solid #38B2AC',
-              background: '#181A20',
-              color: '#F7FAFC',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              marginRight: '10px'
-            }}
-            placeholder="R100"
-          />
-          <Text fontSize="sm" color="#38B2AC">Set your target for the month</Text>
-        </HStack>
-        <Box mt={3}>
-          <Progress value={goal ? (suggestions.reduce((acc, s) => acc + (s.estimated_savings || 0), 0) / goal) * 100 : 0} colorScheme="green" borderRadius="md" height="18px" />
-          <Text mt={2} fontWeight="bold" color="#48BB78">
-            {goal ? `You’ve reached R${suggestions.reduce((acc, s) => acc + (s.estimated_savings || 0), 0).toFixed(2)} of R${goal}` : 'Set a goal to start tracking your savings!'}
-          </Text>
-        </Box>
-      </Box>
-      
-      {/* Enhanced Daily AI Tip with Notifications & Sharing */}
-      {dailyTip && (
-        <Box
-          mb={5}
-          p={4}
-          bg="rgba(20, 184, 166, 0.15)"
-          borderRadius="md"
-          border="1px solid rgba(20, 184, 166, 0.3)"
-          color="#E6FFFA"
-          animation="fadeIn 0.5s"
-        >
-          <Flex justify="space-between" align="center" mb={2}>
-            <Text fontWeight="bold" color="#38B2AC">🌞 AI Tip of the Day:</Text>
-            <HStack spacing={2}>
-              <Button 
-                size="xs" 
-                onClick={notifyTip} 
-                colorScheme="blue" 
-                leftIcon={<BellIcon />}
-                variant="outline"
-              >
-                🔔 Remind
-              </Button>
-              <Button 
-                size="xs" 
-                onClick={copyTip} 
-                colorScheme="green" 
-                leftIcon={<CopyIcon />}
-                variant="outline"
-              >
-                📋 Copy
-              </Button>
-              <Button 
-                size="xs" 
-                onClick={shareTip} 
-                colorScheme="whatsapp" 
-                leftIcon={<ExternalLinkIcon />}
-                variant="outline"
-              >
-                📱 Share
-              </Button>
-              <Button 
-                size="xs" 
-                onClick={refreshTip} 
-                colorScheme="teal" 
-                leftIcon={<RepeatIcon />}
-                variant="outline"
-              >
-                Refresh
-              </Button>
-            </HStack>
-          </Flex>
-          <Text color="#F7FAFC" mb={2}>{dailyTip.description}</Text>
-          <Text fontSize="sm" color="rgba(247, 250, 252, 0.7)">
-            Category: {dailyTip.category} | 💸 R{dailyTip.estimated_savings?.toFixed(2) || 'N/A'}
-          </Text>
-        </Box>
-      )}
-
-      <div className="search-bar" style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          placeholder="Search suggestions..."
-          value={searchTerm}
-          onChange={handleSearch}
-          style={{
-            width: '100%',
-            padding: '10px',
-            borderRadius: '5px',
-            border: '1px solid #2D3748',
-            fontSize: '16px',
-            background: '#23272F',
-            color: '#F7FAFC'
-          }}
-        />
-      </div>
-
-      <div className="categories" style={{ marginBottom: '20px' }}>
-        {["All", "Energy Saving", "Maintenance", "Upgrades", "Favorites"].map((category) => (
-          <button
-            key={category}
-            className={activeCategory === category ? "active" : ""}
-            onClick={() => handleCategoryChange(category)}
-            style={{
-              margin: '0 5px',
-              padding: '8px 16px',
-              borderRadius: '20px',
-              border: '1px solid #38B2AC',
-              background: activeCategory === category ? '#38B2AC' : 'transparent',
-              color: activeCategory === category ? '#181A20' : '#F7FAFC',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              transition: 'background 0.2s, color 0.2s'
-            }}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-
-      {/* Enhanced Sort Toggle with Icons */}
-      <HStack spacing={3} mb={5} justify="center">
-        <Button
-          leftIcon={<ArrowDownIcon />}
-          colorScheme={sortByVotes ? "blue" : "gray"}
-          variant={sortByVotes ? "solid" : "outline"}
-          onClick={() => setSortByVotes(true)}
-          size="sm"
-        >
-          Most Voted
-        </Button>
-        <Button
-          leftIcon={<TimeIcon />}
-          colorScheme={!sortByVotes ? "blue" : "gray"}
-          variant={!sortByVotes ? "solid" : "outline"}
-          onClick={() => setSortByVotes(false)}
-          size="sm"
-        >
-          Most Recent
-        </Button>
-      </HStack>
-
-      {/* Priority Filter Buttons */}
-      <HStack spacing={2} mb={5} justify="center">
-        <Text color="#F7FAFC" fontSize="sm" fontWeight="bold">Filter by Priority:</Text>
-        {["high", "medium", "low"].map(level => (
+    <Flex
+      minH="100vh"
+      align="center"
+      justify="center"
+      p={4}
+      backgroundImage={`url(${topUpBackground})`}
+      backgroundSize="cover"
+      backgroundPosition="center"
+      backgroundAttachment="fixed"
+      position="relative"
+      _before={{
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          bg: 'rgba(0, 0, 0, 0.5)',  // Semi-transparent overlay for readability
+          zIndex: 1,
+      }}
+    >
+      <Container
+        maxW="5xl"
+        py={8}
+        style={{
+          background: 'rgba(24, 26, 32, 0.6)', // Semi-transparent background for glassmorphism
+          minHeight: '100vh',
+          borderRadius: '16px',
+          boxShadow: '0 4px 32px rgba(0,0,0,0.2)',
+          backdropFilter: 'blur(10px)', // Glassmorphism blur effect
+          border: '1px solid rgba(255, 255, 255, 0.1)', // Light border for definition
+          position: 'relative',
+          zIndex: 2,
+        }}
+      >
+        <RouterLink to="/home">
           <Button
-            key={level}
-            size="sm"
-            colorScheme={priorityFilter === level ? 'teal' : 'gray'}
-            variant={priorityFilter === level ? 'solid' : 'outline'}
-            onClick={() => setPriorityFilter(priorityFilter === level ? null : level)}
-          >
-            {level.toUpperCase()}
-          </Button>
-        ))}
-        {priorityFilter && (
-          <Button
-            size="sm"
-            colorScheme="red"
+            mb={4}
+            colorScheme="teal"
             variant="outline"
-            onClick={() => setPriorityFilter(null)}
+            leftIcon={<ArrowBackIcon />}
           >
-            Clear Filter
+            Back to Home
           </Button>
-        )}
-      </HStack>
-
-      <div className="suggestions-list">
-        {sortedSuggestions.map((suggestion) => (
-          <Box 
-            key={suggestion.id} 
-            className="suggestion-card" 
-            style={{ 
-              backdropFilter: 'blur(10px)', 
-              background: '#23272F', 
-              borderRadius: '10px', 
-              border: '1px solid #38B2AC', 
-              padding: '20px', 
-              margin: '10px 0',
-              position: 'relative',
-              color: '#F7FAFC',
-              boxShadow: '0 2px 8px rgba(20,184,166,0.08)',
-              transition: 'transform 0.2s ease-in-out',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={handleView}
-            onClick={() => setSelectedSuggestion(suggestion)}
-            _hover={{ transform: 'translateY(-2px)' }}
-          >
-            {/* Favorites Star Icon */}
-            <Button
-              size="xs"
-              variant="ghost"
-              colorScheme={favorites.includes(suggestion.id) ? 'yellow' : 'gray'}
-              onClick={e => {
-                e.stopPropagation();
-                toggleFavorite(suggestion.id);
+        </RouterLink>
+        <h1 style={{ color: '#F7FAFC', textAlign: 'center', marginBottom: '30px' }}>AI Suggestions</h1>
+        {/* Goal Tracking Section */}
+        <Box mb={6} p={4} bg="#23272F" borderRadius="md" border="1px solid #38B2AC" color="#F7FAFC">
+          <HStack spacing={4} align="center">
+            <Text fontWeight="bold">Monthly Savings Goal:</Text>
+            <input
+              type="number"
+              min="0"
+              value={goal}
+              onChange={e => handleGoalChange(Number(e.target.value))}
+              style={{
+                width: '100px',
+                padding: '6px',
+                borderRadius: '6px',
               }}
-              style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 2 }}
-              aria-label={favorites.includes(suggestion.id) ? 'Remove from favorites' : 'Add to favorites'}
+              placeholder="R100"
+            />
+            <Text fontSize="sm" color="#38B2AC">Set your target for the month</Text>
+          </HStack>
+          <Box mt={3}>
+            <Progress value={goal ? (suggestions.reduce((acc, s) => acc + (s.estimated_savings || 0), 0) / goal) * 100 : 0} colorScheme="green" borderRadius="md" height="18px" />
+            <Text mt={2} fontWeight="bold" color="#48BB78">
+              {goal ? `You’ve reached R${suggestions.reduce((acc, s) => acc + (s.estimated_savings || 0), 0).toFixed(2)} of R${goal}` : 'Set a goal to start tracking your savings!'}
+            </Text>
+          </Box>
+        </Box>
+        
+        {/* Enhanced Daily AI Tip with Notifications & Sharing */}
+        {dailyTip && (
+          <Box
+            mb={5}
+            p={4}
+            bg="rgba(20, 184, 166, 0.15)"
+            borderRadius="md"
+            border="1px solid rgba(20, 184, 166, 0.3)"
+            color="#E6FFFA"
+            animation="fadeIn 0.5s"
+          >
+            <Flex justify="space-between" align="center" mb={2}>
+              <Text fontWeight="bold" color="#38B2AC">🌞 AI Tip of the Day:</Text>
+              <HStack spacing={2}>
+                <Button 
+                  size="xs" 
+                  onClick={notifyTip} 
+                  colorScheme="blue" 
+                  leftIcon={<BellIcon />}
+                  variant="outline"
+                >
+                  🔔 Remind
+                </Button>
+                <Button 
+                  size="xs" 
+                  onClick={copyTip} 
+                  colorScheme="green" 
+                  leftIcon={<CopyIcon />}
+                  variant="outline"
+                >
+                  📋 Copy
+                </Button>
+                <Button 
+                  size="xs" 
+                  onClick={shareTip} 
+                  colorScheme="whatsapp" 
+                  leftIcon={<ExternalLinkIcon />}
+                  variant="outline"
+                >
+                  📱 Share
+                </Button>
+                <Button 
+                  size="xs" 
+                  onClick={refreshTip} 
+                  colorScheme="teal" 
+                  leftIcon={<RepeatIcon />}
+                  variant="outline"
+                >
+                  Refresh
+                </Button>
+              </HStack>
+            </Flex>
+            <Text color="#F7FAFC" mb={2}>{dailyTip.description}</Text>
+            <Text fontSize="sm" color="rgba(247, 250, 252, 0.7)">
+              Category: {dailyTip.category} | 💸 R{dailyTip.estimated_savings?.toFixed(2) || 'N/A'}
+            </Text>
+          </Box>
+        )}
+
+        <div className="search-bar" style={{ marginBottom: '20px' }}>
+          <input
+            type="text"
+            placeholder="Search suggestions..."
+            value={searchTerm}
+            onChange={handleSearch}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '5px',
+              border: '1px solid #2D3748',
+              fontSize: '16px',
+              background: '#23272F',
+              color: '#F7FAFC'
+            }}
+          />
+        </div>
+
+        <div className="categories" style={{ marginBottom: '20px' }}>
+          {["All", "Energy Saving", "Maintenance", "Upgrades", "Favorites"].map((category) => (
+            <button
+              key={category}
+              className={activeCategory === category ? "active" : ""}
+              onClick={() => handleCategoryChange(category)}
+              style={{
+                margin: '0 5px',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                border: '1px solid #38B2AC',
+                background: activeCategory === category ? '#38B2AC' : 'transparent',
+                color: activeCategory === category ? '#181A20' : '#F7FAFC',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                transition: 'background 0.2s, color 0.2s'
+              }}
             >
-              {favorites.includes(suggestion.id) ? '★' : '☆'}
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* Enhanced Sort Toggle with Icons */}
+        <HStack spacing={3} mb={5} justify="center">
+          <Button
+            leftIcon={<ArrowDownIcon />}
+            colorScheme={sortByVotes ? "blue" : "gray"}
+            variant={sortByVotes ? "solid" : "outline"}
+            onClick={() => setSortByVotes(true)}
+            size="sm"
+          >
+            Most Voted
+          </Button>
+          <Button
+            leftIcon={<TimeIcon />}
+            colorScheme={!sortByVotes ? "blue" : "gray"}
+            variant={!sortByVotes ? "solid" : "outline"}
+            onClick={() => setSortByVotes(false)}
+            size="sm"
+          >
+            Most Recent
+          </Button>
+        </HStack>
+
+        {/* Priority Filter Buttons */}
+        <HStack spacing={2} mb={5} justify="center">
+          <Text color="#F7FAFC" fontSize="sm" fontWeight="bold">Filter by Priority:</Text>
+          {["high", "medium", "low"].map(level => (
+            <Button
+              key={level}
+              size="sm"
+              colorScheme={priorityFilter === level ? 'teal' : 'gray'}
+              variant={priorityFilter === level ? 'solid' : 'outline'}
+              onClick={() => setPriorityFilter(priorityFilter === level ? null : level)}
+            >
+              {level.toUpperCase()}
             </Button>
+          ))}
+          {priorityFilter && (
+            <Button
+              size="sm"
+              colorScheme="red"
+              variant="outline"
+              onClick={() => setPriorityFilter(null)}
+            >
+              Clear Filter
+            </Button>
+          )}
+        </HStack>
 
-            {/* Enhanced Priority Badge */}
-            <PriorityBadge priority={suggestion.priority} />
-
-            <h3 style={{ color: '#F7FAFC', marginBottom: '10px', paddingRight: '80px' }}>{suggestion.title}</h3>
-            <p style={{ color: '#CBD5E0', marginBottom: '15px' }}>{suggestion.description}</p>
-            
-            {/* Enhanced Savings Info with Tooltip */}
-            <Box mb={4}>
-              <Tooltip 
-                label={
-                  <Box>
-                    Estimated monthly savings if implemented<br />
-                    <Link href="https://www.energy.gov/energysaver/energy-saver-guide-tips-saving-money-and-energy-home" isExternal color="teal.400">
-                      Learn More <ExternalLinkIcon mx="2px" />
-                    </Link>
-                  </Box>
-                }
-                hasArrow 
-                placement="top"
+        <div className="suggestions-list">
+          {sortedSuggestions.map((suggestion) => (
+            <Box 
+              key={suggestion.id} 
+              className="suggestion-card" 
+              style={{ 
+                backdropFilter: 'blur(10px)', 
+                background: '#23272F', 
+                borderRadius: '10px', 
+                border: '1px solid #38B2AC', 
+                padding: '20px', 
+                margin: '10px 0',
+                position: 'relative',
+                color: '#F7FAFC',
+                boxShadow: '0 2px 8px rgba(20,184,166,0.08)',
+                transition: 'transform 0.2s ease-in-out',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={handleView}
+              onClick={() => setSelectedSuggestion(suggestion)}
+              _hover={{ transform: 'translateY(-2px)' }}
+            >
+              {/* Favorites Star Icon */}
+              <Button
+                size="xs"
+                variant="ghost"
+                colorScheme={favorites.includes(suggestion.id) ? 'yellow' : 'gray'}
+                onClick={e => {
+                  e.stopPropagation();
+                  toggleFavorite(suggestion.id);
+                }}
+                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 2 }}
+                aria-label={favorites.includes(suggestion.id) ? 'Remove from favorites' : 'Add to favorites'}
               >
-                <Text 
-                  fontWeight="bold" 
-                  color="#48BB78"
-                  cursor="help"
-                  fontSize="sm"
-                >
-                  💸 R{suggestion.estimated_savings?.toFixed(2) || 'N/A'}
-                </Text>
-              </Tooltip>
-            </Box>
+                {favorites.includes(suggestion.id) ? '★' : '☆'}
+              </Button>
 
-            <div className="votes" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Tooltip label="Upvote this suggestion" hasArrow placement="top">
-                <Button 
-                  size="xs" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleVote(suggestion.id, 1);
-                  }}
-                  colorScheme="green"
-                  variant="ghost"
-                  p={1}
-                  minW="auto"
+              {/* Enhanced Priority Badge */}
+              <PriorityBadge priority={suggestion.priority} />
+
+              <h3 style={{ color: '#F7FAFC', marginBottom: '10px', paddingRight: '80px' }}>{suggestion.title}</h3>
+              <p style={{ color: '#CBD5E0', marginBottom: '15px' }}>{suggestion.description}</p>
+              
+              {/* Enhanced Savings Info with Tooltip */}
+              <Box mb={4}>
+                <Tooltip 
+                  label={
+                    <Box>
+                      Estimated monthly savings if implemented<br />
+                      <Link href="https://www.energy.gov/energysaver/energy-saver-guide-tips-saving-money-and-energy-home" isExternal color="teal.400">
+                        Learn More <ExternalLinkIcon mx="2px" />
+                      </Link>
+                    </Box>
+                  }
+                  hasArrow 
+                  placement="top"
                 >
-                  👍
-                </Button>
-              </Tooltip>
-              <Tooltip label="Community votes on relevance" hasArrow placement="top">
-                <Text color="#F7FAFC" fontWeight="bold" fontSize="sm">
-                  {(suggestion.votes || 0) + (votes[suggestion.id] || 0)}
+                  <Text 
+                    fontWeight="bold" 
+                    color="#48BB78"
+                    cursor="help"
+                    fontSize="sm"
+                  >
+                    💸 R{suggestion.estimated_savings?.toFixed(2) || 'N/A'}
+                  </Text>
+                </Tooltip>
+              </Box>
+
+              <div className="votes" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Tooltip label="Upvote this suggestion" hasArrow placement="top">
+                  <Button 
+                    size="xs" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleVote(suggestion.id, 1);
+                    }}
+                    colorScheme="green"
+                    variant="ghost"
+                    p={1}
+                    minW="auto"
+                  >
+                    👍
+                  </Button>
+                </Tooltip>
+                <Tooltip label="Community votes on relevance" hasArrow placement="top">
+                  <Text color="#F7FAFC" fontWeight="bold" fontSize="sm">
+                    {(suggestion.votes || 0) + (votes[suggestion.id] || 0)}
+                  </Text>
+                </Tooltip>
+                <Tooltip label="Downvote this suggestion" hasArrow placement="top">
+                  <Button 
+                    size="xs" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleVote(suggestion.id, -1);
+                    }}
+                    colorScheme="red"
+                    variant="ghost"
+                    p={1}
+                    minW="auto"
+                  >
+                    👎
+                  </Button>
+                </Tooltip>
+              </div>
+              {/* User Comments Section */}
+              <Box mt={3}>
+                <Text fontSize="sm" color="#38B2AC" fontWeight="bold">
+                  Comments ({(comments[suggestion.id]?.length || 0)})
                 </Text>
-              </Tooltip>
-              <Tooltip label="Downvote this suggestion" hasArrow placement="top">
-                <Button 
-                  size="xs" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleVote(suggestion.id, -1);
-                  }}
-                  colorScheme="red"
-                  variant="ghost"
-                  p={1}
-                  minW="auto"
-                >
-                  👎
-                </Button>
-              </Tooltip>
-            </div>
-            {/* User Comments Section */}
-            <Box mt={3}>
-              <Text fontSize="sm" color="#38B2AC" fontWeight="bold">
-                Comments ({(comments[suggestion.id]?.length || 0)})
-              </Text>
-              <VStack align="stretch" spacing={2} mt={1} mb={2} maxH="100px" overflowY="auto">
-                {(comments[suggestion.id] || []).map((c, idx) => (
-                  <Box key={idx} bg="#20232A" p={2} borderRadius="md" color="#F7FAFC" fontSize="sm">
-                    {c}
-                  </Box>
-                ))}
-              </VStack>
-              <HStack>
+                <VStack align="stretch" spacing={2} mt={1} mb={2} maxH="100px" overflowY="auto">
+                  {(comments[suggestion.id] || []).map((c, idx) => (
+                    <Box key={idx} bg="#20232A" p={2} borderRadius="md" color="#F7FAFC" fontSize="sm">
+                      {c}
+                    </Box>
+                  ))}
+                </VStack>
+                <HStack>
+                  <Textarea
+                    size="sm"
+                    placeholder="Add a comment..."
+                    bg="#181A20"
+                    color="#F7FAFC"
+                    borderColor="#38B2AC"
+                    _placeholder={{ color: 'gray.400' }}
+                    value={comments[`draft_${suggestion.id}`] || ''}
+                    onChange={e => {
+                      setComments(prev => ({ ...prev, [`draft_${suggestion.id}`]: e.target.value }));
+                    }}
+                    minH="32px"
+                    maxH="60px"
+                    resize="vertical"
+                  />
+                  <Button
+                    size="sm"
+                    colorScheme="teal"
+                    onClick={e => {
+                      e.stopPropagation();
+                      const val = comments[`draft_${suggestion.id}`]?.trim();
+                      if (val) {
+                        handleComment(suggestion.id, val);
+                        setComments(prev => ({ ...prev, [`draft_${suggestion.id}`]: '' }));
+                      }
+                    }}
+                    isDisabled={!(comments[`draft_${suggestion.id}`]?.trim())}
+                  >
+                    Post
+                  </Button>
+                </HStack>
+              </Box>
+              {/* User Notes Section */}
+              <Box mt={2}>
+                <Text fontSize="sm" color="#38B2AC" fontWeight="bold">Personal Note</Text>
                 <Textarea
                   size="sm"
-                  placeholder="Add a comment..."
+                  placeholder="Your note... (only you can see this)"
                   bg="#181A20"
                   color="#F7FAFC"
                   borderColor="#38B2AC"
                   _placeholder={{ color: 'gray.400' }}
-                  value={comments[`draft_${suggestion.id}`] || ''}
-                  onChange={e => {
-                    setComments(prev => ({ ...prev, [`draft_${suggestion.id}`]: e.target.value }));
-                  }}
+                  value={userNotes[suggestion.id] || ''}
+                  onChange={e => handleNoteChange(suggestion.id, e.target.value)}
                   minH="32px"
                   maxH="60px"
                   resize="vertical"
+                  mt={1}
                 />
-                <Button
-                  size="sm"
-                  colorScheme="teal"
-                  onClick={e => {
-                    e.stopPropagation();
-                    const val = comments[`draft_${suggestion.id}`]?.trim();
-                    if (val) {
-                      handleComment(suggestion.id, val);
-                      setComments(prev => ({ ...prev, [`draft_${suggestion.id}`]: '' }));
-                    }
-                  }}
-                  isDisabled={!(comments[`draft_${suggestion.id}`]?.trim())}
-                >
-                  Post
-                </Button>
-              </HStack>
+              </Box>
             </Box>
-            {/* User Notes Section */}
-            <Box mt={2}>
-              <Text fontSize="sm" color="#38B2AC" fontWeight="bold">Personal Note</Text>
-              <Textarea
-                size="sm"
-                placeholder="Your note... (only you can see this)"
-                bg="#181A20"
-                color="#F7FAFC"
-                borderColor="#38B2AC"
-                _placeholder={{ color: 'gray.400' }}
-                value={userNotes[suggestion.id] || ''}
-                onChange={e => handleNoteChange(suggestion.id, e.target.value)}
-                minH="32px"
-                maxH="60px"
-                resize="vertical"
-                mt={1}
-              />
-            </Box>
-          </Box>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Enhanced Charts Section */}
-      <Box mt={10}>
-        <Heading size="md" color="#F7FAFC" textAlign="center" mb={5}>Savings Breakdown</Heading>
-        <Box 
-          bg="#23272F" 
-          borderRadius="10px" 
-          p={5}
-          mb={5}
-          border="1px solid #38B2AC"
-        >
-          <SavingsChart data={suggestions} onBarClick={setSelectedSuggestion} />
-        </Box>
-      </Box>
-
-      <Box mt={10}>
-        <Heading size="md" color="#F7FAFC" textAlign="center" mb={5}>Suggestion Trend</Heading>
-        <HStack justify="center" mb={3}>
-          <Text color="#F7FAFC" fontSize="sm">Time Range:</Text>
-          <Select 
-            value={trendDays} 
-            onChange={e => setTrendDays(Number(e.target.value))}
-            size="sm"
-            w="150px"
-            bg="#23272F"
-            color="#F7FAFC"
-            borderColor="#38B2AC"
+        {/* Enhanced Charts Section */}
+        <Box mt={10}>
+          <Heading size="md" color="#F7FAFC" textAlign="center" mb={5}>Savings Breakdown</Heading>
+          <Box 
+            bg="#23272F" 
+            borderRadius="10px" 
+            p={5}
+            mb={5}
+            border="1px solid #38B2AC"
           >
-            <option value={7}>Last 7 Days</option>
-            <option value={14}>Last 14 Days</option>
-            <option value={30}>Last 30 Days</option>
-          </Select>
-        </HStack>
-        <Box 
-          bg="#23272F" 
-          borderRadius="10px" 
-          p={5}
-          border="1px solid #38B2AC"
-        >
-          <SuggestionTrendChart data={suggestions} days={trendDays} />
-        </Box>
-      </Box>
-
-      {/* Enhanced User Feedback with Comment */}
-      {showFeedback && (
-        <Alert status="info" borderRadius="md" mt={5} bg="#23272F" border="1px solid #38A169">
-          <AlertIcon />
-          <Box flex="1">
-            <Text fontWeight="bold" color="#F7FAFC" mb={3}>Are these AI suggestions helping you?</Text>
-            <VStack align="start" spacing={3}>
-              <HStack>
-                <Button 
-                  colorScheme="green" 
-                  size="sm"
-                  onClick={() => handleFeedback("yes")}
-                  leftIcon={<span>👍</span>}
-                >
-                  Yes
-                </Button>
-                <Button 
-                  colorScheme="red" 
-                  size="sm"
-                  onClick={() => handleFeedback("no")}
-                  leftIcon={<span>👎</span>}
-                >
-                  No
-                </Button>
-              </HStack>
-              <Textarea
-                placeholder="Tell us more about your experience (optional)..."
-                value={feedbackComment}
-                onChange={e => setFeedbackComment(e.target.value)}
-                size="sm"
-                bg="#1A202C"
-                color="#F7FAFC"
-                borderColor="#38A169"
-                _placeholder={{ color: 'gray.400' }}
-                resize="vertical"
-                minH="80px"
-              />
-              <Button 
-                colorScheme="blue" 
-                size="sm"
-                onClick={() => handleFeedback("with_comment")}
-                isDisabled={!feedbackComment.trim()}
-              >
-                Submit Feedback
-              </Button>
-            </VStack>
+            <SavingsChart data={suggestions} onBarClick={setSelectedSuggestion} />
           </Box>
-        </Alert>
-      )}
+        </Box>
 
-      {/* Suggestion Detail Modal */}
-      <Modal isOpen={!!selectedSuggestion} onClose={() => setSelectedSuggestion(null)}>
-        <ModalOverlay />
-        <ModalContent bg="#23272F" color="#F7FAFC" border="1px solid #38B2AC">
-          <ModalHeader color="#38B2AC">
-            {selectedSuggestion?.title}
-          </ModalHeader>
-          <ModalCloseButton color="#F7FAFC" />
-          <ModalBody>
-            <VStack align="start" spacing={4}>
-              <Text color="#CBD5E0">{selectedSuggestion?.description}</Text>
-              <Box>
-                <Text fontWeight="bold" color="#48BB78">
-                  💸 Estimated Savings: R{selectedSuggestion?.estimated_savings?.toFixed(2) || 'N/A'}
-                </Text>
-              </Box>
-              <Box>
-                <Text fontWeight="bold" color="#F7FAFC">
-                  Priority: <Badge colorScheme={getPriorityProps(selectedSuggestion?.priority).color}>
-                    {selectedSuggestion?.priority?.toUpperCase()}
-                  </Badge>
-                </Text>
-              </Box>
-              <Box>
-                <Text fontWeight="bold" color="#F7FAFC">
-                  Category: {selectedSuggestion?.category}
-                </Text>
-              </Box>
-              <Box>
-                <Text fontWeight="bold" color="#F7FAFC">
-                  Votes: {(selectedSuggestion?.votes || 0) + (votes[selectedSuggestion?.id] || 0)}
-                </Text>
-              </Box>
-              <Box>
-                <Text fontWeight="bold" color="#F7FAFC">
-                  Created: {selectedSuggestion?.created_at ? new Date(selectedSuggestion.created_at).toLocaleDateString() : 'N/A'}
-                </Text>
-              </Box>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={() => setSelectedSuggestion(null)}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Container>
+        <Box mt={10}>
+          <Heading size="md" color="#F7FAFC" textAlign="center" mb={5}>Suggestion Trend</Heading>
+          <HStack justify="center" mb={3}>
+            <Text color="#F7FAFC" fontSize="sm">Time Range:</Text>
+            <Select 
+              value={trendDays} 
+              onChange={e => setTrendDays(Number(e.target.value))}
+              size="sm"
+              w="150px"
+              bg="#23272F"
+              color="#F7FAFC"
+              borderColor="#38B2AC"
+            >
+              <option value={7}>Last 7 Days</option>
+              <option value={14}>Last 14 Days</option>
+              <option value={30}>Last 30 Days</option>
+            </Select>
+          </HStack>
+          <Box 
+            bg="#23272F" 
+            borderRadius="10px" 
+            p={5}
+            border="1px solid #38B2AC"
+          >
+            <SuggestionTrendChart data={suggestions} days={trendDays} />
+          </Box>
+        </Box>
+
+        {/* Enhanced User Feedback with Comment */}
+        {showFeedback && (
+          <Alert status="info" borderRadius="md" mt={5} bg="#23272F" border="1px solid #38A169">
+            <AlertIcon />
+            <Box flex="1">
+              <Text fontWeight="bold" color="#F7FAFC" mb={3}>Are these AI suggestions helping you?</Text>
+              <VStack align="start" spacing={3}>
+                <HStack>
+                  <Button 
+                    colorScheme="green" 
+                    size="sm"
+                    onClick={() => handleFeedback("yes")}
+                    leftIcon={<span>👍</span>}
+                  >
+                    Yes
+                  </Button>
+                  <Button 
+                    colorScheme="red" 
+                    size="sm"
+                    onClick={() => handleFeedback("no")}
+                    leftIcon={<span>👎</span>}
+                  >
+                    No
+                  </Button>
+                </HStack>
+                <Textarea
+                  placeholder="Tell us more about your experience (optional)..."
+                  value={feedbackComment}
+                  onChange={e => setFeedbackComment(e.target.value)}
+                  size="sm"
+                  bg="#1A202C"
+                  color="#F7FAFC"
+                  borderColor="#38A169"
+                  _placeholder={{ color: 'gray.400' }}
+                  resize="vertical"
+                  minH="80px"
+                />
+                <Button 
+                  colorScheme="blue" 
+                  size="sm"
+                  onClick={() => handleFeedback("with_comment")}
+                  isDisabled={!feedbackComment.trim()}
+                >
+                  Submit Feedback
+                </Button>
+              </VStack>
+            </Box>
+          </Alert>
+        )}
+
+        {/* Suggestion Detail Modal */}
+        <Modal isOpen={!!selectedSuggestion} onClose={() => setSelectedSuggestion(null)}>
+          <ModalOverlay />
+          <ModalContent bg="#23272F" color="#F7FAFC" border="1px solid #38B2AC">
+            <ModalHeader color="#38B2AC">
+              {selectedSuggestion?.title}
+            </ModalHeader>
+            <ModalCloseButton color="#F7FAFC" />
+            <ModalBody>
+              <VStack align="start" spacing={4}>
+                <Text color="#CBD5E0">{selectedSuggestion?.description}</Text>
+                <Box>
+                  <Text fontWeight="bold" color="#48BB78">
+                    💸 Estimated Savings: R{selectedSuggestion?.estimated_savings?.toFixed(2) || 'N/A'}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text fontWeight="bold" color="#F7FAFC">
+                    Priority: <Badge colorScheme={getPriorityProps(selectedSuggestion?.priority).color}>
+                      {selectedSuggestion?.priority?.toUpperCase()}
+                    </Badge>
+                  </Text>
+                </Box>
+                <Box>
+                  <Text fontWeight="bold" color="#F7FAFC">
+                    Category: {selectedSuggestion?.category}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text fontWeight="bold" color="#F7FAFC">
+                    Votes: {(selectedSuggestion?.votes || 0) + (votes[selectedSuggestion?.id] || 0)}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text fontWeight="bold" color="#F7FAFC">
+                    Created: {selectedSuggestion?.created_at ? new Date(selectedSuggestion.created_at).toLocaleDateString() : 'N/A'}
+                  </Text>
+                </Box>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={() => setSelectedSuggestion(null)}>
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Container>
+    </Flex>
   );
 };
 

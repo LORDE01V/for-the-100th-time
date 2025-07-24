@@ -38,6 +38,7 @@ import { auth } from '../services/api';  // Keep if used elsewhere
 import { useSubscription } from '../context/SubscriptionContext';
 import dashboardBg from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.png';
 import NavigationPanel from '../components/NavigationPanel';
+import Supportbot from '../components/Supportbot';
 
 // Add missing variable declarations at the top
 
@@ -45,14 +46,100 @@ import NavigationPanel from '../components/NavigationPanel';
 
 // Add the subscription plans array here for use in this component
 const subscriptionPlans = [
-  { id: 'basic-lite', name: 'Basic Lite', price: 29 },
-  { id: 'basic', name: 'Basic', price: 49 },
-  { id: 'basic-plus', name: 'Basic Plus', price: 69 },
-  { id: 'standard-lite', name: 'Standard Lite', price: 79 },
-  { id: 'standard', name: 'Standard', price: 99 },
-  { id: 'standard-plus', name: 'Standard Plus', price: 119 },
-  { id: 'premium', name: 'Premium', price: 149 },
-  { id: 'premium-plus', name: 'Premium Plus', price: 309 },
+  {
+    id: 'basic-lite',
+    name: 'Basic Lite',
+    price: 29,
+    features: [
+      'Limited access to core features',
+      'Basic energy tracking',
+      'Standard email support'
+    ],
+    description: 'Ideal for newcomers, this plan offers a simple introduction to energy management with easy-to-use tools and community tips.'
+  },
+  {
+    id: 'basic',
+    name: 'Basic',
+    price: 49,
+    features: [
+      'Access to core features',
+      'Basic energy usage tracking',
+      'Email support'
+    ],
+    description: 'A solid starting point for everyday users, focusing on reliable tracking and essential tools for home energy optimization.'
+  },
+  {
+    id: 'basic-plus',
+    name: 'Basic Plus',
+    price: 69,
+    features: [
+      'All Basic features',
+      'Enhanced tracking reports',
+      'Priority email support'
+    ],
+    description: 'Step up with advanced reports and priority support, perfect for users looking to dive deeper into their energy habits.'
+  },
+  {
+    id: 'standard-lite',
+    name: 'Standard Lite',
+    price: 79,
+    features: [
+      'Most Standard features',
+      'Basic analytics',
+      'Email and chat support',
+      'Standard notifications'
+    ],
+    description: 'A balanced plan for moderate users, including analytics and notifications to help manage energy more efficiently.'
+  },
+  {
+    id: 'standard',
+    name: 'Standard',
+    price: 99,
+    features: [
+      'All Basic features',
+      'Detailed analytics & reports',
+      'Priority email & chat support',
+      'Load shedding notifications'
+    ],
+    description: 'Comprehensive analytics for proactive energy management, with real-time notifications to stay ahead of usage.'
+  },
+  {
+    id: 'standard-plus',
+    name: 'Standard Plus',
+    price: 119,
+    features: [
+      'All Standard features',
+      'Advanced reports',
+      '24/7 support',
+      'Enhanced notifications'
+    ],
+    description: 'Elevate your experience with 24/7 support and advanced tools, ideal for families or small businesses.'
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    price: 149,
+    features: [
+      'All Standard features',
+      'Real-time energy monitoring',
+      'Dedicated account manager',
+      'Early access to new features',
+      'VIP support'
+    ],
+    description: 'For power users who want real-time monitoring and premium support, plus early access to new features.'
+  },
+  {
+    id: 'premium-plus',
+    name: 'Premium Plus',
+    price: 309,
+    features: [
+      'All Premium features',
+      'Enhanced real-time monitoring',
+      'Dedicated manager',
+      'VIP access and support'
+    ],
+    description: 'Unlock dedicated support and real-time insights, tailored for users who demand the best in energy solutions.'
+  },
 ];
 
 // Update the mockSuggestPlan function to return the full plan object
@@ -294,28 +381,27 @@ function DashboardContent() {
                 isHighlighted={recommendedPlan}
                 borderColor={recommendedPlan ? 'green.400' : 'transparent'}
                 boxShadow={recommendedPlan ? 'outline' : 'md'}
-                content={
-                  recommendedPlan ? (
-                    <VStack align="start" spacing={2}>
-                      <Text fontWeight="bold">Plan Name: {recommendedPlan.name}</Text>
-                      <Text>Description: {recommendedPlan.description || 'No description available.'}</Text>
-                      <Text fontWeight="bold">Price: ${recommendedPlan.price}</Text>
-                      <Text fontWeight="bold">Features:</Text>
-                      {recommendedPlan.features && recommendedPlan.features.length > 0 ? (
-                        <VStack align="start" pl={4}>
-                          {recommendedPlan.features.map((feature, index) => (
-                            <Text key={index} fontSize="sm">- {feature}</Text>
-                          ))}
-                        </VStack>
-                      ) : (
-                        <Text>No features available.</Text>
-                      )}
-                      <Text fontWeight="bold">ID: {recommendedPlan.id || 'N/A'}</Text>
-                    </VStack>
-                  ) : 'No plan recommended yet'
-                }
                 sx={glassCardStyle}
-              />
+              >
+                {recommendedPlan ? (
+                  <VStack align="start" spacing={2}>
+                    <Text fontWeight="bold">Plan Name: {recommendedPlan.name}</Text>
+                    <Text>Description: {recommendedPlan.description || 'No description available.'}</Text>
+                    <Text fontWeight="bold">Price: ${recommendedPlan.price}</Text>
+                    <Text fontWeight="bold">Features:</Text>
+                    {recommendedPlan.features && recommendedPlan.features.length > 0 ? (
+                      <VStack align="start" pl={4}>
+                        {recommendedPlan.features.map((feature, index) => (
+                          <Text key={index} fontSize="sm">- {feature}</Text>
+                        ))}
+                      </VStack>
+                    ) : (
+                      <Text>No features available.</Text>
+                    )}
+                    <Text fontWeight="bold">ID: {recommendedPlan.id || 'N/A'}</Text>
+                  </VStack>
+                ) : 'No plan recommended yet'}
+              </DashboardCard>
               {enabledWidgets.includes('DailyForecast') && (
                 <ErrorBoundary>
                   <motion.div
@@ -456,15 +542,7 @@ function DashboardContent() {
         </Flex>
 
         {/* Chatbot Bubble Button */}
-        <IconButton
-          aria-label="Open Chatbot"
-          icon={<FaComments />}
-          position="fixed"
-          bottom="21px"
-          right="21px"
-          {...bubbleButtonProps}
-          // onClick={...} // your chatbot open handler
-        />
+        <Supportbot dashboardMode={true} />
 
         {/* Toggle Mode Bubble Button (just above chatbot) */}
         <IconButton

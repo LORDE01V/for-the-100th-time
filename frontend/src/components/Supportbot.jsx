@@ -16,7 +16,7 @@ import { FaPaperPlane, FaTimes, FaCommentDots, FaMicrophone } from 'react-icons/
 import RecordRTC from 'recordrtc';
 import langaImage from '../assets/images/langa.png';
 
-const SupportBot = () => {
+const SupportBot = ({ noFixed, dashboardMode }) => {
   console.log('SupportBot component is mounting');  // Existing debug log
 
   const [isOpen, setIsOpen] = useState(false);
@@ -176,39 +176,66 @@ const SupportBot = () => {
     }
   };
 
+  // Use conditional styles
+  const positionProps = noFixed
+    ? {}
+    : { position: "fixed", bottom: "24px", right: "24px", zIndex: "9999" };
+
+  // Glassmorphism style for dashboard
+  const dashboardGlassStyle = dashboardMode
+    ? {
+        background: 'rgba(255, 255, 255, 0.18)',
+        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderRadius: '2xl',
+        border: '1.5px solid rgba(255,255,255,0.4)',
+        width: ['95vw', '370px'],
+        maxWidth: '98vw',
+        height: ['60vh', '520px'],
+        minHeight: '400px',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }
+    : {};
+
   return (
     <>
-      {/* Floating Bubble (always visible, but hidden when chat is open) */}
+      {/* Floating Bubble */}
       {!isOpen && (
-        <Box
-          position="fixed"
-          bottom="24px"
-          right="24px"
-          zIndex="9999"
-        >
+        <Box {...positionProps}>
           <IconButton
             aria-label="Chat with Langa"
             icon={<FaCommentDots />}
             size="lg"
-            colorScheme="teal"
             isRound
-            boxShadow="lg"
+            borderRadius="full"
+            boxSize="56px"
+            fontSize="2xl"
+            sx={{
+              backgroundColor: 'teal.400 !important',
+              color: 'white !important',
+              border: '4px solid white !important',
+              '&:hover': {
+                backgroundColor: 'teal.500 !important',
+              },
+            }}
+            zIndex={dashboardMode ? 9999 : undefined}
             onClick={() => setIsOpen(true)}
           />
         </Box>
       )}
 
-      {/* Chatbot Card (only visible when open) */}
+      {/* Chatbot Card */}
       {isOpen && (
         <Box
-          position="fixed"
-          bottom="24px"
-          right="24px"
-          zIndex="9999"
-          width={["95vw", "350px"]}
-          maxWidth="100vw"
-          height="520px"
-          bg="white"
+          {...positionProps}
+          {...dashboardGlassStyle}
+          bg={dashboardMode ? undefined : "white"}
+          width={dashboardMode ? undefined : ["95vw", "350px"]}
+          maxWidth={dashboardMode ? undefined : "100vw"}
+          height={dashboardMode ? undefined : "520px"}
           borderRadius="2xl"
           boxShadow="2xl"
           overflow="hidden"

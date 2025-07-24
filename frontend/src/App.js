@@ -36,6 +36,7 @@ import AISuggestions from './pages/AISuggestions';
 import PersonalUserPage from './pages/PersonalUserPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
+import ProfileDetails from './pages/ProfileDetails';
 
 // Protected Route component
 const ProtectedRoute = () => {
@@ -83,6 +84,7 @@ function App() {
                   <Route path="/subscription" element={<SubscriptionPage />} />
                   <Route path="/ai-suggestions" element={<AISuggestions />} />
                   <Route path="/personal-user" element={<PersonalUserPage />} />
+                  <Route path="/profile" element={<ProfileDetails />} />
                 </Route>
 
                 {/* New Routes */}
