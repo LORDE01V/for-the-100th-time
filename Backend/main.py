@@ -891,8 +891,6 @@ def get_payment_methods():
     finally:
         if conn: conn.close()
 
-# Initialize chatbot
-chatbot = HuggingFaceChatbot()
 
 class ChatMessage(BaseModel):
     message: str
@@ -907,7 +905,6 @@ async def chat_endpoint(chat_message: ChatMessage):
         raise HTTPException(status_code=500, detail=str(e))
 
 # ================= RUN BOTH APPS =================
-import os
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))  # 10000 is a fallback
