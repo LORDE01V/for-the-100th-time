@@ -9,7 +9,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
-        'Access-Control-Allow-Origin': 'http://localhost:3000'
+        //'Access-Control-Allow-Origin': 'http://localhost:3000'
     },
     timeout: 30000, // 10-second timeout
     withCredentials: true, // Include cookies in requests

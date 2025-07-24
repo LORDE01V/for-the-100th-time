@@ -160,7 +160,7 @@ function GroupBuying() {
 
   // Define colors for glassmorphism effect on cards
   const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
-  const glassBoxShadow = useColorModeValue('0 4px 12px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.5)'); // Adjust shadow for depth
+  //const glassBoxShadow = useColorModeValue('0 4px 12px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.5)'); // Adjust shadow for depth
 
   // Define hover box shadow using useColorModeValue at the top level
   const hoverBoxShadow = useColorModeValue('0 8px 16px rgba(0, 0, 0, 0.2)', '0 8px 16px rgba(0, 0, 0, 0.6)');

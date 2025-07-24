@@ -40,7 +40,7 @@ const ForumPage = () => {
   const [isCheckingTone, setIsCheckingTone] = useState(false);
 
   // Mock data for dummyTopics
-  const dummyTopics = useMemo(() => [
+  const dummyTopics = useMemo(() =>  [
     {
       id: 1,
       title: 'Solar Panel Maintenance Tips',
@@ -364,7 +364,9 @@ const ForumPage = () => {
         'Post 15: Success stories from users.'
       ]
     }
-  ]);
+  ],
+  []
+  );
 
   const mockSummarize = (posts) => {
     // Simple mock function to generate a bullet-point summary from posts
