@@ -112,11 +112,12 @@ flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
 def get_db():
     try:
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'Fintech_Solar'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', 'your_password_here'),
-            port=os.getenv('DB_PORT', '5432')
+            host='dpg-d1vjt13e5dus739rq030-a.oregon-postgres.render.com',
+            database='nathi_db_ricx',
+            user='nathi_db',
+            password='QNzk4QVE3MgSvkrTTqOhAAddKyRgZiV6',
+            port='5432',
+            sslmode='require' # Ensure SSL is required
         )
         return conn
     except OperationalError as e:

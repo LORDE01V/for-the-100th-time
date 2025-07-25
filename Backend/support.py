@@ -7,19 +7,26 @@ import logging
 # Load environment variables
 load_dotenv()
 
+# New hardcoded database credentials
+DB_HOST = 'dpg-d1vjt13e5dus739rq030-a.oregon-postgres.render.com'
+DB_NAME = 'nathi_db_ricx'
+DB_USER = 'nathi_db'
+DB_PASSWORD = 'QNzk4QVE3MgSvkrTTqOhAAddKyRgZiV6'
+DB_PORT = '5432'
+
+
 # ================== DATABASE CONNECTION ==================
 def connect_db():
     """Connect to PostgreSQL database"""
-    password = os.getenv('DB_PASSWORD', '')
-    if not password:
-        raise ValueError("DB_PASSWORD environment variable must be set.")
+    # Removed reliance on os.getenv for DB credentials
     try:
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'Fintech_Solar'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=password,
-            port=os.getenv('DB_PORT', '5432')
+            host=DB_HOST,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            port=DB_PORT,
+            sslmode='require' # Ensure SSL is required
         )
         return conn, conn.cursor()
     except OperationalError as e:
@@ -28,20 +35,15 @@ def connect_db():
 
 def get_db():
     try:
-        db_host = os.getenv('DB_HOST', 'localhost')
-        db_name = os.getenv('DB_NAME', 'Fintech_Solar')
-        db_user = os.getenv('DB_USER', 'postgres')
-        db_password = os.getenv('DB_PASSWORD', '')
-        db_port = os.getenv('DB_PORT', '5432')
-        if not db_password:
-            logging.error('DB_PASSWORD is not set in your .env file. Please add it and try again.')
-            raise ValueError('DB_PASSWORD environment variable must be set.')
+        # Removed reliance on os.getenv for DB credentials
+        # Removed DB_PASSWORD check as it's now hardcoded
         conn = psycopg2.connect(
-            host=db_host,
-            database=db_name,
-            user=db_user,
-            password=db_password,
-            port=db_port
+            host=DB_HOST,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            port=DB_PORT,
+            sslmode='require' # Ensure SSL is required
         )
         logging.info('Database connection successful.')
         return conn

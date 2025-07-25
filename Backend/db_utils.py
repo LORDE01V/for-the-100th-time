@@ -6,15 +6,23 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# New hardcoded database credentials
+DB_HOST = 'dpg-d1vjt13e5dus739rq030-a.oregon-postgres.render.com'
+DB_NAME = 'nathi_db_ricx'
+DB_USER = 'nathi_db'
+DB_PASSWORD = 'QNzk4QVE3MgSvkrTTqOhAAddKyRgZiV6'
+DB_PORT = '5432'
+
 def connect_db():
     """Connect to PostgreSQL database"""
     try:
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'Fintech_Solar'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', ''),
-            port=os.getenv('DB_PORT', '5432')
+            host=DB_HOST,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            port=DB_PORT,
+            sslmode='require' # Ensure SSL is required
         )
         return conn, conn.cursor()
     except OperationalError as e:
