@@ -2,7 +2,7 @@ import psycopg2
 import os
 
 # Database credentials (replace with your actual credentials or environment variables)
-DB_HOST = "dpg-d1vjt13e5dus739rq030-a.oregon-postgres.render.com"
+DB_HOST = "dpg-d21jtbidbo4c73e8tau0-a.oregon-postgres.render.com"
 DB_NAME = "nathi_db_ricx"
 DB_USER = "nathi_db"
 DB_PASSWORD = "QNzk4QVE3MgSvkrTTqOhAAddKyRgZiV6"

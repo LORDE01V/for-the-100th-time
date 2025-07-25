@@ -112,7 +112,7 @@ flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
 def get_db():
     try:
         conn = psycopg2.connect(
-            host='dpg-d1vjt13e5dus739rq030-a.oregon-postgres.render.com',
+            host='dpg-d21jtbidbo4c73e8tau0-a.oregon-postgres.render.com',
             database='nathi_db_ricx',
             user='nathi_db',
             password='QNzk4QVE3MgSvkrTTqOhAAddKyRgZiV6',
