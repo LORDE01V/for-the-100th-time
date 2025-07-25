@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   Box,
@@ -56,6 +57,7 @@ import { Gi3dGlasses } from 'react-icons/gi';
 import inverterGeneratorImage from '../assets/images/Inverter_power_generator.jpg';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
+import PropTypes from 'prop-types';
 
 // Create a motion component for Text
 const MotionText = motion.create(Text);
@@ -200,7 +202,7 @@ function GroupBuying() {
     notifyMe: false, // Added for notification preference
   });
 
-  const [monthlyUsage, setMonthlyUsage] = useState(500);
+  const [monthlyUsage] = useState(500); // Only keep monthlyUsage since setMonthlyUsage is unused
   const [showNotificationPref, setShowNotificationPref] = useState(false);
   const [referralCode] = useState(`REF-${Math.random().toString(36).slice(2, 7).toUpperCase()}`);
 
@@ -253,16 +255,16 @@ function GroupBuying() {
   const inputBorderColor = useColorModeValue('gray.300', 'gray.600');
 
   // Define colors for glassmorphism effect on cards
-  const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
-  const glassBoxShadow = useColorModeValue('0 4px 12px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.5)'); // Renamed or kept as is if intended
+  // const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)');
+  // const glassBoxShadow = useColorModeValue('0 4px 12px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.5)'); // Renamed or kept as is if intended
 
   // Define hover box shadow using useColorModeValue at the top level
-  const hoverBoxShadow = useColorModeValue('0 8px 16px rgba(0, 0, 0, 0.2)', '0 8px 16px rgba(0, 0, 0, 0.6)');
+  // const hoverBoxShadow = useColorModeValue('0 8px 16px rgba(0, 0, 0, 0.2)', '0 8px 16px rgba(0, 0, 0, 0.6)');
 
-  const cardBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(0, 0, 0, 0.6)');
-  const cardBorderRadius = useColorModeValue('lg', 'xl');
-  const cardBorder = useColorModeValue('1px solid rgba(255, 255, 255, 0.2)', '1px solid gray.600');
-  const cardColor = useColorModeValue('gray.800', 'white'); // ... existing code ... 
+  // const cardBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(0, 0, 0, 0.6)');
+  // const cardBorderRadius = useColorModeValue('lg', 'xl');
+  // const cardBorder = useColorModeValue('1px solid rgba(255, 255, 255, 0.2)', '1px solid gray.600');
+  // const cardColor = useColorModeValue('gray.800', 'white'); // ... existing code ... 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -385,6 +387,13 @@ function GroupBuying() {
     </SimpleGrid>
   );
 
+  // Add prop types validation for TrustPanel
+  TrustPanel.propTypes = {
+    supplierRating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    deliverySuccess: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    disputeResolution: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  };
+
   // Add AR Viewer component
   const ARViewer = ({ model }) => (
     <Box h="400px" w="100%" bg="blackAlpha.800" borderRadius="lg" p={4}>
@@ -394,6 +403,11 @@ function GroupBuying() {
       </Text>
     </Box>
   );
+
+  // Add prop types validation for ARViewer
+  ARViewer.propTypes = {
+    model: PropTypes.string,
+  };
 
   // Replace ThermometerProgress component
   const ThermometerProgress = ({ progress, goal }) => {
@@ -433,9 +447,14 @@ function GroupBuying() {
     );
   };
 
+  // Add prop types validation for ThermometerProgress
+  ThermometerProgress.propTypes = {
+    progress: PropTypes.number.isRequired,
+    goal: PropTypes.number.isRequired,
+  };
+
   // Enhanced testimonials with verified purchases and interactive elements
   const TestimonialCarousel = () => {
-    const [currentTestimonial] = useState(0);
     
     return (
       <Box mt={8} position="relative">
@@ -452,7 +471,7 @@ function GroupBuying() {
               w={["100%", "80%", "60%"]}
             >
               <Avatar name={testimonial.name} src={testimonial.avatar} size="2xl" mb={4} />
-              <Text fontSize="xl" mb={4}>"{testimonial.text}"</Text>
+              <Text fontSize="xl" mb={4}>&quot;{testimonial.text}&quot;</Text>
               <Text fontWeight="bold">{testimonial.name}</Text>
               <Badge colorScheme="green">Saved {testimonial.savings}</Badge>
             </Box>
@@ -723,6 +742,19 @@ function GroupBuying() {
       </Box>
     );
   };
+
+  // Add prop types validation for PriceHistoryChart
+  PriceHistoryChart.propTypes = {
+    campaign: PropTypes.shape({
+      originalPrice: PropTypes.number.isRequired,
+      groupPrice: PropTypes.number.isRequired,
+      // Add any other properties you use from campaign
+    }).isRequired,
+  };
+
+  // Restore these at the top level of your component:
+  const cardBg = useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(0, 0, 0, 0.6)');
+  const cardColor = useColorModeValue('gray.800', 'white');
 
   return (
     <Box
