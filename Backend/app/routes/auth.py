@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, url_for, session, jsonify, request, current_app, render_template
 from app import oauth
-from support import get_user_by_email, create_user, update_user_by_id, get_db
+from support import get_user_by_email, create_user, update_user_by_id, get_db, connect_db
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
 import time
@@ -154,21 +154,33 @@ def login():
             return create_response('Invalid credentials', 400)
         
         try:
-            user = get_user_by_email(email)
+            # Use connect_db from support.py
+            conn, cur = connect_db()
+            if not conn or not cur:
+                return create_response('Failed to connect to the server. Please check database settings.', 500)
+
+            cur.execute('''
+                SELECT id, password_hash, full_name 
+                FROM users 
+                WHERE email = %s
+            ''', (email,))
+            user = cur.fetchone()
+
             if not user:
                 logging.error(f'User not found for email: {email}')
                 return create_response('Invalid credentials', 401)
             
-            if not check_password_hash(user['password_hash'], password):
+            if not check_password_hash(user[1], password):
                 logging.error(f'Password mismatch for email: {email}')
                 return create_response('Invalid credentials', 401)
             
-            access_token = create_access_token(identity=user['id'])
+            # Identity for JWT should be user ID, not email
+            access_token = create_access_token(identity=user[0])
             return jsonify({
                 'success': True,
                 'user': {
-                    'email': user['email'],
-                    'name': user['full_name']
+                    'email': user[1],
+                    'name': user[2]
                 },
                 'token': access_token,
                 'redirect': url_for('home.home_page')
@@ -179,6 +191,10 @@ def login():
     except Exception as e:
         logging.error(f'Login error: {str(e)}')
         return create_response('Login failed', 500)
+    finally:
+        if 'conn' in locals() and conn:  # Check if conn was successfully assigned
+            cur.close()
+            conn.close()
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -194,6 +210,7 @@ def register():
     password = data.get('password')
     full_name = data.get('name')
     
+    # Use get_user_by_email from support.py
     if get_user_by_email(email):
         return jsonify({'error': 'Email already registered'}), 409
     
@@ -230,40 +247,21 @@ def update_user():
         user_id = user['id']
         
         # Only include fields that are provided and exist in your schema
-        updates = {}
-        if 'email' in data:
-            updates['email'] = data.get('email')
-        if 'full_name' in data:
-            updates['full_name'] = data.get('full_name')
-        # Skip 'surname' for now, or add it after migrating the database
-        # if 'surname' in data:  # Uncomment this once the column is added
-        #     updates['surname'] = data.get('surname')
-        if 'phone_number' in data:
-            updates['phone_number'] = data.get('phone_number')
-        if 'address' in data:
-            updates['address'] = data.get('address')
+        updates_dict = {}
+        if 'email' in data: updates_dict['email'] = data.get('email')
+        if 'full_name' in data: updates_dict['full_name'] = data.get('full_name')
+        if 'surname' in data: updates_dict['surname'] = data.get('surname')
+        if 'phone_number' in data: updates_dict['phone_number'] = data.get('phone_number')
+        if 'address' in data: updates_dict['address'] = data.get('address')
         
-        if not updates:  # No valid updates
+        if not updates_dict:  # No valid updates
             return create_response('No valid fields to update', 400)
         
-        # Build the update query dynamically based on provided fields
-        query = "UPDATE users SET "
-        query_values = []
-        for key in updates:
-            if key in ['email', 'full_name', 'phone_number', 'address']:  # Only include known columns
-                query += f"{key} = COALESCE(%s, {key}), "
-                query_values.append(updates[key])
-        query = query.rstrip(', ')  # Remove trailing comma
-        query += " WHERE id = %s RETURNING id"
-        query_values.append(user_id)
-        
-        # Execute the query
-        conn = get_db()  # Now this should be defined
-        with conn.cursor() as cur:
-            cur.execute(query, query_values)
-            conn.commit()
-        
-        return create_response('Profile updated successfully', 200)
+        # Use the updated update_user_by_id from support.py
+        if update_user_by_id(user_id, **updates_dict):
+            return create_response('Profile updated successfully', 200)
+        else:
+            return create_response('Profile update failed', 500)
     
     except Exception as e:
         logging.error(f'Update error: {str(e)}')
@@ -283,7 +281,8 @@ def reset_password():
             return create_response('User not found', 404)
         
         new_hash = generate_password_hash(new_password)
-        if update_user_by_id(user['id'], password_hash=new_hash):  # Assuming update_user_by_id can handle password_hash
+        # Use update_user_by_id from support.py that now accepts password_hash
+        if update_user_by_id(user['id'], password_hash=new_hash):
             return create_response('Password reset successfully', 200)
         else:
             return create_response('Reset failed', 500)

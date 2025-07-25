@@ -13,22 +13,15 @@ import psycopg2
 from psycopg2 import sql, OperationalError
 from datetime import timedelta, datetime
 import secrets
-import os
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional, List
-import threading
-import uvicorn
+
 from flask import Blueprint, url_for, session
 from email_utils import send_welcome_email
-from app import create_app
+from app import app as flask_app
 from hugging_services import HuggingFaceChatbot
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
-from support import connect_db
+from support import connect_db, initialize_db
 
 # Add the Backend directory and its parent to the Python path
 backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
@@ -42,10 +35,10 @@ load_dotenv()
 # Configuration (use environment variables for secrets in production)
 SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
+ESKOM_TOKEN = os.getenv("ESKOM_TOKEN")
 
 # ================= FLASK APP =================
 # Rename existing app to flask_app
-flask_app = create_app()  # Use factory app
 flask_app.config.update(
     SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev'),
     SESSION_COOKIE_NAME='session',
@@ -77,15 +70,6 @@ jwt = JWTManager(flask_app)
 flask_app.register_blueprint(home_bp)
 flask_app.register_blueprint(auth_bp, name='auth_bp')
 
-# Remove the after_request handler entirely to avoid conflicts
-# @flask_app.after_request
-# def add_cors_headers(response):
-#     response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-#     response.headers['Access-Control-Allow-Credentials'] = 'true'
-#     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-#     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-#     return response
-
 # Database connection helper (PostgreSQL)
 def get_db():
     try:
@@ -101,237 +85,137 @@ def get_db():
         print(f"🚨 Database connection failed: {e}")
         return None
 
-# Auth routes (updated for PostgreSQL)
-@flask_app.route('/api/auth/register', methods=['POST'])
-def flask_register():
-    conn = None
-    try:
-        data = request.get_json()
-        
-        # Validate required fields
-        if not all(key in data for key in ['name', 'email', 'password']):
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-
-        # Get optional phone or set None
-        phone = data.get('phone', None)
-
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-
-        with conn.cursor() as cur:
-            # Check existing user
-            cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
-            if cur.fetchone():
-                return jsonify({'success': False, 'message': 'Email already exists'}), 400
-
-            # Create user with proper hash length
-            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
-            cur.execute(
-                """INSERT INTO users (email, password_hash, full_name, phone)
-                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
-            )
-            user_data = cur.fetchone()
-            conn.commit()
-
-        send_welcome_email(data['email'], data['name'])
-
-        return jsonify({
-            'success': True,
-            'user': {
-                'id': user_data[0],
-                'email': user_data[1],
-                'name': user_data[2]
-            }
-        }), 201
-
-    except Exception as e:
-        print(f"Registration Error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Registration failed'}), 500
-    finally:
-        if conn: conn.close()
-
-@flask_app.route('/api/auth/login', methods=['POST'])
-def flask_login():
-    try:
-        data = request.get_json()
-        email = data.get('email', '').lower()  # Force lowercase
-        password = data.get('password')
-
-        if not email or not password:
-            return jsonify({'success': False, 'message': 'Missing credentials'}), 400
-
-        conn = get_db()
-        with conn.cursor() as cur:
-            cur.execute('''
-                SELECT id, password_hash, full_name 
-                FROM users 
-                WHERE email = %s
-            ''', (email,))
-            user = cur.fetchone()
-
-            if user and check_password_hash(user[1], password):
-                access_token = create_access_token(identity=user[0])
-                return jsonify({
-                    'success': True,
-                    'token': access_token,
-                    'user': {
-                        'id': user[0],
-                        'name': user[2],
-                        'email': email
-                    }
-                }), 200
-
-        return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
-
-    except Exception as e:
-        app.logger.error(f"Login error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Login failed'}), 500
-    finally:
-        if conn:
-            conn.close()
-
-@flask_app.route('/api/solar/systems', methods=['POST'])
-@jwt_required()
-def flask_create_solar_system():
-    """Handle solar system installations"""
-    current_user = get_jwt_identity()
-    data = request.get_json()
-    # Add validation and call support.py's add_solar_system()
-    # ... implementation ...
-
-@flask_app.route('/api/contracts', methods=['POST'])
-@jwt_required()
-def flask_create_solar_contract():
-    """Handle contract creation"""
-    current_user = get_jwt_identity()
-    data = request.get_json()
-    # Add validation and call support.py's create_contract()
-    # ... implementation ...
-
-@flask_app.route('/api/payments', methods=['POST'])
-@jwt_required()
-def flask_record_payment():
-    """Handle payment processing"""
-    current_user = get_jwt_identity()
-    data = request.get_json()
-    # Add validation and call support.py's record_payment()
-    # ... implementation ...
-
-@flask_app.route('/api/contracts', methods=['GET'])
-@jwt_required()
-def flask_get_contracts():
-    """Get user's solar contracts"""
-    current_user = get_jwt_identity()
-    # Add authorization and call support.py's get_user_contracts()
-    # ... implementation ...
 
 @flask_app.errorhandler(404)
 def not_found(e):
     return jsonify(error="Route not found"), 404
 
-# ================= FASTAPI APP =================
-app = FastAPI(title="Lumina Solar FastAPI")
-
-# Configure CORS for development
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# JWT (compatible with Flask's tokens)
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/fastapi/auth/login")
-
-# --- FastAPI Models ---
-class UserRegister(BaseModel):
-    name: str
-    email: str
-    password: str
-    phone: Optional[str] = None
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
-
-# --- FastAPI Routes ---
-@app.post("/fastapi/auth/register")
-async def fastapi_register(user: UserRegister):
-    """FastAPI version of /api/auth/register"""
-    conn = None
-    try:
-        conn = get_db()
-        with conn.cursor() as cur:
-            cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
-            if cur.fetchone():
-                raise HTTPException(status_code=400, detail="Email exists")
-
-            hashed_pw = generate_password_hash(user.password)
-            cur.execute(
-                """INSERT INTO users (email, password_hash, full_name, phone)
-                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (user.email, hashed_pw, user.name, user.phone)
-            )
-            user_data = cur.fetchone()
-            conn.commit()
-
-        return {
-            "success": True,
-            "user": {"id": user_data[0], "email": user_data[1], "name": user_data[2]}
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        if conn: conn.close()
-
-@app.post("/fastapi/auth/login")
-async def fastapi_login(user: UserLogin):
-    """FastAPI version of /api/auth/login"""
-    conn = None
-    try:
-        conn = get_db()
-        with conn.cursor() as cur:
-            cur.execute(
-                'SELECT id, email, password_hash, full_name FROM users WHERE email = %s',
-                (user.email,)
-            )
-            db_user = cur.fetchone()
-
-            if db_user and check_password_hash(db_user[2], user.password):
-                token = create_access_token(identity=db_user[0])
-                return {
-                    "success": True,
-                    "token": token,
-                    "user": {"id": db_user[0], "name": db_user[3], "email": db_user[1]}
-                }
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        if conn: conn.close()
-
 # Initialize chatbot
 chatbot = HuggingFaceChatbot()
 
-class ChatMessage(BaseModel):
-    message: str
-    history: List[dict]
-
-@app.post("/api/chat")
-async def chat_endpoint(chat_message: ChatMessage):
+# Chat endpoint
+@flask_app.route("/api/chat", methods=['POST'])
+def chat_endpoint():
     try:
-        response = chatbot.get_response(chat_message.message)
-        return {"response": response}
+        data = request.json
+        message = data.get('message', '')
+        response = chatbot.get_response(message)
+        return jsonify({"response": response})
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return jsonify({"error": str(e)}), 500
 
-# ================= RUN BOTH APPS =================
+@flask_app.route('/api/voice-to-text', methods=['POST'])
+def voice_to_text():
+    """
+    Converts voice (audio) input to text using the chatbot's voice processing.
+    Expects a file upload with the key 'audio'.
+    """
+    try:
+        # No logger defined here, so using print for now.
+        print("Received voice-to-text request")
+        if 'audio' not in request.files:
+            print("No audio file in request")
+            return jsonify({'error': 'No audio file provided'}), 400
+        
+        audio_file = request.files['audio']
+        print(f"Processing audio file: {audio_file.filename}")
+        
+        # Save the .webm file (no ffmpeg conversion)
+        temp_path = 'temp_audio.webm'
+        audio_file.save(temp_path)
+        print(f"Saved audio file to {temp_path}")
+        
+        # Pass .webm file directly to the chatbot
+        text = chatbot.process_voice_query(temp_path)
+        print(f"Processed text: {text}")
+        
+        # Clean up
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+            print("Cleaned up temporary audio file")
+            
+        return jsonify({'text': text})
+    except Exception as e:
+        print(f"Error in voice-to-text endpoint: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+from Energy_optimizer.agent import EnergyUsageOptimizerAgent # Import here
+
+@flask_app.route('/api/energy-optimizer', methods=['GET'])
+def optimize_energy():
+    """
+    Analyzes energy usage and returns optimization recommendations.
+    """
+    print("Energy optimizer endpoint called")
+    try:
+        agent = EnergyUsageOptimizerAgent()
+        results = agent.analyze_usage()
+        print(f"Energy optimization results: {results}")
+        return jsonify(results)
+    except Exception as e:
+        print(f"Error in energy optimizer: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@flask_app.route('/api/areas', methods=['GET'])  # Added Eskom areas endpoint
+def get_eskom_areas():
+    """
+    Fetches Eskom areas based on search text.
+    """
+    import requests # Import here
+    text = request.args.get("text", "")
+    if not text:
+        return {"error": "Please provide search text"}, 400
+
+    r = requests.get(
+        f"https://developer.sepush.co.za/business/2.0/areas_search?text={text}",
+        headers={"token": ESKOM_TOKEN}
+    )
+    data = r.json()
+    return data
+
+@flask_app.route('/api/version', methods=['GET'])
+def version():
+    """
+    Returns the current version of the backend API.
+    """
+    version_info = {
+        'version': '1.0.0',
+        'description': 'Backend API for energy optimizer and chatbot'
+    }
+    print(f"Version info requested: {version_info}")
+    return jsonify(version_info)
+
+@flask_app.route('/api/ai/suggest-plan', methods=['POST'])
+def suggest_plan():
+    try:
+        data = request.json  # Expecting JSON with usageHours, budget, deviceCount
+        print(f"Received suggest-plan request: {data}")
+        # Simple mock logic: Based on input, return a plan (e.g., 'Pro Saver' if budget > 50)
+        if data and data.get('budget', 0) > 50:
+            return jsonify({'plan': 'Pro Saver'})
+        else:
+            return jsonify({'plan': 'Basic Plan'})
+    except Exception as e:
+        print(f"Error in suggest-plan endpoint: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@flask_app.route('/api/log', methods=['POST'])
+def log_message():
+    try:
+        import datetime # Import here
+        message = request.json.get('message', '')
+        log_file_path = os.path.abspath('../frontend/frontend.log')  # Path relative to backend
+        with open(log_file_path, 'a') as log_file:
+            log_file.write(f"{datetime.datetime.now()} - {message}\n")
+        return jsonify({'status': 'success'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# ================= RUN FLASK APP =================
 if __name__ == '__main__':
-    flask_app.run(host='0.0.0.0', port=5000, debug=True)
+    # Ensure the database table is created when running locally
+    from support import create_topup_table # Import from support now
+    create_topup_table()
 
-conn, cur = connect_db()
-if conn: print("✅ Database connection successful")
-else: print("❌ Database connection failed")
+    print("Starting Flask app on port 5000")
+    flask_app.run(host='0.0.0.0', port=5000, debug=True)

@@ -15,61 +15,66 @@ load_dotenv()
 # ================== DATABASE CONNECTION ==================
 def connect_db():
     db_url = os.getenv('DATABASE_URL')
-    if not db_url:
-        raise ValueError("DATABASE_URL environment variable must be set.")
-    try:
-        conn = psycopg2.connect(db_url)
-        return conn, conn.cursor()
-    except Exception as e:
-        print(f"🚨 Database connection failed: {e}")
-        return None, None
+    if db_url:
+        try:
+            conn = psycopg2.connect(db_url)
+            return conn, conn.cursor()
+        except Exception as e:
+            logging.error(f"🚨 Database connection failed using DATABASE_URL: {e}")
+            return None, None
+    else:
+        try:
+            db_host = os.getenv('DB_HOST', 'localhost')
+            db_name = os.getenv('DB_NAME', 'Fintech_Solar')
+            db_user = os.getenv('DB_USER', 'postgres')
+            db_password = os.getenv('DB_PASSWORD', '')
+            db_port = os.getenv('DB_PORT', '5432')
+            
+            if not db_password:
+                logging.error('DB_PASSWORD is not set in your .env file. Please add it and try again.')
+                raise ValueError('DB_PASSWORD environment variable must be set.')
+            
+            conn = psycopg2.connect(
+                host=db_host,
+                database=db_name,
+                user=db_user,
+                password=db_password,
+                port=db_port
+            )
+            logging.info('Database connection successful.')
+            return conn, conn.cursor()
+        except OperationalError as e:
+            logging.error(f'Database connection failed: {str(e)}. Please verify your .env file settings.')
+            raise  # Re-raise for the caller to handle
 
-# Add the get_db function here, right after the connect_db function
-def get_db():
-    try:
-        db_host = os.getenv('DB_HOST', 'localhost')  # Default to 'localhost' if not set
-        db_name = os.getenv('DB_NAME', 'Fintech_Solar')  # Default if not set
-        db_user = os.getenv('DB_USER', 'postgres')  # Default if not set
-        db_password = os.getenv('DB_PASSWORD', '')  # Check for password
-        db_port = os.getenv('DB_PORT', '5432')  # Default port
-        
-        if not db_password:
-            logging.error('DB_PASSWORD is not set in your .env file. Please add it and try again.')
-            raise ValueError('DB_PASSWORD environment variable must be set.')
-        
-        conn = psycopg2.connect(
-            host=db_host,
-            database=db_name,
-            user=db_user,
-            password=db_password,
-            port=db_port
-        )
-        logging.info('Database connection successful.')
-        return conn
-    except OperationalError as e:
-        logging.error(f'Database connection failed: {str(e)}. Please verify your .env file settings.')
-        raise  # Re-raise for the caller to handle
-
-# ================== CORE FUNCTIONS ==================
-def execute_query(operation=None, query=None, params=None):
+def execute_query(query_type, query, params=None):
     """Execute a database query"""
-    conn, cur = connect_db()
-    if not conn or not cur:
-        raise Exception("Database connection failed")
-
+    conn = None
+    cur = None
     try:
-        if params:
-            cur.execute(query, params)
-        else:
+        conn, cur = connect_db()
+        if not conn or not cur:
+            raise Exception("Database connection failed")
+        
+        if query_type == 'alter':
             cur.execute(query)
-
-        if operation == 'search':
-            return cur.fetchall()
-        elif operation == 'insert':
+        else:
+            if params:
+                cur.execute(query, params)
+            else:
+                cur.execute(query)
+        
+        if query_type in ['insert', 'update', 'delete']:
             conn.commit()
-            return cur.fetchone()[0] if cur.description else None
+            result = cur.fetchone()[0] if cur.description else None
+        else:
+            result = cur.fetchall() if cur.description else None
+            
+        return result
+        
     except Exception as e:
-        conn.rollback()
+        if conn:
+            conn.rollback()
         logging.error("Query failed: %s - Query: %s", str(e), query)
         raise
     finally:
@@ -94,18 +99,27 @@ def get_user_by_email(email):
         return dict(zip(columns, result[0]))
     return None
 
-def update_user_by_id(user_id, email=None, full_name=None, surname=None, phone_number=None, address=None):
-    query = """
-    UPDATE users 
-    SET email = COALESCE(%s, email), 
-        full_name = COALESCE(%s, full_name), 
-        surname = COALESCE(%s, surname), 
-        phone_number = COALESCE(%s, phone_number), 
-        address = COALESCE(%s, address)
-    WHERE id = %s RETURNING id
-    """
-    params = (email, full_name, surname, phone_number, address, user_id)
-    return execute_query('search', query, params) is not None
+def update_user_by_id(user_id, email=None, full_name=None, surname=None, phone_number=None, address=None, password_hash=None):
+    updates = []
+    params = []
+    if email is not None: updates.append("email = %s"); params.append(email)
+    if full_name is not None: updates.append("full_name = %s"); params.append(full_name)
+    if surname is not None: updates.append("surname = %s"); params.append(surname)
+    if phone_number is not None: updates.append("phone_number = %s"); params.append(phone_number)
+    if address is not None: updates.append("address = %s"); params.append(address)
+    if password_hash is not None: updates.append("password_hash = %s"); params.append(password_hash)
+    
+    if not updates:
+        return False
+
+    query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s RETURNING id"
+    params.append(user_id)
+    
+    try:
+        return execute_query('update', query, params) is not None
+    except Exception as e:
+        logging.error(f"Error updating user: {e}")
+        return False
 
 # ================== SOLAR SYSTEM OPERATIONS ==================
 def add_solar_system(installer_id, capacity_kw, components=None, installation_date=None):
@@ -177,9 +191,31 @@ def get_payment_history(contract_id):
     """
     return execute_query('search', query, (contract_id,))
 
+def create_topup_table():
+    query = """
+    CREATE TABLE IF NOT EXISTS topup_transactions (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) NOT NULL,  // References the user making the top-up
+        amount DECIMAL(10, 2) NOT NULL,  // Top-up amount in ZAR
+        promo_code VARCHAR(50),  // Optional promo code
+        voucher_code VARCHAR(50),  // Optional voucher code
+        transaction_type VARCHAR(50) NOT NULL,  // e.g., 'topup' or 'recharge'
+        is_auto_topup BOOLEAN DEFAULT FALSE,  // Whether it's an auto-top-up
+        min_balance DECIMAL(10, 2),  // Minimum balance threshold for auto-top-up
+        auto_topup_amount DECIMAL(10, 2),  // Amount for auto-top-up
+        auto_topup_frequency VARCHAR(50),  // e.g., 'weekly'
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  // Timestamp of the transaction
+    );
+    """
+    try:
+        execute_query('alter', query)
+        print("Top-up table created successfully.")
+    except Exception as e:
+        print(f"🚨 Failed to create top-up table: {str(e)}")
+
 # Initialize database tables when module loads
 def initialize_db():
-    conn, cur = connect_db()
+    conn, cur = connect_db()[0:2] # Ensure both conn and cur are unpacked
     if conn is None or cur is None:
         print("Database connection failed.")
         return  # or raise an Exception if you want to stop execution
