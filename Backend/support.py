@@ -187,6 +187,10 @@ def get_payment_history(contract_id):
 # Initialize database tables when module loads
 def initialize_db():
     conn, cur = connect_db()
+    if conn is None or cur is None:
+        print("Database connection failed.")
+        return  # or raise an Exception if you want to stop execution
+
     try:
         cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
