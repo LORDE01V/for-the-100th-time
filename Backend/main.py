@@ -39,7 +39,7 @@ from app.routes.events_calendar import events_calendar_bp
 from app.routes.topup import topup_bp
 from Backend.app.routes.expenses import expenses_bp
 from app.routes.expensenotifications import expensenotifications_bp
-from Backend.support import update_user_balance
+from Backend.support import update_user_balance, create_support_ticket, save_payment_method, fetch_user_payment_methods, save_community_story
 
 
 # Add the Backend directory and its parent to the Python path
@@ -381,26 +381,26 @@ async def fastapi_register(user: UserRegister):
             user_data = cur.fetchone()
             conn.commit()
             
-            return jsonify({
+            return {
                 'success': True,
-                'message': 'Account deleted successfully'
-            })
+                'message': 'User registered successfully',
+                'user': {
+                    'id': user_data[0],
+                    'email': user_data[1],
+                    'name': user_data[2]
+                }
+            }
             
-    # except Exception as e:
-    #         # Rollback in case of error
-    #         if conn:  # Ensure conn is not None before rollback
-    #             conn.rollback()
-    #         print(f"Error during account deletion: {str(e)}")
-    #         raise
-            
+    except HTTPException as e:
+        raise e
     except Exception as e:
-        print(f"Delete account error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to delete account'}), 500
+        if conn:
+            conn.rollback()
+        print(f"Registration error: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Registration failed")
     finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
+        if conn:
+            conn.close()
 
 # Forum routes
 @flask_app.route('/api/forum/topics', methods=['GET'])
@@ -473,11 +473,12 @@ def submit_story():
             return jsonify({'success': False, 'message': 'Missing required fields'}), 400
         
         username = data['username']
-        email = data['email']
+        email = data['email'] # Not directly used in save_community_story, but kept for consistency with frontend
         story = data['story']
+        rating = data.get('rating', 5) # Default rating to 5 if not provided
         
         # Add story to the database
-        story_id = add_story(username, email, story)
+        story_id = save_community_story(username, story, rating)
         if not story_id:
             return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
         
@@ -550,84 +551,44 @@ def create_forum_topic():
         if conn: conn.close()
 
 @app.post("/fastapi/auth/login")
-async def fastapi_login(user: UserLogin, topic_id: int):
+async def fastapi_login(user: UserLogin):
     """FastAPI version of /api/auth/login"""
     conn = None
     try:
         conn = get_db()
         if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database connection error")
 
         cur = conn.cursor()
-        
-        # Get topic with author info
         cur.execute('''
-            SELECT 
-                t.id,
-                t.title,
-                t.content,
-                t.created_at,
-                u.id as author_id,
-                u.full_name as author_name
-            FROM forum_topics t
-            JOIN users u ON t.user_id = u.id
-            WHERE t.id = %s
-        ''', (topic_id,))
+            SELECT id, password_hash, full_name 
+            FROM users 
+            WHERE email = %s
+        ''', (user.email.lower(),))
+        db_user = cur.fetchone()
 
-        
-        topic = cur.fetchone()
-        if not topic:
-            return jsonify({'success': False, 'message': 'Topic not found'}), 404
-        
-        # Get all replies for the topic
-        cur.execute('''
-            SELECT 
-                r.id,
-                r.content,
-                r.created_at,
-                u.id as author_id,
-                u.full_name as author_name
-            FROM forum_replies r
-            JOIN users u ON r.user_id = u.id
-            WHERE r.topic_id = %s
-            ORDER BY r.created_at ASC
-        ''', (topic_id,))
-        
-        replies = []
-        for row in cur.fetchall():
-            replies.append({
-                'id': row[0],
-                'content': row[1],
-                'created_at': row[2].isoformat(),
-                'author': {
-                    'id': row[3],
-                    'name': row[4]
-                }
-            })
-        
-        return jsonify({
+        if not db_user or not check_password_hash(db_user[1], user.password):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+
+        access_token = create_access_token(identity=db_user[0])
+        return {
             'success': True,
-            'topic': {
-                'id': topic[0],
-                'title': topic[1],
-                'content': topic[2],
-                'created_at': topic[3].isoformat(),
-                'author': {
-                    'id': topic[4],
-                    'name': topic[5]
-                },
-                'replies': replies
+            'token': access_token,
+            'user': {
+                'id': db_user[0],
+                'name': db_user[2],
+                'email': user.email
             }
-        })
+        }
 
+    except HTTPException as e:
+        raise e
     except Exception as e:
-        print(f"Error fetching forum topic: {str(e)}")
-        return jsonify({'success': False, 'message': 'Failed to fetch forum topic'}), 500
+        print(f"FastAPI Login error: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Login failed")
     finally:
-        if 'conn' in locals():
-            if 'cur' in locals(): cur.close()
-            if 'conn' in locals() and conn:  # Ensure conn is valid before closing
-                conn.close()
+        if conn:
+            conn.close()
 
 @flask_app.route('/api/forum/topics/<int:topic_id>/replies', methods=['POST'])
 @jwt_required()
@@ -963,7 +924,8 @@ def get_payment_methods():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if conn: conn.close()
+        # Removed the 'if conn: conn.close()' block as connection is managed by fetch_user_payment_methods
+        pass
 
 
 class ChatMessage(BaseModel):
