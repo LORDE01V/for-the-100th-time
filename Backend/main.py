@@ -28,7 +28,7 @@ from app import create_app
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
 from support import connect_db
-from app.routes.support import support_bp 
+from app.routes.supportt import support_bp 
 from app.routes.community_stories import community_stories_bp
 from app.routes.userprofile import profile_bp
 from app.routes.notification_preference import notifications_bp
@@ -920,7 +920,7 @@ async def chat_endpoint(chat_message: ChatMessage):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))  # 10000 is a fallback
-    app.run(host="0.0.0.0", port=port)
+    flask_app.run(host="0.0.0.0", port=port)
 
 conn, cursor = connect_db()
 if conn:
