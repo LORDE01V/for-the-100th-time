@@ -39,7 +39,7 @@ from app.routes.events_calendar import events_calendar_bp
 from app.routes.topup import topup_bp
 from Backend.app.routes.expenses import expenses_bp
 from app.routes.expensenotifications import expensenotifications_bp
-from Backend.support import update_user_balance, create_support_ticket, save_payment_method, fetch_user_payment_methods, save_community_story
+from Backend.support import update_user_balance, save_payment_method, fetch_user_payment_methods, save_community_story, get_user_by_id, save_support_request # Added get_user_by_id, changed create_support_ticket to save_support_request
 
 
 # Add the Backend directory and its parent to the Python path
@@ -783,8 +783,17 @@ def handle_support_ticket():
             return jsonify({'success': False, 'message': 'Subject and message are required'}), 400
 
         try:
-            priority = data.get('priority', 'low')
-            ticket_id = create_support_ticket(user_id, subject, message, priority)
+            # Fetch user details (name, email) using user_id
+            user = get_user_by_id(user_id)
+            if not user:
+                return jsonify({'success': False, 'message': 'User not found for ticket creation'}), 404
+            
+            user_name = user.get('full_name')
+            user_email = user.get('email')
+
+            # Call save_support_request (renamed from create_support_ticket)
+            # Removed priority as save_support_request does not use it
+            ticket_id = save_support_request(user_name, user_email, subject, message)
             return jsonify({
                 'success': True,
                 'message': 'Support ticket created successfully',
