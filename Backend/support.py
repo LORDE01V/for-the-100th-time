@@ -14,20 +14,13 @@ load_dotenv()
 
 # ================== DATABASE CONNECTION ==================
 def connect_db():
-    """Connect to PostgreSQL database"""
-    password = os.getenv('DB_PASSWORD', '')
-    if not password:
-        raise ValueError("DB_PASSWORD environment variable must be set.")
+    db_url = os.getenv('DATABASE_URL')
+    if not db_url:
+        raise ValueError("DATABASE_URL environment variable must be set.")
     try:
-        conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'Fintech_Solar'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=password,
-            port=os.getenv('DB_PORT', '5432')
-        )
+        conn = psycopg2.connect(db_url)
         return conn, conn.cursor()
-    except OperationalError as e:
+    except Exception as e:
         print(f"🚨 Database connection failed: {e}")
         return None, None
 
