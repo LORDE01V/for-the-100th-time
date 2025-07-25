@@ -318,6 +318,30 @@ def save_auto_topup_settings(user_id, is_auto_topup, min_balance, auto_topup_amo
     """
     return execute_query('insert', query, (user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency))
 
+def save_payment_method(user_id, payment_type, card_number, expiry_date, card_holder_name, is_default=False):
+    """Saves a new payment method for a user."""
+    query = """
+    INSERT INTO payment_methods (user_id, payment_type, card_number, expiry_date, card_holder_name, is_default)
+    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id
+    """
+    params = (user_id, payment_type, card_number, expiry_date, card_holder_name, is_default)
+    return execute_query('insert', query, params)
+
+def fetch_user_payment_methods(user_id):
+    """Fetches all payment methods for a given user."""
+    query = """
+    SELECT id, payment_type, card_number, expiry_date, card_holder_name, is_default, created_at
+    FROM payment_methods
+    WHERE user_id = %s
+    ORDER BY is_default DESC, created_at DESC
+    """
+    results = execute_query('search', query, (user_id,))
+    if results:
+        # Assuming execute_query returns a list of tuples, convert to list of dicts
+        columns = ['id', 'payment_type', 'card_number', 'expiry_date', 'card_holder_name', 'is_default', 'created_at']
+        return [dict(zip(columns, row)) for row in results]
+    return []
+
 # Initialize database tables when module loads
 def initialize_db():
     conn, cur = connect_db()
@@ -488,6 +512,19 @@ def initialize_db():
                 is_read BOOLEAN DEFAULT FALSE
     );
 """)
+        # Add payment_methods table
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS payment_methods (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                payment_type VARCHAR(50) NOT NULL,
+                card_number VARCHAR(255) NOT NULL,
+                expiry_date VARCHAR(10) NOT NULL,
+                card_holder_name VARCHAR(255) NOT NULL,
+                is_default BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
 
         if conn:
             conn.commit()
