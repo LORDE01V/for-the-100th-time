@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import { ChakraProvider, extendTheme, ColorModeScript } from '@chakra-ui/react';
 import { NavigationProvider } from './context/NavigationContext';
-import OneSignal from 'react-onesignal';
 import { DashboardProvider } from "./context/DashboardContext";
 
 // Extend the default theme to configure color mode
@@ -16,21 +15,7 @@ const config = {
 const theme = extendTheme({ config });
 
 // Initialize OneSignal here, once for the entire app
-if (!window.OneSignal || !window.OneSignal._initCalled) {
-  OneSignal.init({
-    appId: process.env.REACT_APP_ONESIGNAL_APP_ID,
-    allowLocalhostAsSecureOrigin: true,
-    notifyButton: {
-      enable: true,
-    },
-    // autoResubscribe: true,
-  }).then(() => {
-    // You can add more OneSignal logic here, e.g., prompt for push notifications
-    // OneSignal.showSlidedownPrompt();
-  }).catch((error) => {
-    // Handle error if needed
-  });
-}
+// OneSignal initialization and related code have been removed
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

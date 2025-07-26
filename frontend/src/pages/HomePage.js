@@ -7,7 +7,6 @@ import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import { Bot } from 'lucide-react';
 import backgroundVideo from '../assets/videos/Slowed-GridX-Video.mp4';
-import OneSignal from 'react-onesignal';
 
 import {
   Box,
@@ -241,16 +240,6 @@ function HomePage() {
                   }
                 }}>Subscribe</Button>
               </Grid>
-              <Button colorScheme="teal" variant="outline" onClick={async () => {
-                try {
-                  await OneSignal.showSlidedownPrompt();
-                  toast({ title: 'Push Notification', description: 'Check your browser prompt to enable notifications.', status: 'info', duration: 5000, isClosable: true });
-                } catch (err) {
-                  toast({ title: 'Push Notification Error', description: 'Could not prompt for notifications.', status: 'error', duration: 5000, isClosable: true });
-                }
-              }}>
-                Enable Push Notifications
-              </Button>
             </Box>
 
             {/* Logout Button */}
