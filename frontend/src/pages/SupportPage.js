@@ -99,7 +99,7 @@ const handleContactSubmit = async (e) => {
   e.preventDefault();
   setIsSubmitting(true);
   try {
-    const response = await fetch('http://localhost:5000/api/support', {
+    const response = await fetch('https://backend-7oa8.onrender.com/api/support', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, subject, message }),
@@ -236,7 +236,7 @@ const handleContactSubmit = async (e) => {
             Contact Support
           </Heading>
           <Text color={textColor} mb={4}>
-            Couldn't find your answer? Send us a message.
+            Could not find your answer? Send us a message.
           </Text>
           <VStack as="form" spacing={4} onSubmit={handleContactSubmit}>
             <FormControl id="contact-name" isRequired>

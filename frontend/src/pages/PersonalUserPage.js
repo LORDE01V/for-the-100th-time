@@ -35,7 +35,7 @@ const PersonalUserPage = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     axios
-      .get("http://localhost:5000/profile/me", {
+      .get("https://backend-7oa8.onrender.com/profile/me", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then((res) => setFormData(res.data))
@@ -61,7 +61,7 @@ const PersonalUserPage = () => {
     setIsOpen(false);
     const token = localStorage.getItem('token');
     axios
-      .post("http://localhost:5000/profile/me", formData, {
+      .post("https://backend-7oa8.onrender.com/profile/me", formData, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() =>

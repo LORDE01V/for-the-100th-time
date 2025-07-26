@@ -1,3 +1,4 @@
+/* global process */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
@@ -106,7 +107,7 @@ function RegisterPage() {
   };
 
   const handleGoogleRegister = () => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-7oa8.onrender.com';
     window.location.href = `${backendUrl}/api/auth/google?action=register`;
   };
 

@@ -1,3 +1,4 @@
+/* global process */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
@@ -113,7 +114,7 @@ function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-7oa8.onrender.com';
     window.location.href = `${backendUrl}/api/auth/google?action=login`;
   };
 
@@ -169,7 +170,7 @@ function LoginPage() {
           <Button type="submit" colorScheme="blue" width="full" isLoading={loading}>Log In</Button>
           <Button width="full" onClick={handleGoogleLogin} leftIcon={<FcGoogle />} variant="outline">Sign in with Google</Button>
           <Text color={useColorModeValue('gray.800', 'white')} mt={4} textAlign="center">
-            Don't have an account?{' '}
+            Don&#39;t have an account?{' '}
             <Button variant="link" color="blue.500" onClick={() => navigate('/register')}>Register</Button>
           </Text>
         </VStack>
