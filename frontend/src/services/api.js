@@ -1,7 +1,7 @@
 /* global process */
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || "https://backend-7oa8.onrender.com";
+const API_URL = process.env.REACT_APP_API_URL || "https://backend-210d.onrender.com";
 
 // Create an axios instance with default config
 const api = axios.create({

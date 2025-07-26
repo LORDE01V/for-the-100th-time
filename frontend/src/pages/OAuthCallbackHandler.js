@@ -25,7 +25,7 @@ const OAuthCallbackHandler = () => {
 
         // Fallback to session check
         console.log('Checking session...');
-        const response = await fetch('https://backend-7oa8.onrender.com/api/auth/user', {
+        const response = await fetch('https://backend-210d.onrender.com/api/auth/user', {
           credentials: 'include',
           headers: {
             'Accept': 'application/json',
