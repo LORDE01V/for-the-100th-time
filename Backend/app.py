@@ -24,7 +24,7 @@ app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
 
 # Configure CORS
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": ["http://localhost:3000", "https://frontend-sabs.onrender.com"]}})
 
 # Initialize OAuth
 oauth = OAuth(app)
@@ -45,6 +45,7 @@ jwt = JWTManager(app)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(ai_agent_bp)
+app.register_blueprint(topup_bp) # Register the topup blueprint
 
 chatbot = EnhancedChatbot()
 
