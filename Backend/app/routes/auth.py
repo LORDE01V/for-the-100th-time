@@ -139,7 +139,7 @@ def logout():
     return create_response("Logged out successfully")
 
 @auth_bp.route('/login', methods=['POST', 'OPTIONS'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-xmub.onrender.com'], supports_credentials=True)
+@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def login():
     if request.method == 'OPTIONS':
         return create_response("OK", 200)
@@ -185,7 +185,7 @@ def login():
         return create_response('Login failed', 500)
 
 @auth_bp.route('/register', methods=['POST', 'OPTIONS'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-xmub.onrender.com'], supports_credentials=True)
+@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def register():
     if request.method == 'OPTIONS':
         return create_response("OK", 200)
