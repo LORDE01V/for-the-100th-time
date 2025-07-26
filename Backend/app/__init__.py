@@ -1,10 +1,10 @@
 # __init__.py
-from flask import Flask
-from authlib.integrations.flask_client import OAuth
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
+from flask import Flask
 from flask_cors import CORS
+from authlib.integrations.flask_client import OAuth
 from app.routes.topup import topup_bp
 
 # Load environment variables
@@ -22,7 +22,8 @@ def create_app():
         "origins": [
             "http://localhost:3000",
             "http://localhost:5000",
-            "http://127.0.0.1:3000"
+            "http://127.0.0.1:3000",
+            "https://frontend-xmub.onrender.com"  # Add your frontend URL here
         ],
         "supports_credentials": True,
         "allow_headers": ["*"],
