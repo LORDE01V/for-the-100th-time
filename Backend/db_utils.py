@@ -7,10 +7,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # New hardcoded database credentials
-DB_HOST = 'dpg-d21jtbidbo4c73e8tau0-a.oregon-postgres.render.com'
-DB_NAME = 'nathi_db_ricx'
-DB_USER = 'nathi_db'
-DB_PASSWORD = 'QNzk4QVE3MgSvkrTTqOhAAddKyRgZiV6'
+DB_HOST = 'dpg-d22bjj3e5dus739fk9gg-a.oregon-postgres.render.com'
+DB_NAME = 'griddb'
+DB_USER = 'griddb'
+DB_PASSWORD = 'GycGE7M140H9RbUj5skLbOAS9kD8o8qf'
 DB_PORT = '5432'
 
 def connect_db():
