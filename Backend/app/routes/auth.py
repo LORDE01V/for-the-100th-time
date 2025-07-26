@@ -139,7 +139,7 @@ def logout():
     return create_response("Logged out successfully")
 
 @auth_bp.route('/login', methods=['POST', 'OPTIONS'])
-@cross_origin(origins='http://localhost:3000', supports_credentials=True)
+@cross_origin(origins=['http://localhost:3000', 'https://frontend-xmub.onrender.com'], supports_credentials=True)
 def login():
     if request.method == 'OPTIONS':
         return create_response("OK", 200)
@@ -184,9 +184,12 @@ def login():
         logging.error(f'Login error: {str(e)}')
         return create_response('Login failed', 500)
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/register', methods=['POST', 'OPTIONS'])
+@cross_origin(origins=['http://localhost:3000', 'https://frontend-xmub.onrender.com'], supports_credentials=True)
 def register():
-    # Always succeed and return a fake user and token
+    if request.method == 'OPTIONS':
+        return create_response("OK", 200)
+    # This route currently returns a mock success. You'll need to implement actual registration logic here.
     return jsonify({
         "success": True,
         "access_token": "mocktoken123",
