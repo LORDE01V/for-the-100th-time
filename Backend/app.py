@@ -14,7 +14,9 @@ from flask_jwt_extended import JWTManager
 import datetime
 from db_utils import create_topup_table  # Import the new function
 from app.routes.topup import topup_bp  # Add this import
-from app.routes.recommendation_plan import recommendation_bp
+from app.routes.auth import auth_bp # Import the auth blueprint
+from app.routes.ai_agent import ai_agent_bp # Import the ai_agent blueprint
+from functools import lru_cache # Import lru_cache
 
 # Set up logging to console only
 logger = logging.getLogger(__name__)
@@ -479,5 +481,4 @@ def get_loadshedding():
 
 if __name__ == '__main__':
     logger.info("Starting Flask app on port 5000")
-    app.register_blueprint(recommendation_bp)
     app.run(debug=True, port=5000)
