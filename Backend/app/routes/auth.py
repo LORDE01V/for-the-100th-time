@@ -189,16 +189,48 @@ def login():
 def register():
     if request.method == 'OPTIONS':
         return create_response("OK", 200)
-    # This route currently returns a mock success. You'll need to implement actual registration logic here.
-    return jsonify({
-        "success": True,
-        "access_token": "mocktoken123",
-        "user": {
-            "id": 1,
-            "email": request.json.get("email", "test@example.com"),
-            "full_name": request.json.get("full_name", "Test User")
-        }
-    }), 200
+    try:
+        data = request.get_json()
+        if not data or not isinstance(data, dict):
+            logging.error('No valid JSON data received in registration request')
+            return create_response('Invalid registration data', 400)
+
+        email = data.get('email', '').lower()
+        password = data.get('password')
+        full_name = data.get('full_name', '') # Assuming full_name is part of the registration
+
+        if not email or not password:
+            logging.error('Missing or invalid email/password in registration data')
+            return create_response('Email and password are required', 400)
+
+        existing_user = get_user_by_email(email)
+        if existing_user:
+            logging.error(f'Attempted registration with existing email: {email}')
+            return create_response('User with that email already exists', 409) # 409 Conflict
+
+        hashed_password = generate_password_hash(password)
+        new_user_id = create_user(email=email, password_hash=hashed_password, full_name=full_name)
+
+        if new_user_id is None:
+            logging.error(f'Failed to create user in database for email: {email}')
+            return create_response('Registration failed due to database error', 500)
+        
+        # After successful registration, automatically log in the user
+        access_token = create_access_token(identity=str(new_user_id))
+        
+        return jsonify({
+            "success": True,
+            "access_token": access_token,
+            "user": {
+                "id": new_user_id,
+                "email": email,
+                "full_name": full_name
+            }
+        }), 201 # 201 Created
+
+    except Exception as e:
+        logging.error(f'Registration error: {str(e)}')
+        return create_response('Registration failed', 500)
 
 @auth_bp.route('/user', methods=['PUT'])
 @jwt_required()
@@ -321,7 +353,7 @@ def delete_account():
 #         return jsonify({'message': 'Account does not exist. Please create a new account.'}), 404
 
 #     # Check password
-#     if not check_password_hash(user.password, password):
+#     if not check_password_hash(user.password, password):\
 #         return jsonify({'message': 'Invalid credentials'}), 401
 
 #     # Generate token (assuming a token generation function exists)
