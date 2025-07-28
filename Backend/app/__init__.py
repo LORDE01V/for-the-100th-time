@@ -2,7 +2,7 @@
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from authlib.integrations.flask_client import OAuth
 from app.routes.topup import topup_bp
@@ -17,7 +17,7 @@ def create_app():
     app = Flask(__name__,
                 template_folder='templates')
     
-    # Update the CORS configuration here to consolidate and ensure proper handling
+    # CORS configuration
     CORS(app, resources={r"/*": {
         "origins": [
             "http://localhost:3000",
@@ -28,8 +28,8 @@ def create_app():
         "supports_credentials": True,
         "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With"],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "expose_headers": ["Authorization"],  # Add this if needed for exposing headers
-        "max_age": 3600  # Cache preflight response for 1 hour to reduce requests
+        "expose_headers": ["Authorization"],
+        "max_age": 3600
     }})
     
     # Configuration
@@ -63,7 +63,7 @@ def create_app():
     # Register blueprints
     from .routes.auth import auth_bp
     app.register_blueprint(auth_bp)
-    #app.register_blueprint(topup_bp)
+    app.register_blueprint(topup_bp)
     
     
     return app 
