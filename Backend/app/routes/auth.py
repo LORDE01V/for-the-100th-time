@@ -185,7 +185,8 @@ def login():
                 'user': {
                     'id': user['id'],  
                     'email': user['email'],
-                    'name': user['full_name']
+                    'full_name': user['full_name'], # Ensure full_name is returned
+                    'phone_number': user.get('phone_number', '') # Include phone_number
                 },
                 'access_token': access_token,  # Change 'token' to 'access_token'
                 'redirect': url_for('home.home_page')
@@ -210,7 +211,8 @@ def register():
 
         email = data.get('email', '').lower()
         password = data.get('password')
-        full_name = data.get('full_name', '') # Assuming full_name is part of the registration
+        full_name = data.get('full_name', '') 
+        phone_number = data.get('phone', '') # Extract phone_number from request data
 
         if not email or not password:
             logging.error('Missing or invalid email/password in registration data')
@@ -222,7 +224,8 @@ def register():
             return create_response('User with that email already exists', 409) # 409 Conflict
 
         hashed_password = generate_password_hash(password)
-        new_user_id = create_user(email=email, password_hash=hashed_password, full_name=full_name)
+        # Pass phone_number to create_user
+        new_user_id = create_user(email=email, password_hash=hashed_password, full_name=full_name, phone_number=phone_number)
 
         if new_user_id is None:
             logging.error(f'Failed to create user in database for email: {email}')
@@ -237,7 +240,8 @@ def register():
             "user": {
                 "id": new_user_id,
                 "email": email,
-                "full_name": full_name
+                "full_name": full_name,
+                "phone_number": phone_number # Include phone_number in response
             }
         }), 201 # 201 Created
 

@@ -82,20 +82,20 @@ def execute_query(operation=None, query=None, params=None):
         if conn: conn.close()
 
 # ================== USER OPERATIONS ==================
-def create_user(email, password_hash, full_name=None):
+def create_user(email, password_hash, full_name=None, phone_number=None):
     """Create a new user account"""
     query = """
-    INSERT INTO users (email, password_hash, full_name)
-    VALUES (%s, %s, %s) RETURNING id
+    INSERT INTO users (email, password_hash, full_name, phone_number)
+    VALUES (%s, %s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (email, password_hash, full_name))
+    return execute_query('insert', query, (email, password_hash, full_name, phone_number))
 
 def get_user_by_email(email):
     """Get user by email address"""
-    query = "SELECT id, email, password_hash, full_name FROM users WHERE email = %s"
+    query = "SELECT id, email, password_hash, full_name, phone_number FROM users WHERE email = %s"
     result = execute_query('search', query, (email,))
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name']
+        columns = ['id', 'email', 'password_hash', 'full_name', 'phone_number']
         return dict(zip(columns, result[0]))
     return None
 
@@ -105,10 +105,10 @@ def get_user_by_id(user_id):
         user_id = int(user_id)
     except Exception:
         return None
-    query = "SELECT id, email, password_hash, full_name FROM users WHERE id = %s"
+    query = "SELECT id, email, password_hash, full_name, phone_number FROM users WHERE id = %s"
     result = execute_query('search', query, (user_id,))
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name']
+        columns = ['id', 'email', 'password_hash', 'full_name', 'phone_number']
         return dict(zip(columns, result[0]))
     return None
 
