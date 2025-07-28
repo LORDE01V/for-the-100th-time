@@ -8,8 +8,6 @@ import logging
 from datetime import datetime
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_cors import CORS, cross_origin
-from flask import jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
@@ -117,7 +115,6 @@ def google_callback():
         """
 
 @auth_bp.route('/user', methods=['GET', 'OPTIONS'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 @jwt_required()
 def get_current_user():
     logging.info("Attempting to get current user.")
@@ -152,7 +149,6 @@ def logout():
     return create_response("Logged out successfully")
 
 @auth_bp.route('/login', methods=['POST', 'OPTIONS'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def login():
     if request.method == 'OPTIONS':
         return create_response("OK", 200)
@@ -199,7 +195,6 @@ def login():
         return create_response('Login failed', 500)
 
 @auth_bp.route('/register', methods=['POST', 'OPTIONS'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def register():
     if request.method == 'OPTIONS':
         return create_response("OK", 200)

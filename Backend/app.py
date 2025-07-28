@@ -25,8 +25,20 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
 
-# Configure CORS
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": ["http://localhost:3000", "https://frontend-sabs.onrender.com"]}})
+# Configure CORS to align with other backend settings
+CORS(app, 
+     resources={r"/*": {
+         "origins": [
+             "http://localhost:3000", 
+             "http://localhost:5000", 
+             "http://127.0.0.1:3000", 
+             "https://frontend-sabs.onrender.com"
+         ],
+         "supports_credentials": True,
+         "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With"],
+         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+     }}
+)
 
 # Initialize OAuth
 oauth = OAuth(app)

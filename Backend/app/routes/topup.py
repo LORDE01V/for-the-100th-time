@@ -1,19 +1,16 @@
 from flask import Blueprint, request, jsonify, session
 from Backend.support import get_user_balance, update_user_balance, save_auto_topup_settings, execute_query
-from flask_cors import cross_origin # Import cross_origin
 
 
 topup_bp = Blueprint('topup', __name__)
 
 @topup_bp.route('/user/balance', methods=['GET'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def get_balance():
     user_id = request.args.get('user_id')  # Assume user_id is passed as a query param
     balance = get_user_balance(user_id)  # Fetch balance from the database
     return jsonify({'balance': balance})
 
 @topup_bp.route('/user/topup', methods=['POST'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def top_up():
     data = request.json
     if not data:
@@ -76,7 +73,6 @@ def top_up():
     return jsonify({"message": "Top-up successful", "transaction_id": transaction_id, "newBalance": new_balance, "success": True}), 200
 
 @topup_bp.route('/user/latest-topup', methods=['GET'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def get_latest_topup():
     user_id = request.args.get('user_id')
     if not user_id:
@@ -105,7 +101,6 @@ def get_latest_topup():
         return jsonify({'transaction': None}), 200
 
 @topup_bp.route('/user/topup-history', methods=['GET'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def get_topup_history():
     user_id = request.args.get('user_id')
     if not user_id:
@@ -137,7 +132,6 @@ def get_topup_history():
 
 # New route for fetching the current user
 @topup_bp.route('/api/current-user', methods=['GET'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def get_current_user():
     # Example logic to retrieve the current user from the session
     user = session.get('user')  # Replace with your session management logic
@@ -152,7 +146,6 @@ def get_current_user():
 
 
 @topup_bp.route('/user/auto-topup-settings', methods=['POST'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def set_auto_topup_settings():
     data = request.json
     if not data:
@@ -174,7 +167,6 @@ def set_auto_topup_settings():
 
 
 @topup_bp.route('/user/auto-topup-settings', methods=['GET'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 def get_auto_topup_settings():
     user_id = request.args.get('user_id')
     if not user_id:

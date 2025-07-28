@@ -342,13 +342,13 @@ chatbot = HuggingFaceChatbot() # Initialize your actual chatbot here
 # ================= FASTAPI APP =================
 app = FastAPI(title="Lumina Solar FastAPI")
 
-# Configure CORS for development
+# Configure CORS for development in FastAPI to match Flask's settings
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://frontend-sabs.onrender.com"], # Add your frontend URL here
+    allow_origins=["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000", "https://frontend-sabs.onrender.com"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With"],
 )
 
 # JWT (compatible with Flask's tokens)
