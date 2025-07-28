@@ -107,7 +107,7 @@ function HomePage() {
     const mockGreetingApi = async () => {
       try {
         const response = {
-          message: `🌞 Good ${getTimeOfDay()}, ${user?.name || "Valued User"}! ` +
+          message: `🌞 Good ${getTimeOfDay()}, ${user?.full_name || "Valued User"}! ` +
             `Here's your personalized energy tip: ${solarTips[currentTipIndex]}`
         };
         setAiGreeting(response.message);
@@ -163,7 +163,7 @@ function HomePage() {
             {/* Header Section */}
             <Flex justify="space-between" direction={{ base: 'column', md: 'row' }} mb={8}>
               <Box>
-                <Heading color={headingColor}>Welcome, {user.name} 👋</Heading>
+                <Heading color={headingColor}>Welcome, {user.full_name} 👋</Heading>
                 {isLoadingGreeting ? (
                   <Flex align="center" mt={2}>
                     <Spinner size="sm" color={spinnerColor} mr={2} />
