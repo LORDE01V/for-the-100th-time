@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, url_for, session, jsonify, request, current_app, render_template
 from app import oauth
-from support import get_user_by_email, create_user, update_user_by_id, get_db
+from support import get_user_by_email, create_user, update_user_by_id, get_db, get_user_by_id
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
 import time
@@ -124,15 +124,16 @@ def get_current_user():
     if request.method == 'OPTIONS':
         logging.info("Received OPTIONS request for /api/auth/user, returning 200 OK.")
         return create_response("OK", 200)
+    
     try:
-        user_email = get_jwt_identity()
-        logging.info(f"JWT Identity: {user_email}")
-        user = get_user_by_email(user_email)
+        user_id = get_jwt_identity() # Get user ID from JWT identity
+        logging.info(f"JWT Identity (user_id): {user_id}")
+        user = get_user_by_id(user_id) # Use get_user_by_id
         if not user:
-            logging.warning(f"User not found for email: {user_email}")
+            logging.warning(f"User not found for ID: {user_id}")
             return create_response("User not found", 404)
         
-        logging.info(f"Found user: {user['email']}")
+        logging.info(f"Found user: {user['email']} (ID: {user['id']})")
         return jsonify({
             "id": user['id'],
             "full_name": user['full_name'],
