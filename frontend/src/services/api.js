@@ -81,7 +81,7 @@ export const auth = {
                     localStorage.setItem('user', JSON.stringify({
                         id: user.id,
                         email: user.email,
-                        name: user.full_name || user.name // Prioritize full_name, fallback to name
+                        full_name: user.full_name || user.name // Store full_name directly
                     }));
                 } else {
                     localStorage.removeItem('user');
@@ -110,7 +110,7 @@ export const auth = {
                     localStorage.setItem('user', JSON.stringify({
                         id: response.data.user.id,
                         email: response.data.user.email,
-                        name: response.data.user.full_name || response.data.user.name // Prioritize full_name
+                        full_name: response.data.user.full_name || response.data.user.name // Store full_name directly
                     }));
                 }
             }
