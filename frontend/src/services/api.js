@@ -74,15 +74,8 @@ export const auth = {
                 } else if (response.data.token) {
                     localStorage.setItem('token', response.data.token);
                 }
-                // Always fetch user from backend after login
-                let user = null;
-                try {
-                    const userResp = await api.get('/api/auth/user');
-                    user = userResp.data.user;
-                } catch (e) {
-                    // fallback to response.data.user if present
-                    user = response.data.user || null;
-                }
+                // Directly use user data from the login response
+                const user = response.data.user;
                 if (user) {
                     // Ensure full_name is consistently set
                     localStorage.setItem('user', JSON.stringify({
