@@ -11,7 +11,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const response = await auth.login(email, password);
     if (response.success && response.user) {
-      setUser(response.user);
+      // Ensure user object always has full_name if available
+      setUser({
+        id: response.user.id,
+        email: response.user.email,
+        full_name: response.user.full_name || response.user.name, // Prefer full_name
+        // Add other relevant fields from response.user if needed, e.g., phone_number: response.user.phone_number,
+      });
     }
     return response;
   };
@@ -20,7 +26,13 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     const response = await auth.register(userData);
     if (response.success && response.user) {
-      setUser(response.user);
+      // Ensure user object always has full_name if available
+      setUser({
+        id: response.user.id,
+        email: response.user.email,
+        full_name: response.user.full_name || response.user.name, // Prefer full_name
+        // Add other relevant fields from response.user if needed
+      });
     }
     return response;
   };
@@ -32,8 +44,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Re-check user from localStorage on mount (e.g., on page refresh)
-    setUser(auth.getCurrentUser());
+    const currentUser = auth.getCurrentUser();
+    if (currentUser) {
+      // Re-set user to ensure consistency, prioritizing full_name
+      setUser({
+        id: currentUser.id,
+        email: currentUser.email,
+        full_name: currentUser.full_name || currentUser.name, // Ensure full_name is consistently set
+        // Add other relevant fields if needed
+      });
+    } else {
+      setUser(null);
+    }
   }, []);
 
   const value = { user, login, register, logout };

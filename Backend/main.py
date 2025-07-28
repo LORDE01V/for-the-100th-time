@@ -130,99 +130,101 @@ def get_db():
         return None
 
 # Auth routes (updated for PostgreSQL)
-@flask_app.route('/api/auth/register', methods=['POST'])
-def flask_register():
-    conn = None
-    try:
-        data = request.get_json()
-        
-        # Validate required fields
-        if not all(key in data for key in ['name', 'email', 'password']):
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+# REMOVE THE FOLLOWING BLOCK FOR flask_register:
+# @flask_app.route('/api/auth/register', methods=['POST'])
+# def flask_register():
+#     conn = None
+#     try:
+#         data = request.get_json()
 
-        # Get optional phone or set None
-        phone = data.get('phone', None)
+#         # Validate required fields
+#         if not all(key in data for key in ['name', 'email', 'password']):
+#             return jsonify({'success': False, 'message': 'Missing required fields'}), 400
 
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+#         # Get optional phone or set None
+#         phone = data.get('phone', None)
 
-        with conn.cursor() as cur:
-            # Check existing user
-            cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
-            if cur.fetchone():
-                return jsonify({'success': False, 'message': 'Email already exists'}), 400
+#         conn = get_db()
+#         if not conn:
+#             return jsonify({'success': False, 'message': 'Database error'}), 500
 
-            # Create user with proper hash length
-            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
-            cur.execute(
-                """INSERT INTO users (email, password_hash, full_name, phone)
-                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
-            )
-            user_data = cur.fetchone()
-            if not user_data:
-                return jsonify({'success': False, 'message': 'Failed to create user'}), 500
-            conn.commit()
+#         with conn.cursor() as cur:
+#             # Check existing user
+#             cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
+#             if cur.fetchone():
+#                 return jsonify({'success': False, 'message': 'Email already exists'}), 400
 
-        send_welcome_email(data['email'], data['name'])
+#             # Create user with proper hash length
+#             hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
+#             cur.execute(
+#                 """INSERT INTO users (email, password_hash, full_name, phone)
+#                 VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+#                 (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
+#             )
+#             user_data = cur.fetchone()
+#             if not user_data:
+#                 return jsonify({'success': False, 'message': 'Failed to create user'}), 500
+#             conn.commit()
 
-        return jsonify({
-            'success': True,
-            'user': {
-                'id': user_data[0],
-                'email': user_data[1],
-                'name': user_data[2]
-            }
-        }), 201
+#         send_welcome_email(data['email'], data['name'])
 
-    except Exception as e:
-        print(f"Registration Error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Registration failed'}), 500
-    finally:
-        if conn: conn.close()
+#         return jsonify({
+#             'success': True,
+#             'user': {
+#                 'id': user_data[0],
+#                 'email': user_data[1],
+#                 'name': user_data[2]
+#             }
+#         }), 201
 
-@flask_app.route('/api/auth/login', methods=['POST'])
-def flask_login():
-    try:
-        data = request.get_json()
-        email = data.get('email', '').lower()  # Force lowercase
-        password = data.get('password')
+#     except Exception as e:
+#         print(f"Registration Error: {str(e)}")
+#         return jsonify({'success': False, 'message': 'Registration failed'}), 500
+#     finally:
+#         if conn: conn.close()
 
-        if not email or not password:
-            return jsonify({'success': False, 'message': 'Missing credentials'}), 400
+# REMOVE THE FOLLOWING BLOCK FOR flask_login:
+# @flask_app.route('/api/auth/login', methods=['POST'])
+# def flask_login():
+#     try:
+#         data = request.get_json()
+#         email = data.get('email', '').lower()  # Force lowercase
+#         password = data.get('password')
 
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database connection error'}), 500
-        with conn.cursor() as cur:
-            cur.execute('''
-                SELECT id, password_hash, full_name 
-                FROM users 
-                WHERE email = %s
-            ''', (email,))
-            user = cur.fetchone()
+#         if not email or not password:
+#             return jsonify({'success': False, 'message': 'Missing credentials'}), 400
 
-            if user and check_password_hash(user[1], password):
-                access_token = create_access_token(identity=user[0])
-                return jsonify({
-                    'success': True,
-                    'token': access_token,
-                    'user': {
-                        'id': user[0],
-                        'name': user[2],
-                        'email': email
-                    }
-                }), 200
+#         conn = get_db()
+#         if not conn:
+#             return jsonify({'success': False, 'message': 'Database connection error'}), 500
+#         with conn.cursor() as cur:
+#             cur.execute('''
+#                 SELECT id, password_hash, full_name
+#                 FROM users
+#                 WHERE email = %s
+#             ''', (email,))
+#             user = cur.fetchone()
 
-        return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+#             if user and check_password_hash(user[1], password):
+#                 access_token = create_access_token(identity=user[0])
+#                 return jsonify({
+#                     'success': True,
+#                     'token': access_token,
+#                     'user': {
+#                         'id': user[0],
+#                         'name': user[2],
+#                         'email': email
+#                     }
+#                 }), 200
 
-    except Exception as e:
-        flask_app.logger.error(f"Login error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Login failed'}), 500
-    finally:
-        if conn:
-            conn.close()
+#         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+
+#     except Exception as e:
+#         flask_app.logger.error(f"Login error: {str(e)}")
+#         return jsonify({'success': False, 'message': 'Login failed'}), 500
+#     finally:
+#         if conn:
+#             conn.close()
 
 @flask_app.route('/api/topup', methods=['OPTIONS'])
 def handle_topup_options():
@@ -364,49 +366,49 @@ class UserLogin(BaseModel):
     password: str
 
 # --- FastAPI Routes ---
-@app.post("/fastapi/auth/register")
-async def fastapi_register(user: UserRegister):
-    """FastAPI version of /api/auth/register"""
-    conn = None
-    try:
-        conn = get_db()
-        if not conn:  # Check if connection failed
-            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+# @app.post("/fastapi/auth/register")
+# async def fastapi_register(user: UserRegister):
+#     """FastAPI version of /api/auth/register"""
+#     conn = None
+#     try:
+#         conn = get_db()
+#         if not conn:  # Check if connection failed
+#             return jsonify({'success': False, 'message': 'Database connection error'}), 500
             
-        with conn.cursor() as cur:
-            cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
-            if cur.fetchone():
-                raise HTTPException(status_code=400, detail="Email exists")
+#         with conn.cursor() as cur:
+#             cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
+#             if cur.fetchone():
+#                 raise HTTPException(status_code=400, detail="Email exists")
 
-            hashed_pw = generate_password_hash(user.password)
-            cur.execute(
-                """INSERT INTO users (email, password_hash, full_name, phone)
-                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (user.email, hashed_pw, user.name, user.phone)
-            )
-            user_data = cur.fetchone()
-            conn.commit()
+#             hashed_pw = generate_password_hash(user.password)
+#             cur.execute(
+#                 """INSERT INTO users (email, password_hash, full_name, phone)
+#                 VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+#                 (user.email, hashed_pw, user.name, user.phone)
+#             )
+#             user_data = cur.fetchone()
+#             conn.commit()
             
-            return {
-                'success': True,
-                'message': 'User registered successfully',
-                'user': {
-                    'id': user_data[0],
-                    'email': user_data[1],
-                    'name': user_data[2]
-                }
-            }
+#             return {
+#                 'success': True,
+#                 'message': 'User registered successfully',
+#                 'user': {
+#                     'id': user_data[0],
+#                     'email': user_data[1],
+#                     'name': user_data[2]
+#                 }
+#             }
             
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        if conn:
-            conn.rollback()
-        print(f"Registration error: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Registration failed")
-    finally:
-        if conn:
-            conn.close()
+#     except HTTPException as e:
+#         raise e
+#     except Exception as e:
+#         if conn:
+#             conn.rollback()
+#         print(f"Registration error: {str(e)}")
+#         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Registration failed")
+#     finally:
+#         if conn:
+#             conn.close()
 
 # Forum routes
 @flask_app.route('/api/forum/topics', methods=['GET'])

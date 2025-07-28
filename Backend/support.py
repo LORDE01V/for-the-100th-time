@@ -235,14 +235,7 @@ def get_all_community_stories():
     FROM community_stories
     ORDER BY created_at DESC
     """
-    return execute_query('select', query)
-
-def save_profile_details(full_name, surname, email, phone_number, address):
-    query = """
-    INSERT INTO users (full_name, surname, email, phone_number, address)
-    VALUES (%s, %s, %s, %s, %s) RETURNING id
-    """
-    return execute_query('insert', query, (full_name, surname, email, phone_number, address))
+    return execute_query('search', query)
 
 def create_event(title, start, end, description, location, event_type):
     """Insert a new event into the events table."""

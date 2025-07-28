@@ -353,27 +353,3 @@ def delete_account():
         cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
         conn.commit()
     return jsonify({'message': 'Account deleted successfully'}), 200
-
-# Route to handle login
-# @auth_bp.route('/login', methods=['POST'])
-# def login():
-#     data = request.get_json()
-#     email = data.get('email')
-#     password = data.get('password')
-
-#     if not email or not password:
-#         return jsonify({'message': 'Email and password are required'}), 400
-
-#     user = User.query.filter_by(email=email).first()
-
-#     if not user:
-#         return jsonify({'message': 'Account does not exist. Please create a new account.'}), 404
-
-#     # Check password
-#     if not check_password_hash(user.password, password):\
-#         return jsonify({'message': 'Invalid credentials'}), 401
-
-#     # Generate token (assuming a token generation function exists)
-#     token = generate_token(user)
-
-#     return jsonify({'message': 'Login successful', 'token': token}), 200
