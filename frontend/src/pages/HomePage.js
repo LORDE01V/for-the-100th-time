@@ -1,7 +1,7 @@
 // HomePage.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { auth } from '../services/api';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
 import ErrorBoundary from '../components/ErrorBoundary';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
@@ -55,7 +55,7 @@ function HomePage() {
   const textColor = useColorModeValue('gray.800', 'gray.400');
   const headingColor = useColorModeValue('gray.900', 'white');
   const spinnerColor = useColorModeValue('blue.500', 'blue.300');
-  const user = auth.getCurrentUser();
+  const { user, logout } = useAuth(); // Use useAuth to get user and logout function
 
   const [isLoadingGreeting, setIsLoadingGreeting] = useState(true);
   const [aiGreeting, setAiGreeting] = useState(null);
@@ -125,7 +125,7 @@ function HomePage() {
     } else {
       setAiGreeting('Please log in to see personalized content.');
     }
-  }, [user, currentTipIndex, solarTips]);
+  }, [user, currentTipIndex, solarTips]); // Depend on user from context
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -135,7 +135,7 @@ function HomePage() {
   }, [solarTips]);
 
   const handleLogout = () => {
-    auth.logout();
+    logout(); // Use the logout from context
     navigate('/login');
   };
 

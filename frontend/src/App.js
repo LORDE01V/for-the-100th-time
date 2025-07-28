@@ -6,13 +6,13 @@ import {
   Outlet
 } from 'react-router-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { auth } from './services/api';
 import Supportbot from './components/Supportbot';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from './theme';
 import { DashboardProvider } from './context/DashboardContext';
 import { SubscriptionProvider } from './context/SubscriptionContext';
+import { AuthProvider, useAuth } from './context/AuthContext'; // Import AuthProvider and useAuth
 
 import LandingPage from './pages/LandingPage';
 import RegisterPage from './pages/RegisterPage';
@@ -40,8 +40,8 @@ import LoadSheddingPage from './pages/LoadSheddingPage'; // Import LoadSheddingP
 import ThemeToggleButton from './components/ThemeToggleButton'; // Import ThemeToggleButton
 // Protected Route component
 const ProtectedRoute = () => {
-  const user = auth.getCurrentUser();
-  console.log('ProtectedRoute: user from localStorage:', user);
+  const { user } = useAuth(); // Use useAuth to get user
+  console.log('ProtectedRoute: user from AuthContext:', user);
   if (!user) {
     return <Navigate to="/login" replace />;
   }
@@ -54,45 +54,47 @@ function App() {
       <ChakraProvider theme={theme}>
         <DashboardProvider>
           <SubscriptionProvider>
-            <Router>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
+            <AuthProvider> {/* Wrap with AuthProvider */}
+              <Router>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
 
-                {/* Protected Routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/home" element={<HomePage />} />
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/top-up" element={<TopUpPage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="/impact" element={<ImpactPage />} />
-                  <Route path="/expenses" element={<ExpensesPage />} />
-                  <Route path="/notifications" element={<NotificationsPage />} />
-                  <Route path="/support" element={<SupportPage />} />
-                  <Route path="/forum" element={<ForumPage />} />
-                  <Route path="/loadshedding" element={<LoadSheddingPage />} />
-                  <Route path="/refer" element={<ReferPage />} />
-                  <Route path="/group-buying" element={<GroupBuying />} />
-                  <Route path="/subscription" element={<SubscriptionPage />} />
-                  <Route path="/ai-suggestions" element={<AISuggestions />} />
-                  <Route path="/personal-user" element={<PersonalUserPage />} />
-                  <Route path="/fault-details" element={<FaultDetails />} /> {/* Fault Details route */}
-                </Route>
+                  {/* Protected Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/top-up" element={<TopUpPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/impact" element={<ImpactPage />} />
+                    <Route path="/expenses" element={<ExpensesPage />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
+                    <Route path="/support" element={<SupportPage />} />
+                    <Route path="/forum" element={<ForumPage />} />
+                    <Route path="/loadshedding" element={<LoadSheddingPage />} />
+                    <Route path="/refer" element={<ReferPage />} />
+                    <Route path="/group-buying" element={<GroupBuying />} />
+                    <Route path="/subscription" element={<SubscriptionPage />} />
+                    <Route path="/ai-suggestions" element={<AISuggestions />} />
+                    <Route path="/personal-user" element={<PersonalUserPage />} />
+                    <Route path="/fault-details" element={<FaultDetails />} /> {/* Fault Details route */}
+                  </Route>
 
-                {/* Static Pages */}
-                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+                  {/* Static Pages */}
+                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                  <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
-                {/* Fallback */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-              <Supportbot />
-              <ThemeToggleButton />
-            </Router>
+                  {/* Fallback */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+                <Supportbot />
+                <ThemeToggleButton />
+              </Router>
+            </AuthProvider> {/* End AuthProvider */}
           </SubscriptionProvider>
         </DashboardProvider>
       </ChakraProvider>

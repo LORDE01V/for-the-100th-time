@@ -17,7 +17,7 @@ import {
   useColorModeValue,
   Progress
 } from '@chakra-ui/react';
-import { auth } from '../services/api';
+import { useAuth } from '../context/AuthContext'; // Import useAuth hook
 import gridXBackground from '../assets/images/gridx_background.jpg';
 
 function LoginPage() {
@@ -29,6 +29,7 @@ function LoginPage() {
   const [strengthScore, setStrengthScore] = useState(0);
   const navigate = useNavigate();
   const toast = useToast();
+  const { login } = useAuth(); // Use the login function from AuthContext
 
   const checkPasswordStrengthLocally = (password) => {
     if (!password) return { message: 'Password is required.', score: 0 };
@@ -72,7 +73,7 @@ function LoginPage() {
     if (Object.keys(newErrors).length > 0) return;
     setLoading(true);
     try {
-      const response = await auth.login(email, password);
+      const response = await login(email, password); // Use the login from context
       if (response.success) {
         toast({
           title: 'Login Successful!',
