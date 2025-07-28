@@ -120,21 +120,30 @@ def google_callback():
 @cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 @jwt_required()
 def get_current_user():
+    logging.info("Attempting to get current user.")
     if request.method == 'OPTIONS':
+        logging.info("Received OPTIONS request for /api/auth/user, returning 200 OK.")
         return create_response("OK", 200)
-    user_email = get_jwt_identity()
-    user = get_user_by_email(user_email)
-    if not user:
-        return create_response("User not found", 404)
+    try:
+        user_email = get_jwt_identity()
+        logging.info(f"JWT Identity: {user_email}")
+        user = get_user_by_email(user_email)
+        if not user:
+            logging.warning(f"User not found for email: {user_email}")
+            return create_response("User not found", 404)
         
-    return jsonify({
-        "id": user['id'],
-        "full_name": user['full_name'],
-        "surname": user.get('surname', ''),
-        "email": user['email'],
-        "phone_number": user.get('phone', ''),
-        "address": user.get('address', ''),
-    })
+        logging.info(f"Found user: {user['email']}")
+        return jsonify({
+            "id": user['id'],
+            "full_name": user['full_name'],
+            "surname": user.get('surname', ''),
+            "email": user['email'],
+            "phone_number": user.get('phone', ''),
+            "address": user.get('address', ''),
+        })
+    except Exception as e:
+        logging.error(f"Error in get_current_user: {str(e)}")
+        return create_response("Internal server error", 500)
 
 @auth_bp.route('/logout')
 def logout():
