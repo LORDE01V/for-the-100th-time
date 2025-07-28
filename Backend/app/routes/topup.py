@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, session
 from Backend.support import get_user_balance, update_user_balance, save_auto_topup_settings, execute_query
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 topup_bp = Blueprint('topup', __name__)
@@ -13,12 +14,13 @@ def fetch_user_balance(user_id):
     return 0  # Return 0 or some default value if not found
 
 @topup_bp.route('/user/balance', methods=['GET'])
+@jwt_required()
 def get_balance():
-    user_id = session.get('user_id')  # Assuming you store user_id in the session
+    user_id = get_jwt_identity()
     if not user_id:
         return jsonify({'error': 'User not logged in'}), 401
 
-    balance = fetch_user_balance(user_id)  # Call the function with user_id
+    balance = fetch_user_balance(user_id)
     return jsonify({'balance': balance})
 
 @topup_bp.route('/user/topup', methods=['POST'])
