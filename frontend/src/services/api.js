@@ -84,7 +84,12 @@ export const auth = {
                     user = response.data.user || null;
                 }
                 if (user) {
-                    localStorage.setItem('user', JSON.stringify(user));
+                    // Ensure full_name is consistently set
+                    localStorage.setItem('user', JSON.stringify({
+                        id: user.id,
+                        email: user.email,
+                        name: user.full_name || user.name // Prioritize full_name, fallback to name
+                    }));
                 } else {
                     localStorage.removeItem('user');
                 }
@@ -108,7 +113,12 @@ export const auth = {
                     localStorage.setItem('token', response.data.token);
                 }
                 if (response.data.user) {
-                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                    // Ensure full_name is consistently set
+                    localStorage.setItem('user', JSON.stringify({
+                        id: response.data.user.id,
+                        email: response.data.user.email,
+                        name: response.data.user.full_name || response.data.user.name // Prioritize full_name
+                    }));
                 }
             }
             return response.data;
