@@ -4,10 +4,21 @@ from Backend.support import get_user_balance, update_user_balance, save_auto_top
 
 topup_bp = Blueprint('topup', __name__)
 
+def fetch_user_balance(user_id):
+    # Logic to fetch the user's balance from the database
+    query = "SELECT balance FROM users WHERE id = %s"
+    result = execute_query('search', query, (user_id,))
+    if result:
+        return result[0][0]  # Assuming the balance is in the first column
+    return 0  # Return 0 or some default value if not found
+
 @topup_bp.route('/user/balance', methods=['GET'])
 def get_balance():
-    # Logic to fetch the user's balance
-    balance = fetch_user_balance()  # Replace with your actual logic
+    user_id = session.get('user_id')  # Assuming you store user_id in the session
+    if not user_id:
+        return jsonify({'error': 'User not logged in'}), 401
+
+    balance = fetch_user_balance(user_id)  # Call the function with user_id
     return jsonify({'balance': balance})
 
 @topup_bp.route('/user/topup', methods=['POST'])
