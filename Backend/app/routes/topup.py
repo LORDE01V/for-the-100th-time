@@ -6,8 +6,8 @@ topup_bp = Blueprint('topup', __name__)
 
 @topup_bp.route('/user/balance', methods=['GET'])
 def get_balance():
-    user_id = request.args.get('user_id')  # Assume user_id is passed as a query param
-    balance = get_user_balance(user_id)  # Fetch balance from the database
+    # Logic to fetch the user's balance
+    balance = fetch_user_balance()  # Replace with your actual logic
     return jsonify({'balance': balance})
 
 @topup_bp.route('/user/topup', methods=['POST'])
