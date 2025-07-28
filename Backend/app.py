@@ -59,7 +59,6 @@ jwt = JWTManager(app)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(ai_agent_bp)
-app.register_blueprint(topup_bp) # Register the topup blueprint
 
 chatbot = EnhancedChatbot()
 

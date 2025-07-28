@@ -99,7 +99,6 @@ flask_app.register_blueprint(community_stories_bp)
 flask_app.register_blueprint(profile_bp)
 flask_app.register_blueprint(notifications_bp, url_prefix='/notifications')
 flask_app.register_blueprint(events_calendar_bp)
-flask_app.register_blueprint(topup_bp, url_prefix='/api')
 flask_app.register_blueprint(expenses_bp, url_prefix='/api')
 flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
 
