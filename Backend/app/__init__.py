@@ -17,17 +17,19 @@ def create_app():
     app = Flask(__name__,
                 template_folder='templates')
     
-    # Enhanced CORS configuration
-    CORS(app, resources={r"/*": {  # Apply to all routes
+    # Update the CORS configuration here to consolidate and ensure proper handling
+    CORS(app, resources={r"/*": {
         "origins": [
             "http://localhost:3000",
             "http://localhost:5000",
             "http://127.0.0.1:3000",
-            "https://frontend-sabs.onrender.com"  # Add your frontend URL here
+            "https://frontend-sabs.onrender.com"
         ],
         "supports_credentials": True,
-        "allow_headers": ["*"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "expose_headers": ["Authorization"],  # Add this if needed for exposing headers
+        "max_age": 3600  # Cache preflight response for 1 hour to reduce requests
     }})
     
     # Configuration
