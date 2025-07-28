@@ -116,9 +116,12 @@ def google_callback():
         </html>
         """
 
-@auth_bp.route('/user')
+@auth_bp.route('/user', methods=['GET', 'OPTIONS'])
+@cross_origin(origins=['http://localhost:3000', 'https://frontend-sabs.onrender.com'], supports_credentials=True)
 @jwt_required()
 def get_current_user():
+    if request.method == 'OPTIONS':
+        return create_response("OK", 200)
     user_email = get_jwt_identity()
     user = get_user_by_email(user_email)
     if not user:
