@@ -23,7 +23,7 @@ def create_app():
             "http://localhost:3000",
             "http://localhost:5000",
             "http://127.0.0.1:3000",
-            "https://frontend-xmub.onrender.com"  # Add your frontend URL here
+            "https://frontend-sabs.onrender.com"  # Add your frontend URL here
         ],
         "supports_credentials": True,
         "allow_headers": ["*"],

@@ -81,7 +81,7 @@ CORS(flask_app,
              "http://localhost:3000", 
              "http://localhost:5000", 
              "http://127.0.0.1:3000", 
-             "https://frontend-xmub.onrender.com" # Add your frontend URL here
+             "https://frontend-sabs.onrender.com" # Add your frontend URL here
          ],
          "supports_credentials": True,
          "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin","X-Requested-With"],
@@ -345,7 +345,7 @@ app = FastAPI(title="Lumina Solar FastAPI")
 # Configure CORS for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "https://frontend-sabs.onrender.com"], # Add your frontend URL here
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
