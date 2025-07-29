@@ -131,6 +131,7 @@ function ImpactPage() {
         user_name: name,
         story_text: quote,
         rating: rating,
+        email: email, // <-- add this
       });
       // Re-fetch all backend stories and append to dummy testimonials
       const backendStories = await fetchBackendStories();

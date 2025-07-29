@@ -25,6 +25,7 @@ import {
   ChevronRightIcon,
 } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios'; // Added axios import
 
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -103,10 +104,22 @@ const EventCalendar = () => {
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
 
   useEffect(() => {
-    const savedEvents = localStorage.getItem('calendarEvents');
-    if (savedEvents) {
-      setEvents(JSON.parse(savedEvents));
-    }
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get('https://backend-210d.onrender.com/api/events');
+        setEvents(response.data); // Adjust this if backend returns a different structure
+      } catch (error) {
+        toast({
+          title: 'Error',
+          description: 'Failed to fetch events from server',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+          position: 'bottom',
+        });
+      }
+    };
+    fetchEvents();
   }, []);
 
   const handlePrev = () => {
@@ -141,7 +154,7 @@ const EventCalendar = () => {
     onOpen();
   };
 
-  const saveEvent = () => {
+  const saveEvent = async () => {
     // Validate all required fields
     if (!eventData.title.trim() || 
         !eventData.start || 
@@ -151,6 +164,39 @@ const EventCalendar = () => {
       toast({
         title: 'Missing required fields',
         description: 'Please fill in all event details',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+      return;
+    }
+
+    const eventPayload = {
+      date: selectedDate,
+      title: eventData.title,
+      start: eventData.start,
+      end: eventData.end,
+      description: eventData.description,
+      location: eventData.location,
+      eventType: eventData.eventType,
+    };
+
+    try {
+      await axios.post('https://backend-210d.onrender.com/api/events', eventPayload);
+      // Optionally, fetch events from backend again here
+      toast({
+        title: 'Event created',
+        description: 'Your event has been successfully saved',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save event to server',
         status: 'error',
         duration: 3000,
         isClosable: true,
