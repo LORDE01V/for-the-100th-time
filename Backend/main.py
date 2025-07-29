@@ -98,7 +98,7 @@ flask_app.register_blueprint(support_bp)
 flask_app.register_blueprint(community_stories_bp)
 flask_app.register_blueprint(profile_bp)
 flask_app.register_blueprint(notifications_bp, url_prefix='/notifications')
-flask_app.register_blueprint(events_calendar_bp)
+# flask_app.register_blueprint(events_calendar_bp) # COMMENTED OUT: Events are now handled directly in main.py
 flask_app.register_blueprint(expenses_bp, url_prefix='/api')
 flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
 
@@ -674,7 +674,7 @@ def get_events():
             return jsonify({'success': False, 'message': 'Database connection error'}), 500
 
         cur = conn.cursor()
-        cur.execute("SELECT date, title, start, end, description, location, event_type FROM events")
+        cur.execute("SELECT date, title, start, \"end\", description, location, event_type FROM events_calendar") # MODIFIED TABLE NAME
         events = cur.fetchall()
 
         # Convert events to a dictionary
@@ -724,12 +724,12 @@ def save_event():
         cur = conn.cursor()
         cur.execute(
             """
-            INSERT INTO events (date, title, start, end, description, location, event_type)
+            INSERT INTO events_calendar (date, title, start, "end", description, location, event_type) # MODIFIED TABLE NAME
             VALUES (%s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (date) DO UPDATE
             SET title = EXCLUDED.title,
                 start = EXCLUDED.start,
-                end = EXCLUDED.end,
+                "end" = EXCLUDED."end", # ADDED QUOTES FOR "end"
                 description = EXCLUDED.description,
                 location = EXCLUDED.location,
                 event_type = EXCLUDED.event_type
@@ -753,7 +753,7 @@ def delete_event(date):
             return jsonify({'success': False, 'message': 'Database connection error'}), 500
 
         cur = conn.cursor()
-        cur.execute("DELETE FROM events WHERE date = %s", (date,))
+        cur.execute("DELETE FROM events_calendar WHERE date = %s", (date,)) # MODIFIED TABLE NAME
         if cur.rowcount == 0:
             return jsonify({'success': False, 'message': 'Event not found'}), 404
 
