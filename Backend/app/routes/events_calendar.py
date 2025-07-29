@@ -11,7 +11,11 @@ db = SQLAlchemy()
 
 # Define your models here
 class Event(db.Model):
-    # ... your model definition ...
+    # Example fields; adjust as necessary
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.String(100), nullable=False)  # Adjust type as needed
+    description = db.Column(db.String(255), default='')
 
 events_bp = Blueprint('events', __name__)
 
