@@ -195,11 +195,15 @@ const EventCalendar = () => {
       return;
     }
 
+    // Combine date with start/end times to create full timestamps
+    const startDateTime = `${selectedDate} ${eventData.start}:00`; // Assuming eventData.start is HH:MM
+    const endDateTime = `${selectedDate} ${eventData.end}:00`;     // Assuming eventData.end is HH:MM
+
     const eventPayload = {
-      date: selectedDate, // This must be in YYYY-MM-DD format for the backend's ON CONFLICT
+      date: selectedDate, // This is YYYY-MM-DD
       title: eventData.title,
-      start: eventData.start, // Assuming these are in a format backend expects (e.g., HH:MM)
-      end: eventData.end,     // Assuming these are in a format backend expects (e.g., HH:MM)
+      start: startDateTime, // Send full timestamp
+      end: endDateTime,     // Send full timestamp
       description: eventData.description,
       location: eventData.location,
       eventType: eventData.eventType,
