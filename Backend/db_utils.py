@@ -65,3 +65,9 @@ def execute_query(query_type, query, params=None):
         if conn:
             cur.close()
             conn.close()
+
+# Backend/db_utils.py
+
+def create_topup_table():
+    # Logic to create the topup table
+    print("Topup table created!")  # Example implementation
