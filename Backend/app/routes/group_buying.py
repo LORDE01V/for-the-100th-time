@@ -4,7 +4,7 @@ from Backend.support import add_user_to_campaign
 
 group_buying_bp = Blueprint('group_buying', __name__)
 
-@group_buying_bp.route('https://backend-0igj.onrender.com/campaigns/join', methods=['POST'])
+@group_buying_bp.route('/https://backend-0igj.onrender.com/campaigns/join', methods=['POST'])
 @jwt_required(optional=True)
 def join_campaign():
     if request.method == 'OPTIONS':
