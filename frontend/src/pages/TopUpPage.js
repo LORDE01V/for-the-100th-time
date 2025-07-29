@@ -108,6 +108,9 @@ function TopUpPage() {
           params: { user_id: user.id },
         });
         const data = response.data;
+
+        console.log('Fetched Auto-Top-Up Settings:', data);
+
         setIsAutoTopUpEnabled(!!data.is_auto_topup);
         setMinBalance(data.min_balance ? data.min_balance.toString() : '');
         setAutoTopUpAmount(data.auto_topup_amount ? data.auto_topup_amount.toString() : '');
@@ -131,6 +134,11 @@ function TopUpPage() {
       });
       return;
     }
+    console.log('Saving Auto-Top-Up Settings:', {
+      minBalance,
+      autoTopUpAmount,
+      autoTopUpFrequency,
+    });
   
     setIsProcessing(true);
     try {
@@ -445,7 +453,10 @@ function TopUpPage() {
                     type="number"
                     placeholder="e.g., 200"
                     value={autoTopUpAmount}
-                    onChange={(e) => setAutoTopUpAmount(e.target.value)}
+                    onChange={(e) => {
+                      console.log('Auto Top-Up Amount Input Changed:', e.target.value);
+                      setAutoTopUpAmount(e.target.value);
+                    }}
                   />
                 </FormControl>
 
