@@ -119,9 +119,12 @@ function TopUpPage() {
         console.error('Error fetching auto-topup settings:', error);
       }
     };
-  
+    
+      // Fetch settings only once when the user is stable
+  if (user?.id) {
     fetchAutoTopUpSettings();
-  }, [user]); // Only fetch settings when the user changes  
+  }
+}, [user?.id]); // Trigger only when user ID changes 
   // Handler for Auto-Top-Up settings
   const handleAutoTopUpSave = async () => {
     if (!minBalance || !autoTopUpAmount) {
