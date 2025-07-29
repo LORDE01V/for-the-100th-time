@@ -17,9 +17,10 @@ class Event(db.Model):
     date = db.Column(db.String(100), nullable=False)  # Adjust type as needed
     description = db.Column(db.String(255), default='')
 
-events_bp = Blueprint('events', __name__)
+# Define the blueprint
+events_calendar_bp = Blueprint('events_calendar', __name__)
 
-@events_bp.route('/api/events', methods=['POST'])
+@events_calendar_bp.route('/api/events', methods=['POST'])
 def create_event():
     from app.models import Event  # Move import here to avoid circular import
     data = request.get_json()
