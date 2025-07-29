@@ -233,7 +233,7 @@ def get_all_community_stories():
     FROM community_stories
     ORDER BY created_at DESC
     """
-    return execute_query('select', query)
+    return execute_query('search', query)
  
 def save_profile_details(full_name, surname, email, phone_number, address):
     query = """ 
