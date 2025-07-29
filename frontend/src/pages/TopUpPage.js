@@ -105,7 +105,7 @@ function TopUpPage() {
       if (!user?.id) return;
       try {
         const response = await api.get('/api/user/auto-topup-settings', {
-          params: { user_id: user.id }
+          params: { user_id: user.id },
         });
         const data = response.data;
         setIsAutoTopUpEnabled(!!data.is_auto_topup);
@@ -113,11 +113,12 @@ function TopUpPage() {
         setAutoTopUpAmount(data.auto_topup_amount ? data.auto_topup_amount.toString() : '');
         setAutoTopUpFrequency(data.auto_topup_frequency || 'weekly');
       } catch (error) {
-        // Optionally handle error
+        console.error('Error fetching auto-topup settings:', error);
       }
     };
+  
     fetchAutoTopUpSettings();
-  }, [user]); 
+  }, [user]); // Only fetch settings when the user changes  
   // Handler for Auto-Top-Up settings
   const handleAutoTopUpSave = async () => {
     if (!minBalance || !autoTopUpAmount) {
@@ -133,26 +134,27 @@ function TopUpPage() {
   
     setIsProcessing(true);
     try {
-      //const response =
-       await api.post('/api/user/auto-topup-settings', {
+      const response = await api.post('/api/user/auto-topup-settings', {
         user_id: user?.id,
         is_auto_topup: true,
         min_balance: parseFloat(minBalance),
         auto_topup_amount: parseFloat(autoTopUpAmount),
         auto_topup_frequency: autoTopUpFrequency,
       });
-      setIsProcessing(false);
-      setIsAutoTopUpEnabled(true);
-      onClose();
-      toast({
-        title: 'Auto Top-Up Enabled',
-        description: `Your account will be topped up with R${autoTopUpAmount} when balance falls below R${minBalance}.`,
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
+  
+      if (response.status === 200) {
+        setIsAutoTopUpEnabled(true);
+        toast({
+          title: 'Auto Top-Up Enabled',
+          description: `Your account will be topped up with R${autoTopUpAmount} when balance falls below R${minBalance}.`,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        throw new Error('Failed to save settings');
+      }
     } catch (error) {
-      setIsProcessing(false);
       toast({
         title: 'Failed to Save Settings',
         description: error.response?.data?.error || 'Could not save auto top-up settings.',
@@ -160,6 +162,8 @@ function TopUpPage() {
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 

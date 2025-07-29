@@ -176,6 +176,7 @@ def set_auto_topup_settings():
         return jsonify({"error": "Failed to save settings"}), 500
 
 
+
 @topup_bp.route('/user/auto-topup-settings', methods=['GET'])
 def get_auto_topup_settings():
     user_id = request.args.get('user_id')
@@ -191,9 +192,14 @@ def get_auto_topup_settings():
         row = result[0]
         return jsonify({
             'is_auto_topup': row[0],
-            'min_balance': row[1],
-            'auto_topup_amount': row[2],
-            'auto_topup_frequency': row[3]
+            'min_balance': row[1] if row[1] is not None else 0.0,
+            'auto_topup_amount': row[2] if row[2] is not None else 0.0,
+            'auto_topup_frequency': row[3] or 'weekly'
         }), 200
     else:
-        return jsonify({'is_auto_topup': False}), 200
+        return jsonify({
+            'is_auto_topup': False,
+            'min_balance': 0.0,
+            'auto_topup_amount': 0.0,
+            'auto_topup_frequency': 'weekly'
+        }), 200

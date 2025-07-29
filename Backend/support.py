@@ -236,7 +236,7 @@ def get_all_community_stories():
     return execute_query('select', query)
  
 def save_profile_details(full_name, surname, email, phone_number, address):
-    query = """
+    query = """ 
     INSERT INTO users (full_name, surname, email, phone_number, address)
     VALUES (%s, %s, %s, %s, %s) RETURNING id
     """
