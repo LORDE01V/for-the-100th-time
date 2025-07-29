@@ -156,7 +156,6 @@ const EventCalendar = () => {
   };
 
   const saveEvent = async () => {
-    // Validate all required fields
     if (
       !eventData.title.trim() ||
       !eventData.start ||
@@ -195,8 +194,7 @@ const EventCalendar = () => {
         isClosable: true,
         position: 'bottom',
       });
-      // Optionally, fetch events again from backend to update UI
-      fetchEventsFromBackend();
+      fetchEventsFromBackend(); // Refresh events from backend
     } catch (error) {
       toast({
         title: 'Error',
@@ -206,7 +204,6 @@ const EventCalendar = () => {
         isClosable: true,
         position: 'bottom',
       });
-      return;
     }
 
     onClose();
