@@ -8,6 +8,7 @@ events_calendar_bp = Blueprint('events_calendar', __name__)
 @events_calendar_bp.route('/api/events_calendar', methods=['POST'])
 @jwt_required()
 def create_event_route():
+    print("POST /api/events_calendar hit")
     try:
         # Parse incoming JSON data
         data = request.json

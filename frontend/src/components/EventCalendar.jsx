@@ -142,41 +142,69 @@ const EventCalendar = () => {
     onOpen();
   };
 
-  const saveEvent = () => {
-    // Validate all required fields
-    if (!eventData.title.trim() || 
-        !eventData.start || 
-        !eventData.end || 
-        !eventData.description.trim() || 
-        !eventData.location.trim()) {
-      toast({
-        title: 'Missing required fields',
-        description: 'Please fill in all event details',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'bottom',
-      });
-      return;
-    }
-
-    const updated = { 
-      ...events, 
-      [selectedDate]: eventData 
-    };
-    setEvents(updated);
-    localStorage.setItem('calendarEvents', JSON.stringify(updated));
-    onClose();
-    
+ // ... existing code ...
+const saveEvent = async () => {
+  // Validate all required fields
+  if (!eventData.title.trim() || 
+      !eventData.start || 
+      !eventData.end || 
+      !eventData.description.trim() || 
+      !eventData.location.trim()) {
     toast({
-      title: 'Event created',
-      description: 'Your event has been successfully saved',
-      status: 'success',
+      title: 'Missing required fields',
+      description: 'Please fill in all event details',
+      status: 'error',
       duration: 3000,
       isClosable: true,
       position: 'bottom',
     });
-  };
+    return;
+  }
+
+  try {
+    const response = await fetch('https://backend-0igj.onrender.com/api/events_calendar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`, // Assuming JWT is stored in localStorage
+      },
+      body: JSON.stringify(eventData),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      const updated = { 
+        ...events, 
+        [selectedDate]: { ...eventData, id: result.id } 
+      };
+      setEvents(updated);
+      localStorage.setItem('calendarEvents', JSON.stringify(updated));
+      onClose();
+
+      toast({
+        title: 'Event created',
+        description: 'Your event has been successfully saved to the database',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    } else {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to save event');
+    }
+  } catch (error) {
+    toast({
+      title: 'Error',
+      description: error.message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+      position: 'bottom',
+    });
+  }
+};
+// ... existing code ... 
 
   // Add ref for tracking deleted event
   const deletedEventRef = useRef(null);
