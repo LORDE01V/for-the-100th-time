@@ -5,13 +5,19 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flask import Blueprint, request, jsonify
-from app.models import Event  # Changed to absolute import
-from app import db  # Assuming you have a db instance
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+# Define your models here
+class Event(db.Model):
+    # ... your model definition ...
 
 events_bp = Blueprint('events', __name__)
 
 @events_bp.route('/api/events', methods=['POST'])
 def create_event():
+    from app.models import Event  # Move import here to avoid circular import
     data = request.get_json()
     
     # Validate incoming data
