@@ -13,7 +13,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/auth/login', { email, password });
+      await api.post('https://backend-0igj.onrender.com/api/auth/login', { email, password });
       // ...handle successful login...
     } catch (err) {
       if (err.response?.data?.message === 'Account does not exist. Please register.') {
