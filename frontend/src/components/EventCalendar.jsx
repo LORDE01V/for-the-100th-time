@@ -103,23 +103,24 @@ const EventCalendar = () => {
   const startDay = new Date(currentYear, currentMonth, 1).getDay();
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
 
+  const fetchEventsFromBackend = async () => {
+    try {
+      const response = await axios.get('https://backend-210d.onrender.com/api/events');
+      setEvents(response.data); // Adjust this if your backend returns a different structure
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch events from server',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    }
+  };
+
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get('https://backend-210d.onrender.com/api/events');
-        setEvents(response.data); // Adjust this if backend returns a different structure
-      } catch (error) {
-        toast({
-          title: 'Error',
-          description: 'Failed to fetch events from server',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-          position: 'bottom',
-        });
-      }
-    };
-    fetchEvents();
+    fetchEventsFromBackend();
   }, []);
 
   const handlePrev = () => {
@@ -156,11 +157,13 @@ const EventCalendar = () => {
 
   const saveEvent = async () => {
     // Validate all required fields
-    if (!eventData.title.trim() || 
-        !eventData.start || 
-        !eventData.end || 
-        !eventData.description.trim() || 
-        !eventData.location.trim()) {
+    if (
+      !eventData.title.trim() ||
+      !eventData.start ||
+      !eventData.end ||
+      !eventData.description.trim() ||
+      !eventData.location.trim()
+    ) {
       toast({
         title: 'Missing required fields',
         description: 'Please fill in all event details',
@@ -184,7 +187,6 @@ const EventCalendar = () => {
 
     try {
       await axios.post('https://backend-210d.onrender.com/api/events', eventPayload);
-      // Optionally, fetch events from backend again here
       toast({
         title: 'Event created',
         description: 'Your event has been successfully saved',
@@ -193,6 +195,8 @@ const EventCalendar = () => {
         isClosable: true,
         position: 'bottom',
       });
+      // Optionally, fetch events again from backend to update UI
+      fetchEventsFromBackend();
     } catch (error) {
       toast({
         title: 'Error',
@@ -205,29 +209,14 @@ const EventCalendar = () => {
       return;
     }
 
-    const updated = { 
-      ...events, 
-      [selectedDate]: eventData 
-    };
-    setEvents(updated);
-    localStorage.setItem('calendarEvents', JSON.stringify(updated));
     onClose();
-    
-    toast({
-      title: 'Event created',
-      description: 'Your event has been successfully saved',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-      position: 'bottom',
-    });
   };
 
   // Add ref for tracking deleted event
   const deletedEventRef = useRef(null);
 
   // Modify deleteEvent function
-  const deleteEvent = () => {
+  const deleteEvent = async () => {
     if (deleteConfirmationText.toLowerCase() !== 'delete') return;
 
     // Store deleted event before removal
@@ -236,64 +225,29 @@ const EventCalendar = () => {
       event: events[selectedDate]
     };
 
-    const updated = { ...events };
-    delete updated[selectedDate];
-    setEvents(updated);
-    localStorage.setItem('calendarEvents', JSON.stringify(updated));
-    
-    setDeleteConfirmationText('');
+    try {
+      await axios.delete(`https://backend-210d.onrender.com/api/events/${selectedDate}`);
+      toast({
+        title: 'Event deleted',
+        description: 'Event has been removed from the server',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+      fetchEventsFromBackend();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete event from server',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    }
     onDeleteClose();
     onClose();
-    
-    toast({
-      title: 'Event deleted',
-      description: 'Click Undo to restore it',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-      position: 'bottom',
-      onCloseComplete: () => {
-        // Clear the ref when toast closes
-        deletedEventRef.current = null;
-      },
-      render: ({ onClose }) => (
-        <Box
-          color="white"
-          p={3}
-          bg="blue.500"
-          borderRadius="md"
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Text>Event deleted. Click Undo to restore it</Text>
-          <Button
-            size="sm"
-            colorScheme="blue"
-            variant="ghost"
-            onClick={() => {
-              if (deletedEventRef.current) {
-                const { key, event } = deletedEventRef.current;
-                setEvents(prev => ({
-                  ...prev,
-                  [key]: event
-                }));
-                localStorage.setItem('calendarEvents', 
-                  JSON.stringify({
-                    ...events,
-                    [key]: event
-                  })
-                );
-                deletedEventRef.current = null;
-                onClose();
-              }
-            }}
-          >
-            Undo
-          </Button>
-        </Box>
-      )
-    });
   };
 
   const renderCalendar = (dateBg, dateColor) => {
