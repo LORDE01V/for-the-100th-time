@@ -323,7 +323,7 @@ function SubscriptionPage() {
             </motion.div>
           ))}
         </SimpleGrid>
-        <Text color={mutedTextColor} mt={8} mb={4}>Review and update your profile details.</Text>
+        
       </Box>
     </Flex>
   );

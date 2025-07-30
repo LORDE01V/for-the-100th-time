@@ -3,7 +3,8 @@ from support import execute_query
 
 notifications_bp = Blueprint('notifications', __name__)
 
-@notifications_bp.route('/notifications/preferences', methods=['GET', 'POST'])
+
+@notifications_bp.route('/api/notification/preferences', methods=['GET', 'POST'])
 def notification_preferences():
     user_id = request.headers.get('User-ID')  # Assuming user ID is passed in headers
 
