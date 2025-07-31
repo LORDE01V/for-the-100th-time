@@ -22,9 +22,10 @@ def create_app():
     CORS(app, resources={r"/*": {  # Apply to all routes
         "origins": [
             "http://localhost:3000",
-            "https://backened-h577.onrender.com",
+            "http://localhost:5000",
             "http://127.0.0.1:3000",
-            "https://frontend-7td4.onrender.com"
+            "https://frontend-7td4.onrender.com",
+            "https://frontend-d8o0.onrender.com"
         ],
         "supports_credentials": True,
         "allow_headers": ["*"],

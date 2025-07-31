@@ -100,7 +100,7 @@ export const auth = {
 
     register: async (userData) => {
         try {
-            const response = await api.post('/api/auth/register', userData);
+            const response = await api.post('/fastapi/auth/register', userData);
             if (response.data.success) {
                 if (response.data.access_token) {
                     localStorage.setItem('token', response.data.access_token);
