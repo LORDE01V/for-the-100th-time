@@ -1,3 +1,4 @@
+/* global process */
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || "https://backened-h577.onrender.com";

@@ -42,9 +42,9 @@ from app.routes.expensenotifications import expensenotifications_bp
 from Backend.support import update_user_balance
 from app.routes.group_buying import group_buying_bp
 #from Backend.support import add_story
-# from Backend.support import create_support_ticket
-# from Backend.support import save_payment_method
-# from Backend.support import fetch_user_payment_methods
+from Backend.support import create_support_ticket
+from Backend.support import save_payment_method
+from Backend.support import fetch_user_payment_methods
 # Add the Backend directory and its parent to the Python path
 backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
 parent_dir = os.path.dirname(backend_dir)  # Parent directory: for-the-100th-time
@@ -921,6 +921,7 @@ def add_payment_method():
 @flask_app.route('/api/payment-methods', methods=['GET'])
 @jwt_required()
 def get_payment_methods():
+    conn = None  # Initialize conn to None
     try:
         user_id = get_jwt_identity()
         payment_methods = fetch_user_payment_methods(user_id)
