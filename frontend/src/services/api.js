@@ -100,7 +100,7 @@ export const auth = {
 
     register: async (userData) => {
         try {
-            const response = await api.post('/fastapi/auth/register', userData);
+            const response = await api.post('https://backened-h577.onrender.com/auth/register', userData);
             if (response.data.success) {
                 if (response.data.access_token) {
                     localStorage.setItem('token', response.data.access_token);
