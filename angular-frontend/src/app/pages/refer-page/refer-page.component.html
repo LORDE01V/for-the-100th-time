@@ -1,0 +1,96 @@
+<div class="page-container">
+  <!-- Back Button -->
+  <button mat-stroked-button class="back-button" (click)="navigateBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Back to Home
+  </button>
+
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1 class="heading">Refer & Earn</h1>
+    <p class="subheading">Share your referral link and earn rewards for each friend who joins!</p>
+  </div>
+
+  <!-- Referral Link Section -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-card-title>Your Referral Link</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="referral-link-container">
+        <mat-form-field appearance="outline" class="link-input">
+          <input matInput [value]="referralLink" readonly>
+          <button matSuffix mat-raised-button 
+                  color="{{ copied ? 'accent' : 'primary' }}"
+                  (click)="handleCopyLink()">
+            <mat-icon>content_copy</mat-icon>
+            {{ copied ? 'Copied!' : 'Copy' }}
+          </button>
+        </mat-form-field>
+
+        <div class="share-buttons">
+          <button mat-raised-button color="primary" (click)="handleShare('whatsapp')">
+            <mat-icon>whatsapp</mat-icon>
+            WhatsApp
+          </button>
+          <button mat-raised-button color="primary" (click)="handleShare('facebook')">
+            <mat-icon>facebook</mat-icon>
+            Facebook
+          </button>
+          <button mat-raised-button color="primary" (click)="handleShare('email')">
+            <mat-icon>email</mat-icon>
+            Email
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Rewards Section -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-card-title>Your Rewards</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="rewards-grid">
+        <div class="reward-item">
+          <mat-icon class="reward-icon">person_add</mat-icon>
+          <div class="reward-details">
+            <h3>Total Referrals</h3>
+            <p class="reward-value">3</p>
+          </div>
+        </div>
+        <div class="reward-item">
+          <mat-icon class="reward-icon">card_giftcard</mat-icon>
+          <div class="reward-details">
+            <h3>Total Rewards</h3>
+            <p class="reward-value">125 units</p>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Referral History -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-card-title>Referral History</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="referral-history">
+        <div *ngFor="let referral of referralHistory" class="referral-item">
+          <div class="referral-details">
+            <h3>{{ referral.name }}</h3>
+            <p class="referral-date">{{ referral.date }}</p>
+          </div>
+          <div class="referral-status">
+            <mat-chip [color]="referral.status === 'completed' ? 'primary' : 'accent'">
+              {{ referral.status }}
+            </mat-chip>
+            <p class="reward-amount">{{ referral.reward }}</p>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

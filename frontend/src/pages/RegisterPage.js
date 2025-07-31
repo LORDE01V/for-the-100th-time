@@ -68,10 +68,10 @@ function RegisterPage() {
 
     try {
       await auth.register({ 
-        name,
+        full_name: name, // Changed 'name' to 'full_name'
         email,
         password,
-        phone
+        phone // Keep phone for now, will update backend to handle it
       });
 
       toast({

@@ -3,7 +3,7 @@ from psycopg2 import OperationalError
 import os
 from dotenv import load_dotenv
 import logging
- 
+
 # Load environment variables
 load_dotenv()
  
@@ -25,7 +25,7 @@ def connect_db():
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
         return None, None
- 
+
 def get_db():
     try:
         db_host = os.getenv('DB_HOST', 'localhost')
@@ -48,7 +48,7 @@ def get_db():
     except OperationalError as e:
         logging.error(f'Database connection failed: {str(e)}. Please verify your .env file settings.')
         raise
- 
+
 # ================== CORE FUNCTIONS ==================
 def execute_query(operation=None, query=None, params=None):
     """Execute a database query"""
@@ -80,14 +80,14 @@ def execute_query(operation=None, query=None, params=None):
         if conn: conn.close()
  
 # ================== USER OPERATIONS ==================
-def create_user(email, password_hash, full_name=None):
+def create_user(email, password_hash, full_name=None, phone_number=None):
     """Create a new user account"""
     query = """
-    INSERT INTO users (email, password_hash, full_name)
-    VALUES (%s, %s, %s) RETURNING id
+    INSERT INTO users (email, password_hash, full_name, phone_number)
+    VALUES (%s, %s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (email, password_hash, full_name))
- 
+    return execute_query('insert', query, (email, password_hash, full_name, phone_number))
+
 def get_user_by_email(email):
     """Get user by email address"""
     query = "SELECT id, email, password_hash, full_name FROM users WHERE email = %s"
@@ -96,7 +96,7 @@ def get_user_by_email(email):
         columns = ['id', 'email', 'password_hash', 'full_name']
         return dict(zip(columns, result[0]))
     return None
- 
+
 def get_user_by_id(user_id):
     """Get user by ID"""
     try:
@@ -109,25 +109,25 @@ def get_user_by_id(user_id):
         columns = ['id', 'email', 'password_hash', 'full_name']
         return dict(zip(columns, result[0]))
     return None
- 
+
 def get_user_by_email_or_id(identifier):
     """Try by id first, then by email"""
     user = get_user_by_id(identifier)
     if user:
         return user
     return get_user_by_email(identifier)
- 
+
 def update_user_by_id(user_id, email=None, full_name=None, phone_number=None):
     query = """
-    UPDATE users
-    SET email = COALESCE(%s, email),
+    UPDATE users 
+    SET email = COALESCE(%s, email), 
         full_name = COALESCE(%s, full_name),
         phone_number = COALESCE(%s, phone_number)
     WHERE id = %s RETURNING id
     """
     params = (email, full_name, phone_number, user_id)
     return execute_query('search', query, params) is not None
- 
+
 def create_user_from_google(user_info):
     """Create user from Google OAuth info"""
     return create_user(
@@ -135,7 +135,7 @@ def create_user_from_google(user_info):
         password_hash=None,
         full_name=user_info.get('name', '')
     )
- 
+
 # ================== SOLAR SYSTEM OPERATIONS ==================
 def add_solar_system(installer_id, capacity_kw, components=None, installation_date=None):
     """Add a new solar system installation"""
@@ -512,3 +512,31 @@ def initialize_db():
         if conn:
             conn.rollback()
         print(f"🚨 Database initialization failed: {e}")
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+# Initialize when imported
+initialize_db()
+
+# Test connection when run directly
+if __name__ == "__main__":
+    try:
+        conn, cur = connect_db()
+        if not conn or not cur:
+            raise Exception("Database connection failed. Connection or cursor is None")
+        print("✅ Database connection successful!")
+        cur.execute("SELECT version()")
+        result = cur.fetchone()
+        if result:
+            print("PostgreSQL version: ", result[0])
+        else:
+            print("🚨 Failed to get PosstgreSQl version.")
+
+    except Exception as e:
+        print("🚨 Database connection failed:", e)
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+        

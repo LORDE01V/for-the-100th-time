@@ -273,6 +273,15 @@ button:disabled {
     font-size: 2xl;
 }
 
+.bot-speaking {
+  animation: botSpeakingPulse 1s infinite alternate;
+  box-shadow: 0 0 0 4px #38b2ac44;
+}
+@keyframes botSpeakingPulse {
+  0% { box-shadow: 0 0 0 4px #38b2ac44; }
+  100% { box-shadow: 0 0 0 12px #38b2ac22; }
+}
+
 /* Add or override styles to force visibility */
 body, html {
   visibility: visible !important;

@@ -1,8 +1,7 @@
-
 import re
 from datetime import datetime
 
-class EnhancedChatbot(HuggingFaceChatbot):
+class EnhancedChatbot:
     def __init__(self):
         super().__init__()
         # Add more dynamic context

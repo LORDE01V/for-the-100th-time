@@ -15,6 +15,7 @@ import {
   useToast,
   Spinner,
   Tooltip,
+  HStack,
 } from '@chakra-ui/react';
 import { FaArrowLeft, FaCreditCard, FaBolt, FaSun, FaShieldAlt, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -248,7 +249,7 @@ function SubscriptionPage() {
         position="relative"
         zIndex={2}
       >
-        <Flex justify="flex-start" align="center" mb={8}>
+        <HStack justify="space-between" align="center" mb={8}>
           <Button
             leftIcon={<FaArrowLeft />}
             onClick={() => navigate(-1)}
@@ -257,11 +258,17 @@ function SubscriptionPage() {
           >
             Back
           </Button>
-          <Heading as="h1" size="xl" color={headingColor}>
-            <FaCreditCard style={{ display: 'inline-block', marginRight: '0.5rem' }} />
-            Subscription Plans
-          </Heading>
-        </Flex>
+        </HStack>
+
+        <Heading size="xl" color={headingColor} mb={2} textAlign="center">
+          <FaCreditCard style={{ display: 'inline-block', marginRight: '0.5rem' }} />
+          Subscription Plans
+        </Heading>
+
+        <Text color={mutedTextColor} fontSize="lg" textAlign="center" mb={6}>
+          Unlock exclusive savings and features tailored to your energy needs!
+        </Text>
+
         <Alert status="info" mb={8} borderRadius="md">
           <AlertIcon />
           Choose the plan that best fits your energy management needs
@@ -323,7 +330,6 @@ function SubscriptionPage() {
             </motion.div>
           ))}
         </SimpleGrid>
-        
       </Box>
     </Flex>
   );
