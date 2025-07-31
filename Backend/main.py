@@ -97,7 +97,7 @@ flask_app.register_blueprint(events_calendar_bp)
 flask_app.register_blueprint(topup_bp, url_prefix='/api')
 flask_app.register_blueprint(expenses_bp, url_prefix='/api')
 flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
-flask_app.register_blueprint(group_buying_bp)
+flask_app.register_blueprint(group_buying_bp, url_prefix='/api')
 
 
 # Remove the after_request handler entirely to avoid conflicts

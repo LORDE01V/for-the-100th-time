@@ -75,7 +75,7 @@ export const auth = {
 
     register: async (userData) => {  // Updated to accept an object
         try {
-            const response = await api.post('/api/auth/register', userData);  // Pass the object directly
+            const response = await api.post('https://backend-0igj.onrender.com/api/auth/register', userData);  // Pass the object directly
             if (response.data.success) {
                 if (response.data.access_token) {
                     localStorage.setItem('token', response.data.access_token);
