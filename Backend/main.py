@@ -42,9 +42,9 @@ from app.routes.expensenotifications import expensenotifications_bp
 from Backend.support import update_user_balance
 from app.routes.group_buying import group_buying_bp
 #from Backend.support import add_story
-from Backend.support import create_support_ticket
-from Backend.support import save_payment_method
-from Backend.support import fetch_user_payment_methods
+from Backend.support import save_support_request
+# from Backend.support import save_payment_method # Commented out
+# from Backend.support import fetch_user_payment_methods # Commented out
 # Add the Backend directory and its parent to the Python path
 backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
 parent_dir = os.path.dirname(backend_dir)  # Parent directory: for-the-100th-time
@@ -814,7 +814,7 @@ def handle_support_ticket():
 
         try:
             priority = data.get('priority', 'low')
-            ticket_id = create_support_ticket(user_id, subject, message, priority)
+            ticket_id = save_support_request(user_id, subject, message, priority)
             return jsonify({
                 'success': True,
                 'message': 'Support ticket created successfully',
@@ -829,134 +829,134 @@ def handle_support_ticket():
         print(f"Create support ticket error: {str(e)}")
         return jsonify({'success': False, 'message': 'Failed to create support ticket'}), 500
 
-@flask_app.route('/api/payment-methods', methods=['POST'])
-@jwt_required()
-def add_payment_method():
-    try:
-        # Debug logging
-        print("=== Payment Method Creation Request Debug ===")
-        print("Request Headers:", dict(request.headers))
-        print("Request Data:", request.get_json())
-        
-        user_id = get_jwt_identity()
-        print("User ID:", user_id)
-        
-        data = request.get_json()
-        if not data:
-            print("No data received in request")
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
-        # Validate required fields
-        required_fields = ['type', 'cardNumber', 'expiryDate', 'cardHolderName']
-        for field in required_fields:
-            if field not in data:
-                print(f"Missing required field: {field}")
-                return jsonify({
-                    'success': False,
-                    'message': f'Missing required field: {field}'
-                }), 400
-
-        # Convert frontend field names to backend field names
-        payment_data = {
-            'payment_type': data['type'],
-            'card_number': data['cardNumber'],
-            'expiry_date': data['expiryDate'],
-            'card_holder_name': data['cardHolderName'],
-            'is_default': data.get('isDefault', False)
-        }
-
-        print("Processed payment data:", payment_data)
-
-        # Save payment method
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
-        cur = conn.cursor()
-        try:
-            result = save_payment_method(
-                user_id=user_id,
-                payment_type=payment_data['payment_type'],
-                card_number=payment_data['card_number'],
-                expiry_date=payment_data['expiry_date'],
-                card_holder_name=payment_data['card_holder_name'],
-                is_default=payment_data['is_default']
-            )
-
-            print("Save payment method result:", result)
-
-            if result:
-                # Create notification for successful payment method addition
-                try:
-                    # Create notification
-                    cur.execute('''
-                        INSERT INTO notifications (user_id, title, message, type)
-                        VALUES (%s, %s, %s, %s)
-                    ''', (
-                        user_id,
-                        'Payment Method Added',
-                        f'Successfully added a new {payment_data["payment_type"]} payment method.',
-                        'success'
-                    ))
-                    conn.commit()
-                except Exception as e:
-                    print(f"Error creating notification: {str(e)}")
-                    conn.rollback()
-
-            return jsonify({
-                'success': True,
-                'message': 'Payment method saved successfully',
-                'payment_method_id': result
-            })
-        except Exception as e:
-            print("Error saving payment method:", str(e))
-            import traceback
-            print("Traceback:", traceback.format_exc())
-            return jsonify({'success': False, 'message': str(e)}), 500
-    except Exception as e:
-        print("Error saving payment method:", str(e))
-        import traceback
-        print("Traceback:", traceback.format_exc())
-        return jsonify({'success': False, 'message': str(e)}), 500
-
-@flask_app.route('/api/payment-methods', methods=['GET'])
-@jwt_required()
-def get_payment_methods():
-    conn = None  # Initialize conn to None
-    try:
-        user_id = get_jwt_identity()
-        payment_methods = fetch_user_payment_methods(user_id)
-        
-        # Format the payment methods for the frontend
-        formatted_methods = []
-        
-        # Check if payment_methods is not None and is iterable
-        if payment_methods:
-            for method in payment_methods:
-                try:
-                    formatted_method = {
-                        'id': method['id'],  # Assuming id is the first column
-                        'payment_type': method['payment_type'],
-                        'card_number': method['card_number'],
-                        'expiry_date': method['expiry_date'].strftime('%m/%y') if method['expiry_date'] else None,
-                        'card_holder_name': method['card_holder_name'],
-                        'is_default': method['is_default'],
-                        'created_at': method['created_at'].isoformat() if method['created_at'] else None  # Add created_at
-                    }
-                    formatted_methods.append(formatted_method)
-                except (IndexError, AttributeError) as e:
-                    print(f"Error formatting payment method: {str(e)}")
-                    continue
-        
-        print("Debug - Formatted payment methods:", formatted_methods)  # Debug log
-        
-        return jsonify({
-            'success': True,
-            'payment_methods': formatted_methods
-        })
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        if conn: conn.close()
+# @flask_app.route('/api/payment-methods', methods=['POST']) # Commented out
+# @jwt_required() # Commented out
+# def add_payment_method(): # Commented out
+#     try: # Commented out
+#         # Debug logging # Commented out
+#         print("=== Payment Method Creation Request Debug ===") # Commented out
+#         print("Request Headers:", dict(request.headers)) # Commented out
+#         print("Request Data:", request.get_json()) # Commented out
+#         # Commented out
+#         user_id = get_jwt_identity() # Commented out
+#         print("User ID:", user_id) # Commented out
+#         # Commented out
+#         data = request.get_json() # Commented out
+#         if not data: # Commented out
+#             print("No data received in request") # Commented out
+#             return jsonify({'success': False, 'message': 'No data provided'}), 400 # Commented out
+# # Commented out
+#         # Validate required fields # Commented out
+#         required_fields = ['type', 'cardNumber', 'expiryDate', 'cardHolderName'] # Commented out
+#         for field in required_fields: # Commented out
+#             if field not in data: # Commented out
+#                 print(f"Missing required field: {field}") # Commented out
+#                 return jsonify({ # Commented out
+#                     'success': False, # Commented out
+#                     'message': f'Missing required field: {field}' # Commented out
+#                 }), 400 # Commented out
+# # Commented out
+#         # Convert frontend field names to backend field names # Commented out
+#         payment_data = { # Commented out
+#             'payment_type': data['type'], # Commented out
+#             'card_number': data['cardNumber'], # Commented out
+#             'expiry_date': data['expiryDate'], # Commented out
+#             'card_holder_name': data['cardHolderName'], # Commented out
+#             'is_default': data.get('isDefault', False) # Commented out
+#         } # Commented out
+# # Commented out
+#         print("Processed payment data:", payment_data) # Commented out
+# # Commented out
+#         # Save payment method # Commented out
+#         conn = get_db() # Commented out
+#         if not conn: # Commented out
+#             return jsonify({'success': False, 'message': 'Database error'}), 500 # Commented out
+#         cur = conn.cursor() # Commented out
+#         try: # Commented out
+#             result = save_payment_method( # Commented out
+#                 user_id=user_id, # Commented out
+#                 payment_type=payment_data['payment_type'], # Commented out
+#                 card_number=payment_data['card_number'], # Commented out
+#                 expiry_date=payment_data['expiry_date'], # Commented out
+#                 card_holder_name=payment_data['card_holder_name'], # Commented out
+#                 is_default=payment_data['is_default'] # Commented out
+#             ) # Commented out
+# # Commented out
+#             print("Save payment method result:", result) # Commented out
+# # Commented out
+#             if result: # Commented out
+#                 # Create notification for successful payment method addition # Commented out
+#                 try: # Commented out
+#                     # Create notification # Commented out
+#                     cur.execute(''' # Commented out
+#                         INSERT INTO notifications (user_id, title, message, type) # Commented out
+#                         VALUES (%s, %s, %s, %s) # Commented out
+#                     ''', ( # Commented out
+#                         user_id, # Commented out
+#                         'Payment Method Added', # Commented out
+#                         f'Successfully added a new {payment_data["payment_type"]} payment method.', # Commented out
+#                         'success' # Commented out
+#                     )) # Commented out
+#                     conn.commit() # Commented out
+#                 except Exception as e: # Commented out
+#                     print(f"Error creating notification: {str(e)}") # Commented out
+#                     conn.rollback() # Commented out
+# # Commented out
+#             return jsonify({ # Commented out
+#                 'success': True, # Commented out
+#                 'message': 'Payment method saved successfully', # Commented out
+#                 'payment_method_id': result # Commented out
+#             }) # Commented out
+#         except Exception as e: # Commented out
+#             print("Error saving payment method:", str(e)) # Commented out
+#             import traceback # Commented out
+#             print("Traceback:", traceback.format_exc()) # Commented out
+#             return jsonify({'success': False, 'message': str(e)}), 500 # Commented out
+#     except Exception as e: # Commented out
+#         print("Error saving payment method:", str(e)) # Commented out
+#         import traceback # Commented out
+#         print("Traceback:", traceback.format_exc()) # Commented out
+#         return jsonify({'success': False, 'message': str(e)}), 500 # Commented out
+# # Commented out
+# @flask_app.route('/api/payment-methods', methods=['GET']) # Commented out
+# @jwt_required() # Commented out
+# def get_payment_methods(): # Commented out
+#     conn = None  # Initialize conn to None # Commented out
+#     try: # Commented out
+#         user_id = get_jwt_identity() # Commented out
+#         payment_methods = fetch_user_payment_methods(user_id) # Commented out
+#         # Commented out
+#         # Format the payment methods for the frontend # Commented out
+#         formatted_methods = [] # Commented out
+#         # Commented out
+#         # Check if payment_methods is not None and is iterable # Commented out
+#         if payment_methods: # Commented out
+#             for method in payment_methods: # Commented out
+#                 try: # Commented out
+#                     formatted_method = { # Commented out
+#                         'id': method['id'],  # Assuming id is the first column # Commented out
+#                         'payment_type': method['payment_type'], # Commented out
+#                         'card_number': method['card_number'], # Commented out
+#                         'expiry_date': method['expiry_date'].strftime('%m/%y') if method['expiry_date'] else None, # Commented out
+#                         'card_holder_name': method['card_holder_name'], # Commented out
+#                         'is_default': method['is_default'], # Commented out
+#                         'created_at': method['created_at'].isoformat() if method['created_at'] else None  # Add created_at # Commented out
+#                     } # Commented out
+#                     formatted_methods.append(formatted_method) # Commented out
+#                 except (IndexError, AttributeError) as e: # Commented out
+#                     print(f"Error formatting payment method: {str(e)}") # Commented out
+#                     continue # Commented out
+#         # Commented out
+#         print("Debug - Formatted payment methods:", formatted_methods)  # Debug log # Commented out
+#         # Commented out
+#         return jsonify({ # Commented out
+#             'success': True, # Commented out
+#             'payment_methods': formatted_methods # Commented out
+#         }) # Commented out
+#     except Exception as e: # Commented out
+#         raise HTTPException(status_code=500, detail=str(e)) # Commented out
+#     finally: # Commented out
+#         if conn: conn.close() # Commented out
 
 
 class ChatMessage(BaseModel):
