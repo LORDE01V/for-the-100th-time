@@ -3054,3 +3054,11 @@ What do you need?
 2025-07-22 17:22:22,149 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:22] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
 2025-07-22 17:22:30,484 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:30] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
 2025-07-22 17:22:30,489 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:30] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-07-31 09:57:26,643 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-31 09:57:26,643 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-31 09:57:26,645 - INFO -  * Restarting with stat
+2025-07-31 09:57:28,089 - WARNING -  * Debugger is active!
+2025-07-31 09:57:28,093 - INFO -  * Debugger PIN: 635-440-903
