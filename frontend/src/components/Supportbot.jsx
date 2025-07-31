@@ -118,7 +118,7 @@ const SupportBot = () => {
   const userBgColor = useColorModeValue('blue.100', 'blue.800');
   const textColor = useColorModeValue('black', 'white');
 
-  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://backened-h577.onrender.com';
 
   // Scroll to the latest message whenever messages state updates
   useEffect(() => {
