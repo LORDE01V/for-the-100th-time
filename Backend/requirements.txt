@@ -44,3 +44,21 @@ tzdata==2025.2
 urllib3==2.5.0
 uvicorn==0.35.0
 Werkzeug==3.1.3
+## The following requirements were added by pip freeze:
+backend==0.2.4.1
+bs4==0.0.2
+filelock==3.18.0
+fsspec==2025.7.0
+huggingface-hub==0.33.4
+mpmath==1.3.0
+networkx==3.5
+psycopg2==2.9.10
+PyYAML==6.0.2
+regex==2024.11.6
+safetensors==0.5.3
+setuptools==80.9.0
+sympy==1.14.0
+tokenizers==0.21.2
+torch==2.7.1
+tqdm==4.67.1
+transformers==4.53.2
