@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 env_path = Path(__file__).resolve().parent.parent / '.env' # Assumes script is in 'backend/' or similar
 load_dotenv(dotenv_path=env_path)
 
-BACKEND_URL = os.getenv("REACT_APP_BACKEND_URL", "http://localhost:5000") # Ensure this points to your Flask app
+BACKEND_URL = os.getenv("REACT_APP_BACKEND_URL", "https://backened-h577.onrender.com") # Ensure this points to your Flask app
 
 def get_national_loadshedding_status_from_backend():
     """Fetches national loadshedding status from your Flask backend."""
