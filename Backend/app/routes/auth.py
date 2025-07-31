@@ -186,16 +186,44 @@ def login():
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    # Always succeed and return a fake user and token
-    return jsonify({
-        "success": True,
-        "access_token": "mocktoken123",
-        "user": {
-            "id": 1,
-            "email": request.json.get("email", "test@example.com"),
-            "full_name": request.json.get("full_name", "Test User")
-        }
-    }), 200
+    try:
+        data = request.get_json()
+        email = data.get('email', '').lower()
+        password = data.get('password')
+        full_name = data.get('full_name')  # Changed from 'name' to 'full_name'
+        phone_number = data.get('phone') # Added phone_number
+
+        if not email or not password or not full_name:
+            logging.warning('Registration attempt with missing email, password, or full_name.')
+            return jsonify({'message': 'Email, password, and full name are required'}), 400
+
+        if get_user_by_email(email):
+            logging.warning(f'Registration attempt for existing email: {email}')
+            return jsonify({'message': 'User with that email already exists'}), 409
+
+        hashed_password = generate_password_hash(password)
+        
+        # Pass phone_number to create_user
+        user_id = create_user(email, hashed_password, full_name, phone_number) 
+
+        if user_id:
+            logging.info(f'User {email} registered successfully with ID: {user_id}')
+            access_token = create_access_token(identity=str(user_id)) # Create token for the newly registered user
+            return jsonify({
+                "success": True,
+                "message": "User registered successfully",
+                "user_id": user_id,
+                "email": email,
+                "full_name": full_name,
+                "access_token": access_token # Return the access token
+            }), 201
+        else:
+            logging.error(f'User registration failed for email: {email} - create_user returned None.')
+            return jsonify({'message': 'User registration failed'}), 500
+
+    except Exception as e:
+        logging.error(f'Registration error: {str(e)}')
+        return jsonify({'message': 'Registration failed'}), 500
 
 @auth_bp.route('/user', methods=['PUT'])
 @jwt_required()

@@ -80,13 +80,13 @@ def execute_query(operation=None, query=None, params=None):
         if conn: conn.close()
 
 # ================== USER OPERATIONS ==================
-def create_user(email, password_hash, full_name=None):
+def create_user(email, password_hash, full_name=None, phone_number=None):
     """Create a new user account"""
     query = """
-    INSERT INTO users (email, password_hash, full_name)
-    VALUES (%s, %s, %s) RETURNING id
+    INSERT INTO users (email, password_hash, full_name, phone_number)
+    VALUES (%s, %s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (email, password_hash, full_name))
+    return execute_query('insert', query, (email, password_hash, full_name, phone_number))
 
 def get_user_by_email(email):
     """Get user by email address"""

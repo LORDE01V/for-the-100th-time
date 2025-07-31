@@ -3062,3 +3062,43 @@ What do you need?
 2025-07-31 09:57:26,645 - INFO -  * Restarting with stat
 2025-07-31 09:57:28,089 - WARNING -  * Debugger is active!
 2025-07-31 09:57:28,093 - INFO -  * Debugger PIN: 635-440-903
+2025-07-31 10:09:38,443 - INFO - 127.0.0.1 - - [31/Jul/2025 10:09:38] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-31 10:09:39,319 - INFO - 127.0.0.1 - - [31/Jul/2025 10:09:39] "POST /api/auth/register HTTP/1.1" 200 -
+2025-07-31 10:09:41,677 - INFO - 127.0.0.1 - - [31/Jul/2025 10:09:41] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-31 10:09:41,849 - ERROR - User not found for email: sala@gmail.com
+2025-07-31 10:09:41,851 - INFO - 127.0.0.1 - - [31/Jul/2025 10:09:41] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-31 10:09:42,182 - INFO - 127.0.0.1 - - [31/Jul/2025 10:09:42] "[33mOPTIONS /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-31 10:10:46,566 - INFO - 127.0.0.1 - - [31/Jul/2025 10:10:46] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-31 10:10:47,081 - ERROR - User not found for email: sala@gmail.com
+2025-07-31 10:10:47,083 - INFO - 127.0.0.1 - - [31/Jul/2025 10:10:47] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-31 10:10:47,156 - INFO - 127.0.0.1 - - [31/Jul/2025 10:10:47] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-31 10:10:56,131 - INFO - 127.0.0.1 - - [31/Jul/2025 10:10:56] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-31 10:10:56,290 - ERROR - User not found for email: sala@gmail.com
+2025-07-31 10:10:56,292 - INFO - 127.0.0.1 - - [31/Jul/2025 10:10:56] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-31 10:10:56,616 - INFO - 127.0.0.1 - - [31/Jul/2025 10:10:56] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-31 10:14:03,745 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-31 10:14:03,749 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-31 10:14:03,753 - INFO -  * Restarting with stat
+2025-07-31 10:14:10,998 - WARNING -  * Debugger is active!
+2025-07-31 10:14:11,013 - INFO -  * Debugger PIN: 635-440-903
+2025-07-31 10:14:34,513 - INFO - 127.0.0.1 - - [31/Jul/2025 10:14:34] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-31 10:14:34,945 - ERROR - User not found for email: sala@gmail.com
+2025-07-31 10:14:34,946 - INFO - 127.0.0.1 - - [31/Jul/2025 10:14:34] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-07-31 10:14:35,099 - INFO - 127.0.0.1 - - [31/Jul/2025 10:14:35] "[33mPOST /api/auth/refresh HTTP/1.1[0m" 404 -
+2025-07-31 10:15:55,333 - INFO - 127.0.0.1 - - [31/Jul/2025 10:15:55] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-31 10:15:55,665 - WARNING - Registration attempt with missing email, password, or full_name.
+2025-07-31 10:15:55,668 - INFO - 127.0.0.1 - - [31/Jul/2025 10:15:55] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 400 -
+2025-07-31 10:20:56,941 - INFO - 127.0.0.1 - - [31/Jul/2025 10:20:56] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-31 10:20:57,268 - WARNING - Registration attempt with missing email, password, or full_name.
+2025-07-31 10:20:57,271 - INFO - 127.0.0.1 - - [31/Jul/2025 10:20:57] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 400 -
+2025-07-31 10:22:21,200 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-07-31 10:22:21,449 - INFO -  * Restarting with stat
+2025-07-31 10:22:26,706 - WARNING -  * Debugger is active!
+2025-07-31 10:22:26,713 - INFO -  * Debugger PIN: 635-440-903
+2025-07-31 10:22:26,880 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\support.py', reloading
+2025-07-31 10:22:27,164 - INFO -  * Restarting with stat
+2025-07-31 10:22:31,021 - WARNING -  * Debugger is active!
+2025-07-31 10:22:31,027 - INFO -  * Debugger PIN: 635-440-903
