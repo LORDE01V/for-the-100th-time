@@ -81,7 +81,7 @@ function ImpactPage() {
   // Helper to fetch backend stories and map to testimonial structure
   const fetchBackendStories = async () => {
     try {
-      const response = await axios.get('https://backend-210d.onrender.com/api/community-stories');
+      const response = await axios.get('https://backend-0igj.onrender.com/api/community-stories');
       console.log('Fetched stories:', response.data); 
       return response.data.map(story => ({
         name: story.user_name,
@@ -127,7 +127,7 @@ function ImpactPage() {
     }
 
     try {
-      await axios.post('https://backend-210d.onrender.com/api/community-stories', {
+      await axios.post('https://backend-0igj.onrender.com/api/community-stories', {
         user_name: name,
         story_text: quote,
         rating: rating,

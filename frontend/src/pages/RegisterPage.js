@@ -1,4 +1,4 @@
-/* global process */
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
@@ -69,12 +69,16 @@ function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await register({ // Use the register from context
-        full_name: name, // Ensure full_name is sent
+      const userData = {
+        full_name: name,
         email,
         password,
-        phone
-      });
+        phone_number: phone
+      };
+
+      console.log('Sending registration data:', userData); // Debug log
+    
+      const response = await register(userData);
 
       if (response.success) {
         toast({
@@ -108,6 +112,7 @@ function RegisterPage() {
         });
       }
     } catch (error) {
+      console.error('Registration error:', error);
       let errorMessage = error.message;
       
       if (error.code === 'ECONNABORTED') {
@@ -131,7 +136,7 @@ function RegisterPage() {
   };
 
   const handleGoogleRegister = () => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-210d.onrender.com';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-0igj.onrender.com';
     window.location.href = `${backendUrl}/api/auth/google?action=register`;
   };
 

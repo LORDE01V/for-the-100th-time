@@ -46,7 +46,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://backend-210d.onrender.com",
+  "proxy": "https://backend-0igj.onrender.com",
   "eslintConfig": {
     "extends": [
       "react-app",

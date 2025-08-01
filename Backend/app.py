@@ -32,7 +32,7 @@ CORS(app,
              "http://localhost:3000", 
              "http://localhost:5000", 
              "http://127.0.0.1:3000", 
-             "https://frontend-sabs.onrender.com"
+             "https://backend-0igj.onrender.com"
          ],
          "supports_credentials": True,
          "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With"],

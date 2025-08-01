@@ -118,7 +118,7 @@ const SupportBot = () => {
   const userBgColor = useColorModeValue('blue.100', 'blue.800');
   const textColor = useColorModeValue('black', 'white');
 
-  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://backend-210d.onrender.com';
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://backend-0igj.onrender.com';
 
   // Scroll to the latest message whenever messages state updates
   useEffect(() => {

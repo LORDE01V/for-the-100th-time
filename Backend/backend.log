@@ -15005,3 +15005,35 @@ LINE 4:             transaction_type, is_auto_topup, min_balance,
 2025-07-22 17:22:30,484 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:30] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
 2025-07-22 17:22:30,489 - INFO - 127.0.0.1 - - [22/Jul/2025 17:22:30] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
 >>>>>>> origin/d3
+2025-08-01 14:15:43,688 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-01 14:15:43,688 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-01 14:15:43,691 - INFO -  * Restarting with stat
+2025-08-01 14:16:03,047 - WARNING -  * Debugger is active!
+2025-08-01 14:16:03,054 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 14:27:38,997 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\main.py', reloading
+2025-08-01 14:27:39,449 - INFO -  * Restarting with stat
+2025-08-01 14:27:58,610 - WARNING -  * Debugger is active!
+2025-08-01 14:27:58,616 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 14:37:20,036 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\app\\routes\\group_buying.py', reloading
+2025-08-01 14:37:20,323 - INFO -  * Restarting with stat
+2025-08-01 14:37:42,232 - WARNING -  * Debugger is active!
+2025-08-01 14:37:42,240 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 14:38:30,424 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-01 14:38:30,424 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-01 14:38:30,426 - INFO -  * Restarting with stat
+2025-08-01 14:38:48,930 - WARNING -  * Debugger is active!
+2025-08-01 14:38:48,934 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 14:45:58,883 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-08-01 14:45:59,154 - INFO -  * Restarting with stat
+2025-08-01 14:46:17,497 - WARNING -  * Debugger is active!
+2025-08-01 14:46:17,501 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 14:49:47,690 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-08-01 14:49:47,960 - INFO -  * Restarting with stat
+2025-08-01 14:50:11,780 - WARNING -  * Debugger is active!
+2025-08-01 14:50:11,788 - INFO -  * Debugger PIN: 739-467-792

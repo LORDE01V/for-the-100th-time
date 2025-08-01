@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback}  from 'react';
 import {
   Box,
   Text,
@@ -101,9 +101,9 @@ const EventCalendar = () => {
 
 
   // New function to fetch events from the backend
-  const fetchEventsFromBackend = async () => {
+  const fetchEventsFromBackend =useCallback( async () => {
     try {
-      const response = await axios.get('https://backend-210d.onrender.com/api/events');
+      const response = await axios.get('https://backend-0igj.onrender.com/api/events');
       // The backend returns a dictionary where keys are dates.
       // We need to convert it to a format suitable for setEvents (where keys are like 'YYYY-MM-DD').
       // Let's assume the backend 'date' field is 'YYYY-MM-DD'.
@@ -134,11 +134,11 @@ const EventCalendar = () => {
         position: 'bottom',
       });
     }
-  };
+  }, [setEvents, toast]);
 
   useEffect(() => {
     fetchEventsFromBackend();
-  }, []); // Run only once on component mount
+  }, [fetchEventsFromBackend]); // Run only once on component mount
 
   const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
@@ -211,7 +211,7 @@ const EventCalendar = () => {
     };
 
     try {
-      await axios.post('https://backend-210d.onrender.com/api/events', eventPayload);
+      await axios.post('https://backend-0igj.onrender.com/api/events', eventPayload);
       toast({
         title: 'Event created',
         description: 'Your event has been successfully saved!',
@@ -255,7 +255,7 @@ const EventCalendar = () => {
 
     try {
       // Assuming selectedDate is the primary key (date) for deletion
-      await axios.delete(`https://backend-210d.onrender.com/api/events/${selectedDate}`);
+      await axios.delete(`https://backend-0igj.onrender.comm/api/events/${selectedDate}`);
       toast({
         title: 'Event deleted',
         description: 'Event has been successfully deleted from the database.',
@@ -336,7 +336,7 @@ const EventCalendar = () => {
       const dateKey = new Date(currentYear, currentMonth, day).toISOString().split('T')[0]; // Format to YYYY-MM-DD
       const dayEvents = events[dateKey] ? [events[dateKey]] : []; // Get event for the day
       const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-      const hasEvents = dayEvents.length > 0;
+      //const hasEvents = dayEvents.length > 0;
 
       // Filter events by search query and active filters
       const filteredEvents = dayEvents.filter(event => {

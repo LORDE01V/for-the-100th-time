@@ -8,10 +8,10 @@ import logging
 load_dotenv()
 
 # New hardcoded database credentials
-DB_HOST = 'dpg-d22bjj3e5dus739fk9gg-a.oregon-postgres.render.com'
-DB_NAME = 'griddb'
-DB_USER = 'griddb'
-DB_PASSWORD = 'GycGE7M140H9RbUj5skLbOAS9kD8o8qf'
+DB_HOST = 'dpg-d20ue6umcj7s73e6p9pg-a.oregon-postgres.render.com'
+DB_NAME = 'fintech_solar'
+DB_USER = 'fintech_solar_user'
+DB_PASSWORD = 'qy0R5lHZJvIyVL6b9Be54BJ51kbrAEDR'
 DB_PORT = '5432'
 
 
@@ -26,7 +26,10 @@ def connect_db():
             user=DB_USER,
             password=DB_PASSWORD,
             port=DB_PORT,
-            sslmode='require' # Ensure SSL is required
+            sslmode='prefer',  # Changed from 'require' to 'prefer'
+            sslcert=None,
+            sslkey=None,
+            sslrootcert=None# Ensure SSL is required
         )
         return conn, conn.cursor()
     except OperationalError as e:
@@ -335,6 +338,37 @@ def fetch_user_payment_methods(user_id):
         return [dict(zip(columns, row)) for row in results]
     return []
 
+
+def add_user_to_campaign(user_id, campaign_id):
+    """
+    Adds a user to a campaign in the user_campaigns table.
+    """
+    try:
+        # Validate campaign exists
+        campaign_query = "SELECT id FROM campaigns WHERE id = %s"
+        campaign_result = execute_query('search', campaign_query, (campaign_id,))
+        
+        if not campaign_result:
+            raise Exception("Campaign not found")
+        
+        # Insert with conflict handling
+        query = """
+        INSERT INTO user_campaigns (user_id, campaign_id, joined_at)
+        VALUES (%s, %s, CURRENT_TIMESTAMP)
+        ON CONFLICT (user_id, campaign_id) DO NOTHING
+        """
+        result = execute_query('insert', query, (user_id, campaign_id))
+        
+        # Check if insertion was successful
+        if result is None:
+            raise Exception("User is already part of this campaign")
+            
+        return True
+    except Exception as e:
+        print(f"Error adding user to campaign: {str(e)}")
+        raise
+
+
 # Initialize database tables when module loads
 def initialize_db():
     conn, cur = connect_db()
@@ -518,6 +552,14 @@ def initialize_db():
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
         """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS user_campaigns (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                campaign_id INTEGER NOT NULL,
+                joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+""")
 
         if conn:
             conn.commit()

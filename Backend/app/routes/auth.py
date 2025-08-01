@@ -200,6 +200,7 @@ def register():
         return create_response("OK", 200)
     try:
         data = request.get_json()
+        logging.info(f'Registration request received: {request.get_data(as_text=True)}')
         if not data or not isinstance(data, dict):
             logging.error('No valid JSON data received in registration request')
             return create_response('Invalid registration data', 400)
@@ -207,7 +208,7 @@ def register():
         email = data.get('email', '').lower()
         password = data.get('password')
         full_name = data.get('full_name', '') 
-        phone_number = data.get('phone', '') # Extract phone_number from request data
+        phone_number = data.get('phone_number', '')  or data.get('phone', '')# Extract phone_number from request data
 
         if not email or not password:
             logging.error('Missing or invalid email/password in registration data')

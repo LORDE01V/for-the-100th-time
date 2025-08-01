@@ -39,6 +39,7 @@ from app.routes.events_calendar import events_calendar_bp
 from app.routes.topup import topup_bp
 from Backend.app.routes.expenses import expenses_bp
 from app.routes.expensenotifications import expensenotifications_bp
+from app.routes.group_buying import group_buying_bp
 from Backend.support import update_user_balance, save_payment_method, fetch_user_payment_methods, save_community_story, get_user_by_id, save_support_request # Added get_user_by_id, changed create_support_ticket to save_support_request
 
 
@@ -81,7 +82,7 @@ CORS(flask_app,
              "http://localhost:3000", 
              "http://localhost:5000", 
              "http://127.0.0.1:3000", 
-             "https://frontend-sabs.onrender.com" # Add your frontend URL here
+             "https://frontend-7td4.onrender.com" # Add your frontend URL here
          ],
          "supports_credentials": True,
          "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin","X-Requested-With"],
@@ -103,16 +104,6 @@ flask_app.register_blueprint(expenses_bp, url_prefix='/api')
 flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
 flask_app.register_blueprint(group_buying_bp, url_prefix='/api')
 
-
-# Remove the after_request handler entirely to avoid conflicts
-# @flask_app.after_request
-# def add_cors_headers(response):
-#     response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-#     response.headers['Access-Control-Allow-Credentials'] = 'true'
-#     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-#     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-#     return response
-
 # Database connection helper (PostgreSQL)
 def get_db():
     try:
@@ -128,103 +119,6 @@ def get_db():
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
         return None
-
-# Auth routes (updated for PostgreSQL)
-# REMOVE THE FOLLOWING BLOCK FOR flask_register:
-# @flask_app.route('/api/auth/register', methods=['POST'])
-# def flask_register():
-#     conn = None
-#     try:
-#         data = request.get_json()
-
-#         # Validate required fields
-#         if not all(key in data for key in ['name', 'email', 'password']):
-#             return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-
-#         # Get optional phone or set None
-#         phone = data.get('phone', None)
-
-#         conn = get_db()
-#         if not conn:
-#             return jsonify({'success': False, 'message': 'Database error'}), 500
-
-#         with conn.cursor() as cur:
-#             # Check existing user
-#             cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
-#             if cur.fetchone():
-#                 return jsonify({'success': False, 'message': 'Email already exists'}), 400
-
-#             # Create user with proper hash length
-#             hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
-#             cur.execute(
-#                 """INSERT INTO users (email, password_hash, full_name, phone)
-#                 VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-#                 (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
-#             )
-#             user_data = cur.fetchone()
-#             if not user_data:
-#                 return jsonify({'success': False, 'message': 'Failed to create user'}), 500
-#             conn.commit()
-
-#         send_welcome_email(data['email'], data['name'])
-
-#         return jsonify({
-#             'success': True,
-#             'user': {
-#                 'id': user_data[0],
-#                 'email': user_data[1],
-#                 'name': user_data[2]
-#             }
-#         }), 201
-
-#     except Exception as e:
-#         print(f"Registration Error: {str(e)}")
-#         return jsonify({'success': False, 'message': 'Registration failed'}), 500
-#     finally:
-#         if conn: conn.close()
-
-# REMOVE THE FOLLOWING BLOCK FOR flask_login:
-# @flask_app.route('/api/auth/login', methods=['POST'])
-# def flask_login():
-#     try:
-#         data = request.get_json()
-#         email = data.get('email', '').lower()  # Force lowercase
-#         password = data.get('password')
-
-#         if not email or not password:
-#             return jsonify({'success': False, 'message': 'Missing credentials'}), 400
-
-#         conn = get_db()
-#         if not conn:
-#             return jsonify({'success': False, 'message': 'Database connection error'}), 500
-#         with conn.cursor() as cur:
-#             cur.execute('''
-#                 SELECT id, password_hash, full_name
-#                 FROM users
-#                 WHERE email = %s
-#             ''', (email,))
-#             user = cur.fetchone()
-
-#             if user and check_password_hash(user[1], password):
-#                 access_token = create_access_token(identity=user[0])
-#                 return jsonify({
-#                     'success': True,
-#                     'token': access_token,
-#                     'user': {
-#                         'id': user[0],
-#                         'name': user[2],
-#                         'email': email
-#                     }
-#                 }), 200
-
-#         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
-
-#     except Exception as e:
-#         flask_app.logger.error(f"Login error: {str(e)}")
-#         return jsonify({'success': False, 'message': 'Login failed'}), 500
-#     finally:
-#         if conn:
-#             conn.close()
 
 @flask_app.route('/api/topup', methods=['OPTIONS'])
 def handle_topup_options():
@@ -345,7 +239,7 @@ app = FastAPI(title="Lumina Solar FastAPI")
 # Configure CORS for development in FastAPI to match Flask's settings
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000", "https://frontend-sabs.onrender.com"],
+    allow_origins=["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000", "https://frontend-7td4.onrender.com"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With"],
@@ -365,52 +259,6 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-# --- FastAPI Routes ---
-# @app.post("/fastapi/auth/register")
-# async def fastapi_register(user: UserRegister):
-#     """FastAPI version of /api/auth/register"""
-#     conn = None
-#     try:
-#         conn = get_db()
-#         if not conn:  # Check if connection failed
-#             return jsonify({'success': False, 'message': 'Database connection error'}), 500
-            
-#         with conn.cursor() as cur:
-#             cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
-#             if cur.fetchone():
-#                 raise HTTPException(status_code=400, detail="Email exists")
-
-#             hashed_pw = generate_password_hash(user.password)
-#             cur.execute(
-#                 """INSERT INTO users (email, password_hash, full_name, phone)
-#                 VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-#                 (user.email, hashed_pw, user.name, user.phone)
-#             )
-#             user_data = cur.fetchone()
-#             conn.commit()
-            
-#             return {
-#                 'success': True,
-#                 'message': 'User registered successfully',
-#                 'user': {
-#                     'id': user_data[0],
-#                     'email': user_data[1],
-#                     'name': user_data[2]
-#                 }
-#             }
-            
-#     except HTTPException as e:
-#         raise e
-#     except Exception as e:
-#         if conn:
-#             conn.rollback()
-#         print(f"Registration error: {str(e)}")
-#         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Registration failed")
-#     finally:
-#         if conn:
-#             conn.close()
-
-# Forum routes
 @flask_app.route('/api/forum/topics', methods=['GET'])
 @jwt_required()
 def get_forum_topics():

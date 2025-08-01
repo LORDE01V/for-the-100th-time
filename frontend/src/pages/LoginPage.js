@@ -1,4 +1,3 @@
-/* global process */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
@@ -115,7 +114,7 @@ function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-210d.onrender.com';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-0igj.onrender.com';
     window.location.href = `${backendUrl}/api/auth/google?action=login`;
   };
 
