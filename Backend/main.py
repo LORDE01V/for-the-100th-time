@@ -360,7 +360,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+async def root():
+    return {
+        "message": "Lumina Solar API is running",
+        "status": "healthy",
+        "version": "1.0.0"
+    }
 app.mount("/api", WSGIMiddleware(flask_app))
+
 
 # JWT (compatible with Flask's tokens)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/fastapi/auth/login")
