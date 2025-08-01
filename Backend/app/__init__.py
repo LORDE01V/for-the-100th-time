@@ -16,7 +16,7 @@ oauth = OAuth()
 def create_app():
     app = Flask(__name__,
                 template_folder='templates')
-    CORS(app, origins=['http://localhost:3000', 'https://frontend-7td4.onrender.com'], supports_credentials=True)        
+    CORS(app, origins=['http://localhost:3000', 'https://frontend-d8o0.onrender.com'], supports_credentials=True)        
     
     # Enhanced CORS configuration
     CORS(app, resources={r"/*": {  # Apply to all routes

@@ -354,7 +354,7 @@ app = FastAPI(title="Lumina Solar FastAPI")
 # Configure CORS for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://frontend-7td4.onrender.com", "https://frontend-d8o0.onrender.com"],
+    allow_origins=["http://localhost:3000", "https://frontend-d8o0.onrender.com", "https://frontend-7td4.onrender.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
