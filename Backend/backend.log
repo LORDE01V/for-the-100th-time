@@ -3141,3 +3141,27 @@ What do you need?
 2025-08-01 14:28:55,130 - INFO -  * Restarting with stat
 2025-08-01 14:28:56,747 - WARNING -  * Debugger is active!
 2025-08-01 14:28:56,751 - INFO -  * Debugger PIN: 956-095-623
+2025-08-01 17:24:48,190 - INFO - 127.0.0.1 - - [01/Aug/2025 17:24:48] "[32mGET /api/auth/google?action=login HTTP/1.1[0m" 302 -
+2025-08-01 17:33:09,343 - INFO - 127.0.0.1 - - [01/Aug/2025 17:33:09] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-01 17:36:29,279 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\main.py', reloading
+2025-08-01 17:36:29,494 - INFO -  * Restarting with stat
+2025-08-01 17:36:31,417 - WARNING -  * Debugger is active!
+2025-08-01 17:36:31,421 - INFO -  * Debugger PIN: 956-095-623
+2025-08-01 17:38:09,706 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\main.py', reloading
+2025-08-01 17:38:09,863 - INFO -  * Restarting with stat
+2025-08-01 17:38:11,343 - WARNING -  * Debugger is active!
+2025-08-01 17:38:11,347 - INFO -  * Debugger PIN: 956-095-623
+2025-08-01 17:52:16,955 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\app\\__init__.py', reloading
+2025-08-01 17:52:17,135 - INFO -  * Restarting with stat
+2025-08-01 17:52:18,745 - WARNING -  * Debugger is active!
+2025-08-01 17:52:18,749 - INFO -  * Debugger PIN: 956-095-623
+2025-08-01 17:52:26,324 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\app.py', reloading
+2025-08-01 17:52:26,466 - INFO -  * Restarting with stat
+2025-08-01 17:52:28,016 - WARNING -  * Debugger is active!
+2025-08-01 17:52:28,019 - INFO -  * Debugger PIN: 956-095-623
+2025-08-01 17:53:26,394 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\app.py', reloading
+2025-08-01 17:53:26,532 - INFO -  * Restarting with stat
+2025-08-01 17:53:28,029 - WARNING -  * Debugger is active!
+2025-08-01 17:53:28,032 - INFO -  * Debugger PIN: 956-095-623
+2025-08-01 17:54:14,149 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\main.py', reloading
+2025-08-01 17:54:14,296 - INFO -  * Restarting with stat

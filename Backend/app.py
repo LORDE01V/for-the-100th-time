@@ -12,9 +12,12 @@ import logging
 from authlib.integrations.flask_client import OAuth
 from flask_jwt_extended import JWTManager
 import datetime
+from functools import lru_cache # Import lru_cache
 from db_utils import create_topup_table  # Import the new function
 from app.routes.topup import topup_bp  # Add this import
-from app.routes.recommendation_plan import recommendation_bp
+from app.routes.auth import auth_bp # Import auth_bp
+from app.routes.ai_agent import ai_agent_bp # Import ai_agent_bp
+# from app.routes.recommendation_plan import recommendation_bp # Commented out due to unresolved import
 
 # Set up logging to console only
 logger = logging.getLogger(__name__)
@@ -24,7 +27,16 @@ app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
 
 # Configure CORS
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000"}})
+# Enhanced CORS configuration
+CORS(app, resources={r"/*": {  # Apply to all routes
+    "origins": [
+        "http://localhost:3000",
+        "http://localhost:5000",
+        "http://127.0.0.1:3000",
+        "http://localhost:4200"
+    ],
+    "supports_credentials": True,
+}})
 
 # Initialize OAuth
 oauth = OAuth(app)
@@ -478,5 +490,5 @@ def get_loadshedding():
 
 if __name__ == '__main__':
     logger.info("Starting Flask app on port 5000")
-    app.register_blueprint(recommendation_bp)
+    # app.register_blueprint(recommendation_bp) # Commented out due to unresolved import
     app.run(debug=True, port=5000)

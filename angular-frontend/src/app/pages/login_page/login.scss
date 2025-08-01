@@ -1,3 +1,193 @@
+.login-bg {
+  min-height: 100vh;
+  background: url('/assets/images/gridx_background.jpg') center/cover no-repeat fixed; /* Use the gridx background as it's closer to the LoginPage.js visual */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    z-index: 1;
+  }
+}
+
+.login-form-container {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.9); /* Slightly less translucent than register, matching LoginPage.js */
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 2rem 2.5rem;
+  max-width: 400px; /* Adjusted to match register-page.scss */
+  width: 100%;
+  color: #222;
+  margin: 2rem 0; /* Centering with margin */
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem; /* Adjusted to match register h2 */
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 0.4rem;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s;
+
+    &:focus {
+      border-color: #00796b; /* Green border on focus, from register-page.scss */
+    }
+  }
+
+  &.has-error input {
+    border-color: #e53935;
+  }
+
+  .error-message { /* Renamed from .error to match previous login.html usage */
+    color: #e53935;
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+  }
+}
+
+.password-strength-message { /* Renamed from .password-strength */
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  color: #4a5568; /* Default text color */
+
+  &.strong {
+    color: #43a047; /* Green for strong, from register-page.scss */
+  }
+  &.medium {
+    color: #fbc02d; /* Yellow for medium, from register-page.scss */
+  }
+  &.weak {
+    color: #e53935; /* Red for weak, from register-page.scss */
+  }
+}
+
+.password-strength-progress { /* Renamed from .password-strength .progress-bar */
+  width: 100%;
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  margin-top: 0.2rem;
+
+  div { /* This div is the .progress inside progress-bar */
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+
+    &.green { background: #43a047; }
+    &.yellow { background: #fbc02d; }
+    &.red { background: #e53935; }
+  }
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 0.8rem;
+  background: #00796b; /* Green submit button, from register-page.scss */
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+
+  &:hover:enabled {
+    background: #004d40;
+  }
+
+  &:disabled {
+    background: #bdbdbd;
+    cursor: not-allowed;
+  }
+}
+
+.google-login-btn { /* Renamed from .google-btn */
+  width: 100%;
+  padding: 0.7rem;
+  background: #fff;
+  color: #222;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: background 0.2s;
+
+  img {
+    width: 22px;
+    height: 22px;
+  }
+
+  &:hover {
+    background: #f5f5f5;
+  }
+}
+
+.forgot-password-btn, .back-to-login-btn { /* New classes for other buttons */
+  width: 100%;
+  padding: 0.7rem;
+  background: #fff;
+  color: #00796b; /* Green link color for consistency */
+  border: 1px solid #00796b;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #e0f2f1; /* Light green hover */
+  }
+}
+
+.bottom-text { /* Renamed from .login-link to be more generic for 'Don't have an account?' */
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.95rem; /* Match previous login.scss */
+  color: #222; /* Default text color */
+
+  a {
+    color: #00796b; /* Green link color */
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 0.3rem;
+  }
+}
+
 .login-container {
     max-width: 350px;
     margin: 40px auto;

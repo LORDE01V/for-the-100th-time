@@ -30,7 +30,7 @@ from email_utils import send_welcome_email
 from app import create_app
 from app.routes.home import home_bp
 from app.routes.auth import auth_bp
-from support import connect_db
+from support import connect_db, save_community_story, save_support_request # Import save_community_story and save_support_request
 from app.routes.support import support_bp 
 from app.routes.community_stories import community_stories_bp
 from app.routes.userprofile import profile_bp
@@ -40,6 +40,7 @@ from app.routes.topup import topup_bp
 from Backend.app.routes.expenses import expenses_bp
 from app.routes.expensenotifications import expensenotifications_bp
 from Backend.support import update_user_balance
+from Backend.support import save_payment_method, fetch_user_payment_methods # Assuming these are in support.py or will be added there
 
 
 # Add the Backend directory and its parent to the Python path
@@ -77,7 +78,7 @@ flask_app.config['JWT_HEADER_TYPE'] = 'Bearer'
 # Initialize CORS properly in one place
 CORS(flask_app, 
      resources={r"/api/*": {
-         "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000"],
+         "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000", "http://localhost:4200"],
          "supports_credentials": True,
          "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin","X-Requested-With"],
          #"expose_headers": ["Authorization"],
@@ -477,7 +478,7 @@ def submit_story():
         story = data['story']
         
         # Add story to the database
-        story_id = add_story(username, email, story)
+        story_id = save_community_story(username, email, story) # Changed add_story to save_community_story
         if not story_id:
             return jsonify({'success': False, 'message': 'Failed to submit story'}), 500
         
@@ -822,7 +823,7 @@ def handle_support_ticket():
 
         try:
             priority = data.get('priority', 'low')
-            ticket_id = create_support_ticket(user_id, subject, message, priority)
+            ticket_id = save_support_request(user_id, subject, message, priority) # Changed create_support_ticket to save_support_request
             return jsonify({
                 'success': True,
                 'message': 'Support ticket created successfully',
@@ -929,6 +930,7 @@ def add_payment_method():
 @flask_app.route('/api/payment-methods', methods=['GET'])
 @jwt_required()
 def get_payment_methods():
+    conn = None # Initialize conn to None
     try:
         user_id = get_jwt_identity()
         payment_methods = fetch_user_payment_methods(user_id)

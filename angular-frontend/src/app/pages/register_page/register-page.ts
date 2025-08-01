@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ApiService } from '../../services/api.service'; // Import ApiService
 
 interface RegisterErrors {
   name?: string;
@@ -30,6 +31,8 @@ export class RegisterPage {
   strengthScore = 0;
   successMessage = '';
   errorMessage = '';
+
+  constructor(private apiService: ApiService) {} // Inject ApiService
 
   validateForm(): boolean {
     const newErrors: RegisterErrors = {};
@@ -87,14 +90,27 @@ export class RegisterPage {
     this.successMessage = '';
     this.errorMessage = '';
     if (!this.validateForm()) return;
+
     this.loading = true;
     try {
-      // Replace this with your real API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      this.successMessage = 'Registration Successful! You can now log in.';
-      // Optionally, redirect to login page here
+      const userData = {
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        phone: this.phone
+      };
+      // Call the API service to register the user
+      const response = await this.apiService.register(userData).toPromise();
+      if (response.success) {
+        this.successMessage = 'Registration Successful! You can now log in.';
+        // Optionally, redirect to login page here
+        // this.goToLogin();
+      } else {
+        this.errorMessage = response.message || 'Registration failed. Please try again.';
+      }
     } catch (error: any) {
-      this.errorMessage = 'Registration failed. Please try again.';
+      this.errorMessage = error.message || 'Registration failed. Please try again.';
+      console.error('Registration error:', error);
     } finally {
       this.loading = false;
     }
