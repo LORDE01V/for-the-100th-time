@@ -8,6 +8,7 @@ import json
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, project_root)
 
+from fastapi.middleware.wsgi import WSGIMiddleware
 from flask import Flask, request, jsonify, redirect, make_response
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -359,6 +360,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.mount("/api", WSGIMiddleware(flask_app))
 
 # JWT (compatible with Flask's tokens)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/fastapi/auth/login")
@@ -1026,5 +1028,6 @@ if __name__ == '__main__':
     print("=== Registered routes ===")
     for rule in flask_app.url_map.iter_rules():
         print(rule)
-        port = int(os.environ.get("PORT", 5000))  # <-- Add this line
-        flask_app.run(host='0.0.0.0', port=port, debug=True)
+        port = int(os.environ.get("PORT", 10000))
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=port)
