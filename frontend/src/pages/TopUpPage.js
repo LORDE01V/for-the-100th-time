@@ -145,7 +145,7 @@ function TopUpPage() {
   
     setIsProcessing(true);
     try {
-      //const response =
+       const response =
        await api.post('/user/auto-topup-settings', {
         user_id: user?.id,
         is_auto_topup: true,
