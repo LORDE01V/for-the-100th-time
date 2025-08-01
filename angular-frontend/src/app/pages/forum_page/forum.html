@@ -1,0 +1,53 @@
+<div class="forum-container">
+    <h1 class="forum-title">Community Forum</h1>
+    <p class="forum-subtitle">Connect with other users, share tips, and get support!</p>
+  
+    <ng-container *ngIf="!selectedTopic">
+      <div class="topics-list">
+        <div
+          class="topic-card"
+          *ngFor="let topic of dummyTopics"
+          (click)="selectTopic(topic)"
+        >
+          <h2>{{ topic.title }}</h2>
+          <p>by {{ topic.author }} | Last activity: {{ topic.lastActivity }} | Replies: {{ topic.replies }}</p>
+        </div>
+      </div>
+    </ng-container>
+  
+    <ng-container *ngIf="selectedTopic">
+      <div class="discussion-card">
+        <button class="back-btn" (click)="selectedTopic = null">Back to Topics</button>
+        <h2>{{ selectedTopic.title }}</h2>
+        <div class="posts-list">
+          <div class="post" *ngFor="let post of getCurrentPosts()">
+            <span class="avatar" [style.background]="post.avatarColor">{{ post.name[0] }}</span>
+            <div>
+              <strong>{{ post.name }}</strong>
+              <p>{{ post.message }}</p>
+            </div>
+          </div>
+        </div>
+        <textarea
+          [(ngModel)]="newMessage"
+          placeholder="Type your message here..."
+          rows="3"
+          class="message-input"
+        ></textarea>
+        <div class="actions">
+          <button (click)="postMessage()" [disabled]="isLoading">Post Message</button>
+          <button (click)="summarizeDiscussion()" [disabled]="isSummarized || isLoading">
+            {{ isSummarized ? 'Summarized' : 'Summarize Discussion' }}
+          </button>
+          <button (click)="checkTone()" [disabled]="isCheckingTone">
+            Check Tone
+          </button>
+          <button *ngIf="isSummarized" (click)="showFullPosts()">Show Full Posts</button>
+        </div>
+        <div *ngIf="isLoading" class="loading">Loading...</div>
+        <div *ngIf="tone" class="tone" [ngClass]="tone">
+          Detected Tone: {{ tone | titlecase }}
+        </div>
+      </div>
+    </ng-container>
+  </div>

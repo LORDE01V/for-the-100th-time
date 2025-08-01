@@ -1,0 +1,327 @@
+/* Root container for the entire dashboard page */
+.dashboard-container {
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden; /* Prevent background image issues */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align content to the top */
+    padding: 32px; /* p={8} */
+  }
+  
+  /* Background overlay for readability */
+  .background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    transition: background-color 0.3s ease; /* Smooth transition for color mode */
+  
+    &.light-mode-overlay {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  
+    &.dark-mode-overlay {
+      background-color: rgba(30, 30, 47, 0.1);
+    }
+  }
+  
+  /* Wrapper for main content to apply z-index */
+  .content-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1400px; /* maxW="1400px" */
+    margin: 0 auto; /* mx="auto" */
+    padding: 0 32px; /* px={8} */
+  }
+  
+  /* Header box with title and subtitle */
+  .header-box {
+    display: inline-block; /* Mimics Chakra's display="inline-block" */
+    background: rgba(0, 0, 0, 0.45); /* bg="rgba(0,0,0,0.45)" */
+    padding: 8px 24px; /* px={6} py={2} */
+    border-radius: 8px; /* borderRadius="lg" */
+    margin-top: 24px; /* mt={6} */
+    margin-bottom: 16px; /* mb={4} */
+    margin-left: auto;
+    margin-right: auto;
+    display: block; /* style={{ display: 'block' }} */
+    text-align: center;
+    color: white; /* Default text color for the header */
+  }
+  
+  .header-row {
+    display: flex;
+    justify-content: flex-start; /* align="center" combined with mb={8} for button */
+    align-items: center;
+    margin-bottom: 32px; /* mb={8} */
+  
+    .back-button {
+      background: none;
+      border: none;
+      color: white; /* useColorModeValue('gray.800', 'white') - adjust based on header-box bg */
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      padding: 8px 16px; /* mr={4} translates to margin-right in component or padding here */
+      border-radius: 4px;
+  
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+  
+  
+  .dashboard-title {
+    font-size: 2.25rem; /* size="xl" */
+    color: white; /* useColorModeValue('gray.800', 'white') */
+    margin-bottom: 8px; /* mb={2} */
+    text-align: center;
+  }
+  
+  .dashboard-subtitle {
+    color: #A0AEC0; /* useColorModeValue('gray.600', 'gray.400') */
+    font-size: 1.125rem; /* fontSize="lg" */
+    text-align: center;
+    margin-bottom: 24px; /* mb={6} */
+  }
+  
+  /* Action section with suggest plan button and location selector */
+  .action-section {
+    text-align: center;
+    margin-bottom: 32px; /* mb={8} */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* spacing between button and location selector */
+  }
+  
+  .suggest-plan-button {
+    background-color: #38B2AC; /* colorScheme="teal" */
+    color: white;
+    padding: 16px 24px; /* size="lg" */
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  
+    &:hover {
+      background-color: #319795; /* darker teal */
+    }
+  
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+  
+  .spinner {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    width: 1em;
+    height: 1em;
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+    display: inline-block;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .location-selector-placeholder {
+    padding: 10px;
+    border: 1px dashed #4FD1C5; /* teal.400 */
+    border-radius: 8px;
+    color: #A0AEC0;
+    text-align: center;
+    
+    select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #718096; /* gray.500 */
+      background-color: #2D3748; /* gray.800 */
+      color: white;
+      margin-top: 5px;
+    }
+  
+    small {
+      display: block;
+      margin-top: 5px;
+      color: #4FD1C5;
+    }
+  }
+  
+  /* Widgets Grid */
+  .widgets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* columns={3} spacing={6} - adapted for responsiveness */
+    gap: 24px; /* spacing={6} */
+  }
+  
+  .widget-card {
+    padding: 24px; /* p={6} */
+    border-radius: 16px; /* borderRadius="2xl" */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* boxShadow="md" */
+    background-color: white; /* cardBg default (light mode) */
+    transition: box-shadow 0.3s ease;
+    color: #2D3748; /* Default text color for cards */
+    
+    &:hover {
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* boxShadow="lg" */
+    }
+  
+    /* Glass card style (applied via [ngStyle] from .ts) */
+    &[style*="backdrop-filter: blur(16px)"] {
+      background-color: rgba(173, 216, 230, 0.18); /* themePresets['arcticBlue'].bg */
+      border: 2px solid rgba(255,255,255,0.7);
+      border-color: rgba(173, 216, 230, 0.35); /* themePresets['arcticBlue'].borderColor */
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18); /* themePresets['arcticBlue'].boxShadow */
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: white; /* Text color for glass cards */
+    }
+  
+    /* Specific style for recommended plan card */
+    &.recommended-plan-card {
+      border-color: transparent; /* Default */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+      &.highlighted {
+        border-color: #48BB78; /* green.400 */
+        box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.6); /* outline shadow */
+      }
+    }
+  
+    .card-title {
+      font-size: 1.25rem; /* h3 size */
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+  
+    .plan-details {
+      p {
+        margin-bottom: 4px;
+      }
+      strong {
+        font-weight: bold;
+      }
+      ul {
+        list-style-type: disc;
+        margin-left: 20px;
+        margin-top: 5px;
+      }
+      li {
+        font-size: 0.875rem; /* fontSize="sm" */
+        margin-bottom: 2px;
+      }
+    }
+  
+    .no-plan-message {
+      font-style: italic;
+      color: #718096; /* gray.500 */
+    }
+  }
+  
+  /* Placeholders for individual React widgets */
+  .widget-card p {
+    text-align: center;
+    font-style: italic;
+    color: #A0AEC0;
+  }
+  
+  .chart-placeholder {
+    border: 1px dashed #4FD1C5;
+    padding: 20px;
+    margin-top: 15px;
+    text-align: center;
+    color: #A0AEC0;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Bubble buttons (Chatbot, Theme Toggle) */
+  .bubble-button {
+    position: fixed;
+    background-color: #4FD1C5; /* teal.400 */
+    color: white;
+    border: 4px solid white;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    font-size: 2rem; /* 2xl */
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); /* lg */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 9999;
+  
+    &:hover {
+      background-color: #319795; /* teal.500 */
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+  }
+  
+  .chatbot-button {
+    bottom: 24px;
+    right: 24px;
+  }
+  
+  .toggle-theme-button {
+    bottom: 90px; /* 24px + 56px button size + 10px spacing */
+    right: 24px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      padding: 20px;
+    }
+    .content-wrapper {
+      padding: 0 16px;
+    }
+    .widgets-grid {
+      grid-template-columns: 1fr; /* Single column on small screens */
+    }
+    .header-box {
+      padding: 8px 16px;
+    }
+    .dashboard-title {
+      font-size: 1.8rem;
+    }
+    .dashboard-subtitle {
+      font-size: 1rem;
+    }
+    .bubble-button {
+      width: 48px;
+      height: 48px;
+      font-size: 1.5rem;
+      bottom: 16px;
+      right: 16px;
+    }
+    .toggle-theme-button {
+      bottom: 70px; /* Adjusted for smaller button size */
+    }
+  }
+  

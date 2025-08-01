@@ -1,0 +1,93 @@
+<div class="landing-bg">
+  <div class="overlay"></div>
+  
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1>{{ heroTitle }}</h1>
+      <div class="hero-typing">
+        <span>{{ messages[currentMessageIndex] }}</span>
+      </div>
+      <button (click)="navigateToRegister()" class="get-started-btn">Get Started</button>
+    </div>
+  </div>
+
+  <!-- Rotating Greetings Section -->
+  <div class="greetings-section">
+    <h2>Discover the Spirit of South Africa!</h2>
+    <div class="greeting-rotator">
+      <span>{{ greetings[currentGreetingIndex] }}</span>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features-section">
+    <div class="feature-slider">
+      <div class="feature-cards">
+        <div class="feature-card" *ngFor="let feature of features">
+          <span class="material-icons feature-icon">{{ feature.icon }}</span>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </div>
+      </div>
+      <!-- Duplicate for seamless scrolling -->
+      <div class="feature-cards">
+        <div class="feature-card" *ngFor="let feature of features">
+          <span class="material-icons feature-icon">{{ feature.icon }}</span>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Developers Section -->
+  <div class="developers-section">
+    <h2>Meet the Developers</h2>
+    <div class="dev-cards">
+      <div class="dev-card" *ngFor="let dev of developers">
+        <div class="dev-image-container">
+          <img [src]="dev.image" [alt]="dev.name" class="dev-img" />
+        </div>
+        <div class="dev-info">
+          <div class="dev-name">{{ dev.name }}</div>
+          <div class="dev-role">{{ dev.role }}</div>
+          <div class="dev-desc">{{ dev.description }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="footer-section">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h3>GridX</h3>
+        <p>Empowering South Africa with sustainable energy solutions and smart power management.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="#">About Us</a>
+        <a href="#">Services</a>
+        <a href="#">Contact</a>
+        <a routerLink="/support">Support</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="#">Solar Solutions</a>
+        <a href="#">Power Management</a>
+        <a href="#">Load Shedding</a>
+        <a href="#">Energy Analytics</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <p>Email: gridx.noreply&#64;gmail.com</p>
+        <p>Support Hours: Mon-Fri, 9:00-17:00</p>
+        <p>Address: Sandton, South Africa</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © {{ (date | date:'yyyy') || (today | date:'yyyy') }} GridX. All rights reserved.
+    </div>
+  </footer>
+</div>

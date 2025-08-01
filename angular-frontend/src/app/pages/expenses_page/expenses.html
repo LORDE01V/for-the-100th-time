@@ -1,0 +1,84 @@
+<div class="expenses-container" [style.background-image]="'url(' + backgroundImageUrl + ')'">
+  <div class="expenses-header">
+    <button class="back-button" (click)="goHome()">
+      <span class="back-icon">←</span>
+      Back to Home
+    </button>
+    <h1 class="page-title">Expenses & Payments</h1>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <div class="summary-card">
+      <div class="card-icon">💰</div>
+      <div class="card-content">
+        <h3>Total Expenses</h3>
+        <p class="card-value">R{{ totalExpenses() | number:'1.2-2' }}</p>
+      </div>
+    </div>
+    
+    <div class="summary-card">
+      <div class="card-icon">📊</div>
+      <div class="card-content">
+        <h3>Monthly Average</h3>
+        <p class="card-value">R{{ monthlyAverage() | number:'1.2-2' }}</p>
+      </div>
+    </div>
+    
+    <div class="summary-card">
+      <div class="card-icon">📅</div>
+      <div class="card-content">
+        <h3>Last Payment</h3>
+        <p class="card-value">{{ lastPaymentDate() }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latest Topup Section -->
+  <div class="topup-section">
+    <h2>Latest Top-up</h2>
+    <div class="topup-card" *ngIf="!loadingTopup() && latestTopup()">
+      <div class="topup-header">
+        <span class="topup-type">{{ latestTopup()?.transaction_type | titlecase }}</span>
+        <span class="topup-date">{{ latestTopup()?.created_at | date:'short' }}</span>
+      </div>
+      <div class="topup-details">
+        <p><strong>Amount:</strong> R{{ latestTopup()?.amount | number:'1.2-2' }}</p>
+        <p *ngIf="latestTopup()?.promo_code"><strong>Promo Code:</strong> {{ latestTopup()?.promo_code }}</p>
+        <p *ngIf="latestTopup()?.voucher_code"><strong>Voucher:</strong> {{ latestTopup()?.voucher_code }}</p>
+      </div>
+    </div>
+    <div class="loading-spinner" *ngIf="loadingTopup()">
+      Loading latest top-up...
+    </div>
+  </div>
+
+  <!-- Expenses List -->
+  <div class="expenses-section">
+    <h2>Recent Expenses</h2>
+    <div class="expenses-list" *ngIf="!loadingExpenses()">
+      <div class="expense-item" *ngFor="let expense of expenses()">
+        <div class="expense-icon">
+          <span *ngIf="expense.category === 'Electricity'">⚡</span>
+          <span *ngIf="expense.category === 'Water'">💧</span>
+          <span *ngIf="expense.category === 'Internet'">🌐</span>
+          <span *ngIf="expense.category !== 'Electricity' && expense.category !== 'Water' && expense.category !== 'Internet'">📄</span>
+        </div>
+        <div class="expense-details">
+          <h4>{{ expense.category }}</h4>
+          <p class="expense-date">{{ expense.date | date:'mediumDate' }}</p>
+        </div>
+        <div class="expense-amount">
+          <span class="amount">R{{ expense.amount | number:'1.2-2' }}</span>
+          <span class="status" [class]="expense.status.toLowerCase()">{{ expense.status }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="loading-spinner" *ngIf="loadingExpenses()">
+      Loading expenses...
+    </div>
+    <div class="no-expenses" *ngIf="!loadingExpenses() && expenses().length === 0">
+      <p>No expenses found.</p>
+    </div>
+  </div>
+</div> 

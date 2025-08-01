@@ -3102,3 +3102,42 @@ What do you need?
 2025-07-31 10:22:27,164 - INFO -  * Restarting with stat
 2025-07-31 10:22:31,021 - WARNING -  * Debugger is active!
 2025-07-31 10:22:31,027 - INFO -  * Debugger PIN: 635-440-903
+2025-07-31 10:23:06,663 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-07-31 10:23:06,664 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-31 10:23:06,668 - INFO -  * Restarting with stat
+2025-07-31 10:23:09,934 - WARNING -  * Debugger is active!
+2025-07-31 10:23:09,946 - INFO -  * Debugger PIN: 635-440-903
+2025-07-31 10:24:28,051 - INFO - 127.0.0.1 - - [31/Jul/2025 10:24:28] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-31 10:24:29,267 - INFO - User sima@gmail.com registered successfully with ID: 15
+2025-07-31 10:24:29,271 - INFO - 127.0.0.1 - - [31/Jul/2025 10:24:29] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-07-31 10:24:32,707 - INFO - 127.0.0.1 - - [31/Jul/2025 10:24:32] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-31 10:24:33,379 - INFO - 127.0.0.1 - - [31/Jul/2025 10:24:33] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-31 10:24:33,715 - INFO - 127.0.0.1 - - [31/Jul/2025 10:24:33] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-07-31 10:24:34,337 - INFO - 127.0.0.1 - - [31/Jul/2025 10:24:34] "[33mGET /api/auth/user HTTP/1.1[0m" 404 -
+2025-08-01 13:01:15,766 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-01 13:01:15,767 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-01 13:01:15,769 - INFO -  * Restarting with stat
+2025-08-01 13:01:17,167 - WARNING -  * Debugger is active!
+2025-08-01 13:01:17,172 - INFO -  * Debugger PIN: 271-732-229
+2025-08-01 14:27:17,277 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-01 14:27:17,278 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-01 14:27:17,280 - INFO -  * Restarting with stat
+2025-08-01 14:27:18,929 - WARNING -  * Debugger is active!
+2025-08-01 14:27:18,934 - INFO -  * Debugger PIN: 956-095-623
+2025-08-01 14:28:55,128 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-01 14:28:55,128 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-01 14:28:55,130 - INFO -  * Restarting with stat
+2025-08-01 14:28:56,747 - WARNING -  * Debugger is active!
+2025-08-01 14:28:56,751 - INFO -  * Debugger PIN: 956-095-623

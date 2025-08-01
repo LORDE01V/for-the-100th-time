@@ -1,0 +1,33 @@
+<div class="home-container">
+    <div class="header">
+      <h1>Welcome, {{ user.name }} 👋</h1>
+      <div *ngIf="isLoadingGreeting" class="greeting-loading">Crafting your energy insights...</div>
+      <div *ngIf="!isLoadingGreeting && aiGreeting" class="greeting">{{ aiGreeting }}</div>
+    </div>
+  
+    <div class="date">
+      {{ (date | date:'fullDate') || (today | date:'fullDate') }}
+    </div>
+  
+    <div class="nav-cards">
+      <div class="nav-card" *ngFor="let item of navItems" [ngClass]="item.color">
+        <span class="material-icons nav-icon">{{ item.icon }}</span>
+        <h2>{{ item.title }}</h2>
+        <p>{{ item.description }}</p>
+        <a [routerLink]="item.path" class="nav-btn">Go to {{ item.title }}</a>
+      </div>
+    </div>
+  
+    <div class="newsletter-section">
+      <h2>Subscribe to Energy Updates</h2>
+      <p>Get the latest energy-saving tips and offers straight to your inbox.</p>
+      <form (ngSubmit)="subscribeNewsletter()" class="newsletter-form">
+        <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required />
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  
+    <div class="logout-section">
+      <button (click)="handleLogout()">Logout</button>
+    </div>
+  </div>

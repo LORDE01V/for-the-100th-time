@@ -1,0 +1,63 @@
+<div class="subscription-bg">
+    <div class="subscription-container">
+      <!-- Header -->
+      <div class="header">
+        <button class="back-btn" (click)="goBack()">&larr; Back</button>
+        <h1>
+          <span>📝</span> Subscription Plans
+        </h1>
+        <p>Choose the plan that best fits your energy needs and unlock more features!</p>
+      </div>
+  
+      <div class="alert info">
+        <span class="alert-icon">ℹ️</span>
+        <span>
+          Select a plan to subscribe. Click "Why this plan?" for a personalized suggestion based on your usage.
+        </span>
+      </div>
+  
+      <div class="plans-grid">
+        <div
+          class="plan-card"
+          *ngFor="let plan of subscriptionPlans"
+          [class.selected]="selectedPlans.includes(plan.id)"
+        >
+          <div class="plan-header">
+            <span class="plan-icon">{{ getPlanIcon(plan.id) }}</span>
+            <h3>{{ plan.name }}</h3>
+          </div>
+          <div class="plan-price">R{{ plan.price }}<span style="font-size:0.9rem;">/mo</span></div>
+          <div class="plan-features">
+            <div class="feature" *ngFor="let feature of plan.features">
+              <span class="check-icon">✔️</span>
+              <span>{{ feature }}</span>
+            </div>
+          </div>
+          <div class="plan-actions">
+            <button
+              class="select-btn"
+              [class.selected]="selectedPlans.includes(plan.id)"
+              (click)="handleSelectPlan(plan)"
+            >
+              {{ selectedPlans.includes(plan.id) ? 'Selected' : 'Select Plan' }}
+            </button>
+            <button
+              class="rationale-btn"
+              (click)="fetchPlanRationale(plan.id)"
+              [disabled]="rationale[plan.id].isLoading"
+            >
+              {{ rationale[plan.id].isLoading ? 'Loading...' : 'Why this plan?' }}
+            </button>
+          </div>
+          <div class="rationale-section" *ngIf="rationale[plan.id].message">
+            <div class="rationale-message">
+              {{ rationale[plan.id].message }}
+            </div>
+          </div>
+          <div class="plan-description" *ngIf="plan.description">
+            <em>{{ plan.description }}</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

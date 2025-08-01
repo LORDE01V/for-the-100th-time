@@ -1,0 +1,119 @@
+<div
+  class="about-page-container"
+  [style.background-image]="'url(' + gridxBackgroundPath + ')'"
+>
+  <!-- Overlay for readability -->
+  <div class="overlay"></div>
+
+  <!-- Content -->
+  <div class="main-content-box">
+    <div class="header-section">
+      <button class="back-button" (click)="goBack()">
+        <!-- You might use an icon library like Angular Material Icons or Font Awesome -->
+        <span>&#8592;</span> Back
+      </button>
+    </div>
+
+    <h1 class="page-heading">About Us</h1>
+    <p class="page-subheading">
+      Discover our mission and the team empowering sustainable energy solutions!
+    </p>
+
+    <!-- Mission Statement -->
+    <p class="mission-statement">
+      <b>Our Mission:</b> Empowering communities with affordable solar energy and
+      smart financial management.
+    </p>
+
+    <!-- What We Do -->
+    <p class="what-we-do-text">
+      Gridx helps low-income households and small businesses manage energy usage
+      efficiently, track expenses, and stay powered sustainably. We combine
+      technology, finance, and clean energy to create a brighter future for all.
+    </p>
+
+    <!-- Core Values -->
+    <div class="core-values-section">
+      <h3 class="core-values-heading">Our Core Values</h3>
+      <div class="core-values-grid">
+        <div *ngFor="let value of ['Sustainability', 'Community', 'Innovation', 'Transparency']"
+             class="core-value-card">
+          {{ value }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Streamline -->
+    <h2 class="team-heading">Our Team</h2>
+    <div class="team-grid">
+      <div *ngFor="let member of team" class="team-member-card">
+        <div class="member-avatar-container">
+          <img
+            [src]="member.avatarPath"
+            [alt]="member.name"
+            class="member-avatar"
+          />
+        </div>
+        <p class="member-name">{{ member.name }}</p>
+        <p class="member-role">{{ member.role }}</p>
+      </div>
+    </div>
+
+    <!-- Contact Info & Socials -->
+    <div class="contact-section">
+      <h3 class="contact-heading">Contact Us</h3>
+      <p class="contact-text">Have questions or feedback? Reach out to us!</p>
+      <div class="social-links">
+        <a href="mailto:support@gridx.com" class="social-button blue-scheme">
+          <!-- Placeholder for icon -->
+          <span>📧</span> Email
+        </a>
+        <a href="https://twitter.com/" target="_blank" class="social-button twitter-scheme">
+          <!-- Placeholder for icon -->
+          <span>🐦</span> Twitter
+        </a>
+        <a href="https://facebook.com/" target="_blank" class="social-button facebook-scheme">
+          <!-- Placeholder for icon -->
+          <span>📘</span> Facebook
+        </a>
+        <a href="https://instagram.com/" target="_blank" class="social-button pink-scheme">
+          <!-- Placeholder for icon -->
+          <span>📸</span> Instagram
+        </a>
+      </div>
+      <p class="email-address">support&#64;gridx.com</p>
+    </div>
+
+    <!-- Legal/Privacy -->
+    <div class="legal-info">
+      <p class="legal-text">
+        By using Gridx, you agree to our
+        <a routerLink="/privacy-policy" class="legal-link">Privacy Policy</a> and
+        <a routerLink="/terms-of-service" class="legal-link">Terms of Service</a>.
+      </p>
+    </div>
+
+    <!-- Version/Last Updated -->
+    <div class="version-info">
+      <p class="version-text">
+        Version 1.0.0 &nbsp;|&nbsp; Last updated: June 2024
+      </p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <a routerLink="/register" class="cta-button teal-scheme">
+        Join Gridx Today
+      </a>
+    </div>
+
+    <div class="policy-buttons">
+      <a routerLink="/terms-of-service" class="policy-button blue-scheme outline-variant">
+        Terms of Service
+      </a>
+      <a routerLink="/privacy-policy" class="policy-button blue-scheme outline-variant">
+        Privacy Policy
+      </a>
+    </div>
+  </div>
+</div>

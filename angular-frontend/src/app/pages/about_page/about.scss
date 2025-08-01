@@ -1,0 +1,418 @@
+:host {
+    display: block; // Ensures the component takes up space for min-height
+  }
+  
+  .about-page-container {
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 32px 16px; // py={8}, px={4}
+    position: relative;
+    overflow: hidden; // Prevent content from overflowing on smaller screens
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(20, 20, 30, 0.85); // bg="rgba(20, 20, 30, 0.85)"
+    z-index: 0;
+  }
+  
+  .main-content-box {
+    max-width: 800px; // maxW="800px"
+    margin: 0 auto; // mx="auto"
+    position: relative;
+    z-index: 1;
+    padding: 32px; // p={8}
+    background: rgba(255, 255, 255, 0.85); // aboutBoxBg - light mode default
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 15px rgba(0, 0, 0, 0.1); // boxShadow="md" or "xl"
+    border-radius: 12px; // borderRadius="lg" or "xl"
+    border: 1px solid;
+    border-color: #CBD5E0; // aboutBorderColor - gray.300
+    color: #4A5568; // aboutTextColor - gray.700
+    backdrop-filter: blur(0px); // Default to none for light mode
+  
+    // Dark mode adjustments (if you implement a theme switcher)
+    @media (prefers-color-scheme: dark) {
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 10px 20px rgba(0, 0, 0, 0.4);
+      border-color: #4A5568; // gray.600
+      color: white;
+      backdrop-filter: blur(16px);
+    }
+  }
+  
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px; // mb={8}
+  
+    .back-button {
+      background: none;
+      border: none;
+      color: #4A5568; // useColorModeValue('gray.800', 'white') - default to dark text for light mode container
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      padding: 8px 16px; // mr={4} is margin-right, this is padding
+      border-radius: 4px;
+  
+      span {
+        margin-right: 8px;
+      }
+  
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05); // subtle hover
+      }
+  
+      @media (prefers-color-scheme: dark) {
+        color: white;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
+  }
+  
+  
+  .page-heading {
+    font-size: 2.25rem; // size="xl"
+    color: #2D3748; // gray.800
+    margin-bottom: 8px; // mb={2}
+    text-align: center;
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .page-subheading {
+    color: #718096; // gray.600
+    font-size: 1.125rem; // fontSize="lg"
+    text-align: center;
+    margin-bottom: 24px; // mb={6}
+  
+    @media (prefers-color-scheme: dark) {
+      color: #A0AEC0; // gray.400
+    }
+  }
+  
+  .mission-statement {
+    font-size: 1.125rem; // fontSize="lg"
+    text-align: center;
+    margin-bottom: 16px; // mb={4}
+    color: #2D3748; // gray.800
+  
+    b {
+      font-weight: bold;
+    }
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .what-we-do-text {
+    font-size: 1rem; // fontSize="md"
+    text-align: center;
+    margin-bottom: 32px; // mb={8}
+    color: #2D3748; // gray.800
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .core-values-section {
+    margin-bottom: 32px; // mb={8}
+  }
+  
+  .core-values-heading {
+    font-size: 1.25rem; // size="md"
+    color: #2D3748; // gray.800
+    margin-bottom: 8px; // mb={2}
+    text-align: center;
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .core-values-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; // wrap="wrap"
+    gap: 24px; // gap={6}
+  }
+  
+  .core-value-card {
+    min-width: 150px;
+    padding: 16px; // p={4}
+    margin: 0 auto; // mx="auto"
+    background: rgba(255, 255, 255, 0.2); // glassCoreBg
+    backdrop-filter: blur(15px);
+    border: 1px solid;
+    border-color: rgba(255, 255, 255, 0.1); // glassCoreBorder
+    border-radius: 4px; // borderRadius="md"
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+    text-align: center;
+  }
+  
+  .team-heading {
+    font-size: 1.875rem; // fontSize="3xl"
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 16px; // mb={4}
+    color: #2D3748; // gray.800
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .team-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px; // gap={6}
+    margin-bottom: 32px; // mb={8}
+  }
+  
+  .team-member-card {
+    min-width: 200px;
+    max-width: 250px;
+    padding: 24px; // p={6}
+    margin: 0 auto; // mx="auto"
+    margin-bottom: 16px; // mb={4}
+    background: rgba(255, 255, 255, 0.15); // glassTeamBg
+    backdrop-filter: blur(15px);
+    border-radius: 16px; // borderRadius="2xl"
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // boxShadow="lg"
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+    border-color: rgba(255, 255, 255, 0.1); // glassCoreBorder
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+    &:hover {
+      transform: translateY(-6px) scale(1.04);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.1); // boxShadow="2xl"
+    }
+  
+    .member-avatar-container {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 16px; // mb={4}
+      border-radius: 8px; // borderRadius="md"
+      overflow: hidden;
+      background: black;
+      border: 3px solid rgba(255, 255, 255, 0.4); // borderColor="whiteAlpha.400"
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .member-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  
+    .member-name {
+      font-weight: bold;
+      color: white;
+      font-size: 1.125rem; // fontSize="lg"
+      margin-bottom: 4px; // mb={1}
+      text-align: center;
+    }
+  
+    .member-role {
+      color: #A0AEC0; // gray.300
+      font-size: 0.875rem; // fontSize="sm"
+      text-align: center;
+    }
+  }
+  
+  .contact-section {
+    text-align: center;
+    margin-bottom: 24px; // mb={6}
+  }
+  
+  .contact-heading {
+    font-size: 1.25rem; // size="md"
+    color: #2D3748; // gray.800
+    margin-bottom: 8px; // mb={2}
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .contact-text {
+    color: #2D3748; // gray.800
+    margin-bottom: 8px; // mb={2}
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px; // gap={4}
+    margin-bottom: 8px; // mb={2}
+  }
+  
+  .social-button {
+    padding: 8px 12px; // size="sm" equivalent
+    border-radius: 4px;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  
+    &.blue-scheme {
+      color: #3182CE; // blue.500
+      &:hover { background-color: rgba(49, 130, 206, 0.1); }
+    }
+    &.twitter-scheme {
+      color: #1DA1F2; // twitter blue
+      &:hover { background-color: rgba(29, 161, 242, 0.1); }
+    }
+    &.facebook-scheme {
+      color: #4267B2; // facebook blue
+      &:hover { background-color: rgba(66, 103, 178, 0.1); }
+    }
+    &.pink-scheme {
+      color: #ED64A6; // pink.400
+      &:hover { background-color: rgba(237, 100, 166, 0.1); }
+    }
+  }
+  
+  .email-address {
+    color: #2D3748; // gray.800
+    font-size: 0.75rem; // fontSize="xs"
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .legal-info {
+    text-align: center;
+    margin-bottom: 16px; // mb={4}
+  }
+  
+  .legal-text {
+    color: #2D3748; // gray.800
+    font-size: 0.75rem; // fontSize="xs"
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .legal-link {
+    color: #63b3ed; // blue.400
+    text-decoration: underline;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  
+  .version-info {
+    text-align: center;
+    margin-bottom: 8px; // mb={2}
+  }
+  
+  .version-text {
+    color: #2D3748; // gray.800
+    font-size: 0.75rem; // fontSize="xs"
+  
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+  
+  .cta-section {
+    text-align: center;
+    margin-top: 16px; // mt={4}
+  }
+  
+  .cta-button {
+    display: inline-block;
+    background-color: #38B2AC; // teal.500
+    color: white;
+    padding: 12px 24px; // size="md"
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+  
+    &:hover {
+      background-color: #319795; // darker teal
+    }
+  }
+  
+  .policy-buttons {
+    text-align: center;
+    margin-top: 32px; // mt={8}
+    display: flex;
+    justify-content: center;
+    gap: 16px; // mr={4} for first button
+  }
+  
+  .policy-button {
+    padding: 8px 16px; // size="md" or other
+    border-radius: 4px;
+    font-weight: bold;
+    text-decoration: none;
+    background: none;
+    border: 1px solid;
+    cursor: pointer;
+  
+    &.blue-scheme {
+      color: #3182CE; // blue.500
+      border-color: #3182CE;
+      &:hover {
+        background-color: rgba(49, 130, 206, 0.1);
+      }
+    }
+  
+    &.outline-variant {
+      background: transparent;
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .main-content-box {
+      padding: 20px;
+      margin: 0 10px;
+    }
+    .core-values-grid, .team-grid, .social-links, .policy-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    .team-member-card {
+      max-width: 90%;
+    }
+  }

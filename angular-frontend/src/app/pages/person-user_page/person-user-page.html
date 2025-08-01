@@ -1,0 +1,49 @@
+<div class="person-user-page">
+    <div class="form-container">
+      <h2>Personal User Information</h2>
+  
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input formControlName="full_name" required />
+        </div>
+        <div class="form-group">
+          <label>Surname</label>
+          <input formControlName="surname" required />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input formControlName="email" type="email" required />
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input formControlName="phone_number" />
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <input formControlName="address" />
+        </div>
+        <button type="submit" [disabled]="loading || profileForm.invalid">Save Changes</button>
+      </form>
+  
+      <!-- Toast message -->
+      <div *ngIf="toast" class="toast" [ngClass]="toast.type" (click)="closeToast()">
+        {{ toast.message }}
+      </div>
+  
+      <!-- Confirmation Dialog -->
+      <div class="dialog-backdrop" *ngIf="isDialogOpen">
+        <div class="dialog">
+          <div class="dialog-header">Confirm Changes</div>
+          <div class="dialog-body">{{ dialogMessage }}</div>
+          <div class="dialog-footer">
+            <button (click)="closeDialog()">Cancel</button>
+            <button class="confirm" (click)="confirmSubmit()">Save</button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Loading spinner -->
+      <div *ngIf="loading" class="spinner"></div>
+    </div>
+  </div>

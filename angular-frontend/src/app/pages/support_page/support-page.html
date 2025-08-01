@@ -1,0 +1,58 @@
+<div class="support-bg">
+  <div class="support-container">
+    <!-- Header -->
+    <div class="header">
+      <button class="back-btn" (click)="goBack()">&larr; Back</button>
+      <h1>Support and Help Center</h1>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div
+          class="faq-item"
+          *ngFor="let item of faqItems; let i = index"
+        >
+          <div class="faq-question" (click)="toggleFaq(i)">
+            <span>{{ item.question }}</span>
+            <span class="faq-toggle">{{ openFaqIndex === i ? '▲' : '▼' }}</span>
+          </div>
+          <div class="faq-answer" *ngIf="openFaqIndex === i">
+            {{ item.answer }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Form Section -->
+    <div class="section">
+      <h2>Contact Support</h2>
+      <p class="muted">Couldn't find your answer? Send us a message.</p>
+      <form (submit)="handleContactSubmit($event)">
+        <div class="form-group">
+          <label for="contact-name">Your Name</label>
+          <input id="contact-name" type="text" [(ngModel)]="name" name="name" required />
+        </div>
+        <div class="form-group">
+          <label for="contact-email">Email Address</label>
+          <input id="contact-email" type="email" [(ngModel)]="email" name="email" required />
+        </div>
+        <div class="form-group">
+          <label for="contact-subject">Subject</label>
+          <input id="contact-subject" type="text" [(ngModel)]="subject" name="subject" />
+        </div>
+        <div class="form-group">
+          <label for="contact-message">Message</label>
+          <textarea id="contact-message" rows="6" [(ngModel)]="message" name="message" required></textarea>
+        </div>
+        <button type="submit" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Sending...' : 'Send Message' }}
+        </button>
+        <div *ngIf="submitStatus" [ngClass]="submitStatus.type" class="status-msg">
+          {{ submitStatus.message }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
