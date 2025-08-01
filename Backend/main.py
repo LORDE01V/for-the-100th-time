@@ -131,67 +131,67 @@ def get_db():
 from flask import request, jsonify
 import traceback
 
-@flask_app.route('/api/auth/register', methods=['POST'])
-def flask_register():
-    conn = None
-    try:
-        data = request.get_json()
-        print("Received registration data:", data)
+# @flask_app.route('/api/auth/register', methods=['POST'])
+# def flask_register():
+#     conn = None
+#     try:
+#         data = request.get_json()
+#         print("Received registration data:", data)
         
-        if not all(key in data for key in ['name', 'email', 'password']):
-            print("Missing required fields")
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+#         if not all(key in data for key in ['name', 'email', 'password']):
+#             print("Missing required fields")
+#             return jsonify({'success': False, 'message': 'Missing required fields'}), 400
 
-        phone = data.get('phone', None)
+#         phone = data.get('phone', None)
 
-        conn = get_db()
-        if not conn:
-            print("Database connection error")
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+#         conn = get_db()
+#         if not conn:
+#             print("Database connection error")
+#             return jsonify({'success': False, 'message': 'Database error'}), 500
 
-        with conn.cursor() as cur:
-            print("Checking for existing user...")
-            cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
-            if cur.fetchone():
-                print("Email already exists")
-                return jsonify({'success': False, 'message': 'Email already exists'}), 400
+#         with conn.cursor() as cur:
+#             print("Checking for existing user...")
+#             cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
+#             if cur.fetchone():
+#                 print("Email already exists")
+#                 return jsonify({'success': False, 'message': 'Email already exists'}), 400
 
-            print("Inserting new user...")
-            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)
-            cur.execute(
-                """INSERT INTO users (email, password_hash, full_name, phone)
-                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (data['email'].lower(), hashed_pw, data['name'], phone)
-            )
-            user_data = cur.fetchone()
-            if not user_data:
-                print("Failed to create user")
-                return jsonify({'success': False, 'message': 'Failed to create user'}), 500
-            conn.commit()
+#             print("Inserting new user...")
+#             hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)
+#             cur.execute(
+#                 """INSERT INTO users (email, password_hash, full_name, phone)
+#                 VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+#                 (data['email'].lower(), hashed_pw, data['name'], phone)
+#             )
+#             user_data = cur.fetchone()
+#             if not user_data:
+#                 print("Failed to create user")
+#                 return jsonify({'success': False, 'message': 'Failed to create user'}), 500
+#             conn.commit()
 
-        try:
-            print("Sending welcome email...")
-            send_welcome_email(data['email'], data['name'])
-        except Exception as email_error:
-            print("Failed to send welcome email:", email_error)
+#         try:
+#             print("Sending welcome email...")
+#             send_welcome_email(data['email'], data['name'])
+#         except Exception as email_error:
+#             print("Failed to send welcome email:", email_error)
 
-        print("Registration successful:", user_data)
-        return jsonify({
-            'success': True,
-            'user': {
-                'id': user_data[0],
-                'email': user_data[1],
-                'name': user_data[2]
-            }
-        }), 201
+#         print("Registration successful:", user_data)
+#         return jsonify({
+#             'success': True,
+#             'user': {
+#                 'id': user_data[0],
+#                 'email': user_data[1],
+#                 'name': user_data[2]
+#             }
+#         }), 201
 
-    except Exception as e:
-        print(f"Registration Error: {str(e)}")
-        traceback.print_exc()
-        return jsonify({'success': False, 'message': 'Registration failed'}), 500
-    finally:
-        if conn:
-            conn.close()
+#     except Exception as e:
+#         print(f"Registration Error: {str(e)}")
+#         traceback.print_exc()
+#         return jsonify({'success': False, 'message': 'Registration failed'}), 500
+#     finally:
+#         if conn:
+#             conn.close()
 
 @flask_app.route('/api/auth/login', methods=['POST'])
 def flask_login():

@@ -15,9 +15,9 @@ def connect_db():
         raise ValueError("DB_PASSWORD environment variable must be set.")
     try:
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'Fintech_Solar'),
-            user=os.getenv('DB_USER', 'postgres'),
+            host=os.getenv('DB_HOST', 'dpg-d25jm215pdvs73dm3s90-a.oregon-postgres.render.com'),
+            database=os.getenv('DB_NAME', 'gridx_db_s40i'),
+            user=os.getenv('DB_USER', 'gridx_db'),
             password=password,
             port=os.getenv('DB_PORT', '5432')
         )

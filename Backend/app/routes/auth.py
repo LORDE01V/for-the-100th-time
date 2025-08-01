@@ -10,7 +10,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from flask_cors import CORS, cross_origin
 from flask import jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
+from flask import make_response
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
 #CORS(auth_bp, origins=["*"], supports_credentials=True)  # Remove strict CORS here
@@ -184,7 +184,18 @@ def login():
         logging.error(f'Login error: {str(e)}')
         return create_response('Login failed', 500)
 
+
+@auth_bp.route('/register', methods=['OPTIONS'])
+def handle_register_options():
+    response = make_response()
+    response.headers['Access-Control-Allow-Origin'] = 'https://frontend-d8o0.onrender.com'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    return response
+
 @auth_bp.route('/register', methods=['POST'])
+@cross_origin(origins=['http://localhost:3000', 'https://frontend-d8o0.onrender.com', 'https://frontend-7td4.onrender.com'], supports_credentials=True)
 def register():
     try:
         data = request.get_json()
