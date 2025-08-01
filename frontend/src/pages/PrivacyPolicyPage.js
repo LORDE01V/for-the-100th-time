@@ -9,7 +9,6 @@ console.log('Imported background image:', backgroundImage);  // Debug log for im
 function PrivacyPolicyPage() {
   const navigate = useNavigate();
   const overlayBg = useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(0, 0, 0, 0.15)');
-  //const textColor = useColorModeValue('gray.700', 'gray.100');
   const headingColor = useColorModeValue('gray.800', 'white');
   const listColor = useColorModeValue('gray.600', 'gray.300');
   const privacyBoxBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');
@@ -69,12 +68,12 @@ function PrivacyPolicyPage() {
         </Heading>
         <Text color={privacyTextColor} mb={4}>Effective Date: [Insert Date]</Text>
         <VStack align="start" spacing={6} color={privacyTextColor}>
-          <Text>
+          <Text color={privacyTextColor}>
             Welcome to Gridx! Your privacy is important to us, and this policy explains how we collect, use, and protect your information when you use our web application.
           </Text>
           <Box>
             <Heading as="h3" size="md" mb={2} color={headingColor}>1. What Information We Collect</Heading>
-            <Text>
+            <Text color={privacyTextColor}>
               <b>Personal Information:</b> Name, email address, phone number, and other registration details.<br />
               <b>Usage Data:</b> Solar energy usage statistics, financial/expense tracking inputs, and feature interactions.<br />
               <b>Device & Technical Info:</b> IP address, browser type, device type, and cookies.<br />
@@ -83,7 +82,7 @@ function PrivacyPolicyPage() {
           </Box>
           <Box>
             <Heading as="h3" size="md" mb={2} color={headingColor}>2. Why We Collect Your Data</Heading>
-            <Text>We collect data to:</Text>
+            <Text color={privacyTextColor}>We collect data to:</Text>
             <UnorderedList spacing={3} pl={5} color={listColor}>
               <ListItem>Provide and improve your experience on Gridx.</ListItem>
               <ListItem>Track solar usage and financial data to generate insights.</ListItem>
@@ -94,7 +93,7 @@ function PrivacyPolicyPage() {
           </Box>
           <Box>
             <Heading as="h3" size="md" mb={2} color={headingColor}>3. How We Store and Protect Your Data</Heading>
-            <Text>
+            <Text color={privacyTextColor}>
               We use secure servers and encryption to protect your personal data.<br />
               Your information is stored on secure databases and cloud infrastructure.<br />
               Access is restricted to authorized personnel only.<br />
@@ -103,7 +102,7 @@ function PrivacyPolicyPage() {
           </Box>
           <Box>
             <Heading as="h3" size="md" mb={2} color={headingColor}>4. Cookies and Analytics</Heading>
-            <Text>
+            <Text color={privacyTextColor}>
               We use cookies to personalize your experience and remember your preferences.<br />
               We may use third-party analytics (e.g., Google Analytics) to understand usage trends.<br />
               You can disable cookies in your browser, but some features may not work properly.
@@ -111,7 +110,7 @@ function PrivacyPolicyPage() {
           </Box>
           <Box>
             <Heading as="h3" size="md" mb={2} color={headingColor}>5. Sharing Your Information</Heading>
-            <Text>We do not sell or share your personal data with third parties, except:</Text>
+            <Text color={privacyTextColor}>We do not sell or share your personal data with third parties, except:</Text>
             <UnorderedList spacing={3} pl={5} color={listColor}>
               <ListItem>With your consent.</ListItem>
               <ListItem>With trusted vendors (e.g., email providers) who help us operate Gridx.</ListItem>
@@ -120,24 +119,24 @@ function PrivacyPolicyPage() {
           </Box>
           <Box>
             <Heading as="h3" size="md" mb={2} color={headingColor}>6. Your Rights and Choices</Heading>
-            <Text>You have the right to:</Text>
+            <Text color={privacyTextColor}>You have the right to:</Text>
             <UnorderedList spacing={3} pl={5} color={listColor}>
               <ListItem>Access your personal data.</ListItem>
               <ListItem>Correct or update your information.</ListItem>
               <ListItem>Request deletion of your account and associated data.</ListItem>
               <ListItem>Opt-out of marketing communications at any time.</ListItem>
             </UnorderedList>
-            <Text>To do any of the above, contact us at [Insert Contact Email].</Text>
+            <Text color={privacyTextColor}>To do any of the above, contact us at [Insert Contact Email].</Text>
           </Box>
           <Box>
             <Heading as="h3" size="md" mb={2} color={headingColor}>7. Children's Privacy</Heading>
-            <Text>
+            <Text color={privacyTextColor}>
               Gridx is not intended for children under 13. We do not knowingly collect personal information from children.
             </Text>
           </Box>
           <Box>
             <Heading as="h3" size="md" mb={2} color={headingColor}>8. Contact Us</Heading>
-            <Text>
+            <Text color={privacyTextColor}>
               If you have any questions or concerns about your privacy, please reach out to:<br />
               📧 Email: [Insert Privacy Contact Email]<br />
               📍 Address (optional): [Insert Company Address]

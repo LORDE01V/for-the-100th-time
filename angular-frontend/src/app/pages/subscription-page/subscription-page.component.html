@@ -1,0 +1,35 @@
+<div class="subscription-container">
+  <div class="subscription-wrapper">
+    <button mat-icon-button class="back-button" (click)="navigateBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Subscriptions
+    </button>
+    
+    <h1 class="heading">Choose Your Subscription Plan</h1>
+    
+    <div class="plans-grid">
+      <mat-card class="plan-card" *ngFor="let plan of plans" @fadeIn>
+        <mat-card-header>
+          <mat-card-title>{{ plan.name }}</mat-card-title>
+          <mat-card-subtitle>{{ plan.description }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <h3 class="plan-price">{{ plan.price }} / month</h3>
+          <ul>
+            <li *ngFor="let feature of plan.features">{{ feature }}</li>
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="selectPlan(plan)" [disabled]="selectedPlan === plan">
+            {{ selectedPlan === plan ? 'Selected' : 'Select Plan' }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    
+    <button mat-raised-button color="primary" class="subscribe-button" (click)="onSubscribe()" [disabled]="!selectedPlan || loading">
+      <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+      <span *ngIf="!loading">Subscribe Now</span>
+    </button>
+  </div>
+</div>

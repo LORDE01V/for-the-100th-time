@@ -26,6 +26,7 @@ import {
   ChevronRightIcon,
 } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios'; // ADD THIS LINE TO IMPORT AXIOS
 
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -80,7 +81,7 @@ const EventCalendar = () => {
 
   // Add filter toggle function
   const toggleFilter = (eventType) => {
-    setActiveFilters(prev => 
+    setActiveFilters(prev =>
       prev.includes(eventType)
         ? prev.filter(f => f !== eventType)
         : [...prev, eventType]
@@ -98,17 +99,48 @@ const EventCalendar = () => {
     };
   }, [searchQuery]);
 
-  const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
-  const startDay = new Date(currentYear, currentMonth, 1).getDay();
-  const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+  // New function to fetch events from the backend
+  const fetchEventsFromBackend = async () => {
+    try {
+      const response = await axios.get('https://backend-210d.onrender.com/api/events');
+      // The backend returns a dictionary where keys are dates.
+      // We need to convert it to a format suitable for setEvents (where keys are like 'YYYY-MM-DD').
+      // Let's assume the backend 'date' field is 'YYYY-MM-DD'.
+      const fetchedEvents = Object.keys(response.data).reduce((acc, dateKey) => {
+        // The backend's structure includes date, title, start, end, description, location, eventType
+        const event = response.data[dateKey];
+        // Ensure the dateKey used by frontend matches the 'date' field from backend
+        // For simplicity, using the dateKey from the backend response as the key in frontend state
+        acc[dateKey] = {
+          title: event.title,
+          start: event.start,
+          end: event.end,
+          description: event.description,
+          location: event.location,
+          eventType: event.eventType
+        };
+        return acc;
+      }, {});
+      setEvents(fetchedEvents);
+    } catch (error) {
+      console.error('Failed to fetch events from server:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch events from server',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    }
+  };
 
   useEffect(() => {
-    const savedEvents = localStorage.getItem('calendarEvents');
-    if (savedEvents) {
-      setEvents(JSON.parse(savedEvents));
-    }
-  }, []);
+    fetchEventsFromBackend();
+  }, []); // Run only once on component mount
+
+  const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
   const handlePrev = () => {
     if (currentMonth === 0) {
@@ -129,9 +161,12 @@ const EventCalendar = () => {
   };
 
   const handleDateClick = (day) => {
-    const key = `${currentYear}-${currentMonth}-${day}`;
-    setSelectedDate(key);
-    setEventData(events[key] || {
+    // Format the date to match backend's expected 'YYYY-MM-DD' if not already
+    // Backend's /api/events GET endpoint uses event[0] as date, which is likely 'YYYY-MM-DD'
+    const formattedDate = new Date(currentYear, currentMonth, day).toISOString().split('T')[0];
+    setSelectedDate(formattedDate);
+    // Use events from state (which are now fetched from backend)
+    setEventData(events[formattedDate] || {
       title: '',
       start: '',
       end: '',
@@ -142,433 +177,383 @@ const EventCalendar = () => {
     onOpen();
   };
 
- // ... existing code ...
-const saveEvent = async () => {
-  // Validate all required fields
-  if (!eventData.title.trim() || 
-      !eventData.start || 
-      !eventData.end || 
-      !eventData.description.trim() || 
-      !eventData.location.trim()) {
-    toast({
-      title: 'Missing required fields',
-      description: 'Please fill in all event details',
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-      position: 'bottom',
-    });
-    return;
-  }
+  const saveEvent = async () => {
+    if (
+      !eventData.title.trim() ||
+      !eventData.start ||
+      !eventData.end ||
+      !eventData.description.trim() ||
+      !eventData.location.trim()
+    ) {
+      toast({
+        title: 'Missing required fields',
+        description: 'Please fill in all event details',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+      return;
+    }
 
-  try {
-    const response = await fetch('https://backend-0igj.onrender.com/api/events_calendar', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`, // Assuming JWT is stored in localStorage
-      },
-      body: JSON.stringify(eventData),
-    });
+    // Combine date with start/end times to create full timestamps
+    const startDateTime = `${selectedDate} ${eventData.start}:00`; // Assuming eventData.start is HH:MM
+    const endDateTime = `${selectedDate} ${eventData.end}:00`;     // Assuming eventData.end is HH:MM
 
-    if (response.ok) {
-      const result = await response.json();
-      const updated = { 
-        ...events, 
-        [selectedDate]: { ...eventData, id: result.id } 
-      };
-      setEvents(updated);
-      localStorage.setItem('calendarEvents', JSON.stringify(updated));
-      onClose();
+    const eventPayload = {
+      date: selectedDate, // This is YYYY-MM-DD
+      title: eventData.title,
+      start: startDateTime, // Send full timestamp
+      end: endDateTime,     // Send full timestamp
+      description: eventData.description,
+      location: eventData.location,
+      eventType: eventData.eventType,
+    };
 
+    try {
+      await axios.post('https://backend-210d.onrender.com/api/events', eventPayload);
       toast({
         title: 'Event created',
-        description: 'Your event has been successfully saved to the database',
+        description: 'Your event has been successfully saved!',
         status: 'success',
         duration: 3000,
         isClosable: true,
         position: 'bottom',
       });
-    } else {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to save event');
+      fetchEventsFromBackend(); // Refresh events from backend after successful save
+    } catch (error) {
+      console.error('Failed to save event to server:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to save event to server.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
     }
-  } catch (error) {
-    toast({
-      title: 'Error',
-      description: error.message,
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-      position: 'bottom',
-    });
-  }
-};
-// ... existing code ... 
+
+    onClose();
+  };
 
   // Add ref for tracking deleted event
   const deletedEventRef = useRef(null);
 
-  // Modify deleteEvent function
-  const deleteEvent = () => {
-    if (deleteConfirmationText.toLowerCase() !== 'delete') return;
+  // Modify deleteEvent function to interact with backend
+  const deleteEvent = async () => {
+    if (deleteConfirmationText.toLowerCase() !== 'delete') {
+      toast({
+        title: 'Confirmation Error',
+        description: 'Please type "delete" to confirm.',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+      return;
+    }
 
-    // Store deleted event before removal
-    deletedEventRef.current = {
-      key: selectedDate,
-      event: events[selectedDate]
-    };
+    try {
+      // Assuming selectedDate is the primary key (date) for deletion
+      await axios.delete(`https://backend-210d.onrender.com/api/events/${selectedDate}`);
+      toast({
+        title: 'Event deleted',
+        description: 'Event has been successfully deleted from the database.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom',
+        onCloseComplete: () => {
+          deletedEventRef.current = null;
+        },
+        render: ({ onClose }) => (
+          <Box
+            color="white"
+            p={3}
+            bg="blue.500"
+            borderRadius="md"
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Text>Event deleted. Click Undo to restore it</Text> {/* This undo won't work with backend deletion unless you add a PUT/PATCH for undo */}
+            <Button
+              size="sm"
+              colorScheme="blue"
+              variant="ghost"
+              onClick={() => {
+                // If you want an undo feature, you'd need to implement a backend endpoint for it.
+                // For now, this button won't restore the event to the database.
+                toast({
+                  title: 'Undo not supported',
+                  description: 'To restore, re-create the event manually.',
+                  status: 'info',
+                  duration: 3000,
+                  isClosable: true,
+                  position: 'bottom',
+                });
+                onClose();
+              }}
+            >
+              Undo
+            </Button>
+          </Box>
+        ),
+      });
+      fetchEventsFromBackend(); // Refresh events from backend after deletion
+    } catch (error) {
+      console.error('Failed to delete event from server:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete event from server.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom',
+      });
+    }
 
-    const updated = { ...events };
-    delete updated[selectedDate];
-    setEvents(updated);
-    localStorage.setItem('calendarEvents', JSON.stringify(updated));
-    
     setDeleteConfirmationText('');
     onDeleteClose();
     onClose();
-    
-    toast({
-      title: 'Event deleted',
-      description: 'Click Undo to restore it',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-      position: 'bottom',
-      onCloseComplete: () => {
-        // Clear the ref when toast closes
-        deletedEventRef.current = null;
-      },
-      render: ({ onClose }) => (
-        <Box
-          color="white"
-          p={3}
-          bg="blue.500"
-          borderRadius="md"
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Text>Event deleted. Click Undo to restore it</Text>
-          <Button
-            size="sm"
-            colorScheme="blue"
-            variant="ghost"
-            onClick={() => {
-              if (deletedEventRef.current) {
-                const { key, event } = deletedEventRef.current;
-                setEvents(prev => ({
-                  ...prev,
-                  [key]: event
-                }));
-                localStorage.setItem('calendarEvents', 
-                  JSON.stringify({
-                    ...events,
-                    [key]: event
-                  })
-                );
-                deletedEventRef.current = null;
-                onClose();
-              }
-            }}
-          >
-            Undo
-          </Button>
-        </Box>
-      )
-    });
   };
 
-  const renderCalendar = (dateBg, dateColor) => {
-    const totalCells = startDay + daysInMonth;
-    const weeks = [];
-    let dayCounter = 1;
+  // Remove localStorage.setItem for saving/deleting
+  // Remove localStorage.getItem for initial load
 
-    for (let i = 0; i < totalCells; i++) {
-      const isEmpty = i < startDay;
-      const key = `${currentYear}-${currentMonth}-${dayCounter}`;
-      const event = events[key];
-      const isEvent = event && 
-        event.title.toLowerCase().includes(debouncedSearchQuery) &&
-        (activeFilters.length === 0 || activeFilters.includes(event.eventType));
-      
-      if (!isEmpty) {
-        const currentDay = dayCounter;
-        weeks.push(
-          <Box
-            key={i}
-            w="40px"
-            h="40px"
-            m="1"
-            borderRadius="md"
-            border="1px solid"
-            borderColor="gray.200"
-            boxShadow="sm"
-            transition="0.2s"
-            bg={isEvent ? eventTypeColors[event.eventType] : dateBg}
-            color={isEvent ? 'white' : dateColor}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            cursor="pointer"
-            onClick={() => handleDateClick(currentDay)}
-            onMouseEnter={() => isEvent && setHoveredDay(key)}
-            onMouseLeave={() => setHoveredDay(null)}
-            position="relative"
-            _hover={{
-              transform: 'scale(1.05)',
-              boxShadow: 'md'
-            }}
-          >
-            {currentDay}
-            {isEvent && (
-              <>
-                <Box 
-                  position="absolute" 
-                  bottom="1" 
-                  right="1" 
-                  bg="red.400" 
-                  w="2" 
-                  h="2" 
-                  borderRadius="full"
-                />
-                {hoveredDay === key && (
-                  <Box
-                    position="absolute"
-                    bottom="100%"
-                    left="50%"
-                    transform="translateX(-50%)"
-                    bg={hoverCardBg}
-                    p={2}
-                    boxShadow="xl"
-                    borderRadius="md"
-                    fontSize="xs"
-                    zIndex="tooltip"
-                    minWidth="120px"
-                    borderWidth="1px"
-                    borderColor="gray.200"
-                  >
-                    <Text fontWeight="bold" color={hoverCardText}>
-                      {event.title}
-                    </Text>
-                    <Text color={hoverCardText}>
-                      {new Date(event.start).toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}
-                    </Text>
-                    <Text color={hoverCardText} textTransform="capitalize">
-                      {event.eventType}
-                    </Text>
-                  </Box>
-                )}
-              </>
-            )}
-          </Box>
-        );
-        dayCounter++;
-      } else {
-        weeks.push(
-          <Box key={i} w="40px" h="40px" m="1" />
-        );
-      }
+  const renderCalendar = (dateBg, dateColor) => {
+    const startDay = new Date(currentYear, currentMonth, 1).getDay();
+    const numDays = getDaysInMonth(currentMonth, currentYear);
+    const calendarDays = [];
+
+    // Fill preceding empty days
+    for (let i = 0; i < startDay; i++) {
+      calendarDays.push(<Box key={`empty-${i}`} />);
     }
 
-    return weeks;
+    // Fill days with numbers and events
+    for (let day = 1; day <= numDays; day++) {
+      const dateKey = new Date(currentYear, currentMonth, day).toISOString().split('T')[0]; // Format to YYYY-MM-DD
+      const dayEvents = events[dateKey] ? [events[dateKey]] : []; // Get event for the day
+      const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+      const hasEvents = dayEvents.length > 0;
+
+      // Filter events by search query and active filters
+      const filteredEvents = dayEvents.filter(event => {
+        const matchesSearch = debouncedSearchQuery
+          ? (event.title?.toLowerCase().includes(debouncedSearchQuery) ||
+             event.description?.toLowerCase().includes(debouncedSearchQuery) ||
+             event.location?.toLowerCase().includes(debouncedSearchQuery))
+          : true;
+        const matchesFilter = activeFilters.length > 0
+          ? activeFilters.includes(event.eventType)
+          : true;
+        return matchesSearch && matchesFilter;
+      });
+      const showEventDot = filteredEvents.length > 0;
+
+      calendarDays.push(
+        <AnimatePresence key={day}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Flex
+              direction="column"
+              align="center"
+              justify="center"
+              h="100%"
+              w="100%"
+              p={1}
+              borderWidth="1px"
+              borderRadius="md"
+              bg={isToday ? 'blue.100' : dateBg}
+              color={isToday ? 'blue.800' : dateColor}
+              fontWeight={isToday ? 'bold' : 'normal'}
+              position="relative"
+              cursor="pointer"
+              _hover={{ bg: isToday ? 'blue.200' : 'gray.200' }}
+              onClick={() => handleDateClick(day)}
+              onMouseEnter={() => setHoveredDay(day)}
+              onMouseLeave={() => setHoveredDay(null)}
+            >
+              <Text fontSize="md">{day}</Text>
+              {showEventDot && (
+                <Box
+                  position="absolute"
+                  bottom="2px"
+                  right="2px"
+                  h="6px"
+                  w="6px"
+                  borderRadius="full"
+                  bg="red.500"
+                  title={filteredEvents.map(e => e.title).join(', ')} // Show event titles on hover
+                />
+              )}
+              {hoveredDay === day && filteredEvents.length > 0 && (
+                <Box
+                  position="absolute"
+                  bottom="20px"
+                  left="50%"
+                  transform="translateX(-50%)"
+                  bg={hoverCardBg}
+                  color={hoverCardText}
+                  p={2}
+                  borderRadius="md"
+                  boxShadow="md"
+                  zIndex={10}
+                  minW="150px"
+                >
+                  {filteredEvents.map((event, index) => (
+                    <Box key={index} mb={1}>
+                      <Text fontWeight="bold">{event.title}</Text>
+                      <Text fontSize="sm">{event.start} - {event.end}</Text>
+                      <Text fontSize="sm">{event.location}</Text>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </Flex>
+          </motion.div>
+        </AnimatePresence>
+      );
+    }
+
+    return calendarDays;
   };
 
   return (
-    <Box 
-      bg={calendarBg}
-      p={8}
-      rounded="lg" 
-      shadow="lg" 
-      maxW="700px"
-      mx="auto"
-      color={monthColor}
-      position="relative"
-    >
+    <Box p={4} borderRadius="lg" bg={calendarBg} boxShadow="xl" width="100%" maxWidth="800px" mx="auto">
       <Flex justify="space-between" align="center" mb={4}>
         <IconButton
           icon={<ChevronLeftIcon />}
+          aria-label="Previous Month"
           onClick={handlePrev}
-          aria-label="Previous month"
           variant="ghost"
         />
-        <Text fontSize="xl" fontWeight="bold" color={monthColor}>
-          {new Date(currentYear, currentMonth).toLocaleString('default', {
-            month: 'long',
-            year: 'numeric',
-          })}
+        <Text fontSize="2xl" fontWeight="bold" color={monthColor}>
+          {new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}
         </Text>
         <IconButton
           icon={<ChevronRightIcon />}
+          aria-label="Next Month"
           onClick={handleNext}
-          aria-label="Next month"
           variant="ghost"
         />
       </Flex>
 
-      {/* Add search input */}
-      <Input
-        placeholder="Search events..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        mb={4}
-        variant="filled"
-        _focus={{ borderColor: 'blue.300' }}
-      />
-
-      {/* Add filter section */}
-      <Box mb={4}>
-        <Text fontSize="sm" fontWeight="semibold" mb={2} color={dayColor}>
-          Filter by event type
-        </Text>
-        <Flex wrap="wrap" gap={2}>
-          {Object.keys(eventTypeColors).map((eventType) => (
-            <Button
-              key={eventType}
-              size="sm"
-              variant={activeFilters.includes(eventType) ? 'solid' : 'outline'}
-              colorScheme={eventTypeColors[eventType].split('.')[0]}
-              onClick={() => toggleFilter(eventType)}
-              textTransform="capitalize"
-            >
-              {eventType}
-            </Button>
+      <Flex mb={4}>
+        <Input
+          placeholder="Search events..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          mr={2}
+        />
+        <Select
+          placeholder="Filter by type"
+          onChange={(e) => toggleFilter(e.target.value)}
+          value={activeFilters.length === 1 ? activeFilters[0] : ''} // Only show if one filter is active
+          w="auto"
+        >
+          {Object.keys(eventTypeColors).map(type => (
+            <option key={type} value={type}>
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </option>
           ))}
-        </Flex>
-      </Box>
+        </Select>
+      </Flex>
 
-      <Grid templateColumns="repeat(7, 1fr)" gap={2} mb={2}>
-        {days.map((day) => (
-          <Text 
-            key={day} 
-            fontSize="sm" 
-            textAlign="center" 
-            fontWeight="bold"
-            color={dayColor}
-          >
+      <Flex justify="space-around" mb={2}>
+        {days.map(day => (
+          <Box key={day} w="calc(100%/7)" textAlign="center" fontWeight="bold" color={dayColor}>
             {day}
-          </Text>
+          </Box>
         ))}
+      </Flex>
+
+      <Grid templateColumns="repeat(7, 1fr)" gap={1} height="400px">
+        {renderCalendar(dateBg, dateColor)}
       </Grid>
 
-      <AnimatePresence mode='wait'>
-        <motion.div
-          key={`${currentYear}-${currentMonth}`}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-        >
-          <Grid templateColumns="repeat(7, 1fr)">
-            {renderCalendar(dateBg, dateColor)}
-          </Grid>
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Event Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add Event</ModalHeader>
+          <ModalHeader>{selectedDate ? `Events for ${selectedDate}` : 'Add New Event'}</ModalHeader>
           <ModalBody>
             <Stack spacing={3}>
               <Input
-                placeholder="Event Title *"
+                placeholder="Event Title"
                 value={eventData.title}
-                onChange={(e) => setEventData({...eventData, title: e.target.value})}
-                isRequired
+                onChange={(e) => setEventData({ ...eventData, title: e.target.value })}
               />
               <Input
-                type="datetime-local"
+                placeholder="Start Time (e.g., 09:00)"
                 value={eventData.start}
-                onChange={(e) => setEventData({...eventData, start: e.target.value})}
-                isRequired
+                onChange={(e) => setEventData({ ...eventData, start: e.target.value })}
               />
               <Input
-                type="datetime-local"
-                placeholder="End Date/Time"
+                placeholder="End Time (e.g., 10:00)"
                 value={eventData.end}
-                onChange={(e) => setEventData({...eventData, end: e.target.value})}
-                isRequired
+                onChange={(e) => setEventData({ ...eventData, end: e.target.value })}
               />
               <Textarea
                 placeholder="Description"
                 value={eventData.description}
-                onChange={(e) => setEventData({...eventData, description: e.target.value})}
-                isRequired
+                onChange={(e) => setEventData({ ...eventData, description: e.target.value })}
               />
               <Input
                 placeholder="Location"
                 value={eventData.location}
-                onChange={(e) => setEventData({...eventData, location: e.target.value})}
-                isRequired
+                onChange={(e) => setEventData({ ...eventData, location: e.target.value })}
               />
-              <Select 
+              <Select
                 value={eventData.eventType}
-                onChange={(e) => setEventData({...eventData, eventType: e.target.value})}
-                isRequired
+                onChange={(e) => setEventData({ ...eventData, eventType: e.target.value })}
               >
-                <option value="meeting">Meeting</option>
-                <option value="maintenance">Maintenance</option>
-                <option value="appointment">Appointment</option>
-                <option value="reminder">Reminder</option>
-                <option value="other">Other</option>
+                {Object.keys(eventTypeColors).map(type => (
+                  <option key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </option>
+                ))}
               </Select>
             </Stack>
+            {events[selectedDate] && (
+              <Box mt={4} p={3} borderWidth="1px" borderRadius="md">
+                <Text fontWeight="bold" mb={2}>Existing Event:</Text>
+                <Text>Title: {events[selectedDate].title}</Text>
+                <Text>Time: {events[selectedDate].start} - {events[selectedDate].end}</Text>
+                <Text>Description: {events[selectedDate].description}</Text>
+                <Text>Location: {events[selectedDate].location}</Text>
+                <Text>Type: {events[selectedDate].eventType}</Text>
+                <Button colorScheme="red" size="sm" mt={3} onClick={onDeleteOpen}>Delete Event</Button>
+              </Box>
+            )}
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            {events[selectedDate] && (
-              <Button 
-                colorScheme="red" 
-                mr={3} 
-                onClick={onDeleteOpen}
-              >
-                Delete
-              </Button>
-            )}
-            <Button colorScheme="blue" onClick={saveEvent}>
-              {events[selectedDate] ? 'Update' : 'Save'}
-            </Button>
+            <Button variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button colorScheme="blue" ml={3} onClick={saveEvent}>Save Event</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
 
-      {/* Confirmation Modal */}
-      <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} isCentered>
+      <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Confirm Deletion</ModalHeader>
+          <ModalHeader>Confirm Delete</ModalHeader>
           <ModalBody>
-            <Text mb={4}>
-              Type "DELETE" to confirm permanent removal of this event:
-            </Text>
+            <Text mb={3}>Are you sure you want to delete this event?</Text>
+            <Text fontWeight="bold" mb={2}>Type "delete" to confirm:</Text>
             <Input
               value={deleteConfirmationText}
               onChange={(e) => setDeleteConfirmationText(e.target.value)}
-              placeholder="Type DELETE here"
-              autoFocus
+              placeholder="delete"
             />
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={() => {
-              setDeleteConfirmationText('');
-              onDeleteClose();
-            }}>
-              Cancel
-            </Button>
-            <Button 
-              colorScheme="red" 
-              onClick={deleteEvent}
-              isDisabled={deleteConfirmationText.toLowerCase() !== 'delete'}
-            >
-              Confirm Delete
-            </Button>
+            <Button variant="ghost" onClick={onDeleteClose}>Cancel</Button>
+            <Button colorScheme="red" ml={3} onClick={deleteEvent} isDisabled={deleteConfirmationText.toLowerCase() !== 'delete'}>Delete</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

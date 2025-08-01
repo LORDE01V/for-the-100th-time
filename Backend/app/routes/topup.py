@@ -1,13 +1,26 @@
 from flask import Blueprint, request, jsonify, session
 from Backend.support import get_user_balance, update_user_balance, save_auto_topup_settings, execute_query
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 topup_bp = Blueprint('topup', __name__)
 
+def fetch_user_balance(user_id):
+    # Logic to fetch the user's balance from the database
+    query = "SELECT balance FROM users WHERE id = %s"
+    result = execute_query('search', query, (user_id,))
+    if result:
+        return result[0][0]  # Assuming the balance is in the first column
+    return 0  # Return 0 or some default value if not found
+
 @topup_bp.route('/user/balance', methods=['GET'])
+@jwt_required()
 def get_balance():
-    user_id = request.args.get('user_id')  # Assume user_id is passed as a query param
-    balance = get_user_balance(user_id)  # Fetch balance from the database
+    user_id = get_jwt_identity()
+    if not user_id:
+        return jsonify({'error': 'User not logged in'}), 401
+
+    balance = fetch_user_balance(user_id)
     return jsonify({'balance': balance})
 
 @topup_bp.route('/user/topup', methods=['POST'])
@@ -39,10 +52,7 @@ def top_up():
     if not result:
         return jsonify({"error": "Top-up failed"}), 500
 
-    # Insert into expenses table
- 
-    if not result:
-        return jsonify({"error": "Top-up failed"}), 500
+    transaction_id = result[0] if isinstance(result, (list, tuple)) and result else result
 
     # Insert into expenses table
     try:
@@ -53,7 +63,6 @@ def top_up():
         """
         expense_category = "Recharge" if transaction_type == "recharge" else "Top-Up"
         execute_query('insert', expense_query, (user_id, amount, expense_category, 'Paid'))
-
 
         notification_query = """
             INSERT INTO notifications (user_id, message)
@@ -66,20 +75,14 @@ def top_up():
     except Exception as e:
         # Log the error for debugging and return a specific message
         print(f"Error inserting into expenses table: {e}")
-        return jsonify({"error": "Failed to record expense after top-up."}), 500
-
-
-    # 2. Update user balance
-    new_balance = update_user_balance(user_id, amount)
-
-    transaction_id = result[0] if isinstance(result, (list, tuple)) else result
-
-
+        # Even if expense/notification fails, top-up should still be successful
+        # Consider if you want to revert top-up or just log and continue
+        # For now, we will just log and continue, as the top-up itself succeeded.
+        pass # Do not return an error here, as the top-up was successful
 
     # 2. Update user balance
     new_balance = update_user_balance(user_id, amount)
 
-    transaction_id = result[0] if isinstance(result, (list, tuple)) else result
     return jsonify({"message": "Top-up successful", "transaction_id": transaction_id, "newBalance": new_balance, "success": True}), 200
 
 @topup_bp.route('/user/latest-topup', methods=['GET'])

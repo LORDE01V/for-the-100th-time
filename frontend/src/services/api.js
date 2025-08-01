@@ -1,15 +1,13 @@
+/* global process */
 import axios from 'axios';
 
-// eslint-disable-next-line no-unused-vars
-const API_URL = process.env.REACT_APP_API_URL || "https://backend-0igj.onrender.com";
+const API_URL = process.env.REACT_APP_API_URL || "https://backend-210d.onrender.com";
 
 // Create an axios instance with default config
 const api = axios.create({
-    baseURL: process.env.REACT_APP_BACKEND_URL || 'https://backend-0igj.onrender.com',  // Remove /api from default
+    baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        //'Access-Control-Allow-Origin': 'http://localhost:3000'
     },
     timeout: 30000, // 10-second timeout
     withCredentials: true, // Include cookies in requests
@@ -31,18 +29,34 @@ api.interceptors.request.use(
     }
 );
 
-// Add response interceptor for better error handling
+// Add a response interceptor to handle common errors and token refresh
 api.interceptors.response.use(
-  response => response,
-  error => {
-    if (error.code === 'ECONNABORTED') {
-      return Promise.reject(new Error('Connection timeout. Please check your internet'));
+    (response) => response,
+    async (error) => {
+        // Handle connection timeout and server unavailable
+        if (error.code === 'ECONNABORTED') {
+            return Promise.reject(new Error('Connection timeout. Please check your internet'));
+        }
+        if (!error.response) {
+            return Promise.reject(new Error('Server unavailable. Please try again later'));
+        }
+        // Handle 401 and try refresh
+        if (error.response?.status === 401 && error.config && !error.config._retry) {
+            error.config._retry = true;
+            try {
+                const refreshResponse = await api.post('/api/auth/refresh');
+                const newToken = refreshResponse.data.token;
+                localStorage.setItem('token', newToken);
+                error.config.headers.Authorization = `Bearer ${newToken}`;
+                return api(error.config);
+            } catch (refreshError) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
+        }
+        return Promise.reject(error);
     }
-    if (!error.response) {
-      return Promise.reject(new Error('Server unavailable. Please try again later'));
-    }
-    return Promise.reject(error);
-  }
 );
 
 // Auth API calls
@@ -50,22 +64,31 @@ export const auth = {
     login: async (email, password) => {
         try {
             const response = await api.post('/api/auth/login', {
-                email: email.toLowerCase().trim(),  // Normalize email
+                email: email.toLowerCase().trim(),
                 password
             });
             if (response.data.success) {
+                // Store token
                 if (response.data.access_token) {
                     localStorage.setItem('token', response.data.access_token);
+                } else if (response.data.token) {
+                    localStorage.setItem('token', response.data.token);
                 }
-                if (response.data.user) {
-                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                // Directly use user data from the login response
+                const user = response.data.user;
+                if (user) {
+                    // Ensure full_name is consistently set
+                    localStorage.setItem('user', JSON.stringify({
+                        id: user.id,
+                        email: user.email,
+                        full_name: user.full_name || user.name // Store full_name directly
+                    }));
+                } else {
+                    localStorage.removeItem('user');
                 }
-                // Removed redirection to let the component handle navigation
-                // window.location.href = '/dashboard';
             }
             return response.data;
         } catch (error) {
-            console.error('Login error:', error.response?.data);
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
@@ -73,20 +96,26 @@ export const auth = {
         }
     },
 
-    register: async (userData) => {  // Updated to accept an object
+    register: async (userData) => {
         try {
-            const response = await api.post('https://backend-0igj.onrender.com/api/auth/register', userData);  // Pass the object directly
+            const response = await api.post('/api/auth/register', userData);
             if (response.data.success) {
                 if (response.data.access_token) {
                     localStorage.setItem('token', response.data.access_token);
+                } else if (response.data.token) {
+                    localStorage.setItem('token', response.data.token);
                 }
                 if (response.data.user) {
-                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                    // Ensure full_name is consistently set
+                    localStorage.setItem('user', JSON.stringify({
+                        id: response.data.user.id,
+                        email: response.data.user.email,
+                        full_name: response.data.user.full_name || response.data.user.name // Store full_name directly
+                    }));
                 }
             }
             return response.data;
         } catch (error) {
-            console.error('Registration error:', error.response?.data);
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
@@ -121,16 +150,17 @@ if (window.location.hostname === 'localhost') {
     };
 }
 
+// AI Suggestions fetcher
 export const fetchAISuggestions = async () => {
-  try {
-    const response = await api.get('/api/ai-suggestions', {
-      withCredentials: true, // Include cookies for authentication
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching AI suggestions:', error);
-    return { success: false };
-  }
+    try {
+        const response = await api.get('/api/ai-suggestions', {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching AI suggestions:', error);
+        return { success: false };
+    }
 };
 
 export default api;

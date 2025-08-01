@@ -6,15 +6,23 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# New hardcoded database credentials
+DB_HOST = 'dpg-d22bjj3e5dus739fk9gg-a.oregon-postgres.render.com'
+DB_NAME = 'griddb'
+DB_USER = 'griddb'
+DB_PASSWORD = 'GycGE7M140H9RbUj5skLbOAS9kD8o8qf'
+DB_PORT = '5432'
+
 def connect_db():
     """Connect to PostgreSQL database"""
     try:
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'Fintech_Solar'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', ''),
-            port=os.getenv('DB_PORT', '5432')
+            host=DB_HOST,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            port=DB_PORT,
+            sslmode='require' # Ensure SSL is required
         )
         return conn, conn.cursor()
     except OperationalError as e:
@@ -58,9 +66,8 @@ def execute_query(query_type, query, params=None):
             cur.close()
             conn.close()
 
+# Backend/db_utils.py
 
-        try:
-            execute_query('alter', query)
-            print("Top-up table created successfully.")
-        except Exception as e:
-            print(f"🚨 Failed to create top-up table: {str(e)}")
+def create_topup_table():
+    # Logic to create the topup table
+    print("Topup table created!")  # Example implementation

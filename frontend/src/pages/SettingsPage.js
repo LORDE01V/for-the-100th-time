@@ -295,15 +295,18 @@ useEffect(() => {
             {/* Header with Back to Dashboard Button */}
             <HStack justify="space-between" align="center" mb={8}>
                 {/* Using the imported FaArrowLeft icon */}
-                <Button leftIcon={<FaArrowLeft />} variant="ghost" onClick={() => navigate('/home')} color={headingColor}>
-                    Back to Home
+                <Button leftIcon={<FaArrowLeft />} onClick={() => navigate(-1)} variant="ghost" mr={4}>
+                    Back
                 </Button>
                 {/* You can add other header elements here if needed */}
             </HStack>
 
-            <Heading as="h1" size="xl" color={headingColor} mb={8}>
-                Account Settings
+            <Heading as="h1" size="xl" color={useColorModeValue('gray.800', 'white')} mb={2} textAlign="center">
+                Settings
             </Heading>
+            <Text color={useColorModeValue('gray.600', 'gray.400')} fontSize="lg" textAlign="center" mb={6}>
+                Customize your preferences and manage your account for a personalized experience!
+            </Text>
 
             <VStack spacing={8} align="stretch">
 

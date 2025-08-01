@@ -1,3 +1,4 @@
+/* global process */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
@@ -16,7 +17,7 @@ import {
   useColorModeValue,
   Progress
 } from '@chakra-ui/react';
-import { auth } from '../services/api';
+import { useAuth } from '../context/AuthContext'; // Import useAuth hook
 import gridXBackground from '../assets/images/gridx_background.jpg';
 
 function LoginPage() {
@@ -28,6 +29,7 @@ function LoginPage() {
   const [strengthScore, setStrengthScore] = useState(0);
   const navigate = useNavigate();
   const toast = useToast();
+  const { login } = useAuth(); // Use the login function from AuthContext
 
   const checkPasswordStrengthLocally = (password) => {
     if (!password) return { message: 'Password is required.', score: 0 };
@@ -71,7 +73,7 @@ function LoginPage() {
     if (Object.keys(newErrors).length > 0) return;
     setLoading(true);
     try {
-      const response = await auth.login(email, password);
+      const response = await login(email, password); // Use the login from context
       if (response.success) {
         toast({
           title: 'Login Successful!',
@@ -113,7 +115,7 @@ function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-0igj.onrender.com';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-210d.onrender.com';
     window.location.href = `${backendUrl}/api/auth/google?action=login`;
   };
 
@@ -169,7 +171,7 @@ function LoginPage() {
           <Button type="submit" colorScheme="blue" width="full" isLoading={loading}>Log In</Button>
           <Button width="full" onClick={handleGoogleLogin} leftIcon={<FcGoogle />} variant="outline">Sign in with Google</Button>
           <Text color={useColorModeValue('gray.800', 'white')} mt={4} textAlign="center">
-            Don't have an account?{' '}
+            Don&#39;t have an account?{' '}
             <Button variant="link" color="blue.500" onClick={() => navigate('/register')}>Register</Button>
           </Text>
         </VStack>

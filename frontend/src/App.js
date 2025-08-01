@@ -1,19 +1,18 @@
 import React from 'react';
-import { 
-  Routes, 
-  Route, 
-  Navigate, 
-  Outlet 
+import {
+  Routes,
+  Route,
+  Navigate,
+  Outlet
 } from 'react-router-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { auth } from './services/api'; // Assuming auth service is still needed
-import Supportbot from './components/Supportbot'; // Correct casing
-import LoadSheddingPage from './pages/LoadSheddingPage';
+import Supportbot from './components/Supportbot';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from './theme';
 import { DashboardProvider } from './context/DashboardContext';
 import { SubscriptionProvider } from './context/SubscriptionContext';
+import { AuthProvider, useAuth } from './context/AuthContext'; // Import AuthProvider and useAuth
 
 import LandingPage from './pages/LandingPage';
 import RegisterPage from './pages/RegisterPage';
@@ -37,15 +36,15 @@ import PersonalUserPage from './pages/PersonalUserPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import FaultDetails from './pages/FaultDetails';
+import LoadSheddingPage from './pages/LoadSheddingPage'; // Import LoadSheddingPage
+import ThemeToggleButton from './components/ThemeToggleButton'; // Import ThemeToggleButton
 // Protected Route component
 const ProtectedRoute = () => {
-  const user = auth.getCurrentUser(); // Check if user data/token exists
-  console.log('ProtectedRoute: User is', user ? 'authenticated' : 'not authenticated');  // Added for debugging
+  const { user } = useAuth(); // Use useAuth to get user
+  console.log('ProtectedRoute: user from AuthContext:', user);
   if (!user) {
-    // If no user (no token), redirect to login
     return <Navigate to="/login" replace />;
   }
-  // If user exists, render the nested routes
   return <Outlet />;
 };
 
@@ -55,46 +54,47 @@ function App() {
       <ChakraProvider theme={theme}>
         <DashboardProvider>
           <SubscriptionProvider>
-            <Router>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/about" element={<AboutPage />} /> {/* About Page route */}
+            <AuthProvider> {/* Wrap with AuthProvider */}
+              <Router>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
 
-                {/* Add OAuth callback route */}
-                <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
+                  {/* Protected Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/top-up" element={<TopUpPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/impact" element={<ImpactPage />} />
+                    <Route path="/expenses" element={<ExpensesPage />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
+                    <Route path="/support" element={<SupportPage />} />
+                    <Route path="/forum" element={<ForumPage />} />
+                    <Route path="/loadshedding" element={<LoadSheddingPage />} />
+                    <Route path="/refer" element={<ReferPage />} />
+                    <Route path="/group-buying" element={<GroupBuying />} />
+                    <Route path="/subscription" element={<SubscriptionPage />} />
+                    <Route path="/ai-suggestions" element={<AISuggestions />} />
+                    <Route path="/personal-user" element={<PersonalUserPage />} />
+                    <Route path="/fault-details" element={<FaultDetails />} /> {/* Fault Details route */}
+                  </Route>
 
-                {/* Protected Routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/home" element={<HomePage />} />
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/top-up" element={<TopUpPage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="/impact" element={<ImpactPage />} />
-                  <Route path="/expenses" element={<ExpensesPage />} />
-                  <Route path="/notifications" element={<NotificationsPage />} />
-                  <Route path="/support" element={<SupportPage />} />
-                  <Route path="/forum" element={<ForumPage />} />
-                  <Route path="/loadshedding" element={<LoadSheddingPage />} />
-                  <Route path="/refer" element={<ReferPage />} />
-                  <Route path="/group-buying" element={<GroupBuying />} />
-                  <Route path="/subscription" element={<SubscriptionPage />} />
-                  <Route path="/ai-suggestions" element={<AISuggestions />} />
-                  <Route path="/personal-user" element={<PersonalUserPage />} />
-                  <Route path="/fault-details" element={<FaultDetails />} /> {/* Fault Details route */}
-                </Route>
+                  {/* Static Pages */}
+                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                  <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
-                {/* New Routes */}
-                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                <Route path="/terms-of-service" element={<TermsOfServicePage />} />
-
-                {/* Fallback route */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-              <Supportbot />
-            </Router>
+                  {/* Fallback */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+                <Supportbot />
+                <ThemeToggleButton />
+              </Router>
+            </AuthProvider> {/* End AuthProvider */}
           </SubscriptionProvider>
         </DashboardProvider>
       </ChakraProvider>

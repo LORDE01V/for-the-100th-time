@@ -89,7 +89,7 @@ function TopUpPage() {
    useEffect(() => {
     const fetchBalance = async () => {
       try {
-        const response = await api.get('/api/user/balance'); // API endpoint to fetch balance
+        const response = await api.get('/user/balance'); // API endpoint to fetch balance
         setBalance(`R${response.data.balance.toFixed(2)}`);
       } catch (error) {
         console.error('Error fetching balance:', error);
@@ -104,8 +104,8 @@ function TopUpPage() {
     const fetchAutoTopUpSettings = async () => {
       if (!user?.id) return;
       try {
-        const response = await api.get('/api/user/auto-topup-settings', {
-          params: { user_id: user.id },
+        const response = await api.get('/user/auto-topup-settings', {
+          params: { user_id: user.id }
         });
         const data = response.data;
 
@@ -145,7 +145,8 @@ function TopUpPage() {
   
     setIsProcessing(true);
     try {
-      const response = await api.post('/api/user/auto-topup-settings', {
+      //const response =
+       await api.post('/user/auto-topup-settings', {
         user_id: user?.id,
         is_auto_topup: true,
         min_balance: parseFloat(minBalance),
@@ -210,7 +211,7 @@ function TopUpPage() {
   
     
       try {
-        const response = await api.post('/api/user/topup', data);
+        const response = await api.post('/user/topup', data);
         console.log('Top-up response:', response);
         if (response.status === 200 && response.data.success) {
           const newBalanceRaw = response.data.newBalance;

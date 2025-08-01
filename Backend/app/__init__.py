@@ -1,9 +1,10 @@
-from flask import Flask
-from authlib.integrations.flask_client import OAuth
+# __init__.py
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
+from flask import Flask, jsonify
 from flask_cors import CORS
+from authlib.integrations.flask_client import OAuth
 from app.routes.topup import topup_bp
 
 # Load environment variables
@@ -17,17 +18,19 @@ def create_app():
                 template_folder='templates')
     CORS(app, origins=['http://localhost:3000', 'https://frontend-7td4.onrender.com'], supports_credentials=True)        
     
-    # Enhanced CORS configuration
-    CORS(app, resources={r"/*": {  # Apply to all routes
+    # CORS configuration
+    CORS(app, resources={r"/*": {
         "origins": [
             "http://localhost:3000",
             "http://localhost:5000",
             "http://127.0.0.1:3000",
-            "https://frontend-7td4.onrender.com"
+            "https://frontend-sabs.onrender.com"
         ],
         "supports_credentials": True,
-        "allow_headers": ["*"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "expose_headers": ["Authorization"],
+        "max_age": 3600
     }})
     
     # Configuration
@@ -61,7 +64,7 @@ def create_app():
     # Register blueprints
     from .routes.auth import auth_bp
     app.register_blueprint(auth_bp)
-    #app.register_blueprint(topup_bp)
+    app.register_blueprint(topup_bp)
     
     
     return app 

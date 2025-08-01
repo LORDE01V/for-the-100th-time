@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, url_for, session, jsonify, request, current_app, render_template
 from app import oauth
-from support import get_user_by_email, create_user, update_user_by_id, get_db
+from support import get_user_by_email, create_user, update_user_by_id, get_db, get_user_by_id
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
 import time
@@ -8,8 +8,6 @@ import logging
 from datetime import datetime
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_cors import CORS, cross_origin
-from flask import jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
@@ -116,22 +114,34 @@ def google_callback():
         </html>
         """
 
-@auth_bp.route('/user')
+@auth_bp.route('/user', methods=['GET', 'OPTIONS'])
 @jwt_required()
 def get_current_user():
-    user_email = get_jwt_identity()
-    user = get_user_by_email(user_email)
-    if not user:
-        return create_response("User not found", 404)
+    logging.info("Attempting to get current user.")
+    if request.method == 'OPTIONS':
+        logging.info("Received OPTIONS request for /api/auth/user, returning 200 OK.")
+        return create_response("OK", 200)
+    
+    try:
+        user_id = get_jwt_identity() # Get user ID from JWT identity
+        logging.info(f"JWT Identity (user_id): {user_id}")
+        user = get_user_by_id(user_id) # Use get_user_by_id
+        if not user:
+            logging.warning(f"User not found for ID: {user_id}")
+            return create_response("User not found", 404)
         
-    return jsonify({
-        "id": user['id'],
-        "full_name": user['full_name'],
-        "surname": user.get('surname', ''),
-        "email": user['email'],
-        "phone_number": user.get('phone', ''),
-        "address": user.get('address', ''),
-    })
+        logging.info(f"Found user: {user['email']} (ID: {user['id']})")
+        return jsonify({
+            "id": user['id'],
+            "full_name": user['full_name'],
+            "surname": user.get('surname', ''),
+            "email": user['email'],
+            "phone_number": user.get('phone', ''),
+            "address": user.get('address', ''),
+        })
+    except Exception as e:
+        logging.error(f"Error in get_current_user: {str(e)}")
+        return create_response("Internal server error", 500)
 
 @auth_bp.route('/logout')
 def logout():
@@ -139,7 +149,6 @@ def logout():
     return create_response("Logged out successfully")
 
 @auth_bp.route('/login', methods=['POST', 'OPTIONS'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-7td4.onrender.com'], supports_credentials=True)
 def login():
     if request.method == 'OPTIONS':
         return create_response("OK", 200)
@@ -172,7 +181,8 @@ def login():
                 'user': {
                     'id': user['id'],  
                     'email': user['email'],
-                    'name': user['full_name']
+                    'full_name': user['full_name'], # Ensure full_name is returned
+                    'phone_number': user.get('phone_number', '') # Include phone_number
                 },
                 'access_token': access_token,  # Change 'token' to 'access_token'
                 'redirect': url_for('home.home_page')
@@ -184,39 +194,55 @@ def login():
         logging.error(f'Login error: {str(e)}')
         return create_response('Login failed', 500)
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/register', methods=['POST', 'OPTIONS'])
 def register():
-    data = request.get_json()
-    if not data or not isinstance(data, dict):
-        return jsonify({'error': 'Invalid request data'}), 400
-    
-    required_fields = ['name', 'email', 'password']
-    if not all(key in data for key in required_fields):
-        return jsonify({'error': f'Missing required fields: {", ".join(set(required_fields) - set(data.keys()))}'}), 400
-    
-    email = data.get('email').lower()
-    password = data.get('password')
-    full_name = data.get('name')
-    
-    if get_user_by_email(email):
-        return jsonify({'error': 'Email already registered'}), 409
-    
+    if request.method == 'OPTIONS':
+        return create_response("OK", 200)
     try:
-        password_hash = generate_password_hash(password)
-        logging.info(f'Attempting to register user with email: {email}')
-        create_user(email=email, password_hash=password_hash, full_name=full_name)
+        data = request.get_json()
+        if not data or not isinstance(data, dict):
+            logging.error('No valid JSON data received in registration request')
+            return create_response('Invalid registration data', 400)
+
+        email = data.get('email', '').lower()
+        password = data.get('password')
+        full_name = data.get('full_name', '') 
+        phone_number = data.get('phone', '') # Extract phone_number from request data
+
+        if not email or not password:
+            logging.error('Missing or invalid email/password in registration data')
+            return create_response('Email and password are required', 400)
+
+        existing_user = get_user_by_email(email)
+        if existing_user:
+            logging.error(f'Attempted registration with existing email: {email}')
+            return create_response('User with that email already exists', 409) # 409 Conflict
+
+        hashed_password = generate_password_hash(password)
+        # Pass phone_number to create_user
+        new_user_id = create_user(email=email, password_hash=hashed_password, full_name=full_name, phone_number=phone_number)
+
+        if new_user_id is None:
+            logging.error(f'Failed to create user in database for email: {email}')
+            return create_response('Registration failed due to database error', 500)
         
-        # Automatically log in the user after successful registration
-        access_token = create_access_token(identity=email)
+        # After successful registration, automatically log in the user
+        access_token = create_access_token(identity=str(new_user_id))
+        
         return jsonify({
-            'message': 'User registered successfully',
-            'success': True,
-            'token': access_token,
-            'user': {'email': email, 'name': full_name}
-        }), 201
+            "success": True,
+            "access_token": access_token,
+            "user": {
+                "id": new_user_id,
+                "email": email,
+                "full_name": full_name,
+                "phone_number": phone_number # Include phone_number in response
+            }
+        }), 201 # 201 Created
+
     except Exception as e:
-        logging.error(f'Registration error: {str(e)} - Email: {email}')
-        return jsonify({'error': 'Registration failed. Please check your details or try again later.'}), 500
+        logging.error(f'Registration error: {str(e)}')
+        return create_response('Registration failed', 500)
 
 @auth_bp.route('/user', methods=['PUT'])
 @jwt_required()
@@ -327,27 +353,3 @@ def delete_account():
         cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
         conn.commit()
     return jsonify({'message': 'Account deleted successfully'}), 200
-
-# Route to handle login
-# @auth_bp.route('/login', methods=['POST'])
-# def login():
-#     data = request.get_json()
-#     email = data.get('email')
-#     password = data.get('password')
-
-#     if not email or not password:
-#         return jsonify({'message': 'Email and password are required'}), 400
-
-#     user = User.query.filter_by(email=email).first()
-
-#     if not user:
-#         return jsonify({'message': 'Account does not exist. Please create a new account.'}), 404
-
-#     # Check password
-#     if not check_password_hash(user.password, password):
-#         return jsonify({'message': 'Invalid credentials'}), 401
-
-#     # Generate token (assuming a token generation function exists)
-#     token = generate_token(user)
-
-#     return jsonify({'message': 'Login successful', 'token': token}), 200

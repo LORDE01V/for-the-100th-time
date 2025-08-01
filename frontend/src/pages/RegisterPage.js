@@ -1,3 +1,4 @@
+/* global process */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
@@ -16,7 +17,7 @@ import {
   useColorModeValue,
   Progress
 } from '@chakra-ui/react';
-import { auth } from '../services/api';
+import { useAuth } from '../context/AuthContext'; // Import useAuth hook
 import registerBackground from '../assets/images/register.png';
 
 function RegisterPage() {
@@ -31,6 +32,7 @@ function RegisterPage() {
   const [strengthScore, setStrengthScore] = useState(0);
   const navigate = useNavigate();
   const toast = useToast();
+  const { register } = useAuth(); // Use the register function from AuthContext
 
   const textColor = useColorModeValue('gray.800', 'white');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -67,21 +69,44 @@ function RegisterPage() {
     setLoading(true);
 
     try {
-      await auth.register({ 
-        name,
+      const response = await register({ // Use the register from context
+        full_name: name, // Ensure full_name is sent
         email,
         password,
         phone
       });
 
-      toast({
-        title: 'Registration Successful!',
-        description: 'You can now log in.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-      navigate('/login');
+      if (response.success) {
+        toast({
+          title: 'Registration Successful!',
+          description: 'You can now log in.',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        navigate('/home'); // Redirect to home after successful registration
+      } else {
+        let errorMessage = response.message;
+        
+        // The 'error' object is not defined here, it's from the outer catch block
+        // The following checks should use properties of 'response' if available
+        // or remove if redundant with the outer catch.
+        if (response.code === 'ECONNABORTED') { // Assuming response might have a code
+          errorMessage = 'Connection to server timed out. Please check your internet connection and try again.';
+        }
+        
+        if (response.status === 504) { // Assuming response might have a status
+          errorMessage = 'Server took too long to respond. Please try again later.';
+        }
+
+        toast({
+          title: 'Registration Error',
+          description: errorMessage,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     } catch (error) {
       let errorMessage = error.message;
       
@@ -106,7 +131,7 @@ function RegisterPage() {
   };
 
   const handleGoogleRegister = () => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-0igj.onrender.com';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://backend-210d.onrender.com';
     window.location.href = `${backendUrl}/api/auth/google?action=register`;
   };
 

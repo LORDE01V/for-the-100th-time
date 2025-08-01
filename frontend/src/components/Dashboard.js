@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, fetchRecommendationPlan } from '../services/api';
 import { useEffect, useState } from 'react';
 
-// Import Chakra UI Components
+// Chakra UI
 import {
   Box,
   Flex,
@@ -17,18 +17,25 @@ import {
   Icon,
   Badge,
   useColorModeValue,
-  Progress // Added Progress component
+  Progress,
+  Select,
+  FormControl,
+  FormLabel,
 } from '@chakra-ui/react';
 
-// Import Lucide Icons
+// Lucide Icons
 import {
   BatteryCharging,
   Zap,
   FileText,
   CircleDot,
-} from 'lucide-react'; // Make sure these icons are correctly imported
+} from 'lucide-react';
 
-// Helper component to convert Lucide icons to Chakra UI icons
+// Import the Loadshedding widget
+import LoadsheddingStatus from '../components/widgets/LoadsheddingStatus';
+import { DashboardContext } from "../context/DashboardContext";
+
+// Helper to render Lucide as Chakra Icons
 const ChakraIcon = ({ icon, ...props }) => {
   const ChakraComp = icon;
   return <Icon as={ChakraComp} {...props} />;
@@ -71,10 +78,10 @@ function DashboardPage() { // Renamed component to DashboardPage
         }
     };
 
-    const handleLogout = () => {
-        auth.logout();
-        navigate('/login');
-    };
+  const handleLogout = () => {
+    auth.logout();
+    navigate('/login');
+  };
 
     const handleBackClick = () => {
         navigate('/'); // Redirects to the homepage
@@ -120,19 +127,19 @@ function DashboardPage() { // Renamed component to DashboardPage
                 </Box>
             </Flex>
 
-            {/* Dashboard Content Grid */}
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mb={8}>
+      {/* Dashboard Cards */}
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mb={8}>
 
-                {/* Battery Info Block */}
-                <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
-                    <HStack mb={2}>
-                        <ChakraIcon icon={BatteryCharging} boxSize={6} color="yellow.500" />
-                        <Heading as="h3" size="md" color={textColor}>Battery</Heading>
-                    </HStack>
-                    <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-                        {dashboardData.batteryLevel}
-                    </Text>
-                </Box>
+        {/* Battery Info */}
+        <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
+          <HStack mb={2}>
+            <ChakraIcon icon={BatteryCharging} boxSize={6} color="yellow.500" />
+            <Heading as="h3" size="md" color={textColor}>Battery</Heading>
+          </HStack>
+          <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+            {dashboardData.batteryLevel}
+          </Text>
+        </Box>
 
                 {/* Power Status Block */}
                 <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
@@ -239,4 +246,4 @@ function DashboardPage() { // Renamed component to DashboardPage
     );
 }
 
-export default DashboardPage; // Export the new component name
+export default DashboardPage;

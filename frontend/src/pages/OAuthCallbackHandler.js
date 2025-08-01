@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const OAuthCallbackHandler = () => {
@@ -25,7 +25,7 @@ const OAuthCallbackHandler = () => {
 
         // Fallback to session check
         console.log('Checking session...');
-        const response = await fetch('https://backend-0igj.onrender.com/api/auth/user', {
+        const response = await fetch('https://backend-210d.onrender.com/api/auth/user', {
           credentials: 'include',
           headers: {
             'Accept': 'application/json',

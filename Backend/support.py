@@ -3,52 +3,54 @@ from psycopg2 import OperationalError
 import os
 from dotenv import load_dotenv
 import logging
- 
+
 # Load environment variables
 load_dotenv()
- 
+
+# New hardcoded database credentials
+DB_HOST = 'dpg-d22bjj3e5dus739fk9gg-a.oregon-postgres.render.com'
+DB_NAME = 'griddb'
+DB_USER = 'griddb'
+DB_PASSWORD = 'GycGE7M140H9RbUj5skLbOAS9kD8o8qf'
+DB_PORT = '5432'
+
+
 # ================== DATABASE CONNECTION ==================
 def connect_db():
     """Connect to PostgreSQL database"""
-    password = os.getenv('DB_PASSWORD', '')
-    if not password:
-        raise ValueError("DB_PASSWORD environment variable must be set.")
+    # Removed reliance on os.getenv for DB credentials
     try:
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'Fintech_Solar'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=password,
-            port=os.getenv('DB_PORT', '5432')
+            host=DB_HOST,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            port=DB_PORT,
+            sslmode='require' # Ensure SSL is required
         )
         return conn, conn.cursor()
     except OperationalError as e:
         print(f"🚨 Database connection failed: {e}")
         return None, None
- 
+
 def get_db():
     try:
-        db_host = os.getenv('DB_HOST', 'localhost')
-        db_name = os.getenv('DB_NAME', 'Fintech_Solar')
-        db_user = os.getenv('DB_USER', 'postgres')
-        db_password = os.getenv('DB_PASSWORD', '')
-        db_port = os.getenv('DB_PORT', '5432')
-        if not db_password:
-            logging.error('DB_PASSWORD is not set in your .env file. Please add it and try again.')
-            raise ValueError('DB_PASSWORD environment variable must be set.')
+        # Removed reliance on os.getenv for DB credentials
+        # Removed DB_PASSWORD check as it's now hardcoded
         conn = psycopg2.connect(
-            host=db_host,
-            database=db_name,
-            user=db_user,
-            password=db_password,
-            port=db_port
+            host=DB_HOST,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            port=DB_PORT,
+            sslmode='require' # Ensure SSL is required
         )
         logging.info('Database connection successful.')
         return conn
     except OperationalError as e:
         logging.error(f'Database connection failed: {str(e)}. Please verify your .env file settings.')
         raise
- 
+
 # ================== CORE FUNCTIONS ==================
 def execute_query(operation=None, query=None, params=None):
     """Execute a database query"""
@@ -80,54 +82,54 @@ def execute_query(operation=None, query=None, params=None):
         if conn: conn.close()
  
 # ================== USER OPERATIONS ==================
-def create_user(email, password_hash, full_name=None):
+def create_user(email, password_hash, full_name=None, phone_number=None):
     """Create a new user account"""
     query = """
-    INSERT INTO users (email, password_hash, full_name)
-    VALUES (%s, %s, %s) RETURNING id
+    INSERT INTO users (email, password_hash, full_name, phone_number)
+    VALUES (%s, %s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (email, password_hash, full_name))
- 
+    return execute_query('insert', query, (email, password_hash, full_name, phone_number))
+
 def get_user_by_email(email):
     """Get user by email address"""
-    query = "SELECT id, email, password_hash, full_name FROM users WHERE email = %s"
+    query = "SELECT id, email, password_hash, full_name, phone_number FROM users WHERE email = %s"
     result = execute_query('search', query, (email,))
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name']
+        columns = ['id', 'email', 'password_hash', 'full_name', 'phone_number']
         return dict(zip(columns, result[0]))
     return None
- 
+
 def get_user_by_id(user_id):
     """Get user by ID"""
     try:
         user_id = int(user_id)
     except Exception:
         return None
-    query = "SELECT id, email, password_hash, full_name FROM users WHERE id = %s"
+    query = "SELECT id, email, password_hash, full_name, phone_number FROM users WHERE id = %s"
     result = execute_query('search', query, (user_id,))
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name']
+        columns = ['id', 'email', 'password_hash', 'full_name', 'phone_number']
         return dict(zip(columns, result[0]))
     return None
- 
+
 def get_user_by_email_or_id(identifier):
     """Try by id first, then by email"""
     user = get_user_by_id(identifier)
     if user:
         return user
     return get_user_by_email(identifier)
- 
+
 def update_user_by_id(user_id, email=None, full_name=None, phone_number=None):
     query = """
-    UPDATE users
-    SET email = COALESCE(%s, email),
+    UPDATE users 
+    SET email = COALESCE(%s, email), 
         full_name = COALESCE(%s, full_name),
         phone_number = COALESCE(%s, phone_number)
     WHERE id = %s RETURNING id
     """
     params = (email, full_name, phone_number, user_id)
     return execute_query('search', query, params) is not None
- 
+
 def create_user_from_google(user_info):
     """Create user from Google OAuth info"""
     return create_user(
@@ -135,7 +137,7 @@ def create_user_from_google(user_info):
         password_hash=None,
         full_name=user_info.get('name', '')
     )
- 
+
 # ================== SOLAR SYSTEM OPERATIONS ==================
 def add_solar_system(installer_id, capacity_kw, components=None, installation_date=None):
     """Add a new solar system installation"""
@@ -234,14 +236,7 @@ def get_all_community_stories():
     ORDER BY created_at DESC
     """
     return execute_query('search', query)
- 
-def save_profile_details(full_name, surname, email, phone_number, address):
-    query = """ 
-    INSERT INTO users (full_name, surname, email, phone_number, address)
-    VALUES (%s, %s, %s, %s, %s) RETURNING id
-    """
-    return execute_query('insert', query, (full_name, surname, email, phone_number, address))
- 
+
 def create_event(title, start, end, description, location, event_type):
     """Insert a new event into the events table."""
     query = """
@@ -315,17 +310,31 @@ def save_auto_topup_settings(user_id, is_auto_topup, min_balance, auto_topup_amo
     RETURNING id
     """
     return execute_query('insert', query, (user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency))
- 
-def add_user_to_campaign(user_id, campaign_id):
-    """
-    Adds a user to a campaign in the user_campaigns table.
-    """
+
+def save_payment_method(user_id, payment_type, card_number, expiry_date, card_holder_name, is_default=False):
+    """Saves a new payment method for a user."""
     query = """
-    INSERT INTO user_campaigns (user_id, campaign_id)
-    VALUES (%s, %s)
-    ON CONFLICT DO NOTHING
+    INSERT INTO payment_methods (user_id, payment_type, card_number, expiry_date, card_holder_name, is_default)
+    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id
     """
-    return execute_query('insert', query, (user_id, campaign_id))
+    params = (user_id, payment_type, card_number, expiry_date, card_holder_name, is_default)
+    return execute_query('insert', query, params)
+
+def fetch_user_payment_methods(user_id):
+    """Fetches all payment methods for a given user."""
+    query = """
+    SELECT id, payment_type, card_number, expiry_date, card_holder_name, is_default, created_at
+    FROM payment_methods
+    WHERE user_id = %s
+    ORDER BY is_default DESC, created_at DESC
+    """
+    results = execute_query('search', query, (user_id,))
+    if results:
+        # Assuming execute_query returns a list of tuples, convert to list of dicts
+        columns = ['id', 'payment_type', 'card_number', 'expiry_date', 'card_holder_name', 'is_default', 'created_at']
+        return [dict(zip(columns, row)) for row in results]
+    return []
+
 # Initialize database tables when module loads
 def initialize_db():
     conn, cur = connect_db()
@@ -496,15 +505,20 @@ def initialize_db():
                 is_read BOOLEAN DEFAULT FALSE
     );
 """)
+        # Add payment_methods table
         cur.execute("""
-            CREATE TABLE IF NOT EXISTS user_campaigns (
+            CREATE TABLE IF NOT EXISTS payment_methods (
                 id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL REFERENCES users(id),
-                campaign_id INTEGER NOT NULL,
-                joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    );
-""")
-     
+                payment_type VARCHAR(50) NOT NULL,
+                card_number VARCHAR(255) NOT NULL,
+                expiry_date VARCHAR(10) NOT NULL,
+                card_holder_name VARCHAR(255) NOT NULL,
+                is_default BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+
         if conn:
             conn.commit()
         print("✅ Database tables initialized")
@@ -512,3 +526,31 @@ def initialize_db():
         if conn:
             conn.rollback()
         print(f"🚨 Database initialization failed: {e}")
+        raise
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+# Initialize when imported
+initialize_db()
+
+# Test connection when run directly
+if __name__ == "__main__":
+    try:
+        conn, cur = connect_db()
+        if not conn or not cur:
+            raise Exception("Database connection failed. Connection or cursor is None")
+        print("✅ Database connection successful!")
+        cur.execute("SELECT version()")
+        result = cur.fetchone()
+        if result:
+            print("PostgreSQL version: ", result[0])
+        else:
+            print("🚨 Failed to get PosstgreSQl version.")
+
+    except Exception as e:
+        print("🚨 Database connection failed:", e)
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+        

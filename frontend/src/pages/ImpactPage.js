@@ -4,7 +4,6 @@ import { auth } from '../services/api';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-//import Calendar from 'react-calendar';
 import {
   Box,
   Flex,
@@ -82,7 +81,7 @@ function ImpactPage() {
   // Helper to fetch backend stories and map to testimonial structure
   const fetchBackendStories = async () => {
     try {
-      const response = await axios.get('https://backend-0igj.onrender.com/api/community-stories');
+      const response = await axios.get('https://backend-210d.onrender.com/api/community-stories');
       console.log('Fetched stories:', response.data); 
       return response.data.map(story => ({
         name: story.user_name,
@@ -128,10 +127,11 @@ function ImpactPage() {
     }
 
     try {
-      await axios.post('https://backend-0igj.onrender.com/api/community-stories', {
+      await axios.post('https://backend-210d.onrender.com/api/community-stories', {
         user_name: name,
         story_text: quote,
         rating: rating,
+        email: email, // <-- add this
       });
       // Re-fetch all backend stories and append to dummy testimonials
       const backendStories = await fetchBackendStories();
@@ -285,7 +285,7 @@ function ImpactPage() {
                   <Flex align="center" mb={4}>
                     <Avatar src={testimonial.avatar} name={testimonial.name} size="xl" mr={4} />
                     <VStack align="start" flex="1">
-                      <Text fontSize="lg" fontStyle="italic" color={textColor}>{testimonial.quote}"</Text>
+                      <Text fontSize="lg" fontStyle="italic" color={textColor}>{testimonial.quote}&quot;</Text>
                       <HStack mt={2}>
                         {Array(5).fill('').map((_, starIndex) => (
                           <MotionIcon
@@ -353,7 +353,7 @@ function ImpactPage() {
           <Divider my={8} />
 
           <Box bg="rgba(255, 255, 255, 0.1)" backdropFilter="blur(10px)" border="1px solid rgba(255, 255, 255, 0.2)">
-            <Heading as="h2" size="lg" mb={4}>Communities We've Reached</Heading>
+            <Heading as="h2" size="lg" mb={4}>Communities We&apos;ve Reached</Heading>
             <ImpactMapPreview />
           </Box>
         </Stack>

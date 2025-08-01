@@ -1,0 +1,198 @@
+// Theme variables
+$primary-color: #2b6cb0;
+$secondary-color: #4299e1;
+$light-bg: #f7fafc;
+$dark-bg: #1a202c;
+$text-light: #2d3748;
+$text-dark: #e2e8f0;
+
+.ai-suggestions-container {
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, rgba(235, 248, 255, 0.9), rgba(190, 227, 248, 0.9));
+  
+  // Dark mode support
+  @media (prefers-color-scheme: dark) {
+    background: linear-gradient(to bottom right, $dark-bg, lighten($dark-bg, 5%));
+    color: $text-dark;
+  }
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 2.5rem;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: $primary-color;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .filter-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+}
+
+.suggestions-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  margin-bottom: 2rem;
+}
+
+.tip-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  // Dark mode adjustments
+  @media (prefers-color-scheme: dark) {
+    background: rgba(26, 32, 44, 0.95);
+    
+    .tip-content {
+      color: $text-dark;
+    }
+  }
+
+  .tip-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .tip-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: $primary-color;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      
+      svg {
+        color: white;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .tip-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $text-light;
+    }
+  }
+
+  .tip-content {
+    color: $text-light;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .tip-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+
+    .category-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+
+      &.savings { background: #48bb78; color: white; }
+      &.efficiency { background: #ed8936; color: white; }
+      &.maintenance { background: #4299e1; color: white; }
+    }
+
+    .vote-buttons {
+      display: flex;
+      gap: 0.5rem;
+
+      button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+          opacity: 0.9;
+        }
+
+        &.upvote { background: #48bb78; color: white; }
+        &.downvote { background: #f56565; color: white; }
+      }
+    }
+  }
+}
+
+.carousel-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: $primary-color;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+
+    &:disabled {
+      background: #cbd5e0;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .ai-suggestions-container {
+    padding: 1rem;
+  }
+
+  .suggestions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-section {
+    h1 {
+      font-size: 2rem;
+    }
+    
+    .filter-controls {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tip-card {
+  animation: fadeIn 0.5s ease forwards;
+}
