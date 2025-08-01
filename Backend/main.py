@@ -362,7 +362,13 @@ app.add_middleware(
 )
 
 @app.get("/")
-async def root():
+@app.head("/")
+async def root(response: Response = None):
+    if response:
+        
+        return Response(status_code=200)
+
+
     return {
         "message": "Lumina Solar API is running",
         "status": "healthy",
