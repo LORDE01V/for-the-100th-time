@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { LandingPageComponent } from './pages/landing_page/landing-page'; // Import the standalone component directly
 
 export const routes: Routes = [
   // Public Routes
-  { path: '', loadComponent: () => import('./pages/landing_page/landing-page').then(m => m.LandingPage) },
+  { path: '', component: LandingPageComponent }, // Use the component directly
   { path: 'register', loadComponent: () => import('./pages/register_page/register-page').then(m => m.RegisterPage) },
   { path: 'login', loadComponent: () => import('./pages/login_page/login').then(m => m.Login) },
   { path: 'about', loadComponent: () => import('./pages/about_page/about').then(m => m.About) },

@@ -1,400 +1,402 @@
-.landing-bg {
+// General container and overlay styles
+.landing-page-container {
   min-height: 100vh;
-  background: url('/assets/images/GridX-IMG.jpg') center/cover no-repeat fixed;
   position: relative;
-  color: #fff;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  overflow: hidden; // Important for managing inner absolute elements
 }
 
 .overlay {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1;
 }
 
-// Hero Section - Matching React styling
+// Common container styles (replaces Chakra UI Container)
+.container {
+  max-width: 1200px; // Equivalent to container.xl
+  margin: 0 auto;
+  padding: 0 16px; // Equivalent to px={4}
+  position: relative;
+  z-index: 2; // Ensure content is above overlay
+}
+
+.container-md {
+  max-width: 768px; // Equivalent to container.md
+  margin: 0 auto;
+  padding: 0 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.container-xl {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  position: relative;
+  z-index: 2;
+}
+
+
+// Hero Section
 .hero-section {
+  padding: 80px 0; // py={20}
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); // bgGradient
+  text-align: center;
   position: relative;
   z-index: 2;
-  text-align: center;
-  padding: 5rem 1rem 2rem 1rem;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
-}
 
-.hero-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-}
-
-.hero-section h1 {
-  font-size: 3.5rem;
-  font-weight: bold;
-  margin-bottom: 1.2rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  color: white;
-}
-
-.hero-typing {
-  font-size: 1.3rem;
-  margin-bottom: 2rem;
-  min-height: 2.5rem;
-  color: #fffde7;
-  text-shadow: 1px 1px 4px #000;
-}
-
-.get-started-btn {
-  background: #1976d2;
-  color: #fff;
-  padding: 1rem 3rem;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  text-decoration: none;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
-  
-  &:hover {
-    background: #1565c0;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  }
-}
-
-// Greetings Section - Matching React styling
-.greetings-section {
-  text-align: center;
-  margin: 3rem 0 2rem 0;
-  position: relative;
-  z-index: 2;
-  padding: 2.5rem;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 50px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  backdrop-filter: blur(10px);
-}
-
-.greetings-section h2 {
-  font-size: 2rem;
-  margin-bottom: 0.7rem;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.greeting-rotator {
-  font-size: 2.2rem;
-  font-weight: bold;
-  color: #ffd600;
-  text-shadow: 1px 1px 4px #000;
-  min-height: 2.5rem;
-}
-
-// Features Section - Matching React styling with rounded cards
-.features-section {
-  position: relative;
-  z-index: 2;
-  padding: 5rem 1rem;
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.feature-slider {
-  width: 200%; // Matching React width
-  display: flex;
-  animation: slide 30s linear infinite; // Matching React timing
-  
-  &:hover {
-    animation-play-state: paused;
-  }
-}
-
-@keyframes slide {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); } // Matching React animation
-}
-
-.feature-cards {
-  display: flex;
-  width: 50%; // Each set takes 50% of total width
-  flex-shrink: 0;
-  gap: 2.5rem; // Matching React spacing
-  padding: 0 1rem;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: nowrap;
-}
-
-.feature-card {
-  background: rgba(0, 0, 0, 0.7); // Matching React background
-  border-radius: 50px; // Full rounded like React
-  padding: 2rem;
-  width: 320px; // Matching React sizing
-  min-width: 320px;
-  max-width: 320px;
-  flex-shrink: 0;
-  flex-grow: 0;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1); // Matching React shadow
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255,255,255,0.2);
-  
-  &:hover {
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    transform: scale(1.05);
-    background: rgba(0, 0, 0, 0.8);
-  }
-}
-
-.feature-icon {
-  font-size: 3rem;
-  color: #1976d2; // Blue color like React
-  margin-bottom: 1rem;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.1);
-    color: #1565c0;
-  }
-}
-
-.feature-card h3 {
-  color: white;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.feature-card p {
-  color: #fffde7;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  transition: all 0.3s ease;
-}
-
-// Developers Section - Matching React styling
-.developers-section {
-  margin: 4rem 0 2rem 0;
-  text-align: center;
-  position: relative;
-  z-index: 3;
-  padding: 3rem 0;
-}
-
-.developers-section h2 {
-  font-size: 2.2rem;
-  margin-bottom: 3rem;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-}
-
-.dev-cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.dev-card {
-  background: rgba(20,20,20,0.95);
-  border-radius: 12px;
-  padding: 1.5rem 1rem;
-  width: 220px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  text-align: center;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255,255,255,0.15);
-  
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    transform: translateY(-5px) scale(1.03);
-  }
-}
-
-.dev-image-container {
-  width: 100%;
-  height: 200px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dev-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
-}
-
-.dev-info {
-  color: #fff;
-}
-
-.dev-name {
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-bottom: 0.2rem;
-  color: white;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-}
-
-.dev-role {
-  font-size: 1rem;
-  color: #1976d2;
-  margin-bottom: 0.3rem;
-  font-style: italic;
-  text-decoration: underline;
-}
-
-.dev-desc {
-  font-size: 0.95rem;
-  color: #fffde7;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-}
-
-// Footer Section - Matching React styling
-.footer-section {
-  background: rgba(0,0,0,0.9);
-  padding: 3rem 2rem 1rem 2rem;
-  color: #fff;
-  margin-top: 4rem;
-  position: relative;
-  z-index: 2;
-}
-
-.footer-content {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto 1.5rem auto;
-}
-
-.footer-col {
-  min-width: 180px;
-  max-width: 260px;
-}
-
-.footer-col h3, .footer-col h4 {
-  color: #ffd600;
-  margin-bottom: 0.7rem;
-}
-
-.footer-col a {
-  color: #fffde7;
-  text-decoration: none;
-  display: block;
-  margin-bottom: 0.3rem;
-  transition: color 0.2s;
-  
-  &:hover {
-    color: #1976d2;
-  }
-}
-
-.footer-col p {
-  color: #fffde7;
-  font-size: 0.9rem;
-  margin-bottom: 0.3rem;
-}
-
-.footer-bottom {
-  text-align: center;
-  color: #bbb;
-  font-size: 0.95rem;
-  margin-top: 1.5rem;
-  border-top: 1px solid #333;
-  padding-top: 1rem;
-}
-
-// Responsive Design - Matching React breakpoints
-@media (max-width: 768px) {
-  .hero-section h1 {
-    font-size: 2rem;
-  }
-  
-  .hero-typing {
-    font-size: 1rem;
-  }
-  
-  .greetings-section h2 {
-    font-size: 1.5rem;
-  }
-  
-  .greeting-rotator {
-    font-size: 1.8rem;
-  }
-  
-  .feature-cards {
-    gap: 1.5rem;
-    padding: 0 0.5rem;
-  }
-  
-  .feature-card {
-    width: 280px;
-    min-width: 280px;
-    max-width: 280px;
-    padding: 1.5rem;
-  }
-  
-  .dev-cards {
+  .hero-content {
+    display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 32px; // spacing={8}
   }
-  
-  .footer-content {
-    flex-direction: column;
-    text-align: center;
+
+  .hero-heading {
+    font-size: 3rem; // size="2xl"
+    color: white; // headingColor
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   }
-  
-  .footer-col {
-    max-width: none;
+
+  .typing-title {
+    font-size: 3rem; // size="2xl"
+    color: white; // headingColor
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    min-height: 1.2em; // To prevent layout shift as in React TypeAnimation
+
+    .cursor {
+      display: inline-block;
+      width: 0.7em; // Adjust cursor width
+      animation: blink-caret 0.75s step-end infinite;
+    }
+  }
+
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: white; }
+  }
+
+  .btn-primary {
+    background-color: #4299e1; // blue.500
+    color: white;
+    padding: 16px 32px; // px={8}, size="lg"
+    border-radius: 8px;
+    font-size: 1.125rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow: 'lg'
+    }
   }
 }
 
-@media (max-width: 480px) {
-  .hero-section {
-    padding: 3rem 1rem 1rem 1rem;
+// Rotating Greetings Section
+.rotating-greetings-section {
+  position: relative;
+  z-index: 2;
+  margin-top: 48px; // mt={12}
+  margin-bottom: 48px; // mb={12}
+
+  .greetings-card {
+    padding: 40px 16px; // py={10}, px={4}
+    background: rgba(0, 0, 0, 0.7); // containerBg
+    text-align: center;
+    border-radius: 9999px; // borderRadius="full"
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); // boxShadow="lg"
+    backdrop-filter: blur(10px);
+    max-width: 768px;
+    margin: 0 auto;
   }
-  
-  .hero-section h1 {
-    font-size: 1.8rem;
+
+  .greetings-heading {
+    font-size: 1.875rem; // size="lg"
+    color: white; // greetingColor
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 16px;
   }
-  
-  .get-started-btn {
-    padding: 0.6rem 2rem;
-    font-size: 1rem;
+
+  .greeting-text-wrapper {
+    overflow: hidden; // For controlling fade-in/out without affecting sibling elements
+    height: 1.5em; // Ensure consistent height during transitions
   }
-  
+
+  .greeting-text {
+    font-size: 1.25rem; // base: 'xl', md: '2xl'
+    font-weight: bold;
+    color: white; // greetingColor
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    display: block; // Needed for transform animations
+
+    // Animation for text fade in/out
+    animation: fade-in-out 3s forwards;
+  }
+
+  @keyframes fade-in-out {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+  }
+}
+
+
+// Features Section
+.features-section {
+  padding: 80px 0; // py={20}
+  position: relative;
+  z-index: 2;
+
+  .feature-slider-container {
+    width: 100%;
+    overflow: hidden;
+    // Add hover to pause animation
+    &:hover .feature-slider {
+      animation-play-state: paused;
+    }
+  }
+
+  .feature-slider {
+    display: flex;
+    width: 200%; // To allow for duplicate content for seamless loop
+    position: relative;
+    animation: slide 30s linear infinite;
+  }
+
+  @keyframes slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); // base: 1, md: 3 (approx)
+    gap: 40px; // spacing={10}
+    width: 100%;
+    flex-shrink: 0; // Prevent shrinking when inside flex container
+  }
+
   .feature-card {
-    width: 250px;
-    min-width: 250px;
-    max-width: 250px;
-    padding: 1.5rem;
+    padding: 32px; // p={8}
+    background: rgba(0, 0, 0, 0.7); // containerBg
+    border-radius: 9999px; // borderRadius="full"
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); // boxShadow="md"
+    border: 1px solid rgba(255, 255, 255, 0.2); // borderColor
+    text-align: center;
+    transition: all 0.3s ease; // transition={{ duration: 0.3 }}
+
+    &:hover {
+      transform: scale(1.05); // hover scale
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow="lg"
+      // Rotate for hover (from framer-motion variants)
+      // Note: Replicating precise framer-motion rotate might need JS, but a subtle rotate can be done with CSS
+      transform: scale(1.05) rotate(2deg);
+    }
   }
-  
-  .feature-cards {
-    gap: 1rem;
-    padding: 0 0.25rem;
+
+  .feature-icon {
+    width: 48px; // w={12}
+    height: 48px; // h={12}
+    color: #3182ce; // blue.500
+    margin-bottom: 16px; // mb={4}
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      color: #2b6cb0; // blue.600
+    }
+  }
+
+  .feature-title {
+    font-size: 1.25rem; // size="md"
+    color: white; // headingColor
+    margin-bottom: 16px; // mb={4}
+    transition: all 0.3s ease;
+  }
+
+  .feature-description {
+    color: white; // textColor
+    transition: all 0.3s ease;
+  }
+}
+
+
+// Meet the Developers Section
+.developers-section {
+  padding: 80px 16px; // py={20}, px={4}
+  position: relative;
+  z-index: 3;
+
+  .developers-heading {
+    font-size: 2.25rem; // size="xl"
+    text-align: center;
+    margin-bottom: 40px; // mb={10}
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+
+  .developers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // base: 1, sm: 2, md: 3, lg: 5 (approx)
+    gap: 32px; // spacing={8}
+  }
+
+  .developer-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; // spacing={3}
+    padding: 16px; // p={4}
+    border-radius: 8px; // borderRadius="lg"
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow="lg"
+    border: 1px solid rgba(255,255,255,0.15); // borderWidth="1px" borderColor
+    text-align: center;
+    width: 100%;
+    background: rgba(20,20,20,0.95); // bg
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); // boxShadow="xl"
+    }
+  }
+
+  .developer-image-container {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 8px; // mb={2}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px; // For 3D flip effect
+
+    &:hover {
+      .developer-image, .developer-avatar { // Apply transform to both
+        transform: rotateY(180deg);
+      }
+    }
+  }
+
+  .developer-image, .developer-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 8px;
+    transition: transform 0.6s ease-in-out;
+    // Removed: backface-visibility: hidden; // This was causing the images to disappear
+    position: absolute; // To allow both to exist and flip
+  }
+
+  .developer-avatar {
+    background-color: #3182ce; // A default avatar background
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotateY(0deg); // Initial state
+  }
+
+
+  .developer-name {
+    font-weight: bold;
+    font-size: 1.125rem; // lg
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  }
+
+  .developer-role {
+    font-size: 1rem; // md
+    color: white;
+    font-style: italic;
+    text-decoration: underline;
+  }
+
+  .developer-description {
+    font-size: 0.875rem; // sm
+    color: white;
+    padding: 0 8px; // px={2}
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  }
+}
+
+// Footer
+.main-footer {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 48px 0; // py={12}
+  margin-top: 80px; // mt={20}
+
+  .footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // base: 1, md: 4 (approx)
+    gap: 32px; // spacing={8}
+  }
+
+  .footer-heading {
+    font-size: 1.125rem; // size="md" or "sm" depending on context
+    color: white;
+    margin-bottom: 16px; // spacing={4}
+  }
+
+  .footer-text, .footer-link {
+    color: white;
+    font-size: 0.875rem; // sm
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+    display: block; // For links within ul
+    margin-bottom: 8px; // Add some spacing between list items if needed
+  }
+
+  .footer-link:hover {
+    color: #63b3ed; // blue.400
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-divider {
+    border-color: #4a5568; // gray.700
+    margin: 40px 0; // spacing={10}
+  }
+
+  .copyright-text {
+    color: white;
+    font-size: 0.875rem; // sm
+    text-align: center;
+  }
+}
+
+// Media queries for responsiveness (example, adjust as needed)
+@media (max-width: 768px) {
+  .hero-section .hero-heading, .hero-section .typing-title {
+    font-size: 2.5rem;
+  }
+
+  .features-section .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .developers-section .developers-grid {
+    grid-template-columns: 1fr;
   }
 }
