@@ -32,6 +32,7 @@ build/
 *.iml
 
 # Ignore any other untracked files
+Backend/backend.log
 Backend/__pycache__/
 Backend/.env
 frontend/.env
