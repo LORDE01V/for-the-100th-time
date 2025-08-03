@@ -139,7 +139,6 @@ def logout():
     return create_response("Logged out successfully")
 
 @auth_bp.route('/login', methods=['POST', 'OPTIONS'])
-@cross_origin(origins='http://localhost:3000', supports_credentials=True)
 def login():
     if request.method == 'OPTIONS':
         return create_response("OK", 200)

@@ -3165,3 +3165,144 @@ What do you need?
 2025-08-01 17:53:28,032 - INFO -  * Debugger PIN: 956-095-623
 2025-08-01 17:54:14,149 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\main.py', reloading
 2025-08-01 17:54:14,296 - INFO -  * Restarting with stat
+2025-08-01 18:01:46,695 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-01 18:01:46,696 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-01 18:01:46,698 - INFO -  * Restarting with stat
+2025-08-01 18:01:48,037 - WARNING -  * Debugger is active!
+2025-08-01 18:01:48,041 - INFO -  * Debugger PIN: 956-095-623
+2025-08-03 04:04:58,266 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-03 04:04:58,267 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-03 04:04:58,270 - INFO -  * Restarting with stat
+2025-08-03 04:04:59,657 - WARNING -  * Debugger is active!
+2025-08-03 04:04:59,661 - INFO -  * Debugger PIN: 360-944-959
+2025-08-03 04:07:24,363 - INFO - 127.0.0.1 - - [03/Aug/2025 04:07:24] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-03 04:07:24,625 - WARNING - Registration attempt with missing email, password, or full_name.
+2025-08-03 04:07:24,628 - INFO - 127.0.0.1 - - [03/Aug/2025 04:07:24] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 400 -
+2025-08-03 04:26:08,090 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\main.py', reloading
+2025-08-03 04:26:08,263 - INFO -  * Restarting with stat
+2025-08-03 04:26:10,005 - WARNING -  * Debugger is active!
+2025-08-03 04:26:10,009 - INFO -  * Debugger PIN: 360-944-959
+2025-08-03 04:26:12,146 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\main.py', reloading
+2025-08-03 04:26:12,298 - INFO -  * Restarting with stat
+2025-08-03 04:26:13,909 - WARNING -  * Debugger is active!
+2025-08-03 04:26:13,912 - INFO -  * Debugger PIN: 360-944-959
+2025-08-03 09:55:08,283 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-03 09:55:08,283 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-03 09:55:08,285 - INFO -  * Restarting with stat
+2025-08-03 09:55:09,710 - WARNING -  * Debugger is active!
+2025-08-03 09:55:09,713 - INFO -  * Debugger PIN: 956-095-623
+2025-08-03 09:56:24,861 - INFO - 127.0.0.1 - - [03/Aug/2025 09:56:24] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-03 09:56:25,099 - WARNING - Registration attempt with missing email, password, or full_name.
+2025-08-03 09:56:25,101 - INFO - 127.0.0.1 - - [03/Aug/2025 09:56:25] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 400 -
+2025-08-03 09:59:09,818 - INFO - 127.0.0.1 - - [03/Aug/2025 09:59:09] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-03 09:59:10,569 - INFO - User nathiradebe20@gmail.com registered successfully with ID: 16
+2025-08-03 09:59:10,573 - INFO - 127.0.0.1 - - [03/Aug/2025 09:59:10] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-03 10:00:33,599 - INFO - 127.0.0.1 - - [03/Aug/2025 10:00:33] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-03 10:00:33,936 - WARNING - Registration attempt for existing email: nathiradebe20@gmail.com
+2025-08-03 10:00:33,937 - INFO - 127.0.0.1 - - [03/Aug/2025 10:00:33] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 409 -
+2025-08-03 10:04:49,013 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-03 10:04:49,014 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-03 10:04:49,015 - INFO -  * Restarting with stat
+2025-08-03 10:04:50,451 - WARNING -  * Debugger is active!
+2025-08-03 10:04:50,454 - INFO -  * Debugger PIN: 956-095-623
+2025-08-03 10:05:51,992 - INFO - 127.0.0.1 - - [03/Aug/2025 10:05:51] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-03 10:05:52,733 - INFO - User amahle@gmail.com registered successfully with ID: 17
+2025-08-03 10:05:52,734 - INFO - 127.0.0.1 - - [03/Aug/2025 10:05:52] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-03 10:06:34,019 - INFO - 127.0.0.1 - - [03/Aug/2025 10:06:34] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:07:33,525 - INFO - 127.0.0.1 - - [03/Aug/2025 10:07:33] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:18:15,753 - INFO - 127.0.0.1 - - [03/Aug/2025 10:18:15] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:18:30,470 - INFO - 127.0.0.1 - - [03/Aug/2025 10:18:30] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:18:41,737 - INFO - 127.0.0.1 - - [03/Aug/2025 10:18:41] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:20:33,760 - INFO - 127.0.0.1 - - [03/Aug/2025 10:20:33] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:21:21,228 - INFO - 127.0.0.1 - - [03/Aug/2025 10:21:21] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-03 10:21:21,896 - INFO - User amahlez@gmail.com registered successfully with ID: 18
+2025-08-03 10:21:21,897 - INFO - 127.0.0.1 - - [03/Aug/2025 10:21:21] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-03 10:21:38,730 - INFO - 127.0.0.1 - - [03/Aug/2025 10:21:38] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:21:46,019 - INFO - 127.0.0.1 - - [03/Aug/2025 10:21:46] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:21:55,701 - INFO - 127.0.0.1 - - [03/Aug/2025 10:21:55] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:28:26,009 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-03 10:28:26,010 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-03 10:28:26,011 - INFO -  * Restarting with stat
+2025-08-03 10:28:27,467 - WARNING -  * Debugger is active!
+2025-08-03 10:28:27,472 - INFO -  * Debugger PIN: 956-095-623
+2025-08-03 10:29:12,930 - INFO - 127.0.0.1 - - [03/Aug/2025 10:29:12] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-03 10:29:13,682 - INFO - User amahlezi@gmail.com registered successfully with ID: 19
+2025-08-03 10:29:13,683 - INFO - 127.0.0.1 - - [03/Aug/2025 10:29:13] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-03 10:29:18,124 - INFO - 127.0.0.1 - - [03/Aug/2025 10:29:18] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:29:22,981 - INFO - 127.0.0.1 - - [03/Aug/2025 10:29:22] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:29:31,004 - INFO - 127.0.0.1 - - [03/Aug/2025 10:29:31] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 10:58:51,339 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-08-03 10:58:51,512 - INFO -  * Restarting with stat
+2025-08-03 10:58:53,259 - WARNING -  * Debugger is active!
+2025-08-03 10:58:53,265 - INFO -  * Debugger PIN: 956-095-623
+2025-08-03 10:59:01,008 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-08-03 10:59:01,177 - INFO -  * Restarting with stat
+2025-08-03 10:59:02,894 - WARNING -  * Debugger is active!
+2025-08-03 10:59:02,899 - INFO -  * Debugger PIN: 956-095-623
+2025-08-03 11:00:10,348 - INFO -  * Detected change in 'C:\\Users\\Nkosinathi Radebe\\Documents\\apps\\angular-gridx\\for-the-100th-time\\Backend\\app\\routes\\auth.py', reloading
+2025-08-03 11:00:10,507 - INFO -  * Restarting with stat
+2025-08-03 11:00:12,068 - WARNING -  * Debugger is active!
+2025-08-03 11:00:12,073 - INFO -  * Debugger PIN: 956-095-623
+2025-08-03 11:00:59,212 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-03 11:00:59,212 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-03 11:00:59,214 - INFO -  * Restarting with stat
+2025-08-03 11:01:00,708 - WARNING -  * Debugger is active!
+2025-08-03 11:01:00,712 - INFO -  * Debugger PIN: 956-095-623
+2025-08-03 11:09:10,282 - INFO - 127.0.0.1 - - [03/Aug/2025 11:09:10] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-03 11:09:10,868 - INFO - User amahlezip@gmail.com registered successfully with ID: 20
+2025-08-03 11:09:10,870 - INFO - 127.0.0.1 - - [03/Aug/2025 11:09:10] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-03 11:09:13,595 - INFO - 127.0.0.1 - - [03/Aug/2025 11:09:13] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 11:09:14,202 - INFO - 127.0.0.1 - - [03/Aug/2025 11:09:14] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 11:15:42,921 - INFO - 127.0.0.1 - - [03/Aug/2025 11:15:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 11:15:43,398 - INFO - 127.0.0.1 - - [03/Aug/2025 11:15:43] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 11:16:44,443 - INFO - 127.0.0.1 - - [03/Aug/2025 11:16:44] "OPTIONS /profile/me HTTP/1.1" 200 -
+2025-08-03 11:16:44,737 - INFO - 127.0.0.1 - - [03/Aug/2025 11:16:44] "GET /profile/me HTTP/1.1" 200 -
+2025-08-03 11:16:51,521 - INFO - 127.0.0.1 - - [03/Aug/2025 11:16:51] "OPTIONS /profile/me HTTP/1.1" 200 -
+2025-08-03 11:16:51,873 - INFO - 127.0.0.1 - - [03/Aug/2025 11:16:51] "GET /profile/me HTTP/1.1" 200 -
+2025-08-03 11:16:56,572 - INFO - 127.0.0.1 - - [03/Aug/2025 11:16:56] "OPTIONS /profile/me HTTP/1.1" 200 -
+2025-08-03 11:16:56,946 - INFO - 127.0.0.1 - - [03/Aug/2025 11:16:56] "GET /profile/me HTTP/1.1" 200 -
+2025-08-03 11:20:00,805 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:00] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-03 11:20:17,604 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:17] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 11:20:18,215 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:18] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 11:20:18,222 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:18] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-08-03 11:20:18,279 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:18] "[33mGET /api/auth/user HTTP/1.1[0m" 404 -
+2025-08-03 11:20:32,207 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:32] "OPTIONS /api/user/balance HTTP/1.1" 200 -
+2025-08-03 11:20:32,208 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:32] "OPTIONS /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:32,209 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:32] "OPTIONS /api/user/balance HTTP/1.1" 200 -
+2025-08-03 11:20:32,211 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:32] "OPTIONS /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:32,580 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:32] "GET /api/user/balance HTTP/1.1" 200 -
+2025-08-03 11:20:32,587 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:32] "GET /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:32,836 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:32] "GET /api/user/balance HTTP/1.1" 200 -
+2025-08-03 11:20:32,962 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:32] "GET /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:34,491 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:34] "GET /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:35,065 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:35] "GET /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:35,337 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:35] "GET /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:36,173 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:36] "OPTIONS /api/user/topup HTTP/1.1" 200 -
+2025-08-03 11:20:36,221 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:36] "GET /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:37,319 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:37] "POST /api/user/topup HTTP/1.1" 200 -
+2025-08-03 11:20:37,655 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:37] "OPTIONS /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:38,030 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:38] "GET /api/user/auto-topup-settings?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:40,504 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:40] "OPTIONS /api/user/latest-topup?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:40,577 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:40] "GET /api/user/latest-topup?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:40,819 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:40] "OPTIONS /api/user/expenses?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:41,225 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:41] "GET /api/user/expenses?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:48,003 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:48] "OPTIONS /api/user/notifications?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:20:48,108 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:48] "GET /api/user/notifications?user_id=15 HTTP/1.1" 200 -

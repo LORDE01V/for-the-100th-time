@@ -12,6 +12,7 @@ node_modules/
 Thumbs.db
 
 # Ignore log files
+backend.log
 *.log
 
 # Ignore temporary files

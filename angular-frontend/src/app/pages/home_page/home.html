@@ -1,33 +1,75 @@
+<!-- home.html -->
+<!-- Required for Material Icons and Google Font -->
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
 <div class="home-container">
-    <div class="header">
-      <h1>Welcome, {{ user.name }} 👋</h1>
+
+  <!-- Welcome and Date Header -->
+  <div class="header-section">
+    <div class="welcome-text-container">
+      <h1 class="welcome-heading">Welcome, {{ user.name }} 👋</h1>
       <div *ngIf="isLoadingGreeting" class="greeting-loading">Crafting your energy insights...</div>
       <div *ngIf="!isLoadingGreeting && aiGreeting" class="greeting">{{ aiGreeting }}</div>
     </div>
-  
-    <div class="date">
-      {{ (date | date:'fullDate') || (today | date:'fullDate') }}
-    </div>
-  
-    <div class="nav-cards">
-      <div class="nav-card" *ngFor="let item of navItems" [ngClass]="item.color">
-        <span class="material-icons nav-icon">{{ item.icon }}</span>
-        <h2>{{ item.title }}</h2>
-        <p>{{ item.description }}</p>
-        <a [routerLink]="item.path" class="nav-btn">Go to {{ item.title }}</a>
-      </div>
-    </div>
-  
-    <div class="newsletter-section">
-      <h2>Subscribe to Energy Updates</h2>
-      <p>Get the latest energy-saving tips and offers straight to your inbox.</p>
-      <form (ngSubmit)="subscribeNewsletter()" class="newsletter-form">
-        <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required />
-        <button type="submit">Subscribe</button>
-      </form>
-    </div>
-  
-    <div class="logout-section">
-      <button (click)="handleLogout()">Logout</button>
+    <div class="date-section">
+      {{ date | date:'longDate' }}
     </div>
   </div>
+
+  <!-- Dashboard Overview Cards -->
+  <div class="dashboard-overview-grid">
+    <div class="overview-card total-power">
+      <h3>Total Power Usage</h3>
+      <p class="card-value"><span>1500</span> kWh</p>
+      <div class="progress-bar-container">
+        <div class="progress-bar" [style.width]="'75%'"></div>
+      </div>
+      <p class="card-insight">75% of your average usage.</p>
+    </div>
+    <div class="overview-card savings">
+      <h3>Estimated Savings</h3>
+      <p class="card-value">R <span>250.00</span></p>
+      <p class="card-insight">Through GridX optimizations.</p>
+    </div>
+    <div class="overview-card carbon-footprint">
+      <h3>Carbon Footprint</h3>
+      <p class="card-value"><span>50</span> kg CO2 reduced</p>
+      <p class="card-insight">Equivalent to planting 3 trees.</p>
+    </div>
+  </div>
+
+  <!-- Navigation Cards -->
+  <div class="nav-cards-grid">
+    <a *ngFor="let item of navItems" [routerLink]="item.path" class="nav-card-link">
+      <div class="nav-card" [ngClass]="item.color">
+        <span class="material-icons nav-icon">{{ item.icon }}</span>
+        <div class="card-content">
+          <h2 class="card-title">{{ item.title }}</h2>
+          <p class="card-description">{{ item.description }}</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Newsletter Section -->
+  <div class="newsletter-section">
+    <h2>Stay Updated</h2>
+    <p class="newsletter-text">Get the latest energy-saving tips and offers straight to your inbox.</p>
+    <form (ngSubmit)="subscribeNewsletter()" class="newsletter-form">
+      <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required />
+      <button type="submit" class="subscribe-btn">Subscribe</button>
+    </form>
+  </div>
+
+  <!-- Logout Button -->
+  <div class="logout-section">
+    <button (click)="handleLogout()" class="logout-btn">
+      <span class="material-icons">logout</span>
+      Logout
+    </button>
+  </div>
+
+</div>

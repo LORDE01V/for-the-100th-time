@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router'; // Import Router
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class Login {
   passwordStrengthMessage: string = ''; // Re-add password strength properties
   passwordStrengthScore: number = 0;   // Re-add password strength properties
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) { // Inject Router
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private apiService: ApiService) { // Inject Router and ApiService
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]] // Re-add minLength validator
@@ -75,9 +76,9 @@ export class Login {
     }
     this.loading = true;
     const { email, password } = this.loginForm.value;
-    this.http.post('/api/auth/login', { email, password }).subscribe({
+    this.apiService.login(email, password).subscribe({ // Use apiService.login()
       next: () => {
-        alert('Login successful! Redirecting to home page.'); // Replace with toast if available
+        // alert('Login successful! Redirecting to home page.'); // Removed alert
         this.router.navigate(['/home']); // Navigate to home page
         this.loading = false;
       },

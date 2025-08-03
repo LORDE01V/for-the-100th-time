@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../services/api.service'; // Import ApiService
+import { Router } from '@angular/router';
 
 interface RegisterErrors {
   name?: string;
@@ -32,7 +33,7 @@ export class RegisterPage {
   successMessage = '';
   errorMessage = '';
 
-  constructor(private apiService: ApiService) {} // Inject ApiService
+  constructor(private apiService: ApiService, private router: Router) {} // Inject ApiService and Router
 
   validateForm(): boolean {
     const newErrors: RegisterErrors = {};
@@ -94,7 +95,7 @@ export class RegisterPage {
     this.loading = true;
     try {
       const userData = {
-        name: this.name,
+        full_name: this.name,
         email: this.email,
         password: this.password,
         phone: this.phone
@@ -103,8 +104,7 @@ export class RegisterPage {
       const response = await this.apiService.register(userData).toPromise();
       if (response.success) {
         this.successMessage = 'Registration Successful! You can now log in.';
-        // Optionally, redirect to login page here
-        // this.goToLogin();
+        this.router.navigate(['/login']);
       } else {
         this.errorMessage = response.message || 'Registration failed. Please try again.';
       }
@@ -123,7 +123,6 @@ export class RegisterPage {
   }
 
   goToLogin() {
-    // Replace with Angular router navigation if available
-    window.location.href = '/login';
+    this.router.navigate(['/login']);
   }
 }
