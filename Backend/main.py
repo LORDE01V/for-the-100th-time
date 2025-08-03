@@ -435,10 +435,10 @@ def direct_register():
         return jsonify({'message': 'Registration failed'}), 500
 
 
- @flask_app.route('/api/test', methods=['GET'])
+@flask_app.route('/api/test', methods=['GET'])
 def test_flask():
     return jsonify({"message": "Flask is working!"}), 200
-           
+
 app.mount("/api", WSGIMiddleware(flask_app))
 
 
