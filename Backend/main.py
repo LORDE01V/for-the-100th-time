@@ -82,7 +82,7 @@ flask_app.config['JWT_HEADER_TYPE'] = 'Bearer'
 # Initialize CORS properly in one place
 CORS(flask_app, 
      resources={r"/api/*": {
-         "origins": ["http://localhost:3000", "https://backened-h577.onrender.com", "http://127.0.0.1:3000", "https://frontend-d8o0.onrender.com"],
+         "origins": ["http://localhost:3000", "http://127.0.0.1:3000", "https://frontend-d8o0.onrender.com"],
          "supports_credentials": True,
          "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin","X-Requested-With"],
          #"expose_headers": ["Authorization"],
@@ -93,7 +93,7 @@ jwt = JWTManager(flask_app)
 
 # Register blueprints
 flask_app.register_blueprint(home_bp)
-flask_app.register_blueprint(auth_bp, name='auth_blueprint', url_prefix='/api/auth')
+#flask_app.register_blueprint(auth_bp, name='auth_blueprint', url_prefix='/auth')
 flask_app.register_blueprint(support_bp)
 flask_app.register_blueprint(community_stories_bp)
 flask_app.register_blueprint(profile_bp)
@@ -375,7 +375,73 @@ async def root(response: Response = None):
         "status": "healthy",
         "version": "1.0.0"
     }
+
+# Temporary direct route for testing
+@flask_app.route('/api/auth/register', methods=['POST', 'OPTIONS'])
+def direct_register():
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers['Access-Control-Allow-Origin'] = 'https://frontend-d8o0.onrender.com'
+        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response
+    
+    try:
+        data = request.get_json()
+        email = data.get('email', '').lower()
+        password = data.get('password')
+        full_name = data.get('full_name')
+        phone_number = data.get('phone')
+
+        if not email or not password or not full_name:
+            return jsonify({'message': 'Email, password, and full name are required'}), 400
+
+        # Check if user exists
+        conn = get_db()
+        if not conn:
+            return jsonify({'message': 'Database connection error'}), 500
+
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+            if cur.fetchone():
+                return jsonify({'message': 'User with that email already exists'}), 409
+
+            # Create user
+            hashed_password = generate_password_hash(password)
+            cur.execute(
+                """INSERT INTO users (email, password_hash, full_name, phone)
+                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+                (email, hashed_password, full_name, phone_number)
+            )
+            user_data = cur.fetchone()
+            conn.commit()
+
+        if user_data:
+            access_token = create_access_token(identity=str(user_data[0]))
+            return jsonify({
+                "success": True,
+                "message": "User registered successfully",
+                "user_id": user_data[0],
+                "email": user_data[1],
+                "full_name": user_data[2],
+                "access_token": access_token
+            }), 201
+        else:
+            return jsonify({'message': 'User registration failed'}), 500
+
+    except Exception as e:
+        print(f"Registration error: {str(e)}")
+        return jsonify({'message': 'Registration failed'}), 500
+
+
+ @flask_app.route('/api/test', methods=['GET'])
+def test_flask():
+    return jsonify({"message": "Flask is working!"}), 200
+           
 app.mount("/api", WSGIMiddleware(flask_app))
+
+
 
 
 # JWT (compatible with Flask's tokens)

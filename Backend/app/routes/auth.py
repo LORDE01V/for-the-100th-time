@@ -12,7 +12,7 @@ from flask import jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import make_response
 
-auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
+auth_bp = Blueprint('auth', __name__, url_prefix="/auth")
 #CORS(auth_bp, origins=["*"], supports_credentials=True)  # Remove strict CORS here
 
 # Configure logging
@@ -139,7 +139,7 @@ def logout():
     return create_response("Logged out successfully")
 
 @auth_bp.route('/login', methods=['POST', 'OPTIONS'])
-@cross_origin(origins=['http://localhost:3000', 'https://frontend-d8o0.onrender.com','https://frontend-7td4.onrender.com'], supports_credentials=True)
+@cross_origin(origins=['http://localhost:3000', 'https://frontend-d8o0.onrender.com'], supports_credentials=True)
 def login():
     if request.method == 'OPTIONS':
         return create_response("OK", 200)
