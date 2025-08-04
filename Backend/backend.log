@@ -3306,3 +3306,91 @@ What do you need?
 2025-08-03 11:20:41,225 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:41] "GET /api/user/expenses?user_id=15 HTTP/1.1" 200 -
 2025-08-03 11:20:48,003 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:48] "OPTIONS /api/user/notifications?user_id=15 HTTP/1.1" 200 -
 2025-08-03 11:20:48,108 - INFO - 127.0.0.1 - - [03/Aug/2025 11:20:48] "GET /api/user/notifications?user_id=15 HTTP/1.1" 200 -
+2025-08-03 11:41:45,573 - INFO - 127.0.0.1 - - [03/Aug/2025 11:41:45] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 11:41:46,153 - INFO - 127.0.0.1 - - [03/Aug/2025 11:41:46] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 11:47:10,371 - INFO - 127.0.0.1 - - [03/Aug/2025 11:47:10] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 11:47:10,860 - INFO - 127.0.0.1 - - [03/Aug/2025 11:47:10] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:01:15,292 - INFO - 127.0.0.1 - - [03/Aug/2025 12:01:15] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-03 12:01:16,105 - INFO - User nathiradebe71@gmail.com registered successfully with ID: 21
+2025-08-03 12:01:16,106 - INFO - 127.0.0.1 - - [03/Aug/2025 12:01:16] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-03 12:01:20,019 - INFO - 127.0.0.1 - - [03/Aug/2025 12:01:20] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:01:20,805 - INFO - 127.0.0.1 - - [03/Aug/2025 12:01:20] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:15:43,437 - INFO - 127.0.0.1 - - [03/Aug/2025 12:15:43] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:15:43,990 - INFO - 127.0.0.1 - - [03/Aug/2025 12:15:43] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:22:51,052 - INFO - 127.0.0.1 - - [03/Aug/2025 12:22:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:22:51,705 - INFO - 127.0.0.1 - - [03/Aug/2025 12:22:51] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:25:05,652 - INFO - 127.0.0.1 - - [03/Aug/2025 12:25:05] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:25:06,090 - INFO - 127.0.0.1 - - [03/Aug/2025 12:25:06] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:35:29,143 - INFO - 127.0.0.1 - - [03/Aug/2025 12:35:29] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:35:29,645 - INFO - 127.0.0.1 - - [03/Aug/2025 12:35:29] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-03 12:42:06,332 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-03 12:42:06,333 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-03 12:42:06,335 - INFO -  * Restarting with stat
+2025-08-03 12:42:08,199 - WARNING -  * Debugger is active!
+2025-08-03 12:42:08,204 - INFO -  * Debugger PIN: 360-944-959
+2025-08-03 12:42:54,887 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-03 12:42:54,887 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-03 12:42:54,889 - INFO -  * Restarting with stat
+2025-08-03 12:42:56,643 - WARNING -  * Debugger is active!
+2025-08-03 12:42:56,648 - INFO -  * Debugger PIN: 360-944-959
+2025-08-03 12:44:03,333 - INFO - 127.0.0.1 - - [03/Aug/2025 12:44:03] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-04 02:00:30,369 - INFO - 127.0.0.1 - - [04/Aug/2025 02:00:30] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-04 02:00:30,901 - INFO - User amahlezip1@gmail.com registered successfully with ID: 22
+2025-08-04 02:00:30,904 - INFO - 127.0.0.1 - - [04/Aug/2025 02:00:30] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-04 02:00:34,301 - INFO - 127.0.0.1 - - [04/Aug/2025 02:00:34] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-04 02:00:34,918 - INFO - 127.0.0.1 - - [04/Aug/2025 02:00:34] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-04 02:24:25,815 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-04 02:24:25,816 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-04 02:24:25,818 - INFO -  * Restarting with stat
+2025-08-04 02:24:27,337 - WARNING -  * Debugger is active!
+2025-08-04 02:24:27,341 - INFO -  * Debugger PIN: 360-944-959
+2025-08-04 02:27:09,469 - INFO - 192.168.18.3 - - [04/Aug/2025 02:27:09] "[31m[1mGET / HTTP/1.1[0m" 401 -
+2025-08-04 02:27:09,639 - INFO - 192.168.18.3 - - [04/Aug/2025 02:27:09] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-04 02:27:32,038 - INFO - 192.168.18.3 - - [04/Aug/2025 02:27:32] "[31m[1mGET / HTTP/1.1[0m" 401 -
+2025-08-04 02:37:04,355 - INFO - 127.0.0.1 - - [04/Aug/2025 02:37:04] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-04 02:37:04,914 - INFO - 127.0.0.1 - - [04/Aug/2025 02:37:04] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-04 02:40:14,842 - INFO - 127.0.0.1 - - [04/Aug/2025 02:40:14] "OPTIONS /profile/me HTTP/1.1" 200 -
+2025-08-04 02:40:15,156 - INFO - 127.0.0.1 - - [04/Aug/2025 02:40:15] "GET /profile/me HTTP/1.1" 200 -
+2025-08-04 02:40:30,279 - INFO - 127.0.0.1 - - [04/Aug/2025 02:40:30] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-04 02:40:30,761 - INFO - 127.0.0.1 - - [04/Aug/2025 02:40:30] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-04 02:40:35,814 - INFO - 127.0.0.1 - - [04/Aug/2025 02:40:35] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-04 02:40:36,402 - INFO - 127.0.0.1 - - [04/Aug/2025 02:40:36] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-04 03:02:53,044 - INFO - 127.0.0.1 - - [04/Aug/2025 03:02:53] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-04 03:02:53,592 - INFO - 127.0.0.1 - - [04/Aug/2025 03:02:53] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-04 03:02:55,613 - INFO - 127.0.0.1 - - [04/Aug/2025 03:02:55] "OPTIONS /profile/me HTTP/1.1" 200 -
+2025-08-04 03:02:55,983 - INFO - 127.0.0.1 - - [04/Aug/2025 03:02:55] "GET /profile/me HTTP/1.1" 200 -
+2025-08-04 04:01:08,018 - INFO - 127.0.0.1 - - [04/Aug/2025 04:01:08] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-04 04:01:08,821 - INFO - 127.0.0.1 - - [04/Aug/2025 04:01:08] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-04 05:31:52,530 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-04 05:31:52,531 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-04 05:31:52,535 - INFO -  * Restarting with stat
+2025-08-04 05:31:55,903 - WARNING -  * Debugger is active!
+2025-08-04 05:31:55,912 - INFO -  * Debugger PIN: 360-944-959
+2025-08-04 05:33:03,296 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-04 05:33:03,298 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-04 05:33:03,301 - INFO -  * Restarting with stat
+2025-08-04 05:33:06,667 - WARNING -  * Debugger is active!
+2025-08-04 05:33:06,679 - INFO -  * Debugger PIN: 360-944-959
+2025-08-04 05:36:25,722 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-04 05:36:25,723 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-04 05:36:25,727 - INFO -  * Restarting with stat
+2025-08-04 05:36:28,869 - WARNING -  * Debugger is active!
+2025-08-04 05:36:28,878 - INFO -  * Debugger PIN: 360-944-959

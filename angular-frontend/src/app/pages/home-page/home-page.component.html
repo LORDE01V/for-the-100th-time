@@ -1,0 +1,66 @@
+<!-- Background Video -->
+<div class="background-video-container">
+  <video autoplay muted loop playsinline class="background-video">
+    <source src="/assets/videos/Slowed-GridX-Video.mp4" type="video/mp4" />
+  </video>
+  <div class="video-overlay"></div>
+</div>
+
+<div class="content-container">
+  <div class="header-section">
+    <div class="welcome-section">
+      <h1>Welcome, {{ user?.name }} 👋</h1>
+      <ng-container *ngIf="isLoadingGreeting">
+        <div class="loading-greeting">
+          <span class="spinner"></span>
+          <p>Crafting your energy insights...</p>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="aiGreeting && !isLoadingGreeting">
+        <p class="ai-greeting">{{ aiGreeting }}</p>
+      </ng-container>
+      <ng-container *ngIf="greetingError">
+        <p class="error-greeting">{{ solarTips[currentTipIndex] }}</p>
+      </ng-container>
+    </div>
+    <div class="date-section">
+      <p>{{ getCurrentDate() }}</p>
+    </div>
+  </div>
+
+  <!-- Navigation Cards -->
+  <div class="navigation-cards">
+    <div *ngFor="let item of navItems" class="nav-card">
+      <a (click)="navigateTo(item.path)">
+        <fa-icon [icon]="item.icon" [ngStyle]="getIconColorStyle(item.colorScheme)" size="2x"></fa-icon>
+        <h2>{{ item.title }}</h2>
+        <p>{{ item.description }}</p>
+        <button class="nav-button" [attr.color-scheme]="item.colorScheme">Go to {{ item.title }}</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- Newsletter Section -->
+  <div class="newsletter-section">
+    <h2>Subscribe to Energy Updates</h2>
+    <p>Get the latest energy-saving tips and offers straight to your inbox.</p>
+    <div class="newsletter-input-group">
+      <input type="email" placeholder="Enter your email" [(ngModel)]="email" />
+      <button (click)="handleNewsletterSubscribe()">Subscribe</button>
+    </div>
+    <button class="push-notifications-button" (click)="enablePushNotifications()">
+      Enable Push Notifications
+    </button>
+  </div>
+
+  <!-- Logout Button -->
+  <div class="logout-section">
+    <button class="logout-button" (click)="handleLogout()">
+      <fa-icon [icon]="faSignOutAlt"></fa-icon> Logout
+    </button>
+  </div>
+
+  <div class="footer-section">
+    <!-- Assuming a separate footer component or direct content -->
+  </div>
+</div>

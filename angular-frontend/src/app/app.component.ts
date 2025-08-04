@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NavigationService } from './services/navigation.service'; // Import the new service
 
 @Component({
   selector: 'app-root',
@@ -19,4 +20,8 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'GridX Solar Management';
+
+  constructor(private navigationService: NavigationService) { // Inject the service
+    // The service's constructor already handles the subscription
+  }
 }

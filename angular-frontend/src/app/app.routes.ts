@@ -12,8 +12,8 @@ export const routes: Routes = [
 
   // Protected Routes
   { 
-    path: 'home', 
-    loadComponent: () => import('./pages/home_page/home').then(m => m.Home),
+    path: 'home',
+    loadComponent: () => import('./pages/home-page/home-page.component').then(m => m.HomePageComponent),
     canActivate: [authGuard]
   },
   { 
@@ -54,6 +54,11 @@ export const routes: Routes = [
   { 
     path: 'forum', 
     loadComponent: () => import('./pages/forum_page/forum').then(m => m.Forum),
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'loadshedding',
+    loadComponent: () => import('./pages/loadshedding_page/loadshedding-page').then(m => m.LoadsheddingPage),
     canActivate: [authGuard]
   },
   { 
