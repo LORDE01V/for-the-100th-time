@@ -93,10 +93,8 @@ jwt = JWTManager(flask_app)
 
 # Register blueprints
 flask_app.register_blueprint(home_bp)
-flask_app.register_blueprint(auth_bp, url_prefix='/api/auth')
 flask_app.register_blueprint(support_bp)
 flask_app.register_blueprint(community_stories_bp)
-flask_app.register_blueprint(profile_bp)
 flask_app.register_blueprint(notifications_bp, url_prefix='/notifications')
 flask_app.register_blueprint(events_calendar_bp)
 flask_app.register_blueprint(topup_bp, url_prefix='/api')
