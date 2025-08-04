@@ -97,7 +97,12 @@ export const auth = {
 
     register: async (userData) => {
         try {
+            console.log('Attempting to register with data:', userData); // Debug log
+            console.log('Making request to:', `${API_URL}/api/auth/register`)
+
             const response = await api.post('/api/auth/register', userData);
+            console.log('Registration response:', response.data); // Debug log
+            
             if (response.data.success) {
                 if (response.data.access_token) {
                     localStorage.setItem('token', response.data.access_token);
@@ -115,6 +120,13 @@ export const auth = {
             }
             return response.data;
         } catch (error) {
+            console.error('Registration error details:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+                statusText: error.response?.statusText,
+                config: error.config
+            }); // Debug log
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }

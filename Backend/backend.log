@@ -15037,3 +15037,45 @@ LINE 4:             transaction_type, is_auto_topup, min_balance,
 2025-08-01 14:49:47,960 - INFO -  * Restarting with stat
 2025-08-01 14:50:11,780 - WARNING -  * Debugger is active!
 2025-08-01 14:50:11,788 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 15:04:22,471 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-01 15:04:22,473 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-01 15:04:22,481 - INFO -  * Restarting with stat
+2025-08-01 15:04:48,928 - WARNING -  * Debugger is active!
+2025-08-01 15:04:48,931 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 15:33:40,010 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\main.py', reloading
+2025-08-01 15:33:40,282 - INFO -  * Restarting with stat
+2025-08-01 15:34:00,806 - WARNING -  * Debugger is active!
+2025-08-01 15:34:00,809 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 15:38:46,682 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\app\\__init__.py', reloading
+2025-08-01 15:38:46,968 - INFO -  * Restarting with stat
+2025-08-01 15:43:14,602 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-01 15:43:14,603 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-01 15:43:14,607 - INFO -  * Restarting with stat
+2025-08-01 15:43:34,457 - WARNING -  * Debugger is active!
+2025-08-01 15:43:34,463 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 15:46:18,195 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\main.py', reloading
+2025-08-01 15:46:18,852 - INFO -  * Restarting with stat
+2025-08-01 15:54:42,306 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-01 15:54:42,307 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-01 15:54:42,311 - INFO -  * Restarting with stat
+2025-08-01 15:55:02,720 - WARNING -  * Debugger is active!
+2025-08-01 15:55:02,725 - INFO -  * Debugger PIN: 739-467-792
+2025-08-01 15:56:46,904 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\main.py', reloading
+2025-08-01 15:56:47,523 - INFO -  * Restarting with stat
+2025-08-04 12:24:51,123 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-04 12:24:51,125 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-04 12:24:51,129 - INFO -  * Restarting with stat
+2025-08-04 12:25:13,783 - WARNING -  * Debugger is active!
+2025-08-04 12:25:13,813 - INFO -  * Debugger PIN: 739-467-792

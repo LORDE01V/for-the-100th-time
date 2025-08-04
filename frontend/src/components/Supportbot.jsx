@@ -127,7 +127,10 @@ const SupportBot = () => {
 
   const handleSendMessage = async (messageText = null) => {
     const textToSend = messageText || inputMessage.trim();
-    if (!textToSend) return;
+    if (!textToSend) {
+      setMessages(prev => [...prev, { text: "Please enter a message before sending.", sender: 'bot' }]);
+      return;
+    }
 
     // Add user message immediately
     setMessages(prev => [...prev, { text: textToSend, sender: 'user' }]);

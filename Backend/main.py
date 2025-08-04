@@ -86,7 +86,7 @@ CORS(flask_app,
          ],
          "supports_credentials": True,
          "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin","X-Requested-With"],
-         #"expose_headers": ["Authorization"],
+         "expose_headers": ["Authorization"],
          "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
      }}
 )
@@ -108,10 +108,10 @@ flask_app.register_blueprint(group_buying_bp, url_prefix='/api')
 def get_db():
     try:
         conn = psycopg2.connect(
-            host='dpg-d21jtbidbo4c73e8tau0-a.oregon-postgres.render.com',
-            database='nathi_db_ricx',
-            user='nathi_db',
-            password='QNzk4QVE3MgSvkrTTqOhAAddKyRgZiV6',
+            host='dpg-d20ue6umcj7s73e6p9pg-a.oregon-postgres.render.com',
+            database='fintech_solar',
+            user='fintech_solar_user',
+            password='qy0R5lHZJvIyVL6b9Be54BJ51kbrAEDR',
             port='5432',
             sslmode='require' # Ensure SSL is required
         )
@@ -444,7 +444,7 @@ async def fastapi_login(user: UserLogin):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Login failed")
     finally:
         if conn:
-            conn.close()
+                conn.close()
 
 @flask_app.route('/api/forum/topics/<int:topic_id>/replies', methods=['POST'])
 @jwt_required()
@@ -847,9 +847,9 @@ def ai_agent_openrouter():
                 answer = result['choices'][0]['message'].get('content', '').strip()
             if answer:
                 return jsonify({'response': answer}), 200
-            else:
-                return jsonify({'response': 'No answer found from OpenRouter.'}), 200
-        else:
+        # else:
+        #         return jsonify({'response': 'No answer found from OpenRouter.'}), 200
+
             return jsonify({'response': f'OpenRouter error: {resp.status_code} - {resp.text}'}), 500
     except Exception as e:
         return jsonify({'response': f'Error contacting OpenRouter: {str(e)}'}), 500

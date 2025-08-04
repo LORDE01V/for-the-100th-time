@@ -16,22 +16,22 @@ oauth = OAuth()
 def create_app():
     app = Flask(__name__,
                 template_folder='templates')
-    CORS(app, origins=['http://localhost:3000', 'https://frontend-7td4.onrender.com'], supports_credentials=True)        
     
-    # CORS configuration
-    CORS(app, resources={r"/*": {
-        "origins": [
-            "http://localhost:3000",
-            "http://localhost:5000",
-            "http://127.0.0.1:3000",
-            "https://frontend-sabs.onrender.com"
-        ],
-        "supports_credentials": True,
-        "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "expose_headers": ["Authorization"],
-        "max_age": 3600
-    }})
+    CORS(app, 
+         origins=[
+             "http://localhost:3000",
+             "http://localhost:5000", 
+             "http://127.0.0.1:3000",
+             "http://127.0.0.1:5000",
+             "https://frontend-7td4.onrender.com"
+         ],
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With", "User-ID"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         expose_headers=["Authorization"],
+         max_age=3600
+    )
+    
     
     # Configuration
     app.config.update(
