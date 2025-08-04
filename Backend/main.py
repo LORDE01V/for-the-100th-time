@@ -93,7 +93,7 @@ jwt = JWTManager(flask_app)
 
 # Register blueprints
 flask_app.register_blueprint(home_bp)
-#flask_app.register_blueprint(auth_bp, name='auth_blueprint', url_prefix='/auth')
+flask_app.register_blueprint(auth_bp, url_prefix='/api/auth')
 flask_app.register_blueprint(support_bp)
 flask_app.register_blueprint(community_stories_bp)
 flask_app.register_blueprint(profile_bp)
@@ -103,6 +103,7 @@ flask_app.register_blueprint(topup_bp, url_prefix='/api')
 flask_app.register_blueprint(expenses_bp, url_prefix='/api')
 flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
 flask_app.register_blueprint(group_buying_bp, url_prefix='/api')
+flask_app.register_blueprint(profile_bp, url_prefix='/api/user')
 
 
 # Remove the after_request handler entirely to avoid conflicts

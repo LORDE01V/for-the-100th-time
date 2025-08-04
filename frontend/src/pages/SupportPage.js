@@ -32,6 +32,7 @@ import {
 // Import Icons
 import { FaArrowLeft, FaPhone, FaEnvelope, FaExternalLinkAlt } from 'react-icons/fa';
 import supportBackground from '../assets/images/Support_page.png';
+import api from '../services/api'; // Import the API instance
 
 function SupportPage() {
   const navigate = useNavigate();
@@ -99,13 +100,12 @@ const handleContactSubmit = async (e) => {
   e.preventDefault();
   setIsSubmitting(true);
   try {
-    const response = await fetch('https://backend-0igj.onrender.com/api/support', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, subject, message }),
+    const response = await api.post('/api/support/ticket', { // Use api.post
+      name, email, subject, message // Remove JSON.stringify
     });
-    const data = await response.json();
-    if (response.ok) {
+    
+    // Adjusted to check response.data.success based on typical API response
+    if (response.data.success) {
       toast({
         title: 'Message Sent',
         description: 'Your support request has been received. We will contact you shortly.',
@@ -120,7 +120,7 @@ const handleContactSubmit = async (e) => {
     } else {
       toast({
         title: 'Error',
-        description: data.error || 'Failed to send message.',
+        description: response.data.message || 'Failed to send message.', // Access data.message
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -129,7 +129,7 @@ const handleContactSubmit = async (e) => {
   } catch (err) {
     toast({
       title: 'Error',
-      description: 'Failed to send message.',
+      description: err.response?.data?.message || 'Failed to send message.', // Access error response
       status: 'error',
       duration: 5000,
       isClosable: true,
