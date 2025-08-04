@@ -626,7 +626,7 @@ def create_forum_topic():
         if conn: conn.close()
 
 @app.post("/fastapi/auth/login")
-async def fastapi_login(user: UserLogin, topic_id: int):
+async def fastapi_login(user: UserLogin):
     """FastAPI version of /api/auth/login"""
     conn = None
     try:
@@ -648,7 +648,7 @@ async def fastapi_login(user: UserLogin, topic_id: int):
             FROM forum_topics t
             JOIN users u ON t.user_id = u.id
             WHERE t.id = %s
-        ''', (topic_id,))
+        ''', (user.email,)) # Changed user.email to user.email
 
         
         topic = cur.fetchone()
@@ -667,7 +667,7 @@ async def fastapi_login(user: UserLogin, topic_id: int):
             JOIN users u ON r.user_id = u.id
             WHERE r.topic_id = %s
             ORDER BY r.created_at ASC
-        ''', (topic_id,))
+        ''', (topic[0],)) # Changed topic_id to topic[0]
         
         replies = []
         for row in cur.fetchall():

@@ -63,7 +63,7 @@ api.interceptors.response.use(
 export const auth = {
     login: async (email, password) => {
         try {
-            const response = await api.post('/fastapi/auth/login', {
+            const response = await api.post('/api/auth/login', {
                 email: email.toLowerCase().trim(),
                 password
             });
