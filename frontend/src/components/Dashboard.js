@@ -1,9 +1,10 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api';
+import { auth, fetchRecommendationPlan } from '../services/api';
+import { useEffect, useState } from 'react';
 
-// Import Chakra UI Components
+// Chakra UI
 import {
   Box,
   Flex,
@@ -16,18 +17,25 @@ import {
   Icon,
   Badge,
   useColorModeValue,
-  Progress // Added Progress component
+  Progress,
+  Select,
+  FormControl,
+  FormLabel,
 } from '@chakra-ui/react';
 
-// Import Lucide Icons
+// Lucide Icons
 import {
   BatteryCharging,
   Zap,
   FileText,
   CircleDot,
-} from 'lucide-react'; // Make sure these icons are correctly imported
+} from 'lucide-react';
 
-// Helper component to convert Lucide icons to Chakra UI icons
+// Import the Loadshedding widget
+import LoadsheddingStatus from '../components/widgets/LoadsheddingStatus';
+import { DashboardContext } from "../context/DashboardContext";
+
+// Helper to render Lucide as Chakra Icons
 const ChakraIcon = ({ icon, ...props }) => {
   const ChakraComp = icon;
   return <Icon as={ChakraComp} {...props} />;
@@ -36,6 +44,26 @@ const ChakraIcon = ({ icon, ...props }) => {
 function DashboardPage() { // Renamed component to DashboardPage
     const navigate = useNavigate();
     const user = auth.getCurrentUser(); // Get user data
+
+    const [recommendationPlan, setRecommendationPlan] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadRecommendationPlan = async () => {
+            try {
+                const data = await fetchRecommendationPlan();
+                if (data.success) {
+                    setRecommendationPlan(data.plan);
+                } else {
+                    setError(data.message || 'No recommendation plan available');
+                }
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        loadRecommendationPlan();
+    }, []);
 
     // Placeholder data - replace with actual data fetching if needed
     const dashboardData = {
@@ -50,19 +78,44 @@ function DashboardPage() { // Renamed component to DashboardPage
         }
     };
 
-    const headingColor = "#333"; // or whatever color you want
+  const handleLogout = () => {
+    auth.logout();
+    navigate('/login');
+  };
 
-    const handleLogout = () => {
-        auth.logout();
-        navigate('/login');
+    const handleBackClick = () => {
+        navigate('/'); // Redirects to the homepage
     };
 
-     const cardBg = useColorModeValue('white', 'gray.700'); // Card background based on color mode
-     const textColor = useColorModeValue('gray.700', 'gray.200'); // Text color
-     const bgColor = useColorModeValue('gray.50', 'gray.800'); // Overall background color
+    const handleIconClick = () => {
+        navigate('/settings'); // Example: Navigate to settings page
+    };
+
+    const cardBg = useColorModeValue('white', 'gray.700'); // Card background based on color mode
+    const textColor = useColorModeValue('gray.700', 'gray.200'); // Text color
+    const bgColor = useColorModeValue('gray.50', 'gray.800'); // Overall background color
 
     return (
-        <Box maxW="1200px" mx="auto" p={[4, 6, 8]} minH="100vh" bg={bgColor}> {/* Centered container */}
+        <Box maxW="1200px" mx="auto" p={[4, 6, 8]} minH="100vh" bg={bgColor} position="relative"> {/* Centered container */}
+
+            {/* Top-Left Icon */}
+            <Box
+                position="fixed"
+                top="20px"
+                left="20px"
+                zIndex="1000"
+                cursor="pointer"
+                p={3}
+                bg={useColorModeValue('white', 'rgba(0, 0, 0, 0.6)')} // Frosted glass effect
+                backdropFilter="blur(16px)"
+                border="1px solid"
+                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderRadius="full"
+                boxShadow="lg"
+                onClick={handleIconClick}
+            >
+                <Icon as={BatteryCharging} boxSize={6} color="blue.500" />
+            </Box>
 
             {/* Header / Welcome Bar */}
             <Flex justify="space-between" align="center" mb={8} pt={4}> {/* Added padding top */}
@@ -70,27 +123,27 @@ function DashboardPage() { // Renamed component to DashboardPage
                     <Heading as="h1" size="xl" color={textColor}>
                         Welcome back, {user?.name}
                     </Heading>
-                     <Text fontSize="sm" color="gray.500">Your financial dashboard</Text> {/* Subtitle */}
+                    <Text fontSize="sm" color="gray.500">Your financial dashboard</Text> {/* Subtitle */}
                 </Box>
             </Flex>
 
-            {/* Dashboard Content Grid */}
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mb={8}>
+      {/* Dashboard Cards */}
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mb={8}>
 
-                {/* Battery Info Block */}
-                <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
-                    <HStack mb={2}>
-                        <ChakraIcon icon={BatteryCharging} boxSize={6} color="yellow.500" />
-                        <Heading as="h3" size="md" color={textColor}>Battery</Heading>
-                    </HStack>
-                    <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-                        {dashboardData.batteryLevel}
-                    </Text>
-                </Box>
+        {/* Battery Info */}
+        <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
+          <HStack mb={2}>
+            <ChakraIcon icon={BatteryCharging} boxSize={6} color="yellow.500" />
+            <Heading as="h3" size="md" color={textColor}>Battery</Heading>
+          </HStack>
+          <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+            {dashboardData.batteryLevel}
+          </Text>
+        </Box>
 
                 {/* Power Status Block */}
                 <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
-                     <HStack mb={2}>
+                    <HStack mb={2}>
                         <ChakraIcon icon={Zap} boxSize={6} color="green.500" />
                         <Heading as="h3" size="md" color={textColor}>Power Status</Heading>
                     </HStack>
@@ -102,16 +155,16 @@ function DashboardPage() { // Renamed component to DashboardPage
                 {/* Live Contract Block */}
                 <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg} gridColumn={{ base: 'span 1', lg: 'span 3' }}> {/* Span full width on larger screens */}
                     <Flex justify="space-between" align="center" mb={4}>
-                         <HStack>
+                        <HStack>
                             <ChakraIcon icon={FileText} boxSize={6} color="blue.600" />
                             <Heading as="h3" size="md" color={textColor}>Live Contract</Heading>
-                         </HStack>
-                         <Badge colorScheme="green" variant="solid" borderRadius="full" px={3} py={1} fontSize="xs">
+                        </HStack>
+                        <Badge colorScheme="green" variant="solid" borderRadius="full" px={3} py={1} fontSize="xs">
                             <HStack spacing={1} alignItems="center">
-                                <ChakraIcon icon={CircleDot} boxSize={2.5} fill="currentColor"/>
+                                <ChakraIcon icon={CircleDot} boxSize={2.5} fill="currentColor" />
                                 <Text>LIVE</Text>
                             </HStack>
-                         </Badge>
+                        </Badge>
                     </Flex>
 
                     <VStack spacing={4} align="stretch" fontSize="sm" color={textColor}>
@@ -119,52 +172,78 @@ function DashboardPage() { // Renamed component to DashboardPage
                             <Text fontWeight="medium">Contract ID</Text>
                             <Text>{dashboardData.contract.id}</Text>
                         </HStack>
-                         <HStack justify="space-between">
+                        <HStack justify="space-between">
                             <Text fontWeight="medium">Status</Text>
-                             <Badge colorScheme="green" variant="subtle">{dashboardData.contract.status}</Badge>
+                            <Badge colorScheme="green" variant="subtle">{dashboardData.contract.status}</Badge>
                         </HStack>
                         <Box>
-                             <Text fontWeight="medium" mb={1}>Progress</Text>
-                             <Progress value={dashboardData.contract.progress} size="sm" colorScheme="blue" hasStripe isAnimated borderRadius="full"/>
-                             <Text fontSize="xs" color="gray.500" mt={1}>
+                            <Text fontWeight="medium" mb={1}>Progress</Text>
+                            <Progress value={dashboardData.contract.progress} size="sm" colorScheme="blue" hasStripe isAnimated borderRadius="full" />
+                            <Text fontSize="xs" color="gray.500" mt={1}>
                                 {dashboardData.contract.paymentsMade}/{dashboardData.contract.totalPayments} payments
                             </Text>
                         </Box>
                     </VStack>
                 </Box>
 
-                 {/* You can add more sections here using Box and layout components */}
-                 <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg} gridColumn={{ base: 'span 1', md: 'span 2', lg: 'span 1' }}> {/* Example of spanning columns */}
+                {/* Additional sections */}
+                <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg} gridColumn={{ base: 'span 1', md: 'span 2', lg: 'span 1' }}>
                     <Heading as="h3" size="md" mb={2} color={textColor}>Additional Info</Heading>
                     <Text fontSize="sm" color={textColor}>This is another section for more content or charts.</Text>
-                 </Box>
+                </Box>
 
-                {/* Example of another section */}
-                 <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
+                <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg}>
                     <Heading as="h3" size="md" mb={2} color={textColor}>Stats Overview</Heading>
                     <Text fontSize="sm" color={textColor}>Stats can go here.</Text>
-                 </Box>
-
-
+                </Box>
             </SimpleGrid>
 
-            {/* Logout Button at the bottom */}
-            <Flex justify="center" mt={8}> {/* Use Flex to center the button horizontally */}
-                <Button colorScheme="red" onClick={handleLogout} size="sm" width="fit-content"> {/* size="sm" reduces size, width="fit-content" prevents full width */}
+            {/* Recommendation Plan Section */}
+            <Box p={6} boxShadow="md" borderRadius="lg" bg={cardBg} mt={8}>
+                <Heading as="h3" size="md" mb={4} color={textColor}>
+                    Recommendation Plan
+                </Heading>
+                {error ? (
+                    <Text color="red.500">{error}</Text>
+                ) : recommendationPlan ? (
+                    <VStack spacing={4} align="stretch" fontSize="sm" color={textColor}>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Plan Name</Text>
+                            <Text>{recommendationPlan.name}</Text>
+                        </HStack>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Description</Text>
+                            <Text>{recommendationPlan.description}</Text>
+                        </HStack>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Price</Text>
+                            <Text>${recommendationPlan.price}</Text>
+                        </HStack>
+                        <HStack justify="space-between">
+                            <Text fontWeight="medium">Features</Text>
+                            <Text>{recommendationPlan.features.join(', ')}</Text>
+                        </HStack>
+                    </VStack>
+                ) : (
+                    <Text>Loading...</Text>
+                )}
+            </Box>
+
+            {/* Logout Button */}
+            <Flex justify="center" mt={8}>
+                <Button colorScheme="red" onClick={handleLogout} size="sm" width="fit-content">
                     Logout
                 </Button>
             </Flex>
 
-            {/* Note: The bottom fixed navigation bar from the second image is complex
-                     and typically built separately. For this refactor focusing on the
-                     main dashboard content layout using Chakra, it is not included.
-                     You can implement a fixed footer navigation using Chakra's Flex
-                     and Box components if needed.
-            */}
-
-
+            {/* Back Button */}
+            <Flex justify="center" mt={8}>
+                <Button colorScheme="blue" onClick={handleBackClick} size="sm" width="fit-content">
+                    Back
+                </Button>
+            </Flex>
         </Box>
     );
 }
 
-export default DashboardPage; // Export the new component name
+export default DashboardPage;

@@ -1,0 +1,64 @@
+<div class="login-bg">
+  <div class="overlay"></div>
+  <div class="login-form-container">
+    <h2>Log In</h2>
+    <form *ngIf="!isResetMode" [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
+      <div class="form-group">
+        <label for="email-login">Email</label>
+        <input id="email-login" formControlName="email" type="email" placeholder="Enter email" [class.has-error]="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)" />
+        <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)" class="error-message">
+          <span *ngIf="loginForm.get('email')?.errors?.['required']">Email is required.</span>
+          <span *ngIf="loginForm.get('email')?.errors?.['email']">Email address is invalid.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password-login">Password</label>
+        <input id="password-login" formControlName="password" type="password" placeholder="Enter password" [class.has-error]="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)" />
+        <div *ngIf="passwordStrengthMessage" class="password-strength-message" [ngClass]="{'strong': passwordStrengthScore === 100, 'medium': passwordStrengthScore > 60 && passwordStrengthScore < 100, 'weak': passwordStrengthScore <= 60}">
+          {{ passwordStrengthMessage }}
+          <div class="password-strength-progress">
+            <div [style.width.%]="passwordStrengthScore" [ngClass]="{'green': passwordStrengthScore > 60, 'yellow': passwordStrengthScore > 20 && passwordStrengthScore <= 60, 'red': passwordStrengthScore <= 20}"></div>
+          </div>
+        </div>
+        <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)" class="error-message">
+          <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required.</span>
+          <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters long.</span>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="loading">Log In</button>
+      <button type="button" (click)="handleGoogleLogin()" class="google-btn">
+        <img src="assets/images/google_icon.png" alt="Google icon" class="google-icon" /> Sign in with Google
+      </button>
+      <button type="button" (click)="switchToReset()" class="forgot-password-btn">Forgot Password?</button>
+
+      <p class="login-link">
+        Don't have an account? <a routerLink="/register">Register</a>
+      </p>
+    </form>
+
+    <form *ngIf="isResetMode" [formGroup]="resetForm" (ngSubmit)="onResetPassword()" novalidate>
+      <div class="form-group">
+        <label for="email-reset">Email</label>
+        <input id="email-reset" formControlName="email" type="email" placeholder="Enter email" [class.has-error]="resetForm.get('email')?.invalid && (resetForm.get('email')?.dirty || resetForm.get('email')?.touched)" />
+        <div *ngIf="resetForm.get('email')?.invalid && (resetForm.get('email')?.dirty || resetForm.get('email')?.touched)" class="error-message">
+          <span *ngIf="resetForm.get('email')?.errors?.['required']">Email is required.</span>
+          <span *ngIf="resetForm.get('email')?.errors?.['email']">Email address is invalid.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="newPassword-reset">New Password</label>
+        <input id="newPassword-reset" formControlName="newPassword" type="password" placeholder="New Password" [class.has-error]="resetForm.get('newPassword')?.invalid && (resetForm.get('newPassword')?.dirty || resetForm.get('newPassword')?.touched)" />
+        <div *ngIf="resetForm.get('newPassword')?.invalid && (resetForm.get('newPassword')?.dirty || resetForm.get('newPassword')?.touched)" class="error-message">
+          <span *ngIf="resetForm.get('newPassword')?.errors?.['required']">New password is required.</span>
+          <span *ngIf="resetForm.get('newPassword')?.errors?.['minlength']">New password must be at least 8 characters long.</span>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="loading">Reset Password</button>
+      <button type="button" (click)="switchToLogin()" class="back-to-login-btn">Back to Login</button>
+    </form>
+  </div>
+</div>

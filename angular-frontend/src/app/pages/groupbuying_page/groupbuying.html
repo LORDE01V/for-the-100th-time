@@ -1,0 +1,122 @@
+<div class="groupbuying-container">
+    <h1 class="title">Group Buying Campaigns</h1>
+    <p class="subtitle">Join forces to save on solar gear and make energy more affordable for everyone!</p>
+    <div class="motivational-line">
+      {{ motivationalLines[currentLineIndex] }}
+    </div>
+  
+    <!-- Campaigns List -->
+    <div class="campaigns-list">
+      <div class="campaign-card" *ngFor="let campaign of ongoingCampaigns">
+        <img [src]="campaign.image" [alt]="campaign.product" class="campaign-image" />
+        <h2>{{ campaign.product }}</h2>
+        <p>{{ campaign.description }}</p>
+        <div class="campaign-details">
+          <span>Original: R{{ campaign.originalPrice }}</span>
+          <span class="group-price">Group Price: R{{ campaign.groupPrice }}</span>
+          <span>{{ campaign.participants }} of {{ campaign.goal }} joined</span>
+          <span>{{ campaign.timeLeft }}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress" [style.width.%]="(campaign.participants / campaign.goal) * 100"></div>
+        </div>
+        <button (click)="joinCampaign(campaign)" [disabled]="campaign.participants >= campaign.goal">
+          {{ campaign.participants >= campaign.goal ? 'Goal Reached!' : 'Join Campaign' }}
+        </button>
+      </div>
+    </div>
+  
+    <!-- Create Campaign Modal Trigger -->
+    <div class="create-campaign-btn">
+      <button (click)="showCreateModal = true">Create New Campaign</button>
+    </div>
+  
+    <!-- Create Campaign Modal -->
+    <div class="modal" *ngIf="showCreateModal">
+      <div class="modal-content">
+        <h2>Create New Solar Campaign</h2>
+        <form (ngSubmit)="createCampaign()">
+          <label>
+            Product Name
+            <input type="text" [(ngModel)]="newCampaign.product" name="product" required />
+          </label>
+          <label>
+            Product Description
+            <textarea [(ngModel)]="newCampaign.description" name="description" required></textarea>
+          </label>
+          <label>
+            Product Image
+            <input type="file" (change)="handleImageChange($event)" />
+            <img *ngIf="selectedImage" [src]="selectedImage" alt="Selected" class="preview-image" />
+          </label>
+          <label>
+            Original Price (R)
+            <input type="number" [(ngModel)]="newCampaign.originalPrice" name="originalPrice" required />
+          </label>
+          <label>
+            Group Price (R)
+            <input type="number" [(ngModel)]="newCampaign.groupPrice" name="groupPrice" required />
+          </label>
+          <label>
+            Target Number of Buyers
+            <input type="number" [(ngModel)]="newCampaign.targetBuyers" name="targetBuyers" required min="1" />
+          </label>
+          <label>
+            Campaign Deadline
+            <input type="date" [(ngModel)]="newCampaign.deadline" name="deadline" required />
+          </label>
+          <div class="modal-actions">
+            <button type="submit">Create Campaign</button>
+            <button type="button" (click)="showCreateModal = false">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <!-- Referral Code -->
+    <div class="referral-section">
+      <h3>Earn R500 Credit</h3>
+      <p>Share your referral code and get R100 credit for each friend who joins a campaign</p>
+      <div class="referral-code">
+        <input [value]="referralCode" readonly />
+        <button (click)="copyReferralCode()">Copy</button>
+      </div>
+    </div>
+  
+    <!-- Testimonials -->
+    <div class="testimonials">
+      <h3>Verified Buyer Stories</h3>
+      <div class="testimonial" *ngFor="let t of testimonials">
+        <img [src]="t.avatar" [alt]="t.name" class="testimonial-avatar" />
+        <blockquote>"{{ t.text }}"</blockquote>
+        <div class="testimonial-details">
+          <span>{{ t.name }}</span>
+          <span>Saved {{ t.savings }}</span>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Savings Calculator -->
+    <div class="savings-calculator">
+      <h3>Advanced Savings Calculator</h3>
+      <label>
+        Select Campaign
+        <select [(ngModel)]="selectedCampaignId">
+          <option *ngFor="let c of ongoingCampaigns" [value]="c.id">{{ c.product }}</option>
+        </select>
+      </label>
+      <label>
+        System Size (kW)
+        <input type="number" [(ngModel)]="systemSize" min="1" max="20" />
+      </label>
+      <div>
+        <strong>Projected 5-Year Savings:</strong>
+        <span class="savings-amount">R{{ (yearlySavings * 5) | number:'1.0-0' }}</span>
+      </div>
+      <div class="savings-breakdown">
+        <div>Unit Price Saving: R{{ savingsPerUnit | number:'1.0-0' }}</div>
+        <div>Total System Saving: R{{ (savingsPerUnit * systemSize) | number:'1.0-0' }}</div>
+        <div>Annual Energy Saving: R{{ yearlySavings | number:'1.0-0' }}</div>
+      </div>
+    </div>
+  </div>

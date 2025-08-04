@@ -1,0 +1,65 @@
+<div class="register-bg">
+    <div class="register-form-container">
+      <h2>Create Account</h2>
+      <form (submit)="onSubmit($event)" novalidate>
+        <div class="form-group" [class.has-error]="errors.name">
+          <label for="name">Full Name</label>
+          <input id="name" type="text" [(ngModel)]="name" name="name" placeholder="Enter full name" required />
+          <div class="error" *ngIf="errors.name">{{ errors.name }}</div>
+        </div>
+  
+        <div class="form-group" [class.has-error]="errors.email">
+          <label for="email">Email</label>
+          <input id="email" type="email" [(ngModel)]="email" name="email" placeholder="Enter email" required />
+          <div class="error" *ngIf="errors.email">{{ errors.email }}</div>
+        </div>
+  
+        <div class="form-group" [class.has-error]="errors.password">
+          <label for="password">Password</label>
+          <input id="password" type="password" [(ngModel)]="password" name="password" (input)="onPasswordChange($event)" placeholder="Create password" required />
+          <div class="password-strength">
+            <span *ngIf="passwordStrength">{{ passwordStrength }}</span>
+            <div class="progress-bar">
+              <div class="progress" [style.width.%]="strengthScore" [ngClass]="{
+                'strong': strengthScore > 60,
+                'medium': strengthScore > 20 && strengthScore <= 60,
+                'weak': strengthScore <= 20
+              }"></div>
+            </div>
+          </div>
+          <div class="error" *ngIf="errors.password">{{ errors.password }}</div>
+        </div>
+  
+        <div class="form-group" [class.has-error]="errors.confirmPassword">
+          <label for="confirmPassword">Confirm Password</label>
+          <input id="confirmPassword" type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm password" required />
+          <div class="error" *ngIf="errors.confirmPassword">{{ errors.confirmPassword }}</div>
+        </div>
+  
+        <div class="form-group" [class.has-error]="errors.phone">
+          <label for="phone">Phone Number</label>
+          <input id="phone" type="tel" [(ngModel)]="phone" name="phone" placeholder="Enter phone number" />
+          <div class="error" *ngIf="errors.phone">{{ errors.phone }}</div>
+        </div>
+  
+        <button type="submit" [disabled]="loading">
+          {{ loading ? 'Registering...' : 'Create Account' }}
+        </button>
+      </form>
+  
+      <div class="divider"><span>or</span></div>
+  
+      <button class="google-btn" (click)="onGoogleRegister()">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" />
+        Continue with Google
+      </button>
+  
+      <div class="login-link">
+        Already have an account?
+        <a href="#" (click)="goToLogin(); $event.preventDefault()">Log in here</a>
+      </div>
+  
+      <div class="success" *ngIf="successMessage">{{ successMessage }}</div>
+      <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    </div>
+  </div>

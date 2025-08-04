@@ -16,11 +16,11 @@ import {
   IconButton,
   useToast,
   Spinner,
-  HStack
+  useColorModeValue,
+  HStack, // Add HStack import
 } from '@chakra-ui/react';
-import { FaBolt, FaTachometerAlt, FaCog, FaSignOutAlt, FaUser, FaWallet, FaComments, FaLightbulb, FaChartBar, FaQuestionCircle, FaMoon, FaSun } from 'react-icons/fa';
+import { FaComments, FaSun, FaArrowLeft } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { useNavigate, NavLink } from 'react-router-dom';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
 import EnergyModeToggle from '../components/widgets/EnergyModeToggle';
 import BudgetDial from '../components/widgets/BudgetDial';
@@ -36,15 +36,12 @@ import FaultDetection from '../components/FaultDetection'; // Import FaultDetect
 import FaultVisualization from '../components/FaultVisualization';
 import { LineChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Line, Legend } from 'recharts';
 import ThemeSwitcher from '../components/widgets/ThemeSwitcher';
-import { auth } from '../services/api';  // Keep if used elsewhere
 import { useSubscription } from '../context/SubscriptionContext';
+import LoadsheddingStatus from '../components/widgets/LoadsheddingStatus'; // Correct import path
 import dashboardBg from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.png';
+import LocationSelector from '../components/widgets/LocationSelector'; // Ensure LocationSelector is imported
+import { useNavigate } from 'react-router-dom'; // Add this import
 
-// Add missing variable declarations at the top
-
-// Keep only one declaration at the top with other mock values
-
-// Add the subscription plans array here for use in this component
 const subscriptionPlans = [
   { id: 'basic-lite', name: 'Basic Lite', price: 29 },
   { id: 'basic', name: 'Basic', price: 49 },
@@ -56,16 +53,15 @@ const subscriptionPlans = [
   { id: 'premium-plus', name: 'Premium Plus', price: 309 },
 ];
 
-// Update the mockSuggestPlan function to return the full plan object
 function mockSuggestPlan(data) {
-  if (!data || !data.budget) return subscriptionPlans[0] || { name: 'Basic Plan', description: 'Default plan' };  // Fallback
+  if (!data || !data.budget) return subscriptionPlans[0] || { name: 'Basic Plan', description: 'Default plan' };
   const suitablePlan = subscriptionPlans.reduce((bestPlan, plan) => {
     if (plan.price <= data.budget && plan.price > bestPlan.price) {
       return plan;
     }
     return bestPlan;
   }, subscriptionPlans[0] || { name: 'Basic Plan', description: 'Default plan' });
-  return suitablePlan;  // Return the full plan object
+  return suitablePlan;
 }
 
 const themePresets = {
@@ -79,63 +75,40 @@ const themePresets = {
     borderColor: 'rgba(255, 183, 94, 0.35)',
     boxShadow: '0 8px 32px 0 rgba(255, 183, 94, 0.18)',
   },
-  // ...add more themes
 };
 
 function DashboardContent() {
-  const navigate = useNavigate();
-  const { setEnabledWidgets, enabledWidgets } = useDashboard();
+  console.log('DashboardContent is rendering');
+  const { setEnabledWidgets, enabledWidgets } = useDashboard(); // Removed selectedArea and setSelectedArea as they are not used directly here
   const { colorMode, toggleColorMode } = useColorMode();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { selectedPlan: recommendedPlan } = useSubscription();
-  const [selectedTheme, setSelectedTheme] = useState('arcticBlue');
+  // Location state is managed by LocationSelector and passed to DailyForecast/SolarOutput if needed
+  const [location, setLocation] = useState({
+    type: 'area',
+    areaId: 'johannesburg',
+    label: 'Johannesburg',
+  });
+  const navigate = useNavigate(); // Add this line
 
-  // Update theme variables to be dynamic based on color mode
-  const backgroundColor = colorMode === 'light' ? '#ffffff' : '#1e1e2f';  // Light: white, Dark: dark background
-  const cardBg = colorMode === 'light' ? '#ffffff' : '#2b2b3d';  // Light: white, Dark: dark card
-  const textColor = colorMode === 'light' ? '#000000' : '#ffffff';  // Light: black, Dark: white
-  const accentColor = 'teal.300';  // Keep accent as is
+  const cardBg = useColorModeValue('white', 'gray.800');
 
-  // Updated energyData to end at 17:00
-  const energyData = [
-    { time: '00:00', usage: 45 },
-    { time: '01:00', usage: 42 },
-    { time: '02:00', usage: 40 },
-    { time: '03:00', usage: 38 },
-    { time: '04:00', usage: 35 },
-    { time: '05:00', usage: 32 },
-    { time: '06:00', usage: 30 },
-    { time: '07:00', usage: 28 },
-    { time: '08:00', usage: 25 },
-    { time: '09:00', usage: 22 },
-    { time: '10:00', usage: 20 },
-    { time: '11:00', usage: 18 },
-    { time: '12:00', usage: 15 },
-    { time: '13:00', usage: 14 },
-    { time: '14:00', usage: 16 },
-    { time: '15:00', usage: 18 },
-    { time: '16:00', usage: 20 },
-    { time: '17:00', usage: 22 },
-  ];
-
-  // Default enabled widgets (can be toggled via user interaction)
   if (!enabledWidgets || enabledWidgets.length === 0) {
     setEnabledWidgets(['EnergyModeToggle', 'BudgetDial', 'ThemeSwitcher', 'SolarOutput', 'DailyForecast', 'WidgetLayout', 'EnergyAvatar', 'ActivityReport', 'AITipsPanel', 'FaultDetection','FaultVisualization']);
   }
 
   const glassCardStyle = {
-    bg: themePresets[selectedTheme].bg,
+    bg: themePresets['arcticBlue'].bg,
     border: '2px solid rgba(255,255,255,0.7)',
-    borderColor: themePresets[selectedTheme].borderColor,
-    boxShadow: themePresets[selectedTheme].boxShadow,
+    borderColor: themePresets['arcticBlue'].borderColor,
+    boxShadow: themePresets['arcticBlue'].boxShadow,
     backdropFilter: 'blur(16px)',
     WebkitBackdropFilter: 'blur(16px)',
     borderRadius: '2xl',
     transition: 'background 0.3s, border 0.3s',
   };
 
-  // Common style for both buttons
   const bubbleButtonProps = {
     borderRadius: "full",
     boxSize: "56px",
@@ -143,7 +116,7 @@ function DashboardContent() {
     boxShadow: "lg",
     bg: "teal.400",
     color: "white",
-    border: "4px solid white", // Optional: makes the border stand out
+    border: "4px solid white",
     _hover: { bg: "teal.500" },
     zIndex: 9999,
   };
@@ -180,15 +153,18 @@ function DashboardContent() {
               mx="auto"
               style={{ display: 'block' }}
             >
-              <Heading
-                as="h1"
-                size="xl"
-                color="white"
-                textShadow="0 2px 8px rgba(0,0,0,0.7)"
-                textAlign="center"
-              >
+              <HStack justify="space-between" align="center" mb={8}>
+                <Button leftIcon={<FaArrowLeft />} onClick={() => navigate(-1)} variant="ghost" mr={4}>
+                  Back
+                </Button>
+              </HStack>
+
+              <Heading as="h1" size="xl" color={useColorModeValue('gray.800', 'white')} mb={2} textAlign="center">
                 Energy Dashboard
               </Heading>
+              <Text color={useColorModeValue('gray.600', 'gray.400')} fontSize="lg" textAlign="center" mb={6}>
+                Take control of your energy and discover ways to optimize your usage for a sustainable future!
+              </Text>
             </Box>
 
             <Box textAlign="center" mb={8}>
@@ -197,11 +173,11 @@ function DashboardContent() {
                   setIsLoading(true);
                   try {
                     const mockData = {
-                      usageHours: 10,  // Hardcoded mock value
-                      budget: 500,     // Hardcoded mock value
-                      deviceCount: 5   // Hardcoded mock value
+                      usageHours: 10,
+                      budget: 500,
+                      deviceCount: 5
                     };
-                    const plan = mockSuggestPlan(mockData);  // Now returns full object
+                    const plan = mockSuggestPlan(mockData);
                     toast({
                       title: `Recommended: ${plan.name}`,
                       status: 'success',
@@ -226,6 +202,8 @@ function DashboardContent() {
               >
                 Suggest Plan
               </Button>
+              {/* LocationSelector is now present here */}
+              <LocationSelector onLocationChange={setLocation} />
             </Box>
 
             <SimpleGrid columns={3} spacing={6}>
@@ -303,12 +281,12 @@ function DashboardContent() {
                     _hover={{ boxShadow: "lg" }}
                   >
                     <Box {...glassCardStyle}>
-                      <DailyForecast />
+                      <DailyForecast location={location} />
                     </Box>
                   </motion.div>
                 </ErrorBoundary>
               )}
-              {enabledWidgets.includes('EnergyAvatar') && (  // Assuming EnergyAvatar is Energy Status
+              {enabledWidgets.includes('EnergyAvatar') && (
                 <ErrorBoundary>
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -361,7 +339,7 @@ function DashboardContent() {
                     _hover={{ boxShadow: "lg" }}
                   >
                     <Box {...glassCardStyle}>
-                      <SolarOutput />
+                      <SolarOutput location={location} />
                     </Box>
                   </motion.div>
                 </ErrorBoundary>
@@ -441,16 +419,6 @@ function DashboardContent() {
                 </ErrorBoundary>
                )}
             </SimpleGrid>
-
-            <Box w="full" mt={8} {...glassCardStyle} p={6}>
-              <DashboardCard title="Loadshedding Updates" icon={FaBolt}>
-                <Box h="400px" w="100%" display="flex" alignItems="center" justifyContent="center">
-                  <Text color="gray.400" fontSize="lg" textAlign="center">
-                    Loadshedding updates will appear here.
-                  </Text>
-                </Box>
-              </DashboardCard>
-            </Box>
           </Box>
         </Flex>
 
@@ -462,7 +430,6 @@ function DashboardContent() {
           bottom="24px"
           right="24px"
           {...bubbleButtonProps}
-          // onClick={...} // your chatbot open handler
         />
 
         {/* Toggle Mode Bubble Button (just above chatbot) */}
@@ -471,7 +438,7 @@ function DashboardContent() {
           icon={<FaSun />}
           onClick={toggleColorMode}
           position="fixed"
-          bottom="90px"   // 24px (chatbot) + 56px (button size) + 10px (gap)
+          bottom="90px"
           right="24px"
           {...bubbleButtonProps}
         />
@@ -484,10 +451,11 @@ function DashboardPage() {
   return (
     <DashboardProvider>
       <ColorModeScript initialColorMode="dark" />
+      {/* NavigationPanel is not defined in the provided context, assuming it's an external component */}
+      {/* <NavigationPanel /> */}
       <DashboardContent />
     </DashboardProvider>
   );
 }
 
 export default DashboardPage;
-

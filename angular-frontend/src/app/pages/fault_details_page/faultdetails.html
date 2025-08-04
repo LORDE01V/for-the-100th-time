@@ -1,0 +1,28 @@
+<div class="faultdetails-container">
+    <ng-container *ngIf="!panel">
+      <div class="faultdetails-card">
+        <h3>Fault Details Not Found</h3>
+        <button class="btn btn-blue" (click)="goBack()">Go Back to Dashboard</button>
+      </div>
+    </ng-container>
+  
+    <ng-container *ngIf="panel">
+      <div class="faultdetails-card">
+        <div class="header-row">
+          <button class="btn btn-ghost" (click)="goBackOne()">← Back</button>
+        </div>
+        <h3 class="faultdetails-title">Fault Details</h3>
+        <p class="faultdetails-subtitle">
+          Resolve faults quickly and keep your energy system running smoothly!
+        </p>
+        <p><strong>Status:</strong> {{ panel.status }}</p>
+        <p><strong>Efficiency:</strong> {{ panel.efficiency }}</p>
+        <p><strong>Details:</strong> {{ faultDetail.details }}</p>
+        <p><strong>Measures to Fix:</strong></p>
+        <ul>
+          <li *ngFor="let measure of faultDetail.measures">- {{ measure }}</li>
+        </ul>
+        <button class="btn btn-blue" (click)="goBack()">Back to Dashboard</button>
+      </div>
+    </ng-container>
+  </div>

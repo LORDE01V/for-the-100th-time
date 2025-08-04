@@ -1,0 +1,31 @@
+<div class="notifications-bg">
+    <div class="notifications-container">
+      <div class="header">
+        <button class="back-btn" (click)="goHome()">
+          &#8592; Back to Home
+        </button>
+        <h1>Notifications</h1>
+      </div>
+  
+      <div *ngIf="loading" class="spinner-container">
+        <div class="spinner"></div>
+      </div>
+  
+      <div *ngIf="!loading">
+        <div *ngIf="activeNotifications.length > 0; else noNotifications">
+          <div *ngFor="let notif of activeNotifications" class="notification-card" [ngClass]="notif.status">
+            <div class="notif-icon" [ngClass]="notif.status"></div>
+            <div class="notif-content">
+              <div class="notif-title">{{ notif.title }}</div>
+              <div class="notif-desc">{{ notif.description }}</div>
+              <div class="notif-date">{{ notif.created_at | date:'short' }}</div>
+            </div>
+            <button class="close-btn" (click)="handleDismissNotification(notif.id)">×</button>
+          </div>
+        </div>
+        <ng-template #noNotifications>
+          <div class="no-notifications">No new notifications.</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>

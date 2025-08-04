@@ -91,8 +91,15 @@ function LoginPage() {
         });
       }
     } catch (error) {
-      let errorMessage = error.message || 'Login failed';
-      if (error.response?.status === 400) errorMessage = 'Invalid request format. Please try again.';
+      let errorMessage;
+      if (error.message.includes('Network Error')) {
+        errorMessage = 'Cannot connect to server. Please check your internet connection.';
+      } else if (error.response?.status === 502) {
+        errorMessage = 'Server is temporarily unavailable. Please try again later.';
+      } else {
+        errorMessage = error.message || 'Login failed';
+      }
+      
       toast({
         title: 'Login Error',
         description: errorMessage,

@@ -8,12 +8,13 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 // Create an axios instance with default config
 const api = axios.create({
     baseURL: API_URL,
-    withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
     },
-    timeout: 20000, // 20 second timeout
+    timeout: 30000, // 10-second timeout
+    withCredentials: true, // Include cookies in requests
+    xsrfCookieName: 'csrftoken',  // Add CSRF protection
+    xsrfHeaderName: 'X-CSRFToken'
 });
 
 // Add a request interceptor to add the auth token to requests
@@ -21,7 +22,7 @@ api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
         if (token) {
-            config.headers.Authorization = `Bearer ${token.trim()}`;
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
@@ -30,10 +31,18 @@ api.interceptors.request.use(
     }
 );
 
-// Add a response interceptor to handle common errors
+// Add a response interceptor to handle common errors and token refresh
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
+        // Handle connection timeout and server unavailable
+        if (error.code === 'ECONNABORTED') {
+            return Promise.reject(new Error('Connection timeout. Please check your internet'));
+        }
+        if (!error.response) {
+            return Promise.reject(new Error('Server unavailable. Please try again later'));
+        }
+        // Handle 401 and try refresh
         if (error.response?.status === 401 && error.config && !error.config._retry) {
             error.config._retry = true;
             try {
@@ -57,22 +66,33 @@ export const auth = {
     login: async (email, password) => {
         try {
             const response = await api.post('/api/auth/login', {
-                email: email.toLowerCase().trim(),  // Normalize email
+                email: email.toLowerCase().trim(),
                 password
             });
             if (response.data.success) {
+                // Store token
                 if (response.data.access_token) {
                     localStorage.setItem('token', response.data.access_token);
+                } else if (response.data.token) {
+                    localStorage.setItem('token', response.data.token);
                 }
-                if (response.data.user) {
-                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                // Always fetch user from backend after login
+                let user = null;
+                try {
+                    const userResp = await api.get('/api/auth/user');
+                    user = userResp.data.user;
+                } catch (e) {
+                    // fallback to response.data.user if present
+                    user = response.data.user || null;
                 }
-                // Removed redirection to let the component handle navigation
-                // window.location.href = '/dashboard';
+                if (user) {
+                    localStorage.setItem('user', JSON.stringify(user));
+                } else {
+                    localStorage.removeItem('user');
+                }
             }
             return response.data;
         } catch (error) {
-            console.error('Login error:', error.response?.data);
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
@@ -80,12 +100,14 @@ export const auth = {
         }
     },
 
-    register: async (userData) => {  // Updated to accept an object
+    register: async (userData) => {
         try {
-            const response = await api.post('/api/auth/register', userData);  // Pass the object directly
+            const response = await api.post('/api/auth/register', userData);
             if (response.data.success) {
                 if (response.data.access_token) {
                     localStorage.setItem('token', response.data.access_token);
+                } else if (response.data.token) {
+                    localStorage.setItem('token', response.data.token);
                 }
                 if (response.data.user) {
                     localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -93,7 +115,6 @@ export const auth = {
             }
             return response.data;
         } catch (error) {
-            console.error('Registration error:', error.response?.data);
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
@@ -112,28 +133,7 @@ export const auth = {
     }
 };
 
-// Top-Up API calls
-export const topUp = {
-    process: async (payload) => {
-        const response = await api.post('/api/topup', payload);
-        return response.data;
-    }
-};
-
-// Auto Top-Up API calls
-export const autoTopUp = {
-    getSettings: async () => {
-        const response = await api.get('/api/auto-topup/settings');
-        return response.data;
-    },
-
-    saveSettings: async (settings) => {
-        const response = await api.post('/api/auto-topup/settings', settings);
-        return response.data;
-    }
-};
-
-// Mock sentiment analysis for local development
+// MOCK: Intercept /api/ai/sentiment for local dev/demo
 if (window.location.hostname === 'localhost') {
     const originalPost = api.post;
     api.post = async function (url, data, ...args) {
@@ -148,5 +148,18 @@ if (window.location.hostname === 'localhost') {
         return originalPost.call(this, url, data, ...args);
     };
 }
+
+// AI Suggestions fetcher
+export const fetchAISuggestions = async () => {
+    try {
+        const response = await api.get('/api/ai-suggestions', {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching AI suggestions:', error);
+        return { success: false };
+    }
+};
 
 export default api;

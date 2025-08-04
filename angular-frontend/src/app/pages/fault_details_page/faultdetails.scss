@@ -1,0 +1,81 @@
+.faultdetails-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 48px;
+    background: #f7fafc;
+  }
+  
+  .faultdetails-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 32px 24px;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .header-row {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 24px;
+  }
+  
+  .faultdetails-title {
+    font-size: 1.5rem;
+    color: #2d3748;
+    margin-bottom: 8px;
+  }
+  
+  .faultdetails-subtitle {
+    color: #718096;
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin: 8px 0;
+    font-size: 1rem;
+    transition: background 0.2s, color 0.2s;
+  }
+  
+  .btn-blue {
+    background: #3182ce;
+    color: #fff;
+  }
+  
+  .btn-blue:hover {
+    background: #2b6cb0;
+  }
+  
+  .btn-ghost {
+    background: none;
+    color: #3182ce;
+    border: 1px solid #3182ce;
+  }
+  
+  .btn-ghost:hover {
+    background: #ebf8ff;
+  }
+  
+  ul {
+    text-align: left;
+    margin: 0 auto 16px auto;
+    max-width: 400px;
+    padding-left: 0;
+    list-style: none;
+  }
+  
+  li {
+    margin-bottom: 6px;
+    color: #2d3748;
+  }

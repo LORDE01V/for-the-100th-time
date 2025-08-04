@@ -1,0 +1,285 @@
+<div
+  class="ai-suggestions-page-container"
+  [style.background]="'url(assets/images/AI_suggestion.png) center center / cover no-repeat'"
+>
+  <div class="main-content-container">
+    <h1 class="page-title">AI Suggestions</h1>
+    <p class="page-subtitle">Get personalized energy-saving tips and suggestions to optimize your usage.</p>
+
+    <!-- Goal Tracking Section -->
+    <div class="goal-tracking-section">
+      <div class="goal-input-row">
+        <span class="goal-label">Monthly Savings Goal:</span>
+        <input
+          type="number"
+          min="0"
+          [ngModel]="goal()"
+          (ngModelChange)="handleGoalChange($event)"
+          placeholder="R100"
+          class="goal-input"
+        />
+        <span class="goal-info">Set your target for the month</span>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" [style.width.%]="progressPercentage"></div>
+        <p class="progress-text">
+          <ng-container *ngIf="goal(); else noGoal">
+            You've reached R{{ formattedTotalSavings }} of R{{ goal() }}
+          </ng-container>
+          <ng-template #noGoal>
+            Set a goal to start tracking your savings!
+          </ng-template>
+        </p>
+      </div>
+    </div>
+        
+    <!-- Enhanced Daily AI Tip with Notifications & Sharing -->
+    <div *ngIf="dailyTip()" class="daily-tip-section">
+      <div class="daily-tip-header">
+        <span class="tip-label">🌞 AI Tip of the Day:</span>
+        <div class="tip-actions">
+          <button (click)="notifyTip()" class="tip-action-button">🔔 Remind</button>
+          <button (click)="copyTip()" class="tip-action-button">📋 Copy</button>
+          <button (click)="shareTip()" class="tip-action-button">📱 Share</button>
+          <button (click)="refreshTip()" class="tip-action-button">Refresh</button>
+        </div>
+      </div>
+      <p class="tip-description">{{ getTipDescription() }}</p>
+      <p class="tip-meta">
+        Category: {{ getTipCategory() }} | 💸 R{{ getFormattedTipSavings() }}
+      </p>
+    </div>
+
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Search suggestions..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="handleSearch($event)"
+        class="search-input"
+      />
+    </div>
+
+    <div class="categories">
+      <button
+        *ngFor="let category of ['All', 'Energy Saving', 'Maintenance', 'Upgrades', 'Favorites']"
+        [class.active]="activeCategory() === category"
+        (click)="handleCategoryChange(category)"
+        class="category-button"
+      >
+        {{ category }}
+      </button>
+    </div>
+
+    <!-- Enhanced Sort Toggle with Icons -->
+    <div class="sort-toggle-section">
+      <button
+        [class.active]="sortByVotes()"
+        (click)="sortByVotes.set(true)"
+        class="sort-button"
+      >
+        ⬇️ Most Voted
+      </button>
+      <button
+        [class.active]="!sortByVotes()"
+        (click)="sortByVotes.set(false)"
+        class="sort-button"
+      >
+        ⏱️ Most Recent
+      </button>
+    </div>
+
+    <!-- Priority Filter Buttons -->
+    <div class="priority-filter-section">
+      <span class="filter-label">Filter by Priority:</span>
+      <button
+        *ngFor="let level of ['high', 'medium', 'low']"
+        class="priority-button"
+        [class.active]="priorityFilter() === level"
+        (click)="priorityFilter.set(priorityFilter() === level ? null : level)"
+      >
+        {{ level.toUpperCase() }}
+      </button>
+      <button
+        *ngIf="priorityFilter()"
+        class="clear-filter-button"
+        (click)="priorityFilter.set(null)"
+      >
+        Clear Filter
+      </button>
+    </div>
+
+    <div class="suggestions-list">
+      <div
+        *ngFor="let suggestion of sortedSuggestions()"
+        class="suggestion-card"
+        (mouseenter)="handleView()"
+        (click)="selectedSuggestion.set(suggestion)"
+      >
+        <!-- Favorites Star Icon -->
+        <button
+          class="favorite-button"
+          (click)="$event.stopPropagation(); toggleFavorite(suggestion.id)"
+          [attr.aria-label]="getFavoriteAriaLabel(suggestion.id)"
+        >
+          {{ getFavoriteIcon(suggestion.id) }}
+        </button>
+
+        <!-- Enhanced Priority Badge -->
+        <span class="priority-badge" [class]="getPriorityProps(suggestion.priority).color" [title]="getPriorityProps(suggestion.priority).label">
+          {{ getPriorityProps(suggestion.priority).icon }} {{ suggestion.priority?.toUpperCase() || 'MEDIUM' }}
+        </span>
+
+        <h3 class="suggestion-title">{{ suggestion.title }}</h3>
+        <p class="suggestion-description">{{ suggestion.description }}</p>
+        
+        <!-- Enhanced Savings Info with Tooltip -->
+        <div class="savings-info" title="Estimated monthly savings if implemented. Learn more at https://www.energy.gov/energysaver/energy-saver-guide-tips-saving-money-and-energy-home">
+          <span class="savings-text">💸 R{{ getFormattedSavings(suggestion) }}</span>
+        </div>
+
+        <div class="votes">
+          <button (click)="$event.stopPropagation(); handleVote(suggestion.id, 1)" class="vote-button upvote" title="Upvote this suggestion">
+            👍
+          </button>
+          <span class="vote-count" title="Community votes on relevance">
+            {{ getVoteCount(suggestion) }}
+          </span>
+          <button (click)="$event.stopPropagation(); handleVote(suggestion.id, -1)" class="vote-button downvote" title="Downvote this suggestion">
+            👎
+          </button>
+        </div>
+        
+        <!-- User Comments Section -->
+        <div class="comments-section">
+          <span class="comments-label">Comments ({{ getCommentCount(suggestion.id) }})</span>
+          <div class="comments-list">
+            <div *ngFor="let c of comments()[suggestion.id]" class="comment-item">
+              {{ c }}
+            </div>
+          </div>
+          <div class="comment-input-row">
+            <textarea
+              class="comment-textarea"
+              placeholder="Add a comment..."
+              [ngModel]="getDraftComment(suggestion.id)"
+              (ngModelChange)="updateDraftComment(suggestion.id, $event)"
+            ></textarea>
+            <button
+              class="post-comment-button"
+              (click)="postComment(suggestion.id)"
+              [disabled]="isDraftCommentEmpty(suggestion.id)"
+            >
+              Post
+            </button>
+          </div>
+        </div>
+        
+        <!-- User Notes Section -->
+        <div class="notes-section">
+          <span class="notes-label">Personal Note</span>
+          <textarea
+            class="note-textarea"
+            placeholder="Your note... (only you can see this)"
+            [ngModel]="userNotes()[suggestion.id]"
+            (ngModelChange)="handleNoteChange(suggestion.id, $event)"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Charts Section -->
+    <div class="charts-section">
+      <h2 class="chart-heading">Savings Breakdown</h2>
+      <div class="chart-container">
+        <!-- Placeholder for SavingsChart - You'll need to implement an Angular charting component here -->
+        <p>Chart for Savings Breakdown will go here.</p>
+        <p>Consider using a library like `ng2-charts` or another Angular-compatible charting solution.</p>
+      </div>
+    </div>
+
+    <div class="charts-section">
+      <h2 class="chart-heading">Suggestion Trend</h2>
+      <div class="trend-filter-row">
+        <span class="filter-label">Time Range:</span>
+        <select
+          [ngModel]="trendDays()"
+          (ngModelChange)="trendDays.set($event)"
+          class="trend-select"
+        >
+          <option [ngValue]="7">Last 7 Days</option>
+          <option [ngValue]="14">Last 14 Days</option>
+          <option [ngValue]="30">Last 30 Days</option>
+        </select>
+      </div>
+      <div class="chart-container">
+        <!-- Placeholder for SuggestionTrendChart - You'll need to implement an Angular charting component here -->
+        <p>Chart for Suggestion Trend will go here.</p>
+        <p>Consider using a library like `ng2-charts` or another Angular-compatible charting solution.</p>
+      </div>
+    </div>
+
+    <!-- Enhanced User Feedback with Comment -->
+    <div *ngIf="showFeedback()" class="feedback-alert">
+      <div class="alert-icon">ℹ️</div>
+      <div class="alert-content">
+        <h3 class="alert-title">Are these AI suggestions helping you?</h3>
+        <div class="feedback-buttons">
+          <button (click)="handleFeedback('yes')" class="feedback-button positive">👍 Yes</button>
+          <button (click)="handleFeedback('no')" class="feedback-button negative">👎 No</button>
+        </div>
+        <textarea
+          class="feedback-textarea"
+          placeholder="Tell us more about your experience (optional)..."
+          [ngModel]="feedbackComment()"
+          (ngModelChange)="feedbackComment.set($event)"
+        ></textarea>
+        <button
+          class="submit-feedback-button"
+          (click)="handleFeedback('with_comment')"
+          [disabled]="isFeedbackCommentEmpty()"
+        >
+          Submit Feedback
+        </button>
+      </div>
+    </div>
+
+    <!-- Suggestion Detail Modal -->
+    <div *ngIf="selectedSuggestion()" class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">{{ getSelectedSuggestionTitle() }}</h2>
+          <button class="modal-close-button" (click)="closeModal()">X</button>
+        </div>
+        <div class="modal-body">
+          <p>{{ getSelectedSuggestionDescription() }}</p>
+          <div class="modal-info-row">
+            <span class="modal-info-label">💸 Estimated Savings:</span>
+            <span class="modal-info-value">R{{ getSelectedSuggestionSavings() }}</span>
+          </div>
+          <div class="modal-info-row">
+            <span class="modal-info-label">Priority:</span>
+            <span class="modal-info-value priority-badge" [class]="getPriorityProps(selectedSuggestion()?.priority).color">
+              {{ getSelectedSuggestionPriority() }}
+            </span>
+          </div>
+          <div class="modal-info-row">
+            <span class="modal-info-label">Category:</span>
+            <span class="modal-info-value">{{ getSelectedSuggestionCategory() }}</span>
+          </div>
+          <div class="modal-info-row">
+            <span class="modal-info-label">Votes:</span>
+            <span class="modal-info-value">{{ getSelectedSuggestionVotes() }}</span>
+          </div>
+          <div class="modal-info-row">
+            <span class="modal-info-label">Created:</span>
+            <span class="modal-info-value">{{ getSelectedSuggestionCreatedAt() }}</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button (click)="closeModal()" class="modal-close-button">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

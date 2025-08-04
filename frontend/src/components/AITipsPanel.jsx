@@ -15,7 +15,7 @@ import {
 import { FiChevronLeft, FiChevronRight, FiDollarSign, FiSun, FiBattery } from 'react-icons/fi';
 import PropTypes from 'prop-types';
 
-const AITipsPanel = ({ tips = [] }) => {
+const AITipsPanel = () => {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const headingColor = useColorModeValue('gray.800', 'whiteAlpha.900');
   const accentColor = useColorModeValue('blue.500', 'blue.300');

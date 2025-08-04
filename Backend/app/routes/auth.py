@@ -7,10 +7,13 @@ import time
 import logging
 from datetime import datetime
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
+from flask import jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
-CORS(auth_bp, origins=["http://localhost:3000", "http://192.168.18.3:3000"], supports_credentials=True)
+#CORS(auth_bp, origins=["*"], supports_credentials=True)  # Remove strict CORS here
 
 # Configure logging
 logging.basicConfig(
@@ -143,84 +146,91 @@ def logout():
     session.clear()
     return create_response("Logged out successfully")
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
 def login():
+    if request.method == 'OPTIONS':
+        return create_response("OK", 200)
     try:
         data = request.get_json()
         if not data or not isinstance(data, dict):
             logging.error('No valid JSON data received in login request')
             return create_response('Invalid credentials', 400)
         
-        email = data.get('email')
-        if isinstance(email, dict):
-            email = email.get('email')
-        elif not isinstance(email, str):
-            logging.error('Invalid email format in data')
-            return create_response('Invalid credentials', 400)
-        email = email.lower() if email else None
-        
+        email = data.get('email', '').lower()
         password = data.get('password')
-        if isinstance(password, dict):
-            password = password.get('password')
-        elif not isinstance(password, str):
-            logging.error('Invalid password format in data')
-            return create_response('Invalid credentials', 400)
         
         if not email or not password:
             logging.error('Missing or invalid email/password in data')
             return create_response('Invalid credentials', 400)
         
-        logging.info(f'Attempting login for email: {email}')
-        user = get_user_by_email(email.lower())
-        if not user:
-            logging.error(f'User not found for email: {email}')
-            return create_response('Invalid credentials', 401)
-        
-        logging.info(f'Verifying password: Incoming password length {len(password)}, Stored hash length {len(user["password_hash"])}')  # Log lengths only
-        if not check_password_hash(user['password_hash'], password):
-            logging.error(f'Password mismatch for email: {email} - Hash verification failed')
-            return create_response('Invalid credentials', 401)
-        
-        access_token = create_access_token(identity=user['id'])  # Use ID instead of email
-        response = jsonify({
-            'success': True,
-            'user': {
-                'email': user['email'],
-                'name': user['full_name']
-            }
-        })
-        # Assuming set_access_cookies is defined elsewhere or needs to be imported
-        # from flask_jwt_extended import set_access_cookies
-        # set_access_cookies(response, access_token) 
-        return response
+        try:
+            user = get_user_by_email(email)
+            if not user:
+                logging.error(f'User not found for email: {email}')
+                return create_response('Invalid credentials', 401)
+            
+            if not check_password_hash(user['password_hash'], password):
+                logging.error(f'Password mismatch for email: {email}')
+                return create_response('Invalid credentials', 401)
+            
+            access_token = create_access_token(identity=str(user['id']))
+            return jsonify({
+                'success': True,
+                'user': {
+                    'id': user['id'],  
+                    'email': user['email'],
+                    'name': user['full_name']
+                },
+                'access_token': access_token,  # Change 'token' to 'access_token'
+                'redirect': url_for('home.home_page')
+            })
+        except Exception as db_error:
+            logging.error(f'Database error during login: {str(db_error)}')
+            return create_response('Failed to connect to the server. Please check database settings.', 500)
     except Exception as e:
-        logging.error(f'Login error: {str(e)} - Request data structure: {type(data)}')
+        logging.error(f'Login error: {str(e)}')
         return create_response('Login failed', 500)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    if not data or not isinstance(data, dict):
-        return jsonify({'error': 'Invalid request data'}), 400
-    
-    if not all(key in data for key in ['name', 'email', 'password']):
-        return jsonify({'error': 'Missing required fields'}), 400
-    
-    email = data.get('email').lower()
-    password = data.get('password')
-    full_name = data.get('name')
-    
-    if get_user_by_email(email):
-        return jsonify({'error': 'Email already registered'}), 409
-    
     try:
-        password_hash = generate_password_hash(password)
-        logging.info(f'User registration for email: {email} - Plain password length: {len(password)}, Hashed password length: {len(password_hash)}')
-        create_user(email=email, password_hash=password_hash, full_name=full_name)
-        return jsonify({'message': 'User registered successfully'}), 201
+        data = request.get_json()
+        email = data.get('email', '').lower()
+        password = data.get('password')
+        full_name = data.get('full_name')  # Changed from 'name' to 'full_name'
+        phone_number = data.get('phone') # Added phone_number
+
+        if not email or not password or not full_name:
+            logging.warning('Registration attempt with missing email, password, or full_name.')
+            return jsonify({'message': 'Email, password, and full name are required'}), 400
+
+        if get_user_by_email(email):
+            logging.warning(f'Registration attempt for existing email: {email}')
+            return jsonify({'message': 'User with that email already exists'}), 409
+
+        hashed_password = generate_password_hash(password)
+        
+        # Pass phone_number to create_user
+        user_id = create_user(email, hashed_password, full_name, phone_number) 
+
+        if user_id:
+            logging.info(f'User {email} registered successfully with ID: {user_id}')
+            access_token = create_access_token(identity=str(user_id)) # Create token for the newly registered user
+            return jsonify({
+                "success": True,
+                "message": "User registered successfully",
+                "user_id": user_id,
+                "email": email,
+                "full_name": full_name,
+                "access_token": access_token # Return the access token
+            }), 201
+        else:
+            logging.error(f'User registration failed for email: {email} - create_user returned None.')
+            return jsonify({'message': 'User registration failed'}), 500
+
     except Exception as e:
-        logging.error(f'Registration error: {str(e)} - Email: {email}')
-        return jsonify({'error': str(e)}), 500
+        logging.error(f'Registration error: {str(e)}')
+        return jsonify({'message': 'Registration failed'}), 500
 
 @auth_bp.route('/user', methods=['PUT'])
 @jwt_required()
@@ -277,24 +287,76 @@ def update_user():
         logging.error(f'Update error: {str(e)}')
         return create_response('Internal server error', 500)
 
-@auth_bp.route('/reset-password', methods=['POST'])
-def reset_password():
+@auth_bp.route('/change-password', methods=['POST'])
+@jwt_required()
+def change_password():
+    data = request.get_json()
+    print("Incoming Request Data:", data)  # Log the incoming request data
+
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+
+    if not old_password or not new_password:
+        return jsonify({'message': 'Old and new password are required'}), 400
+
+    user_id = get_jwt_identity()
+
+    conn = get_db()
     try:
-        data = request.get_json()
-        email = data.get('email')
-        new_password = data.get('new_password')
-        if not email or not new_password:
-            return create_response('Email and new password are required', 400)
-        
-        user = get_user_by_email(email)
-        if not user:
-            return create_response('User not found', 404)
-        
-        new_hash = generate_password_hash(new_password)
-        if update_user_by_id(user['id'], password_hash=new_hash):  # Assuming update_user_by_id can handle password_hash
-            return create_response('Password reset successfully', 200)
-        else:
-            return create_response('Reset failed', 500)
+        with conn.cursor() as cur:
+            cur.execute("SELECT password_hash FROM users WHERE id = %s", (int(user_id),))
+            user = cur.fetchone()
+            if not user or not check_password_hash(user[0], old_password):
+                return jsonify({'message': 'Old password is incorrect'}), 400
+
+            new_hash = generate_password_hash(new_password)
+            cur.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_hash, int(user_id)))
+            conn.commit()
+
+        return jsonify({'message': 'Password updated successfully'}), 200
     except Exception as e:
-        logging.error(f'Password reset error: {str(e)}')
-        return create_response('Reset failed', 500) 
+        conn.rollback()
+        return jsonify({'message': 'Failed to update password'}), 500
+    finally:
+        if conn:
+            conn.close()
+
+
+# Route to delete account
+
+
+# Route to delete account
+@auth_bp.route('/delete-account', methods=['DELETE'])
+@jwt_required()
+def delete_account():
+    user_id = get_jwt_identity()
+    conn = get_db()
+    with conn.cursor() as cur:
+        # Delete the user (and cascade to related data if your schema supports it)
+        cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+    return jsonify({'message': 'Account deleted successfully'}), 200
+
+# Route to handle login
+# @auth_bp.route('/login', methods=['POST'])
+# def login():
+#     data = request.get_json()
+#     email = data.get('email')
+#     password = data.get('password')
+
+#     if not email or not password:
+#         return jsonify({'message': 'Email and password are required'}), 400
+
+#     user = User.query.filter_by(email=email).first()
+
+#     if not user:
+#         return jsonify({'message': 'Account does not exist. Please create a new account.'}), 404
+
+#     # Check password
+#     if not check_password_hash(user.password, password):
+#         return jsonify({'message': 'Invalid credentials'}), 401
+
+#     # Generate token (assuming a token generation function exists)
+#     token = generate_token(user)
+
+#     return jsonify({'message': 'Login successful', 'token': token}), 200

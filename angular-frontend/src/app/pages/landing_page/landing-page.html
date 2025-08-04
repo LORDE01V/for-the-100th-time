@@ -1,0 +1,127 @@
+<!-- Main container with background image and overlay -->
+<div class="landing-page-container" [style.background-image]="'url(' + gridXBackground + ')'">
+  <div class="overlay"></div>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-heading">Welcome to GridX</h1>
+        <!-- Equivalent of HeroTypingTitle -->
+        <h2 class="typing-title">{{ currentTypingMessage }}<span class="cursor">|</span></h2>
+        <button class="btn-primary" (click)="getStarted()">Get Started</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rotating Greetings Section -->
+  <section class="rotating-greetings-section">
+    <div class="container-md">
+      <div class="greetings-card">
+        <h2 class="greetings-heading">Discover the Spirit of South Africa!</h2>
+        <div class="greeting-text-wrapper">
+          <span class="greeting-text">{{ currentGreeting }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="container-xl">
+      <div class="feature-slider-container">
+        <div class="feature-slider">
+          <!-- First set of features -->
+          <div class="features-grid">
+            <div *ngFor="let feature of features; let i = index" class="feature-card">
+              <i class="feature-icon fa-solid fa-{{ feature.icon }}"></i> <!-- Font Awesome icon placeholder -->
+              <h3 class="feature-title">{{ feature.title }}</h3>
+              <p class="feature-description">{{ feature.description }}</p>
+            </div>
+          </div>
+          <!-- Duplicate set of features for seamless scrolling -->
+          <div class="features-grid">
+            <div *ngFor="let feature of features; let i = index" class="feature-card">
+              <i class="feature-icon fa-solid fa-{{ feature.icon }}"></i>
+              <h3 class="feature-title">{{ feature.title }}</h3>
+              <p class="feature-description">{{ feature.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Meet the Developers Section -->
+  <section class="developers-section">
+    <div class="container-xl">
+      <h2 class="developers-heading">Meet the Developers</h2>
+      <div class="developers-grid">
+        <div *ngFor="let dev of developers; let i = index" class="developer-card">
+          <div class="developer-image-container">
+            <img *ngIf="getImagePath(dev.name)" [src]="getImagePath(dev.name)" [alt]="dev.name" class="developer-image" />
+            <div *ngIf="!getImagePath(dev.name)" class="developer-avatar">
+              <!-- Fallback for missing image, could use a generic avatar -->
+              <span>{{ dev.name.charAt(0) }}</span>
+            </div>
+          </div>
+          <div class="developer-info">
+            <p class="developer-name">{{ dev.name }}</p>
+            <p class="developer-role">{{ dev.role }}</p>
+            <p class="developer-description">{{ dev.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container-xl">
+      <div class="footer-content">
+        <!-- Company Info -->
+        <div class="footer-section">
+          <h3 class="footer-heading">GridX</h3>
+          <p class="footer-text">Empowering South Africa with sustainable energy solutions and smart power management.</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-section">
+          <h3 class="footer-heading">Quick Links</h3>
+          <ul>
+            <li><a href="#" class="footer-link">About Us</a></li>
+            <li><a href="#" class="footer-link">Services</a></li>
+            <li><a href="#" class="footer-link">Contact</a></li>
+            <li><a [routerLink]="['/support']" class="footer-link">Support</a></li>
+          </ul>
+        </div>
+
+        <!-- Services -->
+        <div class="footer-section">
+          <h3 class="footer-heading">Services</h3>
+          <ul>
+            <li><a href="#" class="footer-link">Solar Solutions</a></li>
+            <li><a href="#" class="footer-link">Power Management</a></li>
+            <li><a href="#" class="footer-link">Load Shedding</a></li>
+            <li><a href="#" class="footer-link">Energy Analytics</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="footer-section">
+          <h3 class="footer-heading">Contact Us</h3>
+          <p class="footer-text">Email: gridx.noreply&#64;gmail.com</p>
+          <p class="footer-text">Support Hours: Mon-Fri, 9:00-17:00</p>
+          <p class="footer-text">Address: Sandton, South Africa</p>
+        </div>
+      </div>
+
+      <hr class="footer-divider" />
+
+      <!-- Copyright -->
+      <p class="copyright-text">
+        © {{ currentYear }} GridX. All rights reserved.
+      </p>
+    </div>
+  </footer>
+</div>

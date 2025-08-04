@@ -1,0 +1,402 @@
+// General container and overlay styles
+.landing-page-container {
+  min-height: 100vh;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  overflow: hidden; // Important for managing inner absolute elements
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+// Common container styles (replaces Chakra UI Container)
+.container {
+  max-width: 1200px; // Equivalent to container.xl
+  margin: 0 auto;
+  padding: 0 16px; // Equivalent to px={4}
+  position: relative;
+  z-index: 2; // Ensure content is above overlay
+}
+
+.container-md {
+  max-width: 768px; // Equivalent to container.md
+  margin: 0 auto;
+  padding: 0 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.container-xl {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  position: relative;
+  z-index: 2;
+}
+
+
+// Hero Section
+.hero-section {
+  padding: 80px 0; // py={20}
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); // bgGradient
+  text-align: center;
+  position: relative;
+  z-index: 2;
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px; // spacing={8}
+  }
+
+  .hero-heading {
+    font-size: 3rem; // size="2xl"
+    color: white; // headingColor
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .typing-title {
+    font-size: 3rem; // size="2xl"
+    color: white; // headingColor
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    min-height: 1.2em; // To prevent layout shift as in React TypeAnimation
+
+    .cursor {
+      display: inline-block;
+      width: 0.7em; // Adjust cursor width
+      animation: blink-caret 0.75s step-end infinite;
+    }
+  }
+
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: white; }
+  }
+
+  .btn-primary {
+    background-color: #4299e1; // blue.500
+    color: white;
+    padding: 16px 32px; // px={8}, size="lg"
+    border-radius: 8px;
+    font-size: 1.125rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow: 'lg'
+    }
+  }
+}
+
+// Rotating Greetings Section
+.rotating-greetings-section {
+  position: relative;
+  z-index: 2;
+  margin-top: 48px; // mt={12}
+  margin-bottom: 48px; // mb={12}
+
+  .greetings-card {
+    padding: 40px 16px; // py={10}, px={4}
+    background: rgba(0, 0, 0, 0.7); // containerBg
+    text-align: center;
+    border-radius: 9999px; // borderRadius="full"
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); // boxShadow="lg"
+    backdrop-filter: blur(10px);
+    max-width: 768px;
+    margin: 0 auto;
+  }
+
+  .greetings-heading {
+    font-size: 1.875rem; // size="lg"
+    color: white; // greetingColor
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 16px;
+  }
+
+  .greeting-text-wrapper {
+    overflow: hidden; // For controlling fade-in/out without affecting sibling elements
+    height: 1.5em; // Ensure consistent height during transitions
+  }
+
+  .greeting-text {
+    font-size: 1.25rem; // base: 'xl', md: '2xl'
+    font-weight: bold;
+    color: white; // greetingColor
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    display: block; // Needed for transform animations
+
+    // Animation for text fade in/out
+    animation: fade-in-out 3s forwards;
+  }
+
+  @keyframes fade-in-out {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+  }
+}
+
+
+// Features Section
+.features-section {
+  padding: 80px 0; // py={20}
+  position: relative;
+  z-index: 2;
+
+  .feature-slider-container {
+    width: 100%;
+    overflow: hidden;
+    // Add hover to pause animation
+    &:hover .feature-slider {
+      animation-play-state: paused;
+    }
+  }
+
+  .feature-slider {
+    display: flex;
+    width: 200%; // To allow for duplicate content for seamless loop
+    position: relative;
+    animation: slide 30s linear infinite;
+  }
+
+  @keyframes slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); // base: 1, md: 3 (approx)
+    gap: 40px; // spacing={10}
+    width: 100%;
+    flex-shrink: 0; // Prevent shrinking when inside flex container
+  }
+
+  .feature-card {
+    padding: 32px; // p={8}
+    background: rgba(0, 0, 0, 0.7); // containerBg
+    border-radius: 9999px; // borderRadius="full"
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); // boxShadow="md"
+    border: 1px solid rgba(255, 255, 255, 0.2); // borderColor
+    text-align: center;
+    transition: all 0.3s ease; // transition={{ duration: 0.3 }}
+
+    &:hover {
+      transform: scale(1.05); // hover scale
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow="lg"
+      // Rotate for hover (from framer-motion variants)
+      // Note: Replicating precise framer-motion rotate might need JS, but a subtle rotate can be done with CSS
+      transform: scale(1.05) rotate(2deg);
+    }
+  }
+
+  .feature-icon {
+    width: 48px; // w={12}
+    height: 48px; // h={12}
+    color: #3182ce; // blue.500
+    margin-bottom: 16px; // mb={4}
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      color: #2b6cb0; // blue.600
+    }
+  }
+
+  .feature-title {
+    font-size: 1.25rem; // size="md"
+    color: white; // headingColor
+    margin-bottom: 16px; // mb={4}
+    transition: all 0.3s ease;
+  }
+
+  .feature-description {
+    color: white; // textColor
+    transition: all 0.3s ease;
+  }
+}
+
+
+// Meet the Developers Section
+.developers-section {
+  padding: 80px 16px; // py={20}, px={4}
+  position: relative;
+  z-index: 3;
+
+  .developers-heading {
+    font-size: 2.25rem; // size="xl"
+    text-align: center;
+    margin-bottom: 40px; // mb={10}
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+
+  .developers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // base: 1, sm: 2, md: 3, lg: 5 (approx)
+    gap: 32px; // spacing={8}
+  }
+
+  .developer-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; // spacing={3}
+    padding: 16px; // p={4}
+    border-radius: 8px; // borderRadius="lg"
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow="lg"
+    border: 1px solid rgba(255,255,255,0.15); // borderWidth="1px" borderColor
+    text-align: center;
+    width: 100%;
+    background: rgba(20,20,20,0.95); // bg
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); // boxShadow="xl"
+    }
+  }
+
+  .developer-image-container {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 8px; // mb={2}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px; // For 3D flip effect
+
+    &:hover {
+      .developer-image, .developer-avatar { // Apply transform to both
+        transform: rotateY(180deg);
+      }
+    }
+  }
+
+  .developer-image, .developer-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 8px;
+    transition: transform 0.6s ease-in-out;
+    // Removed: backface-visibility: hidden; // This was causing the images to disappear
+    position: absolute; // To allow both to exist and flip
+  }
+
+  .developer-avatar {
+    background-color: #3182ce; // A default avatar background
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotateY(0deg); // Initial state
+  }
+
+
+  .developer-name {
+    font-weight: bold;
+    font-size: 1.125rem; // lg
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  }
+
+  .developer-role {
+    font-size: 1rem; // md
+    color: white;
+    font-style: italic;
+    text-decoration: underline;
+  }
+
+  .developer-description {
+    font-size: 0.875rem; // sm
+    color: white;
+    padding: 0 8px; // px={2}
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  }
+}
+
+// Footer
+.main-footer {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 48px 0; // py={12}
+  margin-top: 80px; // mt={20}
+
+  .footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // base: 1, md: 4 (approx)
+    gap: 32px; // spacing={8}
+  }
+
+  .footer-heading {
+    font-size: 1.125rem; // size="md" or "sm" depending on context
+    color: white;
+    margin-bottom: 16px; // spacing={4}
+  }
+
+  .footer-text, .footer-link {
+    color: white;
+    font-size: 0.875rem; // sm
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+    display: block; // For links within ul
+    margin-bottom: 8px; // Add some spacing between list items if needed
+  }
+
+  .footer-link:hover {
+    color: #63b3ed; // blue.400
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-divider {
+    border-color: #4a5568; // gray.700
+    margin: 40px 0; // spacing={10}
+  }
+
+  .copyright-text {
+    color: white;
+    font-size: 0.875rem; // sm
+    text-align: center;
+  }
+}
+
+// Media queries for responsiveness (example, adjust as needed)
+@media (max-width: 768px) {
+  .hero-section .hero-heading, .hero-section .typing-title {
+    font-size: 2.5rem;
+  }
+
+  .features-section .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .developers-section .developers-grid {
+    grid-template-columns: 1fr;
+  }
+}

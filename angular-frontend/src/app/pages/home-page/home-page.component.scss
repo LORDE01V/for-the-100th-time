@@ -1,0 +1,337 @@
+/* Styling based on HomePage.js (Chakra UI equivalent) */
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--chakra-colors-gray-50); /* Light mode default */
+  position: relative;
+  overflow: hidden;
+}
+
+.background-video-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.background-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* blackAlpha.700 */
+}
+
+.content-container {
+  position: relative;
+  z-index: 2;
+  padding: 2.5rem 0; /* py={10} */
+  max-width: 960px; /* maxW="6xl" equivalent, adjust as needed */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem; /* Adjust as needed */
+  padding-right: 1rem; /* Adjust as needed */
+}
+
+.header-section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem; /* mb={8} */
+}
+
+@media (min-width: 48em) { /* md breakpoint for Chakra UI */
+  .header-section {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.welcome-section h1 {
+  color: var(--chakra-colors-gray-900); /* headingColor */
+  font-size: 2.25rem; /* Equivalent to Chakra Heading default */
+}
+
+.loading-greeting {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem; /* mt={2} */
+}
+
+.loading-greeting .spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--chakra-colors-blue-500); /* spinnerColor */
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem; /* mr={2} */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-greeting p,
+.ai-greeting {
+  color: var(--chakra-colors-gray-800); /* textColor */
+  margin-top: 0.5rem; /* mt={2} */
+}
+
+.ai-greeting {
+  font-weight: 500; /* fontWeight="medium" */
+}
+
+.error-greeting {
+  color: var(--chakra-colors-orange-400);
+  margin-top: 0.5rem;
+}
+
+.date-section p {
+  color: var(--chakra-colors-gray-800); /* textColor */
+  text-align: right;
+}
+
+@media (max-width: 47.999em) { /* Before md breakpoint */
+  .date-section p {
+    text-align: left;
+    margin-top: 1rem;
+  }
+}
+
+.navigation-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* simpleGrid equivalent */
+  gap: 1.5rem; /* spacing={6} */
+}
+
+.nav-card {
+  padding: 1.5rem; /* p={6} */
+  border-radius: 0.75rem; /* borderRadius="xl" */
+  background-color: rgba(255, 255, 255, 0.9); /* navCardBg (whiteAlpha.900) */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* boxShadow="lg" */
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.nav-card:hover {
+  transform: scale(1.03);
+}
+
+.nav-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-icon {
+  display: inline-block;
+  width: 2rem; /* boxSize={8} */
+  height: 2rem; /* boxSize={8} */
+  /* Placeholder for icon styling - actual icons will be SVGs or font icons */
+  background-color: lightgray; /* Temporary visual */
+  border-radius: 50%;
+}
+
+.nav-card h2 {
+  font-size: 1.125rem; /* fontSize="lg" */
+  margin-top: 0.5rem; /* mt={2} */
+  color: var(--chakra-colors-gray-900); /* headingColor */
+}
+
+.nav-card p {
+  margin-top: 0.5rem; /* mt={2} */
+  font-size: 0.875rem; /* fontSize="sm" */
+  color: var(--chakra-colors-gray-800); /* textColor */
+}
+
+.nav-button {
+  margin-top: 1rem; /* mt={4} */
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem; /* md */
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: white;
+}
+
+/* Color schemes for buttons - these would ideally be dynamic based on item.colorScheme */
+.nav-button[color-scheme="blue"] {
+  background-color: var(--chakra-colors-blue-500);
+}
+.nav-button[color-scheme="green"] {
+  background-color: var(--chakra-colors-green-500);
+}
+.nav-button[color-scheme="purple"] {
+  background-color: var(--chakra-colors-purple-500);
+}
+.nav-button[color-scheme="orange"] {
+  background-color: var(--chakra-colors-orange-500);
+}
+.nav-button[color-scheme="gray"] {
+  background-color: var(--chakra-colors-gray-500);
+}
+.nav-button[color-scheme="teal"] {
+  background-color: var(--chakra-colors-teal-500);
+}
+
+.newsletter-section {
+  margin-top: 3rem; /* mt={12} */
+  background-color: rgba(255, 255, 255, 0.9); /* newsletterBg (whiteAlpha.900) */
+  padding: 1.5rem; /* p={6} */
+  border-radius: 0.5rem; /* borderRadius="lg" */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* boxShadow="md" */
+}
+
+.newsletter-section h2 {
+  font-size: 1.25rem; /* size="md" */
+  margin-bottom: 0.5rem; /* mb={2} */
+}
+
+.newsletter-section p {
+  margin-bottom: 1rem; /* mb={4} */
+  color: var(--chakra-colors-gray-800); /* textColor */
+}
+
+.newsletter-input-group {
+  display: grid;
+  grid-template-columns: 1fr; /* base: '1fr' */
+  gap: 1rem; /* gap={4} */
+  margin-bottom: 1rem; /* mb={4} */
+}
+
+@media (min-width: 48em) { /* md breakpoint */
+  .newsletter-input-group {
+    grid-template-columns: 3fr 1fr;
+  }
+}
+
+.newsletter-input-group input {
+  padding: 0.5rem;
+  border: 1px solid var(--chakra-colors-gray-200); /* Border equivalent */
+  border-radius: 0.375rem;
+}
+
+.newsletter-input-group button {
+  background-color: var(--chakra-colors-blue-500); /* colorScheme="blue" */
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.newsletter-input-group button:hover {
+  background-color: var(--chakra-colors-blue-600);
+}
+
+.push-notifications-button {
+  background-color: transparent;
+  border: 1px solid var(--chakra-colors-teal-500); /* variant="outline" */
+  color: var(--chakra-colors-teal-500);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.push-notifications-button:hover {
+  background-color: var(--chakra-colors-teal-50); /* A light hover effect */
+}
+
+.logout-section {
+  text-align: center;
+  margin-top: 2.5rem; /* mt={10} */
+}
+
+.logout-button {
+  background-color: var(--chakra-colors-red-500); /* colorScheme="red" */
+  color: white;
+  padding: 0.75rem 1.5rem; /* size="lg" */
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 1.125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background-color: var(--chakra-colors-red-600);
+}
+
+.logout-button::before {
+  content: '\f08b'; /* FaSignOutAlt unicode, requires Font Awesome */
+  font-family: 'Font Awesome 5 Free'; /* Adjust if using different font icon library */
+  font-weight: 900;
+  margin-right: 0.5rem;
+}
+
+.footer-section {
+  margin-top: 3rem; /* mt={12} */
+}
+
+/* Basic Chakra UI color variables - these would ideally be defined globally or imported */
+:root {
+  --chakra-colors-gray-50: #f7fafc;
+  --chakra-colors-gray-900: #171923;
+  --chakra-colors-gray-800: #2d3748;
+  --chakra-colors-gray-500: #a0aec0;
+  --chakra-colors-blue-500: #4299e1;
+  --chakra-colors-blue-600: #3182ce;
+  --chakra-colors-blue-300: #90cdf4;
+  --chakra-colors-green-500: #48bb78;
+  --chakra-colors-purple-500: #805ad5;
+  --chakra-colors-orange-500: #ed8936;
+  --chakra-colors-red-500: #e53e3e;
+  --chakra-colors-red-600: #c53030;
+  --chakra-colors-teal-500: #319795;
+  --chakra-colors-teal-50: #e6fffa;
+  --chakra-colors-gray-200: #edf2f7;
+}
+
+/* Dark mode adaptations - will need to be conditionally applied */
+/* This assumes a class like .chakra-ui-dark or similar on a parent element */
+/* For simplicity, I'm not implementing the full dark mode toggle logic here */
+/* Instead, these are just the dark mode styles for reference */
+.chakra-ui-dark {
+  --chakra-colors-gray-50: #1a202c;
+  --chakra-colors-gray-900: #f7fafc;
+  --chakra-colors-gray-800: #edf2f7;
+  --chakra-colors-gray-400: #a0aec0;
+  --chakra-colors-blue-500: #63b3ed;
+  --chakra-colors-blue-300: #90cdf4;
+}
+
+.chakra-ui-dark .welcome-section h1,
+.chakra-ui-dark .nav-card h2 {
+  color: var(--chakra-colors-gray-50); /* white */
+}
+
+.chakra-ui-dark .loading-greeting p,
+.chakra-ui-dark .ai-greeting,
+.chakra-ui-dark .date-section p,
+.chakra-ui-dark .nav-card p,
+.chakra-ui-dark .newsletter-section p {
+  color: var(--chakra-colors-gray-400); /* gray.400 */
+}
+
+.chakra-ui-dark .nav-card {
+  background-color: var(--chakra-colors-gray-800);
+}
+
+.chakra-ui-dark .newsletter-section {
+  background-color: var(--chakra-colors-gray-800);
+}

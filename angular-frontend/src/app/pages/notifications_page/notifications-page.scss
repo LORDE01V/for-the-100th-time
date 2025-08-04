@@ -1,0 +1,133 @@
+.notifications-bg {
+    min-height: 100vh;
+    background: url('/assets/images/notification.png') center/cover no-repeat fixed, rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .notifications-container {
+    background: rgba(255,255,255,0.95);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #222;
+      flex: 1;
+      text-align: center;
+    }
+  
+    .back-btn {
+      background: none;
+      border: none;
+      color: #007bff;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-right: 1rem;
+      transition: color 0.2s;
+      &:hover {
+        color: #0056b3;
+      }
+    }
+  }
+  
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+  
+  .spinner {
+    border: 4px solid #eee;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .notification-card {
+    display: flex;
+    align-items: flex-start;
+    background: #f9f9f9;
+    border-left: 6px solid #007bff;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1rem 1.5rem 1rem 1rem;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  
+    &.success { border-left-color: #28a745; }
+    &.warning { border-left-color: #ffc107; }
+    &.error   { border-left-color: #dc3545; }
+    &.info    { border-left-color: #007bff; }
+  
+    .notif-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 1rem;
+      border-radius: 50%;
+      background: #007bff;
+      &.success { background: #28a745; }
+      &.warning { background: #ffc107; }
+      &.error   { background: #dc3545; }
+      &.info    { background: #007bff; }
+    }
+  
+    .notif-content {
+      flex: 1;
+      .notif-title {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+      }
+      .notif-desc {
+        color: #555;
+        margin-bottom: 0.5rem;
+      }
+      .notif-date {
+        font-size: 0.85rem;
+        color: #888;
+      }
+    }
+  
+    .close-btn {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 1.5rem;
+      cursor: pointer;
+      position: absolute;
+      right: 12px;
+      top: 8px;
+      line-height: 1;
+      transition: color 0.2s;
+      &:hover {
+        color: #dc3545;
+      }
+    }
+  }
+  
+  .no-notifications {
+    text-align: center;
+    color: #888;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+  }

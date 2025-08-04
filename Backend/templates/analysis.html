@@ -18,7 +18,6 @@
       <nav class="m-2 my-md-0 mr-md-3">
         <a class="py-2 m-2 text-dark" href="/home">Home</a>
         <a class="py-2 m-2 text-dark" href="/analysis">Analysis</a>
-        <a class="py-2 m-2 text-dark" href="/profile">Profile</a>
         <a class="py-2 m-2 text-dark" href="/contact">Contact Us</a>
       </nav>
          <a class="btn m-2 btn-outline-warning" href="/logout">Logout</a>
@@ -65,29 +64,29 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-     <script src='https://cdn.plot.ly/plotly-2.16.1.min.js'></script>
-     <script src='https://cdn.plot.ly/plotly-latest.min.js'></script> <!-- Plotly CDN -->
-     <script src="{{ url_for('static', filename='js/script.js') }}"></script> <!-- Local JS -->
      <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
      <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
     </body>
-    <script type="text/javascript">
-        var bar = {{ bar | safe }};
-        var pie = {{ pie | safe }};
-        var line_graph = {{ line | safe }};
-        var scatter_graph = {{ scatter | safe }};
-        var heat_graph = {{ heat | safe }};
-        var month_graph = {{ month_bar | safe }};
-        var sun_graph = {{ sun | safe }};
+    <script type='text/javascript'>
+      var bar = {{ bar | tojson }};
+      var pie = {{ pie | tojson }};
+      var line_graph = {{ line | tojson }};
+      var scatter_graph = {{ scatter | tojson }};
+      var heat_graph = {{ heat | tojson }};
+      var month_graph = {{ month_bar | tojson }};
+      var sun_graph = {{ sun | tojson }};
 
-<!--Plotly.plot('div_id',data,{});-->
-      Plotly.plot('pie',pie,{});
-      Plotly.plot('stack_bar',bar,{});
-      Plotly.plot('line',line_graph,{});
-      Plotly.plot('scatter',scatter_graph,{});
-      Plotly.plot('heat',heat_graph,{});
-      Plotly.plot('month_bar',month_graph,{});
-      Plotly.plot('sun',sun_graph,{});
-
+      try {
+          Plotly.plot('pie', pie, {});
+          Plotly.plot('stack_bar', bar, {});
+          Plotly.plot('line', line_graph, {});
+          Plotly.plot('scatter', scatter_graph, {});
+          Plotly.plot('heat', heat_graph, {});
+          Plotly.plot('month_bar', month_graph, {});
+          Plotly.plot('sun', sun_graph, {});
+      } catch (error) {
+          console.error('Error rendering charts:', error);
+      }
     </script>
 </html>

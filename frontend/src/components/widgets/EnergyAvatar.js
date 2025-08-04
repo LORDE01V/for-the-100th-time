@@ -33,7 +33,7 @@ const EnergyAvatar = () => {
         <Center h="100%">
           <Avatar 
             size="2xl" 
-            src="/assets/images/default-avatar.png"
+            // src removed: fallback icon will be used if no image is provided
             bg="brand.100"
             icon={<FaUser size={40} />}
           />

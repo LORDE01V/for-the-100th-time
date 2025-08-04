@@ -1,0 +1,218 @@
+.topup-bg {
+    min-height: 100vh;
+    background: url('/assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png') center/cover no-repeat fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2rem 1rem;
+    &:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1;
+    }
+  }
+  
+  .topup-container {
+    position: relative;
+    z-index: 2;
+    background: rgba(255,255,255,0.92);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 2rem 2.5rem;
+    max-width: 400px;
+    width: 100%;
+    color: #222;
+    margin: 2rem 0;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+    .back-btn {
+      float: left;
+      background: none;
+      border: none;
+      color: #00796b;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      margin: 0.5rem 0 0.2rem 0;
+      font-size: 2rem;
+    }
+  }
+  
+  .balance-section {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    p {
+      color: #666;
+      font-size: 1.1rem;
+      margin-bottom: 0.2rem;
+    }
+    .balance {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #388e3c;
+    }
+  }
+  
+  .status-msg {
+    margin-bottom: 1rem;
+    padding: 0.7rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    &.success { background: #e8f5e9; color: #388e3c; }
+    &.error { background: #ffebee; color: #e53935; }
+    &.warning { background: #fffde7; color: #fbc02d; }
+  }
+  
+  form {
+    margin-bottom: 2rem;
+    .form-group {
+      margin-bottom: 1rem;
+      label {
+        display: block;
+        margin-bottom: 0.2rem;
+        font-weight: 500;
+      }
+      input, select {
+        width: 100%;
+        padding: 0.6rem;
+        border-radius: 0.4rem;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        outline: none;
+        transition: border 0.2s;
+        &:focus {
+          border-color: #00796b;
+        }
+      }
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.8rem;
+      background: #00796b;
+      color: #fff;
+      border: none;
+      border-radius: 0.4rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s;
+      &:hover:enabled {
+        background: #004d40;
+      }
+      &:disabled {
+        background: #bdbdbd;
+        cursor: not-allowed;
+      }
+    }
+  }
+  
+  hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 2rem 0;
+  }
+  
+  .auto-topup-section {
+    margin-bottom: 2rem;
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.7rem;
+    }
+    .auto-topup-active {
+      background: #e8f5e9;
+      color: #388e3c;
+      border-radius: 0.5rem;
+      padding: 0.7rem 1rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    .auto-topup-btn {
+      width: 100%;
+      padding: 0.7rem;
+      background: #fff;
+      color: #00796b;
+      border: 1px solid #00796b;
+      border-radius: 0.4rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s, color 0.2s;
+      &:hover {
+        background: #00796b;
+        color: #fff;
+      }
+    }
+  }
+  
+  .modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .modal-content {
+      background: #fff;
+      border-radius: 0.7rem;
+      padding: 2rem;
+      max-width: 350px;
+      width: 100%;
+      position: relative;
+      h3 {
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+      .close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #888;
+        cursor: pointer;
+      }
+      .modal-body {
+        .form-group {
+          margin-bottom: 1rem;
+        }
+      }
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1rem;
+        button {
+          padding: 0.6rem 1.2rem;
+          border-radius: 0.4rem;
+          border: none;
+          font-size: 1rem;
+          font-weight: 500;
+          cursor: pointer;
+          &:first-child {
+            background: #bdbdbd;
+            color: #fff;
+          }
+          &:last-child {
+            background: #00796b;
+            color: #fff;
+          }
+          &:disabled {
+            background: #bdbdbd;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }

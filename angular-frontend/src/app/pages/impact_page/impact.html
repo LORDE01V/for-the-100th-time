@@ -1,0 +1,56 @@
+<div class="impact-container">
+    <div class="impact-header">
+      <button class="back-btn" routerLink="/home">Back to Home</button>
+      <button class="download-btn" (click)="downloadPDF()">Download Impact Report</button>
+    </div>
+  
+    <h1>Environmental Impact</h1>
+  
+    <div class="impact-stats">
+      <div class="stat-card" *ngFor="let stat of impactStats">
+        <span class="material-icons stat-icon">{{ stat.icon }}</span>
+        <div>
+          <div class="stat-label">{{ stat.label }}</div>
+          <div class="stat-value">{{ stat.value }}</div>
+        </div>
+      </div>
+    </div>
+  
+    <h2>Community Voices</h2>
+    <div class="testimonial-carousel">
+      <button (click)="prevTestimonial()">&lt;</button>
+      <div class="testimonial-card">
+        <img [src]="testimonials[currentTestimonial].avatar" [alt]="testimonials[currentTestimonial].name" class="testimonial-avatar" />
+        <blockquote>"{{ testimonials[currentTestimonial].quote }}"</blockquote>
+        <div class="testimonial-name">{{ testimonials[currentTestimonial].name }}</div>
+        <div class="testimonial-rating">
+          <span *ngFor="let star of [1,2,3,4,5]" class="material-icons"
+                [ngClass]="{'active': star <= testimonials[currentTestimonial].rating}">star</span>
+        </div>
+      </div>
+      <button (click)="nextTestimonial()">&gt;</button>
+    </div>
+  
+    <h2>Share Your Story</h2>
+    <form (ngSubmit)="submitTestimonial()" class="testimonial-form">
+      <input type="text" [(ngModel)]="name" name="name" placeholder="Your Name" required />
+      <input type="email" [(ngModel)]="email" name="email" placeholder="Your Email" required />
+      <textarea [(ngModel)]="quote" name="quote" placeholder="Share your story..." required></textarea>
+      <div class="star-rating">
+        <span *ngFor="let star of [1,2,3,4,5]" class="material-icons"
+              [ngClass]="{'active': star <= rating}" (click)="setRating(star)">star</span>
+      </div>
+      <button type="submit">Submit Story</button>
+    </form>
+  
+    <h2>Upcoming Events Calendar</h2>
+    <div class="calendar-placeholder">[Events calendar coming soon]</div>
+  
+    <h2>Why Solar + Fintech Matters</h2>
+    <div class="why-section">
+      Access to clean, affordable energy is transformative. By combining solar technology with accessible fintech solutions, we empower individuals and communities, drive economic growth, and build a sustainable future. Every watt saved and every household powered contributes to a brighter tomorrow.
+    </div>
+  
+    <h2>Communities We've Reached</h2>
+    <div class="map-placeholder">[Impact map coming soon]</div>
+  </div>
