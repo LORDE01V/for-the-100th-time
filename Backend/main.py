@@ -1036,8 +1036,9 @@ def ai_agent_openrouter():
 
 # ================= RUN BOTH APPS =================
 if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
     print("=== Registered routes ===")
     for rule in flask_app.url_map.iter_rules():
         print(rule)
     print("=========================")
-    flask_app.run(host='0.0.0.0', port=5000, debug=True)
+    flask_app.run(host='0.0.0.0', port=port, debug=True)

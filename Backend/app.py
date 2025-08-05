@@ -491,5 +491,6 @@ def get_loadshedding():
 
 if __name__ == '__main__':
     logger.info("Starting Flask app on port 5000")
+    port = int(os.environ.get("PORT", 5000))
     # app.register_blueprint(recommendation_bp) # Commented out due to unresolved import
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=port)
