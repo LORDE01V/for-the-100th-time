@@ -33,7 +33,7 @@ from app.routes.auth import auth_bp
 from support import connect_db, save_community_story, save_support_request # Import save_community_story and save_support_request
 from app.routes.support import support_bp 
 from app.routes.community_stories import community_stories_bp
-from app.routes.userprofile import profile_bp
+from app.routes.userprofile import user_profile_bp
 from app.routes.notification_preference import notifications_bp
 from app.routes.events_calendar import events_calendar_bp
 from app.routes.topup import topup_bp
@@ -92,7 +92,7 @@ flask_app.register_blueprint(home_bp)
 flask_app.register_blueprint(auth_bp, name='auth_blueprint', url_prefix='/api/auth')
 flask_app.register_blueprint(support_bp)
 flask_app.register_blueprint(community_stories_bp)
-flask_app.register_blueprint(profile_bp)
+flask_app.register_blueprint(user_profile_bp)
 flask_app.register_blueprint(notifications_bp, url_prefix='/notifications')
 flask_app.register_blueprint(events_calendar_bp)
 flask_app.register_blueprint(topup_bp, url_prefix='/api')
