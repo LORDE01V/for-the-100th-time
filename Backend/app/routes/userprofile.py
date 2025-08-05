@@ -2,11 +2,11 @@ from flask import Blueprint, request, jsonify
 from Backend.db_utils import connect_db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-profile_bp = Blueprint('profile', __name__)
+user_profile_bp = Blueprint('profile', __name__)
 
 
 
-@profile_bp.route('/profile/me', methods=['GET'])
+@user_profile_bp.route('/profile/me', methods=['GET'])
 @jwt_required()
 def get_my_profile():
     user_id = get_jwt_identity()
@@ -34,7 +34,7 @@ def get_my_profile():
 
 import psycopg2
 
-@profile_bp.route('/profile/me', methods=['POST', 'PUT'])
+@user_profile_bp.route('/profile/me', methods=['POST', 'PUT'])
 @jwt_required()
 def update_my_profile():
     try:
