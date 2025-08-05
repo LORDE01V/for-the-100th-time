@@ -3426,3 +3426,75 @@ What do you need?
 2025-08-04 08:24:08,660 - WARNING -  * Debugger is active!
 2025-08-04 08:24:08,663 - INFO -  * Debugger PIN: 360-944-959
 2025-08-04 08:26:59,172 - INFO - 127.0.0.1 - - [04/Aug/2025 08:26:59] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-04 12:16:38,379 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-04 12:16:38,380 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-04 12:16:38,383 - INFO -  * Restarting with stat
+2025-08-04 12:16:39,896 - WARNING -  * Debugger is active!
+2025-08-04 12:16:39,902 - INFO -  * Debugger PIN: 360-944-959
+2025-08-04 12:16:59,501 - INFO - 127.0.0.1 - - [04/Aug/2025 12:16:59] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-04 12:17:00,092 - INFO - 127.0.0.1 - - [04/Aug/2025 12:17:00] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-04 12:17:00,099 - INFO - 127.0.0.1 - - [04/Aug/2025 12:17:00] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-08-04 12:17:00,157 - INFO - 127.0.0.1 - - [04/Aug/2025 12:17:00] "[33mGET /api/auth/user HTTP/1.1[0m" 404 -
+2025-08-04 12:17:23,265 - INFO - 127.0.0.1 - - [04/Aug/2025 12:17:23] "OPTIONS /api/user/latest-topup?user_id=15 HTTP/1.1" 200 -
+2025-08-04 12:17:23,268 - INFO - 127.0.0.1 - - [04/Aug/2025 12:17:23] "OPTIONS /api/user/expenses?user_id=15 HTTP/1.1" 200 -
+2025-08-04 12:17:23,642 - INFO - 127.0.0.1 - - [04/Aug/2025 12:17:23] "GET /api/user/latest-topup?user_id=15 HTTP/1.1" 200 -
+2025-08-04 12:17:23,644 - INFO - 127.0.0.1 - - [04/Aug/2025 12:17:23] "GET /api/user/expenses?user_id=15 HTTP/1.1" 200 -
+2025-08-04 12:19:31,082 - INFO - 127.0.0.1 - - [04/Aug/2025 12:19:31] "OPTIONS /api/user/latest-topup?user_id=15 HTTP/1.1" 200 -
+2025-08-04 12:19:31,083 - INFO - 127.0.0.1 - - [04/Aug/2025 12:19:31] "OPTIONS /api/user/expenses?user_id=15 HTTP/1.1" 200 -
+2025-08-04 12:19:31,493 - INFO - 127.0.0.1 - - [04/Aug/2025 12:19:31] "GET /api/user/latest-topup?user_id=15 HTTP/1.1" 200 -
+2025-08-04 12:19:31,493 - INFO - 127.0.0.1 - - [04/Aug/2025 12:19:31] "GET /api/user/expenses?user_id=15 HTTP/1.1" 200 -
+2025-08-04 12:19:36,089 - INFO - 127.0.0.1 - - [04/Aug/2025 12:19:36] "[33mGET /api/community-stories HTTP/1.1[0m" 404 -
+2025-08-04 12:19:36,437 - INFO - 127.0.0.1 - - [04/Aug/2025 12:19:36] "[33mGET /api/community-stories HTTP/1.1[0m" 404 -
+2025-08-04 12:19:48,910 - INFO - 127.0.0.1 - - [04/Aug/2025 12:19:48] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-08-04 12:19:48,911 - INFO - 127.0.0.1 - - [04/Aug/2025 12:19:48] "[33mOPTIONS /notifications/preferences HTTP/1.1[0m" 404 -
+2025-08-04 14:52:43,433 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-04 14:52:43,434 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-04 14:52:43,441 - INFO -  * Restarting with stat
+2025-08-04 14:52:47,309 - WARNING -  * Debugger is active!
+2025-08-04 14:52:47,328 - INFO -  * Debugger PIN: 102-762-359
+2025-08-05 03:57:52,511 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-05 03:57:52,511 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-05 03:57:52,513 - INFO -  * Restarting with stat
+2025-08-05 03:57:54,049 - WARNING -  * Debugger is active!
+2025-08-05 03:57:54,053 - INFO -  * Debugger PIN: 102-762-359
+2025-08-05 03:58:23,395 - INFO - 127.0.0.1 - - [05/Aug/2025 03:58:23] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-05 03:58:45,167 - INFO - 127.0.0.1 - - [05/Aug/2025 03:58:45] "OPTIONS /api/ai-agent HTTP/1.1" 200 -
+2025-08-05 03:58:45,431 - INFO - 127.0.0.1 - - [05/Aug/2025 03:58:45] "[31m[1mPOST /api/ai-agent HTTP/1.1[0m" 400 -
+2025-08-05 04:00:02,764 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:02] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-05 04:00:03,449 - INFO - User laka@gmail.com registered successfully with ID: 25
+2025-08-05 04:00:03,452 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:03] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-05 04:00:06,000 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:06] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-05 04:00:06,361 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:06] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-05 04:00:06,682 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:06] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-08-05 04:00:07,073 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:07] "[33mGET /api/auth/user HTTP/1.1[0m" 404 -
+2025-08-05 04:00:12,945 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:12] "OPTIONS /api/user/balance HTTP/1.1" 200 -
+2025-08-05 04:00:13,023 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:13] "GET /api/user/balance HTTP/1.1" 200 -
+2025-08-05 04:00:13,260 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:13] "OPTIONS /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:13,261 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:13] "OPTIONS /api/user/balance HTTP/1.1" 200 -
+2025-08-05 04:00:13,263 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:13] "OPTIONS /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:13,630 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:13] "GET /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:13,641 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:13] "GET /api/user/balance HTTP/1.1" 200 -
+2025-08-05 04:00:14,033 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:14] "GET /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:15,532 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:15] "GET /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:16,072 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:16] "GET /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:16,347 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:16] "GET /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:17,784 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:17] "GET /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:18,046 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:18] "OPTIONS /api/user/topup HTTP/1.1" 200 -
+2025-08-05 04:00:18,898 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:18] "POST /api/user/topup HTTP/1.1" 200 -
+2025-08-05 04:00:18,929 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:18] "OPTIONS /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:19,095 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:19] "GET /api/user/auto-topup-settings?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:22,537 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:22] "OPTIONS /api/user/notifications?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:22,920 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:22] "GET /api/user/notifications?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:26,417 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:26] "OPTIONS /api/user/latest-topup?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:26,609 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:26] "GET /api/user/latest-topup?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:26,724 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:26] "OPTIONS /api/user/expenses?user_id=25 HTTP/1.1" 200 -
+2025-08-05 04:00:27,096 - INFO - 127.0.0.1 - - [05/Aug/2025 04:00:27] "GET /api/user/expenses?user_id=25 HTTP/1.1" 200 -
