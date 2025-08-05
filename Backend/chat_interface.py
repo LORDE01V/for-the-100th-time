@@ -1,9 +1,16 @@
 import re
 from datetime import datetime
 
+from transformers import pipeline
+
 class EnhancedChatbot:
     def __init__(self):
         super().__init__()
+        self.pipe = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+        self.candidate_labels = [
+            "payment", "technical_support", "energy_consumption", "maintenance",
+            "solar_panel", "status", "loadshedding", "billing", "account settings"
+        ]
         # Add more dynamic context
         self.context = {
             "time_of_day": self._get_time_of_day(),
@@ -27,6 +34,16 @@ class EnhancedChatbot:
         else:
             return "night"
 
+    def get_response(self, message: str) -> str:
+        """Main entry point for the chatbot to get a response."""
+        return self.chat(message)
+
+    def process_voice_query(self, audio_path: str) -> str:
+        """Placeholder for voice-to-text processing. In a real scenario, this would convert
+        audio to text using a speech recognition library."""
+        # For now, simply return a dummy response or the path itself
+        return "Voice input processed. (Actual transcription not implemented)"
+
     def generate_dynamic_response(self, query: str, intent: str, confidence: float) -> str:
         """Generate more dynamic and contextual responses"""
         
@@ -47,7 +64,10 @@ class EnhancedChatbot:
             "energy_consumption": self._handle_energy_query(query),
             "maintenance": self._handle_maintenance_query(query),
             "solar_panel": self._handle_solar_query(query),
-            "status": self._handle_status_query(query)
+            "status": self._handle_status_query(query),
+            "loadshedding": self._handle_loadshedding_query(query),
+            "billing": self._handle_payment_query(query), # Map billing to payment handler
+            "account settings": self._handle_account_settings_query(query)
         }
 
         # Get the specific response or fall back to a general one
@@ -108,6 +128,12 @@ class EnhancedChatbot:
 
     def _handle_general_query(self, query: str) -> str:
         return f"I understand you're asking about {query}. To help you better, could you specify if this is about:\n1. System performance\n2. Maintenance\n3. Billing\n4. Technical support"
+
+    def _handle_loadshedding_query(self, query: str) -> str:
+        return "I can provide information about loadshedding schedules and alerts in your area. What specific details are you looking for?"
+
+    def _handle_account_settings_query(self, query: str) -> str:
+        return "I can help you with your account settings, including profile management, password changes, or notification preferences. What would you like to do?"
 
     def chat(self, query: str) -> str:
         try:

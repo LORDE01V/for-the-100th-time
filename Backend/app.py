@@ -13,10 +13,22 @@ from authlib.integrations.flask_client import OAuth
 from flask_jwt_extended import JWTManager
 import datetime
 from functools import lru_cache # Import lru_cache
-from db_utils import create_topup_table  # Import the new function
+from db_utils import create_topup_table, initialize_db  # Import the new function and initialize_db
 from app.routes.topup import topup_bp  # Add this import
 from app.routes.auth import auth_bp # Import auth_bp
 from app.routes.ai_agent import ai_agent_bp # Import ai_agent_bp
+from app.routes.home import home_bp # Added import for home_bp
+from app.routes.userprofile import user_profile_bp # Added import for user_profile_bp
+from app.routes.ai_suggestions import ai_suggestions_bp # Added import for ai_suggestions_bp
+from app.routes.expenses import expenses_bp # Added import for expenses_bp
+from app.routes.loadshedding import loadshedding_bp # Added import for loadshedding_bp
+from app.routes.support import support_bp # Added import for support_bp
+from app.routes.notification_preference import notification_preference_bp # Added import for notification_preference_bp
+from app.routes.community_stories import community_stories_bp # Added import for community_stories_bp
+from app.routes.events_calendar import events_calendar_bp # Added import for events_calendar_bp
+from app.routes.email_subscription import email_subscription_bp # Added import for email_subscription_bp
+from app.routes.expensenotifications import expensenotifications_bp # Added import for expensenotifications_bp
+from app.routes.email import email_bp # Added import for email_bp
 # from app.routes.recommendation_plan import recommendation_bp # Commented out due to unresolved import
 
 # Set up logging to console only
@@ -35,7 +47,8 @@ CORS(app, resources={r"/*": {  # Apply to all routes
         "http://127.0.0.1:3000",
         "http://localhost:4200",
         "https://backend-b45o.onrender.com",
-        "https://frontend-1scu.onrender.com"
+        "https://frontend-1scu.onrender.com",
+        "https://gridx-frrontend.onrender.com" # Added this origin
     ],
     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
@@ -60,25 +73,9 @@ app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "default_jwt_secret_k
 jwt = JWTManager(app)
 
 # Register blueprints
-from app.routes.auth import auth_bp
-from app.routes.home import home_bp
-from app.routes.userprofile import user_profile_bp
-from app.routes.ai_suggestions import ai_suggestions_bp
-from app.routes.expenses import expenses_bp
-from app.routes.loadshedding import loadshedding_bp
-from app.routes.topup import topup_bp
-from app.routes.support import support_bp
-from app.routes.notification_preference import notification_preference_bp
-from app.routes.community_stories import community_stories_bp
-from app.routes.events_calendar import events_calendar_bp
-from app.routes.email_subscription import email_subscription_bp
-from app.routes.expensenotifications import expensenotifications_bp
-from app.routes.email import email_bp
-from app.routes.ai_agent import ai_agent_bp
-
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(home_bp, url_prefix='/api/home')
-app.register_blueprint(user_profile_bp, url_prefix='/profile')
+app.register_blueprint(user_profile_bp, url_prefix='/profile') # Corrected url_prefix for user_profile_bp
 app.register_blueprint(ai_suggestions_bp, url_prefix='/api/ai-suggestions')
 app.register_blueprint(expenses_bp, url_prefix='/api/expenses')
 app.register_blueprint(loadshedding_bp, url_prefix='/api/loadshedding')
@@ -91,6 +88,10 @@ app.register_blueprint(email_subscription_bp, url_prefix='/api/email-subscriptio
 app.register_blueprint(expensenotifications_bp, url_prefix='/api/expensenotifications')
 app.register_blueprint(email_bp, url_prefix='/api/email')
 app.register_blueprint(ai_agent_bp, url_prefix='/api/ai-agent')
+
+# Initialize database
+if not initialize_db():
+    raise Exception("Database initialization failed. Please check your database connection.")
 
 chatbot = EnhancedChatbot()
 
@@ -135,7 +136,7 @@ def voice_to_text():
         return jsonify({'error': str(e)}), 500
 
 try:
-    from agent import EnergyUsageOptimizerAgent
+    from Energy_optimizer.agent import EnergyUsageOptimizerAgent # Corrected import path
     AGENT_AVAILABLE = True
 except ImportError:
     AGENT_AVAILABLE = False
@@ -523,7 +524,7 @@ def get_loadshedding():
     return jsonify({"error": "Missing areaId or lat/lon"}), 400
 
 if __name__ == '__main__':
-    logger.info("Starting Flask app on port 5000")
+    logger.info("Starting Flask app")
     port = int(os.environ.get("PORT", 5000))
     # app.register_blueprint(recommendation_bp) # Commented out due to unresolved import
-    app.run(debug=True, port=port)
+    app.run(debug=True, host='0.0.0.0', port=port) # Listen on all interfaces
