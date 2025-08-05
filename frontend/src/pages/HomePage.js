@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { Bot } from 'lucide-react';
 import backgroundVideo from '../assets/videos/Slowed-GridX-Video.mp4';
 import OneSignal from 'react-onesignal';
+import api from '../services/api';
 
 import {
   Box,
