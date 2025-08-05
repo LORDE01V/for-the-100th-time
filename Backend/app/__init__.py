@@ -6,6 +6,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 from flask_cors import CORS
 from app.routes.topup import topup_bp
+from app.routes.notification_preference import notifications_bp
 
 # Load environment variables
 load_dotenv()
