@@ -22,15 +22,13 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     'Sawubona',
     'Molo',
     'Lotjhani',
-    'Sawubona',
-    'Dumela',
-    'Dumela',
     'Dumela',
     'Avuxeni',
     'Ndaa',
   ];
   currentGreetingIndex: number = 0;
   currentGreeting: string = '';
+  greetingAnimationClass: string = 'fade-in'; // New property for animation class
 
   // Properties for MeetTheDevelopers
   developers = [
@@ -52,12 +50,12 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     {
       name: 'Mpho Ramokhoase',
       role: 'Frontend',
-      description: "Crafts seamless, user-friendly interfaces with an eye for responsive design and smooth interactions."
+      description: "Brings UI designs to life with pixel-perfect precision and a deep focus on performance."
     },
     {
       name: 'Nkosinathi Radebe',
       role: 'Frontend',
-      description: "Brings UI designs to life with pixel-perfect precision and a deep focus on performance."
+      description: "Crafts seamless, user-friendly interfaces with an eye for responsive design and smooth interactions."
     }
   ];
 
@@ -77,7 +75,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
       case 'Nkosinathi Radebe':
         return 'assets/images/IMG Nathii.jpg';
       default:
-        return ''; // Or a placeholder image path
+        return 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; // A transparent 1x1 GIF for placeholder
     }
   }
 
@@ -109,6 +107,8 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   private deletingSpeed: number = 50;
   private pauseBeforeDelete: number = 2000;
   private pauseBeforeType: number = 1000;
+  // private underlineInterval: any; // Removed
+  // showUnderline: boolean = false; // Removed
 
   // Features data (featureMessages and related logic removed as they were not rotating in React)
   features = [
@@ -133,17 +133,27 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    // Start rotating greetings
-    this.updateGreeting();
-    interval(3000).pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.currentGreetingIndex = (this.currentGreetingIndex + 1) % this.southAfricanGreetings.length;
-      this.updateGreeting();
+    // Initial greeting update with fade-in
+    this.updateGreeting(true);
+
+    // Start rotating greetings with fade-out and fade-in
+    interval(3500).pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.greetingAnimationClass = 'fade-out';
+      setTimeout(() => {
+        this.currentGreetingIndex = (this.currentGreetingIndex + 1) % this.southAfricanGreetings.length;
+        this.updateGreeting(true);
+      }, 500); // Wait for fade-out to complete (0.5s)
     });
 
     // Start typing effect
     this.typeWriterEffect();
 
     // Removed the rotating feature messages logic as it was not in the original React code
+
+    // Removed Start automated underline effect
+    // if (this.underlineInterval) { // Removed
+    //   clearInterval(this.underlineInterval); // Removed
+    // }
   }
 
   ngOnDestroy(): void {
@@ -152,11 +162,17 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     if (this.typingTimeout) {
       clearTimeout(this.typingTimeout); // Clear the typing effect timeout
     }
+    // if (this.underlineInterval) { // Removed
+    //   clearInterval(this.underlineInterval); // Removed
+    // }
   }
 
   // Helper for RotatingGreetingsSection
-  updateGreeting(): void {
+  updateGreeting(applyFadeIn: boolean = false): void {
     this.currentGreeting = this.southAfricanGreetings[this.currentGreetingIndex];
+    if (applyFadeIn) {
+      this.greetingAnimationClass = 'fade-in';
+    }
   }
 
   // Helper for HeroTypingTitle (integrated)

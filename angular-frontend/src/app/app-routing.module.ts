@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { AISuggestionsComponent } from './pages/ai-suggestions/ai-suggestions.component';
+import { HomePageComponent } from './pages/home-page/home-page.component';
+import { Dashboard } from './pages/dashboard_page/dashboard';
+import { AiSuggestions } from './pages/ai-suggestions_page/ai-suggestions';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'ai-suggestions', component: AISuggestionsComponent },
+  { path: 'home', component: HomePageComponent },
+  { path: 'dashboard', component: Dashboard },
+  { path: 'ai-suggestions', component: AiSuggestions },
   { path: '**', redirectTo: '/home' } // Handle 404
 ];
 

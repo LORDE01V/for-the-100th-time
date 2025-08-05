@@ -64,6 +64,26 @@
     color: white; // headingColor
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    position: relative; // Needed for pseudo-elements
+    display: inline-block; // Needed for pseudo-elements to size correctly with text
+
+    // Removed the hover-underline styles
+  }
+
+  .shadow-dance-text {
+    font-size: 4rem; // As provided by user, adjust if needed for visual harmony
+    color: #fff;
+    text-shadow: 5px 5px 0 #ff005e, 10px 10px 0 #00d4ff;
+    animation: shadow-dance 2s infinite;
+  }
+
+  @keyframes shadow-dance {
+    0%, 100% {
+        text-shadow: 5px 5px 0 #ff005e, 10px 10px 0 #00d4ff;
+    }
+    50% {
+        text-shadow: -5px -5px 0 #00d4ff, -10px -10px 0 #ff005e;
+    }
   }
 
   .typing-title {
@@ -86,18 +106,60 @@
   }
 
   .btn-primary {
-    background-color: #4299e1; // blue.500
-    color: white;
-    padding: 16px 32px; // px={8}, size="lg"
-    border-radius: 8px;
-    font-size: 1.125rem;
-    transition: all 0.3s ease;
-    border: none;
+    position: relative;
+    padding: 1.5rem 3rem; // Use the padding from the neon pulse example
+    font-size: 1.1rem; // Use the font-size from the neon pulse example
+    font-weight: 600;
+    color: #fff;
+    background: none; // Ensure background is none as neon-pulse will set it
+    border: none; // Ensure border is none as neon-pulse will set it
     cursor: pointer;
+    overflow: hidden; // Keep overflow hidden
+    transition: all 0.4s ease; // Transition from neon pulse example
+    min-width: 200px; // As provided in .btn
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50px; // Make corners curly
 
     &:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow: 'lg'
+      transform: none; // Remove previous transform on hover
+      box-shadow: none; // Remove previous box-shadow on hover
+    }
+  }
+
+  .neon-pulse {
+    background: #3182ce; // Reverted to previous blue background
+    border: 2px solid #4299e1; // Blue border for the pulse
+    box-shadow: 0 0 10px rgba(66, 153, 225, 0.3); // Blue shadow for the pulse
+    overflow: visible;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border: 2px solid #4299e1; // Blue border for the pulsing elements
+      border-radius: inherit;
+      animation: pulseOut 2s ease-out infinite;
+      opacity: 0;
+      z-index: -1; // Place behind the button content
+    }
+
+    &::after {
+      animation-delay: 1s;
+    }
+  }
+
+  @keyframes pulseOut {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
     }
   }
 }
@@ -130,6 +192,7 @@
   .greeting-text-wrapper {
     overflow: hidden; // For controlling fade-in/out without affecting sibling elements
     height: 1.5em; // Ensure consistent height during transitions
+    position: relative; // Needed for absolute positioning of text
   }
 
   .greeting-text {
@@ -138,16 +201,28 @@
     color: white; // greetingColor
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     display: block; // Needed for transform animations
+    position: absolute; // To allow fade in/out on the same spot
+    width: 100%;
+    top: 0;
+    left: 0;
 
-    // Animation for text fade in/out
-    animation: fade-in-out 3s forwards;
+    &.fade-out {
+      animation: fadeOut 0.5s forwards;
+    }
+
+    &.fade-in {
+      animation: fadeIn 0.5s forwards;
+    }
   }
 
-  @keyframes fade-in-out {
-    0% { opacity: 0; transform: translateY(20px); }
-    10% { opacity: 1; transform: translateY(0); }
-    90% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-20px); }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
   }
 }
 
@@ -188,21 +263,101 @@
   }
 
   .feature-card {
-    padding: 32px; // p={8}
-    background: rgba(0, 0, 0, 0.7); // containerBg
-    border-radius: 9999px; // borderRadius="full"
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); // boxShadow="md"
-    border: 1px solid rgba(255, 255, 255, 0.2); // borderColor
-    text-align: center;
-    transition: all 0.3s ease; // transition={{ duration: 0.3 }}
+    padding: 32px; // p={8} - Restored
+    background: rgba(0, 0, 0, 0.7); // containerBg - Restored
+    border-radius: 9999px; // borderRadius="full" - Restored
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); // boxShadow="md" - Restored
+    border: 1px solid rgba(255, 255, 255, 0.2); // borderColor - Restored
+    text-align: center; // Restored
+    transition: all 0.3s ease; // Restored
+    overflow: hidden; // Keep overflow hidden for the card itself
+    display: flex; // Ensure liquid-morph-element takes full space
+    height: 100%; // Ensure liquid-morph-element takes full height
+    align-items: center;
+    justify-content: center;
+    position: relative;
 
     &:hover {
-      transform: scale(1.05); // hover scale
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow="lg"
-      // Rotate for hover (from framer-motion variants)
-      // Note: Replicating precise framer-motion rotate might need JS, but a subtle rotate can be done with CSS
-      transform: scale(1.05) rotate(2deg);
+      transform: translateY(-5px); // Restore original hover effect
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow="lg" - Restore original hover effect
     }
+
+    &:nth-child(odd):hover {
+      transform: translateY(-5px) rotate(2deg); // Restore original rotate
+    }
+
+    &:nth-child(even):hover {
+      transform: translateY(-5px) rotate(-2deg); // Restore original rotate
+    }
+  }
+
+  .liquid-morph-element {
+    width: 100%; // Make it take full width of parent
+    height: 100%; // Make it take full height of parent
+    background: transparent; // Make background transparent on liquid-morph-element
+    display: flex;
+    flex-direction: column; // Arrange content vertically
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 0; // Remove border-radius here
+    overflow: hidden;
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); // Liquid morph transition
+    padding: 0; // Remove padding from here
+    text-align: center; // Remove text-align from here
+  }
+
+  .liquid-morph-element span {
+    color: #fff;
+    font-size: 1.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  // Styles for content inside liquid-morph-element
+  .liquid-morph-element .feature-icon {
+    color: white; // Ensure icon color is white
+    margin-bottom: 16px; // Restore mb={4} from feature-card
+    z-index: 2; // Ensure icon is above pseudo-element
+  }
+
+  .liquid-morph-element .feature-title {
+    color: white; // Ensure title color is white
+    font-size: 1.5rem; // Match the span font size for consistency
+    margin-bottom: 16px; // Restore mb={4} from feature-card
+    z-index: 2; // Ensure title is above pseudo-element
+  }
+
+  .liquid-morph-element .feature-description {
+    color: white; // Ensure description color is white
+    z-index: 2; // Ensure description is above pseudo-element
+  }
+
+  .liquid-morph-element::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(
+      #0ff 0deg,
+      #0a2342 120deg,
+      #0ff 240deg
+    ); // Conic gradient as provided
+    transition: all 0.6s ease;
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  .liquid-morph-element:hover {
+    border-radius: 10px; // Rectangle shape on hover
+    transform: rotate(15deg); // Rotate on hover
+  }
+
+  .liquid-morph-element:hover::before {
+    opacity: 0.5;
+    transform: scale(2);
   }
 
   .feature-icon {
@@ -253,22 +408,63 @@
   }
 
   .developer-card {
+    // This will be the grid item, primarily for layout and containing the holographic-card.
+    // Removed padding, background, box-shadow, border-radius, border, and transition
+    // from here, as they are now handled by .holographic-card.
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px; // spacing={3}
-    padding: 16px; // p={4}
-    border-radius: 8px; // borderRadius="lg"
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // boxShadow="lg"
-    border: 1px solid rgba(255,255,255,0.15); // borderWidth="1px" borderColor
-    text-align: center;
+    padding: 0; // The holographic-card will have its own padding
     width: 100%;
-    background: rgba(20,20,20,0.95); // bg
-    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    height: 100%; // Ensure it fills the grid item height
+  }
+
+  .holographic-card {
+    width: 100%;
+    height: 100%;
+    background: #111; // As provided
+    display: flex;
+    flex-direction: column; // Arrange content vertically
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px; // As provided
+    transition: all 0.5s ease; // As provided
+    padding: 16px; // Restore original padding from developer-card
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); // Initial shadow (lg)
+    border: 1px solid rgba(255,255,255,0.15); // Initial border
 
     &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); // boxShadow="xl"
+      transform: scale(1.05); // As provided
+      box-shadow: 0 0 20px rgba(0,255,255,0.5); // As provided
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        0deg,
+        transparent,
+        transparent 30%,
+        rgba(0,255,255,0.3)
+      ); // As provided
+      transform: rotate(-45deg);
+      transition: all 0.5s ease; // As provided
+      opacity: 0;
+      z-index: 1; // Ensure it's behind content but above background
+    }
+
+    &:hover::before {
+      opacity: 1;
+      transform: rotate(-45deg) translateY(100%); // As provided
     }
   }
 
@@ -283,23 +479,57 @@
     align-items: center;
     justify-content: center;
     perspective: 1000px; // For 3D flip effect
-
-    &:hover {
-      .developer-image, .developer-avatar { // Apply transform to both
-        transform: rotateY(180deg);
-      }
-    }
+    transform-style: preserve-3d; // Necessary for 3D transforms on children
+    z-index: 2; // Ensure image container is above holographic ::before
   }
 
-  .developer-image, .developer-avatar {
+  .developer-info {
+    position: relative;
+    z-index: 2; // Ensure info is above holographic ::before
+  }
+
+  .flipper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s ease-in-out, box-shadow 0.6s ease-in-out; // Add box-shadow to transition
+    transform-style: preserve-3d;
+    box-shadow: none; // Initial state, no glow
+    z-index: 3; // Ensure flipper is above holographic ::before and image container
+  }
+
+  .developer-card:hover .flipper {
+    transform: rotateY(180deg);
+    box-shadow: 0 0 15px 5px rgba(66, 153, 225, 0.7); // Blue glow on hover
+  }
+
+  .front-face, .back-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden; // For Safari
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .front-face {
+    transform: rotateY(0deg);
+  }
+
+  .back-face {
+    transform: rotateY(180deg);
+  }
+
+  .developer-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
     border-radius: 8px;
-    transition: transform 0.6s ease-in-out;
-    // Removed: backface-visibility: hidden; // This was causing the images to disappear
-    position: absolute; // To allow both to exist and flip
   }
 
   .developer-avatar {
@@ -309,9 +539,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: rotateY(0deg); // Initial state
+    transform: rotateY(180deg); // Initially hidden (rotated)
   }
-
 
   .developer-name {
     font-weight: bold;
