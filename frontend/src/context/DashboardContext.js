@@ -8,7 +8,7 @@ const DashboardContext = createContext();
 export const DashboardProvider = ({ children }) => {
   const [energyMode, setEnergyMode] = useState("saver");
   const [widgetLayout, setWidgetLayout] = useState({ ...defaultWidgetLayout });
-  const [currentTheme, setCurrentTheme] = useState("arcticBlue");
+  const [currentTheme, setCurrentTheme] = useState("coolBlue");
 
   const toggleEnergyMode = () => {
     setEnergyMode((prev) => (prev === "saver" ? "boost" : "saver"));
