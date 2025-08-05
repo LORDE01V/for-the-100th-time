@@ -24,11 +24,12 @@ def create_app():
             "http://localhost:5000",
             "http://127.0.0.1:3000",
             "http://localhost:4200",
-            "https://backend-b45o.onrender.com"
+            "https://backend-b45o.onrender.com",
+            "https://frontend-1scu.onrender.com"
         ],
-        "supports_credentials": True,
-        "allow_headers": ["*"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+        "supports_credentials": True
     }})
     
     # Configuration
@@ -60,9 +61,37 @@ def create_app():
     )
     
     # Register blueprints
-    from .routes.auth import auth_bp
-    app.register_blueprint(auth_bp)
-    #app.register_blueprint(topup_bp)
+    from app.routes.auth import auth_bp
+    from app.routes.home import home_bp
+    from app.routes.userprofile import user_profile_bp
+    from app.routes.ai_suggestions import ai_suggestions_bp
+    from app.routes.expenses import expenses_bp
+    from app.routes.loadshedding import loadshedding_bp
+    from app.routes.topup import topup_bp
+    from app.routes.support import support_bp
+    from app.routes.notification_preference import notification_preference_bp
+    from app.routes.community_stories import community_stories_bp
+    from app.routes.events_calendar import events_calendar_bp
+    from app.routes.email_subscription import email_subscription_bp
+    from app.routes.expensenotifications import expensenotifications_bp
+    from app.routes.email import email_bp
+    from app.routes.ai_agent import ai_agent_bp
+
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(home_bp, url_prefix='/api/home')
+    app.register_blueprint(user_profile_bp, url_prefix='/profile')
+    app.register_blueprint(ai_suggestions_bp, url_prefix='/api/ai-suggestions')
+    app.register_blueprint(expenses_bp, url_prefix='/api/expenses')
+    app.register_blueprint(loadshedding_bp, url_prefix='/api/loadshedding')
+    app.register_blueprint(topup_bp, url_prefix='/api/topup')
+    app.register_blueprint(support_bp, url_prefix='/api/support')
+    app.register_blueprint(notification_preference_bp, url_prefix='/api/notification-preference')
+    app.register_blueprint(community_stories_bp, url_prefix='/api/community-stories')
+    app.register_blueprint(events_calendar_bp, url_prefix='/api/events-calendar')
+    app.register_blueprint(email_subscription_bp, url_prefix='/api/email-subscription')
+    app.register_blueprint(expensenotifications_bp, url_prefix='/api/expensenotifications')
+    app.register_blueprint(email_bp, url_prefix='/api/email')
+    app.register_blueprint(ai_agent_bp, url_prefix='/api/ai-agent')
     
     
     return app 

@@ -78,7 +78,7 @@ flask_app.config['JWT_HEADER_TYPE'] = 'Bearer'
 # Initialize CORS properly in one place
 CORS(flask_app, 
      resources={r"/api/*": {
-         "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000", "http://localhost:4200", "https://backend-b45o.onrender.com"],
+         "origins": ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:3000", "http://localhost:4200", "https://backend-b45o.onrender.com", "https://frontend-1scu.onrender.com"],
          "supports_credentials": True,
          "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin","X-Requested-With"],
          #"expose_headers": ["Authorization"],
@@ -342,7 +342,7 @@ app = FastAPI(title="Lumina Solar FastAPI")
 # Configure CORS for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://backend-b45o.onrender.com"],
+    allow_origins=["http://localhost:3000", "https://backend-b45o.onrender.com", "https://frontend-1scu.onrender.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
