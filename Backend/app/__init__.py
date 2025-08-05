@@ -70,7 +70,7 @@ def create_app():
     from app.routes.loadshedding import loadshedding_bp
     from app.routes.topup import topup_bp
     from app.routes.support import support_bp
-    from app.routes.notification_preference import notification_preference_bp
+    from app.routes.notification_preference import notifications_bp
     from app.routes.community_stories import community_stories_bp
     from app.routes.events_calendar import events_calendar_bp
     from app.routes.email_subscription import email_subscription_bp
@@ -86,7 +86,7 @@ def create_app():
     app.register_blueprint(loadshedding_bp, url_prefix='/api/loadshedding')
     app.register_blueprint(topup_bp, url_prefix='/api/topup')
     app.register_blueprint(support_bp, url_prefix='/api/support')
-    app.register_blueprint(notification_preference_bp, url_prefix='/api/notification-preference')
+    app.register_blueprint(notifications_bp, url_prefix='/api/notification-preference')
     app.register_blueprint(community_stories_bp, url_prefix='/api/community-stories')
     app.register_blueprint(events_calendar_bp, url_prefix='/api/events-calendar')
     app.register_blueprint(email_subscription_bp, url_prefix='/api/email-subscription')
