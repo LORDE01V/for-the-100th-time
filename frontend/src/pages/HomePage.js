@@ -222,16 +222,11 @@ function HomePage() {
                 <Button colorScheme="blue" onClick={async () => {
                   if (email.includes('@')) {
                     try {
-                      const res = await fetch('/api/subscribe', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email }),
-                      });
-                      const data = await res.json();
-                      if (res.ok && data.success) {
+                      const res = await api.post('/api/subscribe', { email });
+                      if (res.data.success) {
                         toast({ title: 'Subscribed!', description: 'Check your inbox.', status: 'success', duration: 5000, isClosable: true });
                       } else {
-                        toast({ title: 'Subscription Failed', description: data.error || 'Could not subscribe.', status: 'error', duration: 5000, isClosable: true });
+                        toast({ title: 'Subscription Failed', description: res.data.error || 'Could not subscribe.', status: 'error', duration: 5000, isClosable: true });
                       }
                     } catch (err) {
                       toast({ title: 'Network Error', description: 'Could not subscribe.', status: 'error', duration: 5000, isClosable: true });

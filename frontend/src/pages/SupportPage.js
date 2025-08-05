@@ -32,6 +32,7 @@ import {
 // Import Icons
 import { FaArrowLeft, FaPhone, FaEnvelope, FaExternalLinkAlt } from 'react-icons/fa';
 import supportBackground from '../assets/images/Support_page.png';
+import api from '../services/api';
 
 function SupportPage() {
   const navigate = useNavigate();
@@ -94,50 +95,43 @@ function SupportPage() {
     navigate('/home');
   };
 
-  // ... existing code ...
-const handleContactSubmit = async (e) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-  try {
-    const response = await fetch('http://localhost:5000/api/support', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, subject, message }),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      toast({
-        title: 'Message Sent',
-        description: 'Your support request has been received. We will contact you shortly.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-      setName('');
-      setEmail('');
-      setSubject('');
-      setMessage('');
-    } else {
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const response = await api.post('/api/support', { name, email, subject, message });
+      if (response.data.success) {
+        toast({
+          title: 'Message Sent',
+          description: 'Your support request has been received. We will contact you shortly.',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        setName('');
+        setEmail('');
+        setSubject('');
+        setMessage('');
+      } else {
+        toast({
+          title: 'Error',
+          description: response.data.error || 'Failed to send message.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (err) {
       toast({
         title: 'Error',
-        description: data.error || 'Failed to send message.',
+        description: 'Failed to send message.',
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
     }
-  } catch (err) {
-    toast({
-      title: 'Error',
-      description: 'Failed to send message.',
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    });
-  }
-  setIsSubmitting(false);
-};
-// ... existing code ...
+    setIsSubmitting(false);
+  };
 
   const filteredFaqItems = faqItems.filter(item => item.question !== 'How do I update my profile information?');
 

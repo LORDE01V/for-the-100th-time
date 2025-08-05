@@ -31,7 +31,7 @@ const Login = () => {
   const handlePasswordReset = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/auth/reset-password', { email, new_password: newPassword });
+      await api.post('/api/auth/reset-password', { email, new_password: newPassword });
       toast({
         title: 'Password reset successfully',
         status: 'success',

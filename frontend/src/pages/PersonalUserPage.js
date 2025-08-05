@@ -17,6 +17,7 @@ import {
   AlertDialogOverlay,
 } from "@chakra-ui/react";
 import axios from "axios";
+import api from '../services/api';
 
 const PersonalUserPage = () => {
   const toast = useToast();
@@ -34,8 +35,8 @@ const PersonalUserPage = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios
-      .get("http://localhost:5000/profile/me", {
+    api
+      .get("/profile/me", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then((res) => setFormData(res.data))
@@ -60,8 +61,8 @@ const PersonalUserPage = () => {
   const confirmSubmit = () => {
     setIsOpen(false);
     const token = localStorage.getItem('token');
-    axios
-      .post("http://localhost:5000/profile/me", formData, {
+    api
+      .post("/profile/me", formData, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() =>

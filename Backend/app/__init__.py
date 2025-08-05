@@ -23,7 +23,8 @@ def create_app():
             "http://localhost:3000",
             "http://localhost:5000",
             "http://127.0.0.1:3000",
-            "http://localhost:4200"
+            "http://localhost:4200",
+            "https://backend-b45o.onrender.com"
         ],
         "supports_credentials": True,
         "allow_headers": ["*"],

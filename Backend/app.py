@@ -33,7 +33,8 @@ CORS(app, resources={r"/*": {  # Apply to all routes
         "http://localhost:3000",
         "http://localhost:5000",
         "http://127.0.0.1:3000",
-        "http://localhost:4200"
+        "http://localhost:4200",
+        "https://backend-b45o.onrender.com"
     ],
     "supports_credentials": True,
 }})
