@@ -15121,3 +15121,15 @@ LINE 4:             transaction_type, is_auto_topup, min_balance,
 2025-08-05 11:17:32,367 - INFO -  * Restarting with stat
 2025-08-05 11:17:51,065 - WARNING -  * Debugger is active!
 2025-08-05 11:17:51,071 - INFO -  * Debugger PIN: 739-467-792
+2025-08-05 11:21:46,046 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-05 11:21:46,047 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-05 11:21:46,050 - INFO -  * Restarting with stat
+2025-08-05 11:22:03,067 - WARNING -  * Debugger is active!
+2025-08-05 11:22:03,070 - INFO -  * Debugger PIN: 739-467-792
+2025-08-05 11:29:03,808 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\app\\routes\\events_calendar.py', reloading
+2025-08-05 11:29:04,018 - INFO -  * Restarting with stat
+2025-08-05 11:29:22,294 - WARNING -  * Debugger is active!
+2025-08-05 11:29:22,298 - INFO -  * Debugger PIN: 739-467-792

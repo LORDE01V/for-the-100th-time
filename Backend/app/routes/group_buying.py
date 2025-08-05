@@ -65,3 +65,23 @@ def create_campaign():
     except Exception as e:
         print(f"Error creating campaign: {str(e)}")
         return jsonify({'error': 'Failed to create campaign'}), 500
+
+# ... existing code ...
+
+@group_buying_bp.route('/api/campaigns', methods=['GET'])
+def get_campaigns():
+    try:
+        conn = get_db()
+        if not conn:
+            return jsonify({'error': 'Database connection error'}), 500
+
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT id, user_id, product, description, original_price, group_price, target_buyers, deadline, category, image
+            FROM campaigns
+        """)
+        campaigns = cur.fetchall()
+        return jsonify(campaigns), 200
+    except Exception as e:
+        print(f"Error fetching campaigns: {str(e)}")
+        return jsonify({'error': 'Failed to fetch campaigns'}), 500

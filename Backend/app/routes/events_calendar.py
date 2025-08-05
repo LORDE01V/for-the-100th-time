@@ -1,58 +1,72 @@
-from flask import Blueprint, request, jsonify
-from Backend.support import create_event, get_all_events, delete_event
+from flask import Blueprint, request, jsonify, current_app
+from flask_sqlalchemy import SQLAlchemy
 
+# Initialize SQLAlchemy
+db = SQLAlchemy()
+
+# Define the Event model
+class Event(db.Model):
+    __tablename__ = 'events_calendar'  # Explicit table name for clarity
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.String(100), nullable=False)  # Adjust type as needed
+    description = db.Column(db.String(255), default='')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'date': self.date,
+            'description': self.description
+        }
+
+# Define the blueprint
 events_calendar_bp = Blueprint('events_calendar', __name__)
 
-# ... existing code ...
+@events_calendar_bp.route('/api/events', methods=['POST'])
+def create_event():
+    data = request.get_json()
 
-@events_calendar_bp.route('/api/events_calendar', methods=['POST'])
-def create_event_route():
+    # Validate incoming data
+    if not data or 'title' not in data or 'date' not in data:
+        return jsonify({'error': 'Invalid data, title and date are required.'}), 400
+
+    # Create a new event instance
+    new_event = Event(
+        title=data['title'],
+        date=data['date'],
+        description=data.get('description', '')  # Default to empty string if not provided
+    )
+    
     try:
-        # Parse incoming JSON data
-        data = request.json
-
-        # Validate required fields
-        required_fields = ['title', 'start', 'end', 'description', 'location', 'eventType']
-        missing_fields = [field for field in required_fields if field not in data]
-        if missing_fields:
-            return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
-
-        # Validate field types (example: start and end should be valid timestamps)
-        try:
-            from datetime import datetime
-            datetime.strptime(data['start'], '%Y-%m-%d %H:%M:%S')
-            datetime.strptime(data['end'], '%Y-%m-%d %H:%M:%S')
-        except ValueError:
-            return jsonify({'error': 'Invalid date format for start or end. Use YYYY-MM-DD HH:MM:SS'}), 400
-
-        # Call the create_event function to save the event
-        event_id = create_event(
-            title=data['title'],
-            start=data['start'],
-            end=data['end'],
-            description=data['description'],
-            location=data['location'],
-            event_type=data['eventType']
-        )
-
-        # Return success response
-        return jsonify({'id': event_id}), 201
-
+        db.session.add(new_event)
+        db.session.commit()
+        return jsonify({'message': 'Event created successfully', 'event': new_event.to_dict()}), 201
     except Exception as e:
-        # Handle unexpected errors
-        return jsonify({'error': f'Failed to create event: {str(e)}'}), 500
+        db.session.rollback()
+        current_app.logger.error(f"Error creating event: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @events_calendar_bp.route('/api/events', methods=['GET'])
-def get_events_route():
+def get_events():
     try:
-        events = get_all_events()
-        return jsonify(events), 200
+        events = Event.query.all()
+        return jsonify([event.to_dict() for event in events]), 200
     except Exception as e:
-        # Log the error for debugging
         current_app.logger.error(f"Error fetching events: {e}")
         return jsonify({'error': 'Failed to fetch events'}), 500
 
-@events_calendar_bp.route('/api/events_calendar/<int:event_id>', methods=['DELETE'])
-def delete_event_route(event_id):
-    delete_event(event_id)
-    return '', 204
+@events_calendar_bp.route('/api/events/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    try:
+        event = Event.query.get(event_id)
+        if not event:
+            return jsonify({'error': 'Event not found'}), 404
+
+        db.session.delete(event)
+        db.session.commit()
+        return '', 204
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting event: {e}")
+        return jsonify({'error': 'Failed to delete event'}), 500

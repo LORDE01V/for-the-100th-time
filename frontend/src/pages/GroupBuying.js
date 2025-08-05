@@ -199,6 +199,23 @@ function GroupBuying() {
     category: 'Solar Panels', // Default category
     notifyMe: false, // Added for notification preference
   });
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const response = await fetch('https://backend-0igj.onrender.com/api/campaigns');
+        if (response.ok) {
+          const campaigns = await response.json();
+          setOngoingCampaigns(campaigns);
+        } else {
+          console.error('Failed to fetch campaigns:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+      }
+    };
+
+    fetchCampaigns();
+  }, []);
 
   const [monthlyUsage] = useState(500);
   const [showNotificationPref, setShowNotificationPref] = useState(false);
