@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, session
-from app.services.gmail_service import get_user_emails
+from ..services.gmail_service import get_user_emails
 import os
 
 email_bp = Blueprint('email', __name__)
