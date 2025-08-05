@@ -103,10 +103,12 @@ const EventCalendar = () => {
   // New function to fetch events from the backend
   const fetchEventsFromBackend =useCallback( async () => {
     try {
-      const response = await axios.get('https://backend-0igj.onrender.com/api/events');
-      // The backend returns a dictionary where keys are dates.
-      // We need to convert it to a format suitable for setEvents (where keys are like 'YYYY-MM-DD').
-      // Let's assume the backend 'date' field is 'YYYY-MM-DD'.
+      const token = localStorage.getItem('token'); // Retrieve token from localStorage
+      const response = await axios.get('https://backend-0igj.onrender.com/api/events', {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        },
+      });
       const fetchedEvents = Object.keys(response.data).reduce((acc, dateKey) => {
         // The backend's structure includes date, title, start, end, description, location, eventType
         const event = response.data[dateKey];
@@ -210,8 +212,15 @@ const EventCalendar = () => {
       eventType: eventData.eventType,
     };
 
+    console.log('Event Payload:', eventPayload);
+
     try {
-      await axios.post('https://backend-0igj.onrender.com/api/events', eventPayload);
+      const token = localStorage.getItem('token'); // Retrieve token from localStorage
+      await axios.post('https://backend-0igj.onrender.com/api/events', eventPayload, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        },
+      });
       toast({
         title: 'Event created',
         description: 'Your event has been successfully saved!',

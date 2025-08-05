@@ -155,7 +155,7 @@ function ImpactPage() {
   const testimonialBorderColor = useColorModeValue('gray.200', 'gray.600');
   const headingColor = useColorModeValue('gray.800', 'white');
   const subTextColor = useColorModeValue('gray.600', 'whiteAlpha.700');
-  const MotionIcon = motion(Icon);
+  const MotionIcon = motion.create(Icon);
 
   useEffect(() => {
     if (!user) {

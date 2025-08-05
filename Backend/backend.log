@@ -15079,3 +15079,45 @@ LINE 4:             transaction_type, is_auto_topup, min_balance,
 2025-08-04 12:24:51,129 - INFO -  * Restarting with stat
 2025-08-04 12:25:13,783 - WARNING -  * Debugger is active!
 2025-08-04 12:25:13,813 - INFO -  * Debugger PIN: 739-467-792
+2025-08-04 13:47:39,558 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-04 13:47:39,558 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-04 13:47:39,561 - INFO -  * Restarting with stat
+2025-08-04 13:47:57,642 - WARNING -  * Debugger is active!
+2025-08-04 13:47:57,647 - INFO -  * Debugger PIN: 739-467-792
+2025-08-05 10:04:06,396 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-05 10:04:06,415 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-05 10:04:06,418 - INFO -  * Restarting with stat
+2025-08-05 10:04:26,692 - WARNING -  * Debugger is active!
+2025-08-05 10:04:26,700 - INFO -  * Debugger PIN: 739-467-792
+2025-08-05 10:59:36,183 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\app\\routes\\events_calendar.py', reloading
+2025-08-05 10:59:36,557 - INFO -  * Restarting with stat
+2025-08-05 10:59:53,661 - WARNING -  * Debugger is active!
+2025-08-05 10:59:53,666 - INFO -  * Debugger PIN: 739-467-792
+2025-08-05 11:02:36,611 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\app\\routes\\events_calendar.py', reloading
+2025-08-05 11:02:36,827 - INFO -  * Restarting with stat
+2025-08-05 11:02:55,357 - WARNING -  * Debugger is active!
+2025-08-05 11:02:55,368 - INFO -  * Debugger PIN: 739-467-792
+2025-08-05 11:08:50,349 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\app\\routes\\events_calendar.py', reloading
+2025-08-05 11:08:50,601 - INFO -  * Restarting with stat
+2025-08-05 11:09:09,530 - WARNING -  * Debugger is active!
+2025-08-05 11:09:09,533 - INFO -  * Debugger PIN: 739-467-792
+2025-08-05 11:16:08,802 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\app\\routes\\events_calendar.py', reloading
+2025-08-05 11:16:09,100 - INFO -  * Restarting with stat
+2025-08-05 11:16:28,119 - WARNING -  * Debugger is active!
+2025-08-05 11:16:28,126 - INFO -  * Debugger PIN: 739-467-792
+2025-08-05 11:16:49,868 - INFO -  * Detected change in 'C:\\Users\\Thembelihle Zulu\\Documents\\JIC\\for-the-100th-time\\Backend\\support.py', reloading
+2025-08-05 11:16:50,094 - INFO -  * Restarting with stat
+2025-08-05 11:17:32,361 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-08-05 11:17:32,363 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-05 11:17:32,367 - INFO -  * Restarting with stat
+2025-08-05 11:17:51,065 - WARNING -  * Debugger is active!
+2025-08-05 11:17:51,071 - INFO -  * Debugger PIN: 739-467-792

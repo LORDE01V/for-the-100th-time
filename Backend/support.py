@@ -252,10 +252,16 @@ def create_event(title, start, end, description, location, event_type):
 def get_all_events():
     """Retrieve all events from the events table."""
     query = "SELECT id, title, start, \"end\", description, location, event_type FROM events_calendar;"
-    result = execute_query('search', query)
-    columns = ['id', 'title', 'start', 'end', 'description', 'location', 'event_type']
-    if result:
-        return [dict(zip(columns, row)) for row in result]
+    try:
+        result = execute_query('search', query)
+        columns = ['id', 'title', 'start', 'end', 'description', 'location', 'event_type']
+        if result:
+            return [dict(zip(columns, row)) for row in result]
+        return []  # Return an empty list if no results
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error retrieving events: {e}")
+        return []
    
  
  
