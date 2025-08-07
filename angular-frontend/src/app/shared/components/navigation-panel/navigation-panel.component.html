@@ -1,0 +1,38 @@
+<div
+  class="navigation-trigger-bubble"
+  [ngStyle]="{
+    'background': triggerBgColor,
+    'border-color': panelBorderColor
+  }"
+  (click)="toggleVisibility()"
+>
+  <span class="menu-icon" [ngStyle]="{'color': triggerTextColor}">☰</span>
+</div>
+
+<div
+  class="navigation-panel"
+  [ngClass]="{'is-visible': isVisible}"
+  [ngStyle]="{
+    'background': panelBg,
+    'border-color': panelBorderColor,
+    'backdrop-filter': 'blur(16px)'
+  }"
+  (mouseenter)="isVisible = true"
+  (mouseleave)="isVisible = false"
+>
+  <div class="navigation-header">
+    <h2>Energy Dashboard</h2>
+  </div>
+  <div class="navigation-menu">
+    <button
+      *ngFor="let page of pages"
+      class="navigation-item"
+      (click)="navigateTo(page.path)"
+    >
+      <span class="icon">
+        <fa-icon [icon]="page.icon"></fa-icon>
+      </span>
+      <span class="label">{{ page.name }}</span>
+    </button>
+  </div>
+</div>

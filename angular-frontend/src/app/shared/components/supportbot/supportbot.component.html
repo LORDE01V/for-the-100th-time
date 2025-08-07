@@ -1,0 +1,108 @@
+<div class="floating-bubble-container" *ngIf="!isOpen">
+  <button
+    class="floating-bubble"
+    aria-label="Chat with Langa"
+    (click)="toggleOpen()"
+    [ngStyle]="{'background-color': bubbleBgColor}"
+  >
+    <fa-icon [icon]="faCommentDots"></fa-icon>
+  </button>
+</div>
+
+<div
+  class="chatbot-card"
+  *ngIf="isOpen"
+  [ngStyle]="{
+    'background-color': chatBg
+  }"
+>
+  <div
+    class="chatbot-header"
+    [ngStyle]="{
+      'background': headerBgGradient,
+      'color': headerColor
+    }"
+  >
+    <div class="avatar-name-group">
+      <img
+        [src]="langaImage"
+        alt="Langa Avatar"
+        class="avatar"
+        [ngClass]="{'bot-speaking': isSpeaking}"
+      />
+      <h3 class="bot-name">Langa</h3>
+    </div>
+    <div class="header-buttons">
+      <button
+        class="icon-button"
+        (click)="toggleMute()"
+        [attr.aria-label]="isMuted ? 'Unmute Langa' : 'Mute Langa'"
+        [attr.title]="isMuted ? 'Unmute voice replies' : 'Mute voice replies'"
+      >
+        <fa-icon [icon]="isMuted ? faVolumeMute : faVolumeUp"></fa-icon>
+      </button>
+      <button
+        class="icon-button"
+        (click)="toggleOpen()"
+      >
+        <fa-icon [icon]="faTimes"></fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="messages-container">
+    <div
+      *ngFor="let message of messages; let i = index"
+      class="message-row"
+      [ngClass]="{'user': message.sender === 'user', 'bot': message.sender === 'bot'}"
+    >
+      <img *ngIf="message.sender === 'bot'" [src]="langaImage" alt="Bot Avatar" class="message-avatar" />
+      <div
+        class="message-bubble"
+        [ngStyle]="{
+          'background-color': message.sender === 'bot' ? botBgColor : userBgColor,
+          'color': textColor
+        }"
+      >
+        {{ message.text }}
+      </div>
+      <div *ngIf="message.sender === 'user'" class="message-avatar user-avatar"></div>
+    </div>
+    <div #messagesEnd></div>
+  </div>
+
+  <div class="input-area"
+    [ngStyle]="{
+      'background-color': inputAreaBg,
+      'border-color': inputAreaBorderColor
+    }"
+  >
+    <input
+      type="text"
+      [(ngModel)]="inputMessage"
+      (keypress)="onKeyPress($event)"
+      placeholder="Type your message..."
+      class="message-input"
+      [disabled]="isLoading || isListening"
+      [ngStyle]="{
+        'background-color': inputBg,
+        'border-color': inputBorderColor,
+        'color': textColor
+      }"
+    />
+    <button
+      class="mic-button"
+      (click)="handleMicClick()"
+      [ngClass]="{'listening': isListening}"
+    >
+      <fa-icon [icon]="faMicrophone"></fa-icon>
+    </button>
+    <button
+      class="send-button"
+      (click)="handleSendMessage()"
+      [disabled]="isLoading || !inputMessage.trim() || isListening"
+    >
+      <fa-icon [icon]="faPaperPlane"></fa-icon>
+    </button>
+  </div>
+</div>

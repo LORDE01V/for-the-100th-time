@@ -1,0 +1,30 @@
+<footer class="footer">
+  <div class="social-icons">
+    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+      <fa-icon [icon]="faFacebook"></fa-icon>
+    </a>
+    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+      <fa-icon [icon]="faTwitter"></fa-icon>
+    </a>
+    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+      <fa-icon [icon]="faLinkedin"></fa-icon>
+    </a>
+    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+      <fa-icon [icon]="faInstagram"></fa-icon>
+    </a>
+  </div>
+  <nav class="footer-nav">
+    <a routerLink="/about">About</a>
+    <a routerLink="/">Home</a>
+    <a routerLink="/subscription">Services</a>
+    <a routerLink="/team">Team</a>
+    <a routerLink="/support">Contact</a>
+    <a routerLink="/terms-of-service">Terms of Service</a>
+    <a routerLink="/privacy-policy">Privacy Policy</a>
+  </nav>
+  <p class="copyright">©2025 | All Rights Reserved · Powered by GridX</p>
+  <p class="tagline">Innovating Energy Solutions for a Sustainable Tomorrow</p>
+  <button class="back-to-top-button" (click)="scrollToTop()">
+    Back to Top <fa-icon [icon]="faArrowUp"></fa-icon>
+  </button>
+</footer>

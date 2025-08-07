@@ -1,0 +1,135 @@
+<div class="calendar-container" [ngStyle]="{'background-color': calendarBg}">
+  <div class="calendar-header">
+    <button class="nav-button" (click)="handlePrev()" aria-label="Previous month">
+      <fa-icon [icon]="faChevronLeft"></fa-icon>
+    </button>
+    <span class="month-year" [ngStyle]="{'color': monthColor}">
+      {{ (currentMonth | date:'LLLL') + ' ' + currentYear }}
+    </span>
+    <button class="nav-button" (click)="handleNext()" aria-label="Next month">
+      <fa-icon [icon]="faChevronRight"></fa-icon>
+    </button>
+  </div>
+
+  <!-- Search input -->
+  <input
+    type="text"
+    placeholder="Search events..."
+    [ngModel]="searchQuery"
+    (ngModelChange)="onSearchQueryChange($event)"
+    class="search-input"
+  />
+
+  <!-- Filter section -->
+  <div class="filter-section">
+    <span class="filter-label" [ngStyle]="{'color': dayColor}">
+      Filter by event type
+    </span>
+    <div class="filter-buttons">
+      <button
+        *ngFor="let eventType of ['meeting', 'maintenance', 'appointment', 'reminder', 'other']"
+        class="filter-button"
+        [ngClass]="{
+          'active': activeFilters.includes(eventType),
+          'meeting': eventType === 'meeting',
+          'maintenance': eventType === 'maintenance',
+          'appointment': eventType === 'appointment',
+          'reminder': eventType === 'reminder',
+          'other': eventType === 'other'
+        }"
+        (click)="toggleFilter(eventType)"
+      >
+        {{ eventType | titlecase }}
+      </button>
+    </div>
+  </div>
+
+  <div class="days-grid">
+    <span *ngFor="let day of days" class="day-name" [ngStyle]="{'color': dayColor}">{{ day }}</span>
+  </div>
+
+  <div class="calendar-grid">
+    <ng-container *ngFor="let dayInfo of getCalendarDays()">
+      <div
+        *ngIf="dayInfo.day !== null; else emptyCell"
+        class="calendar-day"
+        [ngStyle]="{
+          'background-color': dayInfo.isEvent ? eventTypeColors[dayInfo.eventType!] : dateBg,
+          'color': dayInfo.isEvent ? 'white' : dateColor
+        }"
+        (click)="handleDateClick(dayInfo.day!)"
+        (mouseenter)="hoveredDay = (dayInfo.isEvent ? (currentYear + '-' + currentMonth + '-' + dayInfo.day) : null)"
+        (mouseleave)="hoveredDay = null"
+      >
+        {{ dayInfo.day }}
+        <ng-container *ngIf="dayInfo.isEvent">
+          <div class="event-indicator"></div>
+          <div
+            *ngIf="hoveredDay === (currentYear + '-' + currentMonth + '-' + dayInfo.day)"
+            class="event-hover-card"
+            [ngStyle]="{
+              'background-color': hoverCardBg,
+              'color': hoverCardText
+            }"
+          >
+            <strong [ngStyle]="{'color': hoverCardText}">{{ getEventDetails(dayInfo.day!)?.title }}</strong>
+            <span [ngStyle]="{'color': hoverCardText}">{{ formatTime(getEventDetails(dayInfo.day!)?.start!) }}</span>
+            <span [ngStyle]="{'color': hoverCardText}">{{ getEventDetails(dayInfo.day!)?.eventType | titlecase }}</span>
+          </div>
+        </ng-container>
+      </div>
+      <ng-template #emptyCell>
+        <div class="empty-calendar-cell"></div>
+      </ng-template>
+    </ng-container>
+  </div>
+
+  <!-- Event Modal -->
+  <div class="modal-overlay" *ngIf="isModalOpen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ selectedDate && events[selectedDate] ? 'Edit Event' : 'Add Event' }}</h3>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="saveEvent()">
+          <input type="text" placeholder="Event Title *" [(ngModel)]="eventData.title" name="eventTitle" required />
+          <input type="datetime-local" [(ngModel)]="eventData.start" name="eventStart" required />
+          <input type="datetime-local" placeholder="End Date/Time" [(ngModel)]="eventData.end" name="eventEnd" required />
+          <textarea placeholder="Description" [(ngModel)]="eventData.description" name="eventDescription" required></textarea>
+          <input type="text" placeholder="Location" [(ngModel)]="eventData.location" name="eventLocation" required />
+          <select [(ngModel)]="eventData.eventType" name="eventType" required>
+            <option value="meeting">Meeting</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="appointment">Appointment</option>
+            <option value="reminder">Reminder</option>
+            <option value="other">Other</option>
+          </select>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="ghost-button" (click)="isModalOpen = false">Cancel</button>
+        <button *ngIf="selectedDate && events[selectedDate]" class="red-button" (click)="isDeleteModalOpen = true">Delete</button>
+        <button class="blue-button" (click)="saveEvent()">
+          {{ selectedDate && events[selectedDate] ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="isDeleteModalOpen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+      </div>
+      <div class="modal-body">
+        <p>Type "DELETE" to confirm permanent removal of this event:</p>
+        <input type="text" [(ngModel)]="deleteConfirmationText" name="deleteConfirm" placeholder="Type DELETE here" />
+      </div>
+      <div class="modal-footer">
+        <button class="ghost-button" (click)="isDeleteModalOpen = false; deleteConfirmationText = ''">Cancel</button>
+        <button class="red-button" (click)="deleteEvent()" [disabled]="deleteConfirmationText.toLowerCase() !== 'delete'">Confirm Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

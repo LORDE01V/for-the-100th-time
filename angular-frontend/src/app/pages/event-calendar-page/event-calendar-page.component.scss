@@ -1,0 +1,281 @@
+.calendar-container {
+  padding: 2rem; /* p={8} */
+  border-radius: 0.5rem; /* rounded="lg" */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow="lg" */
+  max-width: 700px; /* maxW="700px" */
+  margin: 0 auto; /* mx="auto" */
+  position: relative;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem; /* mb={4} */
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem; /* ChevronLeftIcon font size */
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* variant="ghost" hover */
+  }
+}
+
+.month-year {
+  font-size: 1.25rem; /* fontSize="xl" */
+  font-weight: bold;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem; /* mb={4} */
+  border: 1px solid #e2e8f0; /* variant="filled" border */
+  border-radius: 0.375rem;
+  background-color: #edf2f7; /* filled background */
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #63b3ed; /* blue.300 */
+    outline: none;
+    box-shadow: 0 0 0 1px #63b3ed;
+  }
+}
+
+.filter-section {
+  margin-bottom: 1rem; /* mb={4} */
+}
+
+.filter-label {
+  font-size: 0.875rem; /* fontSize="sm" */
+  font-weight: 600; /* fontWeight="semibold" */
+  margin-bottom: 0.5rem; /* mb={2} */
+  display: block;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* gap={2} */
+}
+
+.filter-button {
+  padding: 0.25rem 0.75rem; /* size="sm" */
+  border-radius: 0.375rem;
+  text-transform: capitalize;
+  cursor: pointer;
+  border: 1px solid;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+
+  &.active {
+    color: white;
+    border-color: transparent;
+  }
+
+  &.meeting {
+    border-color: #4299e1; /* blue.500 */
+    color: #4299e1;
+    &.active { background-color: #4299e1; }
+  }
+  &.maintenance {
+    border-color: #ed8936; /* orange.500 */
+    color: #ed8936;
+    &.active { background-color: #ed8936; }
+  }
+  &.appointment {
+    border-color: #48bb78; /* green.500 */
+    color: #48bb78;
+    &.active { background-color: #48bb78; }
+  }
+  &.reminder {
+    border-color: #805ad5; /* purple.500 */
+    color: #805ad5;
+    &.active { background-color: #805ad5; }
+  }
+  &.other {
+    border-color: #a0aec0; /* gray.500 */
+    color: #a0aec0;
+    &.active { background-color: #a0aec0; }
+  }
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem; /* gap={2} */
+  margin-bottom: 0.5rem; /* mb={2} */
+}
+
+.day-name {
+  font-size: 0.875rem; /* fontSize="sm" */
+  text-align: center;
+  font-weight: bold;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+  width: 40px;
+  height: 40px;
+  margin: 1px;
+  border-radius: 0.375rem; /* borderRadius="md" */
+  border: 1px solid #e2e8f0; /* gray.200 */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* boxShadow="sm" */
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* boxShadow="md" */
+  }
+}
+
+.empty-calendar-cell {
+  width: 40px;
+  height: 40px;
+  margin: 1px;
+}
+
+.event-indicator {
+  position: absolute;
+  bottom: 4px; /* bottom="1" */
+  right: 4px; /* right="1" */
+  background-color: #e53e3e; /* red.400 */
+  width: 8px; /* w="2" */
+  height: 8px; /* h="2" */
+  border-radius: 50%; /* borderRadius="full" */
+}
+
+.event-hover-card {
+  position: absolute;
+  bottom: 100%; /* bottom="100%" */
+  left: 50%; /* left="50%" */
+  transform: translateX(-50%); /* transform="translateX(-50%)" */
+  padding: 0.5rem; /* p={2} */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* boxShadow="xl" */
+  border-radius: 0.375rem; /* borderRadius="md" */
+  font-size: 0.75rem; /* fontSize="xs" */
+  z-index: 100; /* zIndex="tooltip" */
+  min-width: 120px; /* minWidth="120px" */
+  border-width: 1px; /* borderWidth="1px" */
+  border-color: #e2e8f0; /* gray.200 */
+  white-space: nowrap;
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: 90%;
+  max-width: 500px;
+}
+
+.modal-header {
+  margin-bottom: 1rem;
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+}
+
+.modal-body {
+  margin-bottom: 1rem;
+}
+
+.modal-body form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* spacing={3} */
+}
+
+.modal-body input,
+.modal-body textarea,
+.modal-body select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem; /* mr={3} */
+}
+
+.ghost-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.red-button {
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #c53030;
+  }
+
+  &:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+}
+
+.blue-button {
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #2b6cb0;
+  }
+}

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 @import '~@angular/material/theming';
 
 .login-container {
@@ -119,10 +120,66 @@
 
   &:disabled {
     background: #cccccc;
+=======
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  padding: 20px;
+}
+
+.auth-container h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.auth-container form {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+
+  &:disabled {
+    background-color: #cccccc;
+>>>>>>> Stashed changes
     cursor: not-allowed;
   }
 }
 
+<<<<<<< Updated upstream
 .login-footer {
   margin-top: 1.5rem;
   text-align: center;
@@ -151,3 +208,38 @@
     padding: 1.5rem;
   }
 }
+=======
+.error-message {
+  color: red;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.oauth-buttons {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.google-login-button {
+  background-color: #db4437 !important; /* Google red */
+
+  &:hover {
+    background-color: #a82e22 !important;
+  }
+}
+
+.auth-link {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.auth-link a {
+  color: #007bff;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+>>>>>>> Stashed changes

@@ -1,0 +1,40 @@
+<div
+  class="dashboard-card"
+  [ngStyle]="{
+    'background': bg || cardBg,
+    'background-image': bgGradient,
+    'box-shadow': effectiveBoxShadow === 'outline' ? '0 0 0 3px rgba(56, 178, 172, 0.6)' : 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+    'border-color': effectiveBorderColor
+  }"
+>
+  <div class="dashboard-card-header">
+    <h3 [ngStyle]="{'color': currentThemeConfig.colors.primary}">
+      <fa-icon *ngIf="icon" [icon]="icon" [ngStyle]="{'color': iconColor}" [fixedWidth]="true" size="lg"></fa-icon>
+      {{ title }}
+    </h3>
+  </div>
+
+  <div *ngIf="metric" class="dashboard-card-metric">
+    <p [ngStyle]="{'color': 'blue.500'}">
+      {{ metric }}
+    </p>
+    <span *ngIf="metricLabel" [ngStyle]="{'color': textColor}">
+      {{ metricLabel }}
+    </span>
+  </div>
+
+  <div class="dashboard-card-content" [ngStyle]="{'color': currentThemeConfig.colors.text}">
+    <ng-content></ng-content>
+  </div>
+
+  <div *ngIf="planDetails" class="dashboard-card-plan-details">
+    <h4>Plan Details</h4>
+    <p [ngStyle]="{'color': textColor}">
+      {{ planDetails }}
+    </p>
+  </div>
+
+  <div *ngIf="footer" class="dashboard-card-footer" [ngStyle]="{'border-color': borderColor}">
+    <ng-content select="[footer-content]"></ng-content>
+  </div>
+</div>

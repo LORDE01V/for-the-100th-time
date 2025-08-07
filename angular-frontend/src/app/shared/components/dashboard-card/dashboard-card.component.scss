@@ -1,0 +1,90 @@
+.dashboard-card {
+  padding: 1.5rem; /* p={6} */
+  border-radius: 0.75rem; /* borderRadius="xl" */
+  border-width: 1px; /* borderWidth="1px" */
+  height: 100%;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease-in-out; /* _hover={{ transform: 'translateY(-2px)', transition: 'all 0.2s' }} */
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem; /* mb={4} */
+}
+
+.dashboard-card-header h3 {
+  display: flex;
+  align-items: center;
+  font-size: 1.125rem; /* size="md" */
+  font-weight: 600; /* fontWeight="semibold" */
+  white-space: nowrap; /* isTruncated */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dashboard-card-header h3 svg {
+  width: 1.5rem; /* w={6} */
+  height: 1.5rem; /* h={6} */
+  margin-right: 0.5rem; /* mr={2} */
+}
+
+.dashboard-card-metric {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem; /* mb={4} */
+}
+
+.dashboard-card-metric p {
+  font-size: 1.875rem; /* fontSize="3xl" */
+  font-weight: bold;
+  line-height: 1;
+}
+
+.dashboard-card-metric span {
+  font-size: 0.875rem; /* fontSize="sm" */
+  margin-top: 0.25rem; /* mt={1} */
+}
+
+.dashboard-card-content {
+  flex: 1;
+  margin-top: 0.5rem; /* mt={2} */
+}
+
+.dashboard-card-plan-details {
+  margin-top: 1rem; /* mt={4} */
+  padding: 1rem; /* p={4} */
+  background-color: #f7fafc; /* gray.100 */
+  border-radius: 0.375rem; /* md */
+}
+
+.dashboard-card-plan-details h4 {
+  font-size: 1rem; /* size="sm" */
+  margin-bottom: 0.5rem; /* mb={2} */
+}
+
+.dashboard-card-plan-details p {
+  font-size: 0.875rem; /* fontSize="sm" */
+}
+
+.dashboard-card-footer {
+  margin-top: 1rem; /* mt={4} */
+  padding-top: 1rem; /* pt={4} */
+  border-top-width: 1px; /* borderTopWidth="1px" */
+}
+
+/* Box shadow utilities (simplified from Chakra UI values) */
+.box-shadow-xl {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+.box-shadow-outline {
+  box-shadow: 0 0 0 3px rgba(56, 178, 172, 0.6);
+}

@@ -1,0 +1,41 @@
+.impact-map-container {
+  padding: 1rem; /* p={4} */
+  border-radius: 0.5rem; /* borderRadius="lg" */
+  border-width: 1px; /* borderWidth="1px" */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* boxShadow="md" */
+  margin-top: 1.5rem; /* mt={6} */
+  position: relative;
+  z-index: 1;
+}
+
+.form-control-group {
+  margin-bottom: 1rem; /* mb={4} */
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600; /* As typically implied by FormLabel */
+}
+
+.theme-select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.6); /* Approximate teal.500/teal.300 focus */
+  }
+
+  option {
+    /* Styles for options are handled by Angular in component.ts (optionBg, optionColor) */
+  }
+}
+
+.map-container {
+  height: 500px;
+  border-radius: 0.5rem; /* borderRadius="8px" */
+}

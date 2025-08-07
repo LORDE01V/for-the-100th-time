@@ -1,0 +1,68 @@
+<div
+  class="ai-tips-panel"
+  [ngStyle]="{
+    'background-image': boxBgGradient,
+    'border-color': boxBorderColor
+  }"
+>
+  <div class="header-flex">
+    <h2 class="heading" [ngStyle]="{'color': headingColor}">
+      AI Energy Tips
+    </h2>
+    <span class="badge" [ngClass]="{
+      'badge-blue': true
+    }">
+      {{ currentTipIndex + 1 }}/{{ energyTips.length }}
+    </span>
+  </div>
+
+  <div class="tip-content-vstack">
+    <div class="tip-flex-header">
+      <div
+        class="avatar"
+        [ngStyle]="{'background-color': accentColor}"
+        (mouseenter)="onAvatarHover($event, 'scale(1.05)')"
+        (mouseleave)="onAvatarHover($event, 'scale(1)')"
+      >
+        <fa-icon [icon]="energyTips[currentTipIndex].icon"></fa-icon>
+      </div>
+      <p class="tip-title" [ngStyle]="{'color': textColorPrimary}">
+        {{ energyTips[currentTipIndex].title }}
+      </p>
+    </div>
+
+    <p class="tip-content" [ngStyle]="{'color': textColorSecondary}">
+      {{ energyTips[currentTipIndex].content }}
+    </p>
+
+    <hr class="divider" />
+
+    <div class="tip-footer-flex">
+      <span class="badge" [ngClass]="{
+        'badge-green': energyTips[currentTipIndex].badgeColor === 'green',
+        'badge-orange': energyTips[currentTipIndex].badgeColor === 'orange',
+        'badge-blue': energyTips[currentTipIndex].badgeColor === 'blue'
+      }">
+        {{ energyTips[currentTipIndex].category }}
+      </span>
+
+      <div class="navigation-hstack">
+        <button
+          class="icon-button"
+          (click)="handlePrevTip()"
+          aria-label="Previous tip"
+          [ngStyle]="{'color': accentColor}"
+        >
+          <fa-icon [icon]="faArrowLeft"></fa-icon>
+        </button>
+        <button
+          class="icon-button"
+          (click)="handleNextTip()"
+          aria-label="Next tip"
+        >
+          <fa-icon [icon]="faArrowRight"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

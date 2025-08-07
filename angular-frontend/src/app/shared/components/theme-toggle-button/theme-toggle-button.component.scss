@@ -1,0 +1,22 @@
+.theme-toggle-button {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  z-index: 9999;
+  width: 56px; /* boxSize="56px" */
+  height: 56px; /* boxSize="56px" */
+  border-radius: 50%; /* isRound */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+
+  &:hover {
+    background-color: #4A5568; /* A darker gray for hover */
+  }
+
+  fa-icon {
+    font-size: 1.5rem; /* fontSize="2xl" - approximate, adjust as needed */
+  }
+}

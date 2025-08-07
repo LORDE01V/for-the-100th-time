@@ -1,0 +1,21 @@
+/* No specific styles needed for ErrorBoundaryComponent beyond basic layout */
+div {
+  padding: 20px;
+  border: 1px solid red;
+  background-color: #ffebeb;
+  color: #c00;
+  margin: 20px;
+}
+
+h2 {
+  color: #c00;
+}
+
+details {
+  background-color: #fcebeb;
+  border: 1px solid #ecc;
+  padding: 10px;
+  margin-top: 10px;
+  font-family: monospace;
+  font-size: 0.9em;
+}

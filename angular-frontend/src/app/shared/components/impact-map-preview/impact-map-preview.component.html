@@ -1,0 +1,42 @@
+<div
+  class="impact-map-container"
+  [ngStyle]="{
+    'background': boxBg,
+    'border-color': boxBorderColor
+  }"
+>
+  <div class="form-control-group">
+    <label class="form-label" [ngStyle]="{'color': formLabelColor}">
+      Map Theme
+    </label>
+    <select
+      [ngModel]="mapTheme"
+      (ngModelChange)="onMapThemeChange($event)"
+      class="theme-select"
+      [ngStyle]="{
+        'background-color': selectBg,
+        'border-color': selectBorderColor,
+        'color': selectColor
+      }"
+    >
+      <option
+        *ngFor="let theme of tileOptions"
+        [value]="theme.value"
+        [ngStyle]="{
+          'background-color': optionBg,
+          'color': optionColor
+        }"
+      >
+        {{ theme.name }} Theme
+      </option>
+    </select>
+  </div>
+
+  <div
+    leaflet
+    [leafletOptions]="options"
+    [leafletLayers]="layers"
+    [leafletFitBounds]="mapBounds"
+    class="map-container"
+  ></div>
+</div>

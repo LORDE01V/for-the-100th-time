@@ -1,0 +1,29 @@
+<div
+  class="fault-detection-container"
+  [ngStyle]="{
+    'background-color': cardBg,
+    'border-color': borderColor
+  }"
+>
+  <h3 class="heading">Solar Panel Fault Detection</h3>
+  <div class="panel-grid">
+    <div
+      *ngFor="let panel of panelData"
+      class="panel-card"
+      [ngStyle]="{
+        'background-color': panel.status === 'Operational' ? operationalColor : faultColor
+      }"
+    >
+      <p class="panel-id">Panel ID: {{ panel.id }}</p>
+      <p class="panel-status">Status: {{ panel.status }}</p>
+      <p class="panel-efficiency">Efficiency: {{ panel.efficiency }}</p>
+      <button
+        *ngIf="panel.status === 'Fault Detected'"
+        class="view-more-button"
+        (click)="viewMore(panel)"
+      >
+        View More
+      </button>
+    </div>
+  </div>
+</div>

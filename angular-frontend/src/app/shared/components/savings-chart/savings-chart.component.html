@@ -1,0 +1,14 @@
+<div class="savings-chart-container">
+  <h3 class="total-savings-heading">
+    💰 Total Potential Savings: R{{ totalSavings.toFixed(2) }}
+  </h3>
+
+  <div class="chart-wrapper">
+    <canvas baseChart
+      [options]="barChartOptions"
+      [data]="barChartData"
+      [type]="barChartType"
+      (chartClick)="onChartClick($event)">
+    </canvas>
+  </div>
+</div>
