@@ -318,3 +318,31 @@
 2025-08-07 10:13:03,795 - INFO -  * Restarting with stat
 2025-08-07 10:13:21,910 - WARNING -  * Debugger is active!
 2025-08-07 10:13:21,917 - INFO -  * Debugger PIN: 774-911-916
+2025-08-07 10:21:51,347 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.194:5000
+2025-08-07 10:21:51,348 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-07 10:21:51,351 - INFO -  * Restarting with stat
+2025-08-07 10:22:10,628 - WARNING -  * Debugger is active!
+2025-08-07 10:22:10,637 - INFO -  * Debugger PIN: 774-911-916
+2025-08-07 10:22:45,379 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-08-07 10:22:45,385 - INFO - 127.0.0.1 - - [07/Aug/2025 10:22:45] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-07 10:22:45,707 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-08-07 10:22:46,105 - ERROR - User not found for email: busisiwe@gmail.com
+2025-08-07 10:22:46,139 - INFO - 127.0.0.1 - - [07/Aug/2025 10:22:46] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-08-07 10:22:53,626 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-08-07 10:22:53,628 - INFO - 127.0.0.1 - - [07/Aug/2025 10:22:53] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-07 10:22:53,633 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-08-07 10:22:53,926 - ERROR - User not found for email: busisiwe@gmail.com
+2025-08-07 10:22:53,927 - INFO - 127.0.0.1 - - [07/Aug/2025 10:22:53] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-08-07 10:22:58,937 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-08-07 10:22:59,130 - ERROR - User not found for email: busisiwe@gmail.com
+2025-08-07 10:22:59,132 - INFO - 127.0.0.1 - - [07/Aug/2025 10:22:59] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-08-07 10:23:29,334 - INFO - 127.0.0.1 - - [07/Aug/2025 10:23:29] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-08-07 10:23:30,247 - INFO - Attempting to register user with email: keketso3@gmail.com
+2025-08-07 10:23:30,411 - INFO - 127.0.0.1 - - [07/Aug/2025 10:23:30] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-07 10:23:33,456 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-08-07 10:23:33,465 - INFO - 127.0.0.1 - - [07/Aug/2025 10:23:33] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-08-07 10:23:33,791 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-08-07 10:23:34,415 - INFO - 127.0.0.1 - - [07/Aug/2025 10:23:34] "POST /api/auth/login HTTP/1.1" 200 -
