@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from hugging_services import HuggingFaceChatbot
 import logging
-from agent import EnergyUsageOptimizerAgent
+from Energy_optimizer.agent import EnergyUsageOptimizerAgent
 from sys import stdout  # Import for StreamHandler
 from flask_jwt_extended import JWTManager
 import datetime

@@ -181,3 +181,140 @@
 2025-07-24 09:17:51,411 - INFO - 127.0.0.1 - - [24/Jul/2025 09:17:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
 2025-07-24 09:17:51,730 - WARNING - Unknown option passed to Flask-CORS: origin
 2025-07-24 09:17:52,584 - INFO - 127.0.0.1 - - [24/Jul/2025 09:17:52] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-24 09:26:55,874 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-24 09:26:55,875 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 09:26:55,882 - INFO -  * Restarting with stat
+2025-07-24 09:27:22,461 - WARNING -  * Debugger is active!
+2025-07-24 09:27:22,472 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 09:27:26,979 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 09:27:26,981 - INFO - 127.0.0.1 - - [24/Jul/2025 09:27:26] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-24 09:27:27,302 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 09:27:28,079 - INFO - 127.0.0.1 - - [24/Jul/2025 09:27:28] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-24 09:40:07,379 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-24 09:40:07,388 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 09:40:07,405 - INFO -  * Restarting with stat
+2025-07-24 09:41:03,252 - WARNING -  * Debugger is active!
+2025-07-24 09:41:03,264 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 09:51:45,194 - INFO -  * Detected change in 'C:\\Users\\User\\Documents\\Ramokhoase\\for-the-100th-time\\Backend\\app.py', reloading
+2025-07-24 09:51:46,387 - INFO -  * Restarting with stat
+2025-07-24 09:51:58,293 - WARNING -  * Debugger is active!
+2025-07-24 09:51:58,297 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 10:49:30,330 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-24 10:49:30,331 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 10:49:30,334 - INFO -  * Restarting with stat
+2025-07-24 10:49:41,954 - WARNING -  * Debugger is active!
+2025-07-24 10:49:41,957 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 11:41:17,849 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-24 11:41:17,850 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 11:41:17,854 - INFO -  * Restarting with stat
+2025-07-24 11:41:27,799 - WARNING -  * Debugger is active!
+2025-07-24 11:41:27,802 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 11:42:29,592 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 11:42:29,593 - INFO - 127.0.0.1 - - [24/Jul/2025 11:42:29] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-24 11:42:29,906 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 11:42:30,291 - INFO - 127.0.0.1 - - [24/Jul/2025 11:42:30] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-24 11:52:04,018 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-24 11:52:04,019 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 11:52:04,021 - INFO -  * Restarting with stat
+2025-07-24 11:52:19,991 - WARNING -  * Debugger is active!
+2025-07-24 11:52:19,996 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 11:57:16,842 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 11:57:16,845 - INFO - 127.0.0.1 - - [24/Jul/2025 11:57:16] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-24 11:57:17,155 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 11:57:17,563 - INFO - 127.0.0.1 - - [24/Jul/2025 11:57:17] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-24 12:12:40,116 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-24 12:12:40,117 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 12:12:40,123 - INFO -  * Restarting with stat
+2025-07-24 12:12:52,479 - WARNING -  * Debugger is active!
+2025-07-24 12:12:52,483 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 12:22:40,798 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-24 12:22:40,801 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 12:22:40,804 - INFO -  * Restarting with stat
+2025-07-24 12:22:53,908 - WARNING -  * Debugger is active!
+2025-07-24 12:22:53,915 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 12:22:55,900 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 12:22:55,902 - INFO - 127.0.0.1 - - [24/Jul/2025 12:22:55] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-24 12:22:56,216 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 12:22:56,549 - INFO - 127.0.0.1 - - [24/Jul/2025 12:22:56] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-24 22:11:52,998 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-24 22:11:52,999 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 22:11:53,007 - INFO -  * Restarting with stat
+2025-07-24 22:12:19,944 - WARNING -  * Debugger is active!
+2025-07-24 22:12:19,971 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 22:13:59,263 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 22:13:59,268 - INFO - 127.0.0.1 - - [24/Jul/2025 22:13:59] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-24 22:13:59,581 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 22:14:00,413 - INFO - 127.0.0.1 - - [24/Jul/2025 22:14:00] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-24 22:31:26,088 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-24 22:31:26,090 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-24 22:31:26,095 - INFO -  * Restarting with stat
+2025-07-24 22:31:45,808 - WARNING -  * Debugger is active!
+2025-07-24 22:31:45,814 - INFO -  * Debugger PIN: 774-911-916
+2025-07-24 22:31:47,058 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 22:31:47,060 - INFO - 127.0.0.1 - - [24/Jul/2025 22:31:47] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-24 22:31:52,980 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 22:31:52,982 - INFO - 127.0.0.1 - - [24/Jul/2025 22:31:52] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-24 22:31:53,293 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-24 22:31:53,643 - INFO - 127.0.0.1 - - [24/Jul/2025 22:31:53] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-25 09:13:53,939 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.132:5000
+2025-07-25 09:13:53,940 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-25 09:13:53,944 - INFO -  * Restarting with stat
+2025-07-25 09:14:11,426 - WARNING -  * Debugger is active!
+2025-07-25 09:14:11,434 - INFO -  * Debugger PIN: 774-911-916
+2025-07-25 09:15:18,870 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-25 09:15:18,881 - INFO - 127.0.0.1 - - [25/Jul/2025 09:15:18] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-25 09:15:19,194 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-25 09:15:20,017 - INFO - 127.0.0.1 - - [25/Jul/2025 09:15:20] "POST /api/auth/login HTTP/1.1" 200 -
+2025-07-30 09:59:23,841 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.194:5000
+2025-07-30 09:59:23,842 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-30 09:59:23,845 - INFO -  * Restarting with stat
+2025-07-30 09:59:34,169 - WARNING -  * Debugger is active!
+2025-07-30 09:59:34,179 - INFO -  * Debugger PIN: 774-911-916
+2025-07-30 10:37:34,281 - INFO - 127.0.0.1 - - [30/Jul/2025 10:37:34] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-07-30 10:37:34,962 - INFO - Attempting to register user with email: kekeletso@gmail.com
+2025-07-30 10:37:35,059 - INFO - 127.0.0.1 - - [30/Jul/2025 10:37:35] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-07-30 10:37:39,645 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-30 10:37:39,647 - INFO - 127.0.0.1 - - [30/Jul/2025 10:37:39] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-07-30 10:37:39,653 - WARNING - Unknown option passed to Flask-CORS: origin
+2025-07-30 10:37:39,984 - INFO - 127.0.0.1 - - [30/Jul/2025 10:37:39] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-07 10:13:03,790 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.194:5000
+2025-08-07 10:13:03,791 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-07 10:13:03,795 - INFO -  * Restarting with stat
+2025-08-07 10:13:21,910 - WARNING -  * Debugger is active!
+2025-08-07 10:13:21,917 - INFO -  * Debugger PIN: 774-911-916
