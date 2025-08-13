@@ -1,179 +1,58 @@
-<div
-  class="dashboard-container"
-  [style.background-image]="'url(' + dashboardBgPath + ')'"
->
-  <div class="background-overlay"
-       [class.light-mode-overlay]="colorMode() === 'light'"
-       [class.dark-mode-overlay]="colorMode() === 'dark'">
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <header class="dashboard-header">
+    <button class="back-button">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <div class="header-content">
+      <h1>Energy Dashboard</h1>
+      <p class="subtitle">Take control of your energy and discover ways to optimize your usage for a sustainable future!</p>
+    </div>
+  </header>
+
+  <!-- Plan Selector Row -->
+  <div class="plan-selector">
+    <button class="suggest-plan-btn">Suggest Plan</button>
+    <div class="location-inputs">
+      <mat-form-field>
+        <mat-label>Select city</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let city of cities" [value]="city">{{ city }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Or search your home address">
+      </mat-form-field>
+      <button class="location-btn">
+        <i class="fas fa-map-marker-alt"></i>
+      </button>
+    </div>
   </div>
 
-  <div class="content-wrapper">
-    <div class="main-content-area">
-      <div class="header-box">
-        <div class="header-row">
-          <button class="back-button" (click)="goBack()">
-            &#8592; Back
-          </button>
-        </div>
-
-        <h1 class="dashboard-title">Energy Dashboard</h1>
-        <p class="dashboard-subtitle">
-          Take control of your energy and discover ways to optimize your usage
-          for a sustainable future!
-        </p>
-      </div>
-
-      <div class="action-section">
-        <button
-          class="suggest-plan-button"
-          (click)="suggestPlan()"
-          [disabled]="isLoading()"
-        >
-          Suggest Plan
-          <span *ngIf="isLoading()" class="spinner"></span>
-        </button>
-        <!-- LocationSelector Placeholder -->
-        <div class="location-selector-placeholder">
-          <p>Location Selector Component Here:</p>
-          <select [ngModel]="location().areaId" (ngModelChange)="onLocationChange({type: 'area', areaId: $event, label: $event})">
-            <option value="johannesburg">Johannesburg</option>
-            <option value="capetown">Cape Town</option>
-            <!-- Add more options as needed -->
-          </select>
-          <small>Current: {{ location().label }}</small>
-        </div>
-      </div>
-
-      <div class="widgets-grid">
-        <ng-container *ngIf="isWidgetEnabled('EnergyModeToggle')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- EnergyModeToggle Placeholder -->
-            <p>Energy Mode Toggle Component Here</p>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="isWidgetEnabled('ThemeSwitcher')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- ThemeSwitcher Placeholder -->
-            <p>Theme Switcher Component Here</p>
-          </div>
-        </ng-container>
-
-        <div class="widget-card recommended-plan-card"
-             [class.highlighted]="recommendedPlan()"
-             [ngStyle]="glassCardStyle()">
-          <h3 class="card-title">Recommended Plan: {{ recommendedPlan() ? recommendedPlan().name : 'None' }}</h3>
-          <div *ngIf="recommendedPlan()" class="plan-details">
-            <p><strong>Plan Name:</strong> {{ recommendedPlan().name }}</p>
-            <p><strong>Description:</strong> {{ recommendedPlan().description || 'No description available.' }}</p>
-            <p><strong>Price:</strong> ${{ recommendedPlan().price }}</p>
-            <p><strong>Features:</strong></p>
-            <ul *ngIf="recommendedPlan().features && recommendedPlan().features.length > 0; else noFeatures">
-              <li *ngFor="let feature of recommendedPlan().features">{{ feature }}</li>
-            </ul>
-            <ng-template #noFeatures><p>No features available.</p></ng-template>
-            <p><strong>ID:</strong> {{ recommendedPlan().id || 'N/A' }}</p>
-          </div>
-          <div *ngIf="!recommendedPlan()" class="no-plan-message">
-            <p>No plan recommended yet</p>
-          </div>
-        </div>
-
-        <ng-container *ngIf="isWidgetEnabled('DailyForecast')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- DailyForecast Placeholder -->
-            <p>Daily Forecast Component Here</p>
-            <p>Location: {{ location().label }}</p>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="isWidgetEnabled('EnergyAvatar')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- EnergyAvatar Placeholder -->
-            <p>Energy Avatar Component Here</p>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="isWidgetEnabled('BudgetDial')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- BudgetDial Placeholder -->
-            <p>Budget Dial Component Here</p>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="isWidgetEnabled('SolarOutput')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- SolarOutput Placeholder -->
-            <p>Solar Output Component Here</p>
-            <p>Location: {{ location().label }}</p>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="isWidgetEnabled('AITipsPanel')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- AITipsPanel Placeholder -->
-            <p>AI Tips Panel Component Here</p>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="isWidgetEnabled('ActivityReport')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- ActivityReport Placeholder -->
-            <p>Activity Report Component Here</p>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="isWidgetEnabled('WidgetLayout')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- WidgetLayout Placeholder -->
-            <p>Widget Layout Component Here</p>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="isWidgetEnabled('FaultDetection')">
-          <div class="widget-card">
-            <!-- FaultDetection Placeholder -->
-            <p>Fault Detection Component Here</p>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="isWidgetEnabled('FaultVisualization')">
-          <div class="widget-card" [ngStyle]="glassCardStyle()">
-            <!-- FaultVisualization Placeholder -->
-            <p>Fault Visualization Component Here</p>
-            <!-- Recharts placeholder - this needs a dedicated Angular charting library -->
-            <div class="chart-placeholder">
-              <p>Energy Usage Chart (LineChart)</p>
-              <p>Implement with ng2-charts or similar Angular library.</p>
-            </div>
-          </div>
-        </ng-container>
-        
-        <!-- LoadsheddingStatus Placeholder (if needed, it was imported but not directly rendered) -->
-        <ng-container *ngIf="false"> <!-- Assuming it's not explicitly enabled or rendered in the original simplified JSX -->
-          <div class="widget-card">
-            <p>Loadshedding Status Component Here</p>
-          </div>
-        </ng-container>
-
-      </div>
+  <!-- Main Dashboard Grid -->
+  <div class="dashboard-grid">
+    <!-- Column 1 -->
+    <div class="grid-column">
+      <app-energy-mode-card></app-energy-mode-card>
+      <app-daily-forecast-card></app-daily-forecast-card>
+      <app-solar-output-card></app-solar-output-card>
+      <app-widget-layout-card></app-widget-layout-card>
     </div>
 
-    <!-- Chatbot Bubble Button -->
-    <button
-      class="bubble-button chatbot-button"
-      [ngStyle]="bubbleButtonProps()"
-    >
-      💬
-    </button>
+    <!-- Column 2 -->
+    <div class="grid-column">
+      <app-theme-presets-card></app-theme-presets-card>
+      <app-energy-status-card></app-energy-status-card>
+      <app-ai-tips-card></app-ai-tips-card>
+      <app-solar-panel-fault-card></app-solar-panel-fault-card>
+    </div>
 
-    <!-- Toggle Mode Bubble Button -->
-    <button
-      class="bubble-button toggle-theme-button"
-      [ngStyle]="bubbleButtonProps()"
-      (click)="toggleColorMode()"
-    >
-      ☀️
-    </button>
+    <!-- Column 3 -->
+    <div class="grid-column">
+      <app-recommended-plan-card></app-recommended-plan-card>
+      <app-monthly-budget-card></app-monthly-budget-card>
+      <app-activity-report-card></app-activity-report-card>
+      <app-fault-visualization-card></app-fault-visualization-card>
+    </div>
   </div>
 </div>

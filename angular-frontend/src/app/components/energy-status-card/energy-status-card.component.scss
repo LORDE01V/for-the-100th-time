@@ -1,0 +1,40 @@
+@use '../../../styles.scss' as styles;
+
+.energy-status-card {
+  @include styles.card-base();
+  @include styles.notifications-card-gradient(); // Orange for notifications/caution
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    i {
+      color: #FFC107;
+    }
+  }
+
+  .status-content {
+    .caution-label {
+      display: inline-block;
+      background: #FFF8E1;
+      color: #FFA000;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .usage {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0.5rem 0;
+    }
+
+    .suggestion {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #757575;
+    }
+  }
+}

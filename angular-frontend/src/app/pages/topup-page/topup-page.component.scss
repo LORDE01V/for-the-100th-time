@@ -1,0 +1,22 @@
+.topup-card {
+  @extend .card;
+
+  .card-header {
+    @extend .topup-header; // Green accent
+    color: white;
+    padding: 1rem;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: white;
+    }
+  }
+
+  .primary-button {
+    --accent-color: #21B14E; // Green
+    --accent-color-hover: darken(#21B14E, 10%);
+  }
+}

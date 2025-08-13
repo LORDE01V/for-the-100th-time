@@ -1,0 +1,15 @@
+@use '../../../styles.scss' as styles;
+
+.monthly-budget-card {
+  @include styles.card-base();
+  @include styles.subscriptions-card-gradient(); // Sky blue for subscriptions
+}
+
+.progress-indicator {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  display: inline-block;
+  margin: 10px 0;
+}

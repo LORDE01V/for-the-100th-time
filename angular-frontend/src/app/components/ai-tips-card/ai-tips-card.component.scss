@@ -1,0 +1,6 @@
+@use '../../../styles.scss' as styles;
+
+.ai-tips-card {
+  @include styles.card-base();
+  @include styles.ai-suggestions-card-gradient();
+}

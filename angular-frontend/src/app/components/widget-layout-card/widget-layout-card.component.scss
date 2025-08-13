@@ -1,0 +1,10 @@
+@use '../../../styles.scss' as styles;
+
+.widget-layout-card {
+  @include styles.card-base();
+  @include styles.dashboard-card-gradient(); // Or a more appropriate gradient
+}
+
+.primary-button {
+  @include styles.primary-button(#0B84FF, #0066CC);
+}

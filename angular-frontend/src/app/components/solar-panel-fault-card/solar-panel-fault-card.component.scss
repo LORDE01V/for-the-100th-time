@@ -1,0 +1,10 @@
+@use '../../../styles.scss' as styles;
+
+.solar-panel-fault-card {
+  @include styles.card-base();
+  @include styles.expenses-card-gradient(); // Using expenses gradient for "faults"
+}
+
+.primary-button {
+  @include styles.primary-button(#6E4BFF, #5A3BD6);
+}

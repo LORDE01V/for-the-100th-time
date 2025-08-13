@@ -1,0 +1,17 @@
+@use '../../../styles.scss' as styles;
+
+.daily-forecast-card {
+  @include styles.card-base();
+  @include styles.dashboard-card-gradient(); // Assuming part of dashboard, or pick appropriate gradient
+
+  .alert-box {
+    background: #FFEBEE;
+    border-left: 4px solid #F44336;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    p {
+      margin: 0;
+      color: #D32F2F;
+    }
+  }
+}

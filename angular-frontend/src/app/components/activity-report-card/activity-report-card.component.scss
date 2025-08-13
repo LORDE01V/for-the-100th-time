@@ -1,0 +1,10 @@
+@use '../../../styles.scss' as styles;
+
+.activity-report-card {
+  @include styles.card-base();
+  @include styles.support-card-gradient(); // Bright blue for support
+}
+
+.primary-button {
+  @include styles.primary-button(#0EA5E9, #0C8AC7);
+}

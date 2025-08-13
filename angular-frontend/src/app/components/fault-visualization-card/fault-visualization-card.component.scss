@@ -1,0 +1,6 @@
+@use '../../../styles.scss' as styles;
+
+.fault-visualization-card {
+  @include styles.card-base();
+  @include styles.expenses-card-gradient(); // Light purple for expenses/faults
+}

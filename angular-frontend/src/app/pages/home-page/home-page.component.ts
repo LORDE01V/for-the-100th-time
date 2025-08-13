@@ -175,7 +175,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   getIconColorStyle(colorScheme: string): { color: string } {
-    return { 'color': `var(--chakra-colors-${colorScheme}-500)` };
+    // Return white or a high-contrast color for icons to stand out on gradient backgrounds
+    return { 'color': '#FFFFFF' };
   }
 
   navigateTo(path: string): void {

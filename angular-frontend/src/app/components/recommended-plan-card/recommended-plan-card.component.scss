@@ -1,0 +1,6 @@
+@use '../../../styles.scss' as styles;
+
+.recommended-plan-card {
+  @include styles.card-base();
+  @include styles.dashboard-card-gradient(); // Example: Using dashboard gradient
+}

@@ -36,91 +36,6 @@ export const dailyForecast = [
   { hour: '24:00', usage: 25, icon: 'moon' },
 ];
 
-// Theme Presets
-export const themePresets = {
-  coolBlue: {
-    name: 'Arctic Blue',
-    colors: {
-      primary: '#4299E1',
-      secondary: '#63B3ED',
-      accent: '#90CDF4',
-      background: '#F7FAFC',
-      text: '#2D3748'
-    },
-    gradients: {
-      card: 'linear(to-br, #EBF8FF, #BEE3F8)'
-    }
-  },
-  warmSunrise: {
-    name: 'Warm Sunrise',
-    colors: {
-      primary: '#DD6B20',
-      secondary: '#F6AD55',
-      background: '#FFFAF0',
-      text: '#2D3748',
-      accent: '#F6AD55'
-    },
-    gradients: {
-      main: 'linear(to-br, #DD6B20, #F6AD55)',
-      card: 'linear(to-br, #FFFAF0, #FEEBC8)'
-    }
-  },
-  warmOrange: {
-    name: 'Warm Orange',
-    colors: {
-      primary: 'orange.500',
-      secondary: 'red.500',
-      background: 'orange.50',
-      text: 'gray.800',
-      accent: 'yellow.500',
-    },
-    gradients: {
-      main: 'linear(to-br, orange.500, red.500)',
-      card: 'linear(to-br, orange.50, red.50)'
-    }
-  },
-  deepPurple: {
-    name: 'Deep Purple',
-    colors: {
-      primary: 'purple.500',
-      secondary: 'pink.500',
-      background: 'purple.50',
-      text: 'gray.800',
-      accent: 'indigo.500',
-    },
-    gradients: {
-      main: 'linear(to-br, purple.500, pink.500)',
-      card: 'linear(to-br, purple.50, pink.50)'
-    }
-  },
-  ecoGreen: {
-    name: 'Eco Green',
-    colors: {
-      primary: '#48BB78',
-      secondary: '#68D391',
-      accent: '#9AE6B4',
-      background: '#F0FFF4',
-      text: '#2F855A'
-    },
-    gradients: {
-      card: 'linear(to-br, #C6F6D5, #9AE6B4)'
-    }
-  },
-  sunsetPink: {
-    name: 'Sunset Pink',
-    colors: {
-      primary: '#ED64A6',
-      secondary: '#F687B3',
-      accent: '#FBB6CE',
-      background: '#FFF5F7',
-      text: '#97266D'
-    },
-    gradients: {
-      card: 'linear(to-br, #FED7E2, #FBB6CE)'
-    }
-  }
-};
-
 // Energy Avatar States
 export const avatarStates = {
   happy: {
@@ -369,4 +284,104 @@ export const mockAreas = [
   { id: 'mafikeng', name: 'Mafikeng', latitude: -25.8733, longitude: 25.6713 },
   { id: 'gqeberha', name: 'Gqeberha', latitude: -33.9611, longitude: 25.6102 },
   { id: 'eastlondon', name: 'East London', latitude: -33.0186, longitude: 27.8942 },
-]; 
+];
+
+// Theme Presets for Theme Switcher
+export const themePresets = {
+  coolBlue: {
+    name: 'Cool Blue',
+    colors: {
+      primary: 'blue.500',
+      secondary: 'blue.300',
+      accent: 'blue.100',
+      text: 'gray.700',
+      background: 'blue.50'
+    },
+    gradients: {
+      card: 'linear(to-br, blue.50, blue.100)'
+    },
+    bg: 'rgba(173, 216, 230, 0.18)',
+    borderColor: 'rgba(173, 216, 230, 0.35)',
+    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)',
+  },
+  arcticBlue: {
+    name: 'Arctic Blue',
+    colors: {
+      primary: 'cyan.500',
+      secondary: 'cyan.300',
+      accent: 'cyan.100',
+      text: 'gray.700',
+      background: 'cyan.50'
+    },
+    gradients: {
+      card: 'linear(to-br, cyan.50, cyan.100)'
+    },
+    bg: 'rgba(173, 216, 230, 0.18)',
+    borderColor: 'rgba(173, 216, 230, 0.35)',
+    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)',
+  },
+  warmSunrise: {
+    name: 'Warm Sunrise',
+    colors: {
+      primary: 'orange.500',
+      secondary: 'orange.300',
+      accent: 'orange.100',
+      text: 'gray.700',
+      background: 'orange.50'
+    },
+    gradients: {
+      card: 'linear(to-br, orange.50, orange.100)'
+    },
+    bg: 'rgba(255, 223, 186, 0.18)',
+    borderColor: 'rgba(255, 183, 94, 0.35)',
+    boxShadow: '0 8px 32px 0 rgba(255, 183, 94, 0.18)',
+  },
+  forestGreen: {
+    name: 'Forest Green',
+    colors: {
+      primary: 'green.500',
+      secondary: 'green.300',
+      accent: 'green.100',
+      text: 'gray.700',
+      background: 'green.50'
+    },
+    gradients: {
+      card: 'linear(to-br, green.50, green.100)'
+    },
+    bg: 'rgba(144, 238, 144, 0.18)',
+    borderColor: 'rgba(144, 238, 144, 0.35)',
+    boxShadow: '0 8px 32px 0 rgba(34, 139, 34, 0.18)',
+  },
+  lavender: {
+    name: 'Lavender',
+    colors: {
+      primary: 'purple.500',
+      secondary: 'purple.300',
+      accent: 'purple.100',
+      text: 'gray.700',
+      background: 'purple.50'
+    },
+    gradients: {
+      card: 'linear(to-br, purple.50, purple.100)'
+    },
+    bg: 'rgba(230, 230, 250, 0.18)',
+    borderColor: 'rgba(230, 230, 250, 0.35)',
+    boxShadow: '0 8px 32px 0 rgba(147, 112, 219, 0.18)',
+  },
+  coral: {
+    name: 'Coral',
+    colors: {
+      primary: 'red.500',
+      secondary: 'red.300',
+      accent: 'red.100',
+      text: 'gray.700',
+      background: 'red.50'
+    },
+    gradients: {
+      card: 'linear(to-br, red.50, red.100)'
+    },
+    bg: 'rgba(255, 127, 80, 0.18)',
+    borderColor: 'rgba(255, 127, 80, 0.35)',
+    boxShadow: '0 8px 32px 0 rgba(255, 69, 0, 0.18)',
+  }
+}; 

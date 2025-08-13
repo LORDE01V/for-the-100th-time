@@ -4,14 +4,54 @@ import { Router, RouterLink } from '@angular/router'; // For navigation
 import { FormsModule } from '@angular/forms'; // For ngModel on inputs
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'; // For sanitizing image URLs
 
+// Angular Material Imports
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input'; // For matInput
+
+// Custom Component Imports
+import { EnergyModeCardComponent } from '../../components/energy-mode-card/energy-mode-card.component';
+import { DailyForecastCardComponent } from '../../components/daily-forecast-card/daily-forecast-card.component';
+import { SolarOutputCardComponent } from '../../components/solar-output-card/solar-output-card.component';
+import { WidgetLayoutCardComponent } from '../../components/widget-layout-card/widget-layout-card.component';
+import { ThemePresetsCardComponent } from '../../components/theme-presets-card/theme-presets-card.component';
+import { EnergyStatusCardComponent } from '../../components/energy-status-card/energy-status-card.component';
+import { AiTipsCardComponent } from '../../components/ai-tips-card/ai-tips-card.component';
+import { SolarPanelFaultCardComponent } from '../../components/solar-panel-fault-card/solar-panel-fault-card.component';
+import { RecommendedPlanCardComponent } from '../../components/recommended-plan-card/recommended-plan-card.component';
+import { MonthlyBudgetCardComponent } from '../../components/monthly-budget-card/monthly-budget-card.component';
+import { ActivityReportCardComponent } from '../../components/activity-report-card/activity-report-card.component';
+import { FaultVisualizationCardComponent } from '../../components/fault-visualization-card/fault-visualization-card.component';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule], // Add FormsModule for two-way binding
+  imports: [
+    CommonModule,
+    RouterLink,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule, // Add MatInputModule
+    // Custom Components
+    EnergyModeCardComponent,
+    DailyForecastCardComponent,
+    SolarOutputCardComponent,
+    WidgetLayoutCardComponent,
+    ThemePresetsCardComponent,
+    EnergyStatusCardComponent,
+    AiTipsCardComponent,
+    SolarPanelFaultCardComponent,
+    RecommendedPlanCardComponent,
+    MonthlyBudgetCardComponent,
+    ActivityReportCardComponent,
+    FaultVisualizationCardComponent,
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
 export class Dashboard implements OnInit {
+  cities: string[] = ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Bloemfontein'];
 
   // Subscription Plans (directly in component for now, could be service)
   subscriptionPlans = [
@@ -79,7 +119,7 @@ export class Dashboard implements OnInit {
   }));
 
   constructor(private router: Router, private sanitizer: DomSanitizer) {
-    this.dashboardBgPath = this.sanitizer.bypassSecurityTrustUrl('assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.png');
+    this.dashboardBgPath = this.sanitizer.bypassSecurityTrustUrl('assets/images/Mpho_Jesic-Create_a_high-resolution_background_image_for_a_modern_energy_man_afcb404c-1dac-4159-b82d-73e5d60dcf59.png');
   }
 
   ngOnInit(): void {

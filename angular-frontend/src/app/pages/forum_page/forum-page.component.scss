@@ -1,0 +1,26 @@
+.forum-card {
+  @extend .forum-card; // Uses the global forum-card gradient
+  padding: 1.5rem;
+  border-radius: 16px;
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    i {
+      font-size: 1.25rem;
+    }
+  }
+
+  .primary-button {
+    --accent-color: #4338CA;
+    --accent-color-dark: #372FA8;
+  }
+}
