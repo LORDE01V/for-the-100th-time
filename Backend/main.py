@@ -1,31 +1,32 @@
 # main.py
 import sys
 import os
-import requests # Import requests library
+import requests
 import json
+import re
+from urllib.parse import quote_plus
+import psycopg2
+from psycopg2 import OperationalError
+from typing import Optional, List
+from pydantic import BaseModel
+
+# FastAPI imports
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
 
 # Get the absolute path to the project root (for-the-100th-time directory)
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, project_root)
 
-from flask import Flask, request, jsonify, redirect, make_response
-from flask_cors import CORS
+from flask import Flask, request, jsonify
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-import psycopg2
-from psycopg2 import sql, OperationalError
-from datetime import timedelta, datetime
+from db_utils import get_db_connection
+from datetime import datetime
 import secrets
-import os
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional, List
-import threading
-import uvicorn
-from flask import Blueprint, url_for, session
 from email_utils import send_welcome_email
 from app import create_app
 from app.routes.home import home_bp
@@ -44,21 +45,19 @@ from Backend.support import save_payment_method, fetch_user_payment_methods # As
 
 
 # Add the Backend directory and its parent to the Python path
-backend_dir = os.path.dirname(os.path.abspath(__file__))  # Current directory: Backend
-parent_dir = os.path.dirname(backend_dir)  # Parent directory: for-the-100th-time
-sys.path.append(backend_dir)  # Add Backend
-sys.path.append(parent_dir)  # Add for-the-100th-time, to ensure subpackages are accessible
+backend_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(backend_dir)
+sys.path.append(backend_dir)
+sys.path.append(parent_dir)
 
-# Load environment variables (same as support.py)
 load_dotenv()
 
-# Configuration (use environment variables for secrets in production)
+# Configuration
 SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))
 
 # ================= FLASK APP =================
-# Rename existing app to flask_app
-flask_app = create_app()  # Use factory app
+flask_app = create_app()
 flask_app.config.update(
     SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev'),
     SESSION_COOKIE_NAME='session',
@@ -68,7 +67,7 @@ flask_app.config.update(
     SESSION_TYPE='filesystem'
 )
 flask_app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
-flask_app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+flask_app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=1)
 flask_app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
 flask_app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
 flask_app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
@@ -86,6 +85,19 @@ CORS(flask_app,
      }}
 )
 jwt = JWTManager(flask_app)
+
+# JWT error handlers
+@jwt.invalid_token_loader
+def invalid_token_callback(error):
+    return jsonify({'error': 'Invalid token', 'message': str(error)}), 401
+
+@jwt.expired_token_loader
+def expired_token_callback(jwt_header, jwt_payload):
+    return jsonify({'error': 'Token has expired'}), 401
+
+@jwt.unauthorized_loader
+def missing_token_callback(error):
+    return jsonify({'error': 'Authorization token is required', 'message': str(error)}), 401
 
 # Register blueprints
 flask_app.register_blueprint(home_bp)
@@ -550,12 +562,12 @@ def create_forum_topic():
         }), 201
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return jsonify({'success': False, 'message': str(e)}), 500
     finally:
         if conn: conn.close()
 
-@app.post("/fastapi/auth/login")
-async def fastapi_login(user: UserLogin, topic_id: int):
+@flask_app.route("/fastapi/auth/login", methods=['POST'])
+def fastapi_login(user: UserLogin, topic_id: int):
     """FastAPI version of /api/auth/login"""
     conn = None
     try:
@@ -967,7 +979,7 @@ def get_payment_methods():
             'payment_methods': formatted_methods
         })
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return jsonify({'success': False, 'message': str(e)}), 500
     finally:
         if conn: conn.close()
 
@@ -976,13 +988,15 @@ class ChatMessage(BaseModel):
     message: str
     history: List[dict]
 
-@app.post("/api/chat")
-async def chat_endpoint(chat_message: ChatMessage):
+@flask_app.route("/api/chat", methods=['POST'])
+def chat_endpoint(chat_message: ChatMessage):
+    """Chat endpoint for AI interactions"""
     try:
-        response = chatbot.get_response(chat_message.message)
-        return {"response": response}
+        # Process the chat message here
+        response = {"message": "Chat functionality coming soon!", "status": "success"}
+        return jsonify(response)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return jsonify({"error": str(e)}), 500
 
 # Correctly defining and handling the Flask /api/ai-agent route
 @flask_app.route('/api/ai-agent', methods=['POST'])
@@ -1036,8 +1050,4 @@ def ai_agent_openrouter():
 
 # ================= RUN BOTH APPS =================
 if __name__ == '__main__':
-    print("=== Registered routes ===")
-    for rule in flask_app.url_map.iter_rules():
-        print(rule)
-    print("=========================")
     flask_app.run(host='0.0.0.0', port=5000, debug=True)

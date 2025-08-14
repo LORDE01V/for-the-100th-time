@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { 
@@ -28,6 +28,22 @@ function LoginPage() {
   const [strengthScore, setStrengthScore] = useState(0);
   const navigate = useNavigate();
   const toast = useToast();
+
+  // Check for expired token parameter and show notification
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('expired') === 'true') {
+      toast({
+        title: 'Session Expired',
+        description: 'Your session has expired. Please log in again to continue.',
+        status: 'warning',
+        duration: 7000,
+        isClosable: true,
+      });
+      // Clean up URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [toast]);
 
   const checkPasswordStrengthLocally = (password) => {
     if (!password) return { message: 'Password is required.', score: 0 };

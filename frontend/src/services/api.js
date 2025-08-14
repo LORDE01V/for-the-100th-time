@@ -31,7 +31,7 @@ api.interceptors.request.use(
     }
 );
 
-// Add a response interceptor to handle common errors and token refresh
+// Add a response interceptor to handle common errors and authentication
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -42,20 +42,19 @@ api.interceptors.response.use(
         if (!error.response) {
             return Promise.reject(new Error('Server unavailable. Please try again later'));
         }
-        // Handle 401 and try refresh
-        if (error.response?.status === 401 && error.config && !error.config._retry) {
-            error.config._retry = true;
-            try {
-                const refreshResponse = await api.post('/api/auth/refresh');
-                const newToken = refreshResponse.data.token;
-                localStorage.setItem('token', newToken);
-                error.config.headers.Authorization = `Bearer ${newToken}`;
-                return api(error.config);
-            } catch (refreshError) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/login';
+        // Handle 401 - token expired or invalid
+        if (error.response?.status === 401) {
+            // Clear auth data and redirect to login
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('selectedPlan'); // Also clear any selected plan
+            
+            // Redirect to login page if not already there
+            if (!window.location.pathname.includes('/login')) {
+                window.location.href = '/login?expired=true';
             }
+            
+            return Promise.reject(new Error('Your session has expired. Please log in again.'));
         }
         return Promise.reject(error);
     }
@@ -130,6 +129,24 @@ export const auth = {
     getCurrentUser: () => {
         const user = localStorage.getItem('user');
         return user ? JSON.parse(user) : null;
+    },
+
+    // Top-up and subscription payment method
+    topup: async (amount, paymentType = 'topup') => {
+        try {
+            const response = await api.post('/api/topup/', {
+                amount: amount,
+                payment_type: paymentType
+            });
+            return response.data;
+        } catch (error) {
+            if (error.response?.data?.error) {
+                throw new Error(error.response.data.error);
+            } else if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+            throw new Error('Payment service unavailable');
+        }
     }
 };
 

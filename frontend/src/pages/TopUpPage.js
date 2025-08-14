@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api'; // Assuming auth service is still used
-import { FaArrowLeft } from 'react-icons/fa'; // Import FaArrowLeft
+import { FaArrowLeft, FaSync } from 'react-icons/fa'; // Import FaArrowLeft and FaSync
+import axios from 'axios'; // Import axios directly
 
 // Import Chakra UI Components
 import {
@@ -14,10 +15,10 @@ import {
   Input,
   Button,
   VStack,
-  useToast, // For displaying messages
-  useColorModeValue, // For light/dark mode styling
-  Spinner, // Added Spinner for loading state
-  HStack, // Added HStack for horizontal back button layout
+  useToast,
+  useColorModeValue,
+  Spinner,
+  HStack,
   Divider,
   Alert,
   AlertIcon,
@@ -31,13 +32,14 @@ import {
   ModalBody,
   ModalFooter,
   ModalCloseButton,
-  Select
+  Select,
+  IconButton
 } from '@chakra-ui/react';
 import { useTransactions } from '../context/TransactionsContext'; // Import the hook
 import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs
 
-import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png';  // Import the new background image
-import api from '../services/api';
+import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png';
+// Removed: import api from '../services/api'; // No longer needed if using axios directly
 
 function TopUpPage() {
   const navigate = useNavigate();
@@ -51,29 +53,29 @@ function TopUpPage() {
   const [voucherCode, setVoucherCode] = useState('');
   const [isProcessing, setIsProcessing] = useState(false); // Corrected typo
 
-  // New state for Auto-Top-Up
+  // Auto-Top-Up states
   const [isAutoTopUpEnabled, setIsAutoTopUpEnabled] = useState(false);
   const [minBalance, setMinBalance] = useState('');
   const [autoTopUpAmount, setAutoTopUpAmount] = useState('');
   const [autoTopUpFrequency, setAutoTopUpFrequency] = useState('weekly');
 
-  const [transactionType, setTransactionType] = useState('topup'); // New state for transaction type
+  const [transactionType, setTransactionType] = useState('topup'); // Transaction type (topup/recharge)
 
   const user = auth.getCurrentUser(); // Get current user data
 
-  // Chakra UI hook for dynamic colors based on color mode
+  // Chakra UI colors for theme modes
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const textColor = useColorModeValue('gray.700', 'gray.200');
   const headingColor = useColorModeValue('gray.800', 'white');
-  const buttonColorScheme = useColorModeValue('green', 'teal'); // Use green/teal for top-up
+  const buttonColorScheme = useColorModeValue('green', 'teal');
   const spinnerColor = useColorModeValue('blue.500', 'blue.300');
 
-  // Styles for the glassmorphism effect on the form Box
+  // Glassmorphism style for form container
   const glassmorphismBoxStyles = {
-    bg: useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(26, 32, 44, 0.15)'), // Semi-transparent background
-    backdropFilter: 'blur(10px)', // Blur effect
-    boxShadow: useColorModeValue('lg', 'dark-lg'), // Shadow for depth
-    borderRadius: 'lg', // Rounded corners
+    bg: useColorModeValue('rgba(255, 255, 255, 0.15)', 'rgba(26, 32, 44, 0.15)'),
+    backdropFilter: 'blur(10px)',
+    boxShadow: useColorModeValue('lg', 'dark-lg'),
+    borderRadius: 'lg',
   };
 
   // Basic check if user data is available. ProtectedRoute handles the main redirection,
@@ -171,9 +173,17 @@ function TopUpPage() {
   
   const handleTopUp = async (e) => {
     e.preventDefault();
-  
+
     const topUpAmount = parseFloat(amount);
     if (isNaN(topUpAmount) || topUpAmount <= 0) {
+      toast({
+        title: 'Invalid Amount',
+        description: 'Please enter a valid positive amount.',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
       toast({
         title: 'Invalid Amount',
         description: 'Please enter a valid positive amount.',
@@ -251,14 +261,13 @@ function TopUpPage() {
       }
     }; 
 
-  // Render loading spinner if user is being checked (though ProtectedRoute handles the redirect)
   if (!user) {
-        return (
-            <Flex minH="100vh" align="center" justify="center" bg={bgColor}>
-                <Spinner size="xl" color={spinnerColor} />
-            </Flex>
-        );
-    }
+    return (
+      <Flex minH="100vh" align="center" justify="center" bg={bgColor}>
+        <Spinner size="xl" color={spinnerColor} />
+      </Flex>
+    );
+  }
 
   return (
     <Flex
@@ -266,52 +275,49 @@ function TopUpPage() {
       align="center"
       justify="center"
       p={4}
-      backgroundImage={`url(${topUpBackground})`}  // Replace gradient with the new image
+      backgroundImage={`url(${topUpBackground})`}
       backgroundSize="cover"
       backgroundPosition="center"
       backgroundAttachment="fixed"
       position="relative"
       _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          bg: 'rgba(0, 0, 0, 0.5)',  // Semi-transparent overlay for readability
-          zIndex: 1,
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        bg: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 1,
       }}
     >
       <Box
         maxW="md"
         w="full"
-        {...glassmorphismBoxStyles}  // Existing glassmorphism styles
+        {...glassmorphismBoxStyles}
         boxShadow="md"
         borderRadius="lg"
         p={6}
         textAlign="center"
         position="relative"
         zIndex={2}
-        backdropFilter="blur(16px)"  // Increase blur for stronger glassmorphism effect
+        backdropFilter="blur(16px)"
       >
-         {/* Back to Home Button in HStack */}
-         <HStack justify="space-between" w="full" mb={8} align="center">
-             <Button
-               leftIcon={<FaArrowLeft />}
-               variant="ghost"
-               onClick={() => navigate('/home')}
-               color={headingColor}
-             >
-                Back to Home
-             </Button>
-         </HStack>
+        <HStack justify="space-between" w="full" mb={8} align="center">
+          <Button
+            leftIcon={<FaArrowLeft />}
+            variant="ghost"
+            onClick={() => navigate('/home')}
+            color={headingColor}
+          >
+            Back to Home
+          </Button>
+        </HStack>
 
-        {/* Main Heading placed below the HStack */}
         <Heading as="h2" size="xl" mb={6} color={headingColor} textAlign="center">
           Top-Up / Recharge
         </Heading>
 
-        {/* Current Balance Display */}
         <Box mb={6}>
             <Text fontSize="md" color={textColor}>Current Energy Credit Balance:</Text>
             <Text fontSize="3xl" fontWeight="bold" color={textColor}>
@@ -319,9 +325,7 @@ function TopUpPage() {
 </Text>
         </Box>
 
-
         <VStack as="form" spacing={4} onSubmit={handleTopUp} noValidate>
-          {/* Transaction Type Selection */}
           <FormControl id="transaction-type">
             <FormLabel>Transaction Type</FormLabel>
             <Select
@@ -333,20 +337,18 @@ function TopUpPage() {
             </Select>
           </FormControl>
 
-          {/* Amount Input */}
           <FormControl id="top-up-amount">
             <FormLabel>Amount (ZAR)</FormLabel>
             <Input
-              type="number" // Use number type for currency
+              type="number"
               placeholder="Enter amount"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              step="0.01" // Allow decimal values
-              min="0" // Ensure positive amount
+              step="0.01"
+              min="0"
             />
           </FormControl>
 
-          {/* Optional Promo Code Input */}
           <FormControl id="promo-code">
             <FormLabel>Promo Code (Optional)</FormLabel>
             <Input
@@ -357,7 +359,6 @@ function TopUpPage() {
             />
           </FormControl>
 
-           {/* Optional Voucher Code Input */}
           <FormControl id="voucher-code">
             <FormLabel>Voucher Code (Optional)</FormLabel>
             <Input
@@ -368,8 +369,6 @@ function TopUpPage() {
             />
           </FormControl>
 
-
-          {/* Top-Up Button */}
           <Button
             type="submit"
             colorScheme={buttonColorScheme}
@@ -384,17 +383,21 @@ function TopUpPage() {
           </Button>
         </VStack>
 
-        {/* Divider */}
         <Divider my={6} />
 
-        {/* Auto Top-Up Section */}
         <Box>
           <Heading as="h3" size="md" mb={4} color={headingColor}>
             Auto Top-Up Settings
           </Heading>
-          
+
           {isAutoTopUpEnabled ? (
-            <Alert status="success" mb={4} bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(10px)" borderRadius="md">
+            <Alert
+              status="success"
+              mb={4}
+              bg="rgba(255, 255, 255, 0.15)"
+              backdropFilter="blur(10px)"
+              borderRadius="md"
+            >
               <AlertIcon />
               <Box>
                 <AlertTitle>Auto Top-Up is Active</AlertTitle>
@@ -410,16 +413,15 @@ function TopUpPage() {
           )}
 
           <Button
-            colorScheme={isAutoTopUpEnabled ? "red" : "green"}
+            colorScheme={isAutoTopUpEnabled ? 'red' : 'green'}
             variant="outline"
             w="full"
             onClick={onOpen}
           >
-            {isAutoTopUpEnabled ? "Modify Auto Top-Up" : "Set Up Auto Top-Up"}
+            {isAutoTopUpEnabled ? 'Modify Auto Top-Up' : 'Set Up Auto Top-Up'}
           </Button>
         </Box>
 
-        {/* Auto Top-Up Modal */}
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>

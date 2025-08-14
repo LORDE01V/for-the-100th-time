@@ -261,7 +261,7 @@ const handleContactSubmit = async (e) => {
                 _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px teal.500' }}
               />
             </FormControl>
-            <FormControl id="contact-subject">
+            <FormControl id="contact-subject" isRequired>
               <FormLabel color={textColor}>Subject</FormLabel>
               <Input
                 type="text"

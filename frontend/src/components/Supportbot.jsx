@@ -7,37 +7,34 @@ import {
   IconButton,
   Input,
   Heading,
-  Text,
   useToast,
   Avatar,
   useColorModeValue,
   Button,
+  Link,
 } from '@chakra-ui/react';
 import { FaPaperPlane, FaTimes, FaCommentDots, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 // Replaced local image import with a placeholder URL
 // If you have a specific image, you'll need to host it or use a base64 string (not recommended for large images)
 const langaImage = "https://placehold.co/150x150/008080/ffffff?text=Langa";
-
-// Add SpeechRecognition support
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+if (recognition) {
+  recognition.continuous = false;
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+}
 
 let selectedVoice = null;
 
 function pickSiriLikeVoice() {
   const voices = window.speechSynthesis.getVoices();
-  // Prefer 'Samantha', 'Alex', or any en-US Siri-like voice
   let siriVoice = voices.find(v => v.lang && v.lang.includes('en-US') && (v.name === 'Samantha' || v.name === 'Alex'));
-  if (!siriVoice) {
-    siriVoice = voices.find(v => v.lang && v.lang.includes('en-US'));
-  }
-  if (!siriVoice) {
-    siriVoice = voices.find(v => v.lang && v.lang.startsWith('en'));
-  }
+  if (!siriVoice) siriVoice = voices.find(v => v.lang && v.lang.includes('en-US'));
+  if (!siriVoice) siriVoice = voices.find(v => v.lang && v.lang.startsWith('en'));
   return siriVoice || null;
 }
 
-// Set up voice selection on load and on voiceschanged
 function useSiriLikeVoice() {
   useEffect(() => {
     function setVoice() {
@@ -45,18 +42,14 @@ function useSiriLikeVoice() {
     }
     setVoice();
     window.speechSynthesis.onvoiceschanged = setVoice;
-    return () => {
-      window.speechSynthesis.onvoiceschanged = null;
-    };
+    return () => { window.speechSynthesis.onvoiceschanged = null; };
   }, []);
 }
 
 const langaGreeting = "Hi! I'm Langa. How can I help you today?";
 
 const SupportBot = () => {
-  console.log('SupportBot component is mounting');
-
-  const [isOpen, setIsOpen] = useState(false); // Must be false
+  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -69,125 +62,116 @@ const SupportBot = () => {
 
   // State for voice-to-text
   const [isListening, setIsListening] = useState(false);
-  const recognitionActiveRef = useRef(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchLocation, setSearchLocation] = useState(null);
+  const [notificationPrompt, setNotificationPrompt] = useState({ show: false, location: '' });
+
+  const toast = useToast();
+  const messagesEndRef = useRef(null);
+  const { enableNotifications, getUserId } = useNotifications();
 
   useSiriLikeVoice();
 
-  // Voice reply function for Langa
   const speakReply = useCallback((text) => {
-    if (isMuted) return;
-    if (!window.speechSynthesis) return;
-    const utterance = new window.SpeechSynthesisUtterance(text);
-    utterance.lang = selectedVoice?.lang || 'en-US';
-    utterance.voice = selectedVoice || null;
+    if (isMuted || !text || typeof text !== 'string') return;
+    const cleanText = text.replace(/(https?:\/\/[^\s]+)/g, '').replace(/Would you like me to set up push notifications for future alerts in .*?/g, '');
+    if (!cleanText.trim()) return;
+    const utterance = new window.SpeechSynthesisUtterance(cleanText);
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice.lang;
+    }
     utterance.pitch = 1.1;
     utterance.rate = 0.95;
-    window.speechSynthesis.cancel(); // Always cancel any ongoing speech
+    window.speechSynthesis.cancel();
     setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.onerror = (e) => {
+      console.error("Speech synthesis error", e);
+      setIsSpeaking(false);
+    };
     window.speechSynthesis.speak(utterance);
   }, [isMuted]);
 
-  // Langa greeting ONLY when chatbot is opened for the first time per session (not on app load)
   useEffect(() => {
-    if (isOpen && !hasSpokenLangaGreeting && !isMuted) {
-      window.speechSynthesis.cancel();
-      speakReply(langaGreeting);
-      setHasSpokenLangaGreeting(true);
-    }
-    if (isOpen && isMuted) {
-      window.speechSynthesis.cancel();
-    }
-  }, [isOpen, hasSpokenLangaGreeting, isMuted, speakReply]);
-
-  // Call speakReply whenever a new bot message is added (and not muted)
-  useEffect(() => {
-    if (messages.length === 0) return;
-    const lastMsg = messages[messages.length - 1];
-    if (lastMsg.sender === 'bot' && lastMsg.text && !lastMsg.typing && !lastMsg.thinking && !isMuted) {
-      speakReply(lastMsg.text);
-    }
-    // eslint-disable-next-line
-  }, [messages, isMuted, speakReply]);
-
-  const toast = useToast();
-  const messagesEndRef = useRef(null); // Ref to scroll to the latest message
-
-  const bgColor = useColorModeValue('gray.100', 'gray.700');
-  const userBgColor = useColorModeValue('blue.100', 'blue.800');
-  const textColor = useColorModeValue('black', 'white');
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages.length]);
 
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
-  // Scroll to the latest message whenever messages state updates
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const handleSendMessage = async (text, options = {}) => {
+    const textToSend = text || inputMessage.trim();
+    if (!textToSend || isLoading) return;
 
-  const handleSendMessage = async (messageText = null) => {
-    const textToSend = messageText || inputMessage.trim();
-    if (!textToSend) return;
+    setNotificationPrompt({ show: false, location: '' });
 
-    // Add user message immediately
-    setMessages(prev => [...prev, { text: textToSend, sender: 'user' }]);
-    setInputMessage(''); // Clear input
-    setIsLoading(true); // Disable input/send button
-    setTyping(true); // Show "Bot is typing..."
+    const newUserMessage = { id: Date.now(), text: textToSend, sender: 'user' };
+    const currentMessages = [...messages, newUserMessage];
+    
+    if (!options.isFollowUp) {
+      setMessages(currentMessages);
+      setInputMessage('');
+    }
+    
+    setIsLoading(true);
 
-    // Show '🤔 Thinking...' immediately
-    setMessages(prev => [...prev, { text: '🤔 Thinking...', sender: 'bot', thinking: true }]);
+    // Prepare history for the backend (last 4 messages)
+    const history = messages.slice(-4).map(msg => ({
+        role: msg.sender === 'bot' ? 'assistant' : 'user',
+        content: msg.text
+    }));
 
-    // Simulate typing effect
-    await new Promise(res => setTimeout(res, 800)); // Short delay before typing
-
-    // Replace '🤔 Thinking...' with animated typing dots
-    setMessages(prev => {
-      const updated = [...prev];
-      const lastIdx = updated.findIndex(m => m.thinking);
-      if (lastIdx !== -1) {
-        updated[lastIdx] = { ...updated[lastIdx], text: 'Langa is typing', typing: true };
-      }
-      return updated;
-    });
-
-    // Animate typing effect (3 dots)
-    let dotCount = 0;
-    const typingInterval = setInterval(() => {
-      setMessages(prev => {
-        const updated = [...prev];
-        const lastIdx = updated.findIndex(m => m.typing);
-        if (lastIdx !== -1) {
-          updated[lastIdx] = { ...updated[lastIdx], text: `Langa is typing${'.'.repeat(dotCount % 4)}` };
-        }
-        return updated;
-      });
-      dotCount++;
-    }, 400);
-
-    let data;
     try {
-      const response = await fetch(`${API_BASE_URL}/api/ai-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: textToSend }),
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      data = await response.json();
+        const response = await fetch(`${API_BASE_URL}/api/ai-agent`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                prompt: textToSend, 
+                history: history,
+                force_search: options.forceSearch || false 
+            }),
+        });
+        if (!response.ok) throw new Error(`Network error: ${response.statusText}`);
+        const data = await response.json();
+
+        if (data.status === 'LOCATION_NEEDED') {
+            setMessages(prev => [...prev, { id: Date.now(), text: data.response, sender: 'bot' }]);
+        } else if (data.status === 'SEARCH_REQUIRED') {
+            setIsSearching(true);
+            setSearchLocation(data.location);
+            await new Promise(resolve => setTimeout(resolve, 2500));
+            await handleSendMessage(data.prompt, { isFollowUp: true, forceSearch: true });
+        } else {
+            const newBotMessage = {
+                id: Date.now(),
+                text: data.response,
+                sender: 'bot',
+                source: data.source_url,
+            };
+            
+            // Debug logging
+            console.log("DEBUG: Bot message data:", {
+                response: data.response,
+                source_url: data.source_url,
+                location: data.location
+            });
+            if (data.response && data.location && (
+                data.response.toLowerCase().includes("notifications") || 
+                data.response.toLowerCase().includes("alerts") ||
+                data.response.toLowerCase().includes("set up") ||
+                data.response.toLowerCase().includes("daily")
+            )) {
+                console.log("DEBUG: Setting notification prompt for location:", data.location);
+                setNotificationPrompt({ show: true, location: data.location });
+            }
+            setMessages(prev => [...prev, newBotMessage]);
+            if (!isMuted) setTimeout(() => speakReply(data.response), 100);
+        }
     } catch (error) {
-      console.error('Error:', error);
-      data = { response: "I apologize, but I'm having trouble connecting. Please try again." };
-      toast({
-        title: 'Error',
-        description: 'Failed to get response from server',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+        const errorMsg = "I'm having trouble connecting. Please try again.";
+        setMessages(prev => [...prev, { id: Date.now(), text: errorMsg, sender: 'bot' }]);
+        toast({ title: 'Connection Error', description: error.message, status: 'error' });
     } finally {
       clearInterval(typingInterval);
       setIsLoading(false);
@@ -209,43 +193,13 @@ const SupportBot = () => {
 
   // Voice-to-text mic logic
   const handleMicClick = () => {
-    if (!recognition) {
-      setMessages(prev => [...prev, { text: "Sorry, your browser doesn't support voice-to-text.", sender: 'bot' }]);
-      return;
-    }
-    if (isListening || recognitionActiveRef.current) {
-      recognition.stop();
-      setIsListening(false);
-      recognitionActiveRef.current = false;
-      return;
-    }
-    // Only start if not already listening
-    try {
-      recognition.start();
-      setIsListening(true);
-      recognitionActiveRef.current = true;
-    } catch (e) {
-      // If already started, just ignore
-      setIsListening(true);
-      recognitionActiveRef.current = true;
-    }
-    recognition.onresult = (event) => {
-      const speech = event.results[0][0].transcript;
-      setInputMessage('');
-      setIsListening(false);
-      recognitionActiveRef.current = false;
-      handleSendMessage(speech);
-    };
-    recognition.onend = () => {
-      setIsListening(false);
-      recognitionActiveRef.current = false;
-    };
-    recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      setMessages(prev => [...prev, { text: "Sorry, I couldn't process your voice message. Try again or type your message.", sender: 'bot' }]);
-      setIsListening(false);
-      recognitionActiveRef.current = false;
-    };
+    if (!recognition) return toast({ title: "Voice recognition not supported", status: "error" });
+    if (isListening) return recognition.stop();
+    recognition.start();
+    recognition.onstart = () => setIsListening(true);
+    recognition.onresult = (e) => handleSendMessage(e.results[0][0].transcript);
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => toast({ title: "Voice Recognition Error", status: "error" });
   };
 
   const handleKeyPress = (e) => {
@@ -254,130 +208,66 @@ const SupportBot = () => {
       handleSendMessage();
     }
   };
+  
+  const handleOpenChat = () => {
+      setIsOpen(true);
+      if (messages.length === 0) {
+          setMessages([{ id: Date.now(), text: langaGreeting, sender: 'bot' }]);
+          if (!isMuted) setTimeout(() => speakReply(langaGreeting), 300);
+      }
+  };
+
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
+  const userBgColor = useColorModeValue('blue.100', 'blue.800');
+  const textColor = useColorModeValue('black', 'white');
 
   return (
     <>
-      {/* Floating Bubble (always visible, but hidden when chat is open) */}
       {!isOpen && (
-        <Box
-          position="fixed"
-          bottom="24px"
-          right="24px"
-          zIndex="9999"
-        >
-          <IconButton
-            aria-label="Chat with Langa"
-            icon={<FaCommentDots />}
-            boxSize="56px" // Explicitly set box size to match ThemeToggleButton
-            fontSize="2xl" // Explicitly set font size to match ThemeToggleButton
-            colorScheme="teal"
-            isRound
-            boxShadow="lg"
-            onClick={() => {
-              setIsOpen(true);
-              setHasSpokenLangaGreeting(false); // Reset greeting for new session
-              setMessages([{ text: "Hi! I'm Langa. How can I help you today?", sender: 'bot' }]);
-            }}
-          />
+        <Box position="fixed" bottom="24px" right="24px" zIndex="9999">
+          <IconButton icon={<FaCommentDots />} boxSize="56px" fontSize="2xl" colorScheme="teal" isRound boxShadow="lg" onClick={handleOpenChat} />
         </Box>
       )}
 
-      {/* Chatbot Card (only visible when open) */}
       {isOpen && (
-        <Box
-          position="fixed"
-          bottom="24px"
-          right="24px"
-          zIndex="9999"
-          width={["95vw", "350px"]}
-          maxWidth="100vw"
-          height="520px"
-          bg="white"
-          borderRadius="2xl"
-          boxShadow="2xl"
-          overflow="hidden"
-          display="flex"
-          flexDirection="column"
-        >
-          <Flex
-            align={"center"}
-            justify={"space-between"}
-            bgGradient={"linear(to-r, teal.500, teal.400)"}
-            color={"white"}
-            p={4}
-            boxShadow={"md"}
-          >
+        <Box position="fixed" bottom="24px" right="24px" zIndex="9999" width={["95vw", "350px"]} maxWidth="100vw" height="520px" bg="white" borderRadius="2xl" boxShadow="2xl" overflow="hidden" display="flex" flexDirection="column">
+          <Flex align="center" justify="space-between" bgGradient="linear(to-r, teal.500, teal.400)" color="white" p={4} boxShadow="md">
             <HStack>
-              <Avatar size="md" border="2px solid white" src={langaImage} className={isSpeaking ? 'bot-speaking' : ''} />
-              <Heading size="md" fontWeight="bold" letterSpacing="wide">
-                Langa
-              </Heading>
+              <Avatar size="md" border="2px solid white" name="Langa" src={langaImage} className={isSpeaking ? 'bot-speaking' : ''} />
+              <Heading size="md" fontWeight="bold">Langa</Heading>
             </HStack>
             <HStack>
-              <IconButton
-                icon={isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
-                variant="ghost"
-                color="white"
-                onClick={() => {
-                  setIsMuted(m => {
-                    if (!m) window.speechSynthesis.cancel();
-                    return !m;
-                  });
-                }}
-                size="sm"
-                aria-label={isMuted ? 'Unmute Langa' : 'Mute Langa'}
-                _hover={{ bg: "teal.600" }}
-                title={isMuted ? 'Unmute voice replies' : 'Mute voice replies'}
-              />
-              <IconButton
-                icon={<FaTimes />}
-                variant="ghost"
-                color="white"
-                onClick={() => setIsOpen(false)}
-                size="sm"
-                _hover={{ bg: "teal.600" }}
-              />
+              <IconButton icon={isMuted ? <FaVolumeMute /> : <FaVolumeUp />} variant="ghost" color="white" onClick={() => setIsMuted(m => !m)} size="sm" _hover={{ bg: "teal.600" }} />
+              <IconButton icon={<FaTimes />} variant="ghost" color="white" onClick={() => setIsOpen(false)} size="sm" _hover={{ bg: "teal.600" }} />
             </HStack>
           </Flex>
 
-          {/* Messages */}
-          <VStack
-            flex={1}
-            spacing={3}
-            px={3}
-            py={2}
-            overflowY="auto"
-            align="stretch"
-            bg="gray.50"
-            sx={{
-              "&::-webkit-scrollbar": {
-                width: "6px",
-                background: "#e0e0e0",
-                borderRadius: "8px"
-              },
-              "&::-webkit-scrollbar-thumb": {
-                background: "#b2b2b2",
-                borderRadius: "8px"
-              }
-            }}
-          >
-            {messages.map((message, idx) => (
-              <Flex key={idx} justify={message.sender === 'bot' ? 'flex-start' : 'flex-end'} align="center">
-                {message.sender === 'bot' && <Avatar name="SolarBot" src={langaImage} size="sm" mr={2} />}
-                <Box bg={message.sender === 'bot' ? bgColor : userBgColor} color={textColor} p={3} borderRadius="md">
-                  {message.text}
-                </Box>
-                {message.sender === 'user' && <Avatar name="You" bg="blue.500" size="sm" ml={2} />}
-              </Flex>
+          <VStack flex={1} spacing={3} px={3} py={2} overflowY="auto" align="stretch" bg="gray.50" sx={{ "&::-webkit-scrollbar": { width: "6px" }, "&::-webkit-scrollbar-thumb": { background: "#b2b2b2", borderRadius: "8px" } }}>
+            {isSearching ? <SearchingAnimation location={searchLocation} /> : messages.map((message) => (
+                <Flex key={message.id} direction="column" align={message.sender === 'bot' ? 'flex-start' : 'flex-end'}>
+                    <Flex justify={message.sender === 'bot' ? 'flex-start' : 'flex-end'} align="center" w="100%">
+                        {message.sender === 'bot' && <Avatar name="Langa" src={langaImage} size="sm" mr={2} />}
+                        <Box bg={message.sender === 'bot' ? bgColor : userBgColor} color={textColor} p={3} borderRadius="md" whiteSpace="pre-wrap">
+                            {message.text}
+                        </Box>
+                        {message.sender === 'user' && <Avatar name="You" bg="blue.500" size="sm" ml={2} />}
+                    </Flex>
+                    {message.source && (
+                        <Link href={message.source} isExternal color="gray.500" fontSize="xs" mt={1} ml="44px">
+                            Source <FaExternalLinkAlt style={{ display: 'inline', marginLeft: '4px' }} />
+                        </Link>
+                    )}
+                </Flex>
             ))}
-            {/* Thinking state display */}
-            {typing && (
-              <Flex justify="flex-start" align="center">
-                <Avatar name="SolarBot" src={langaImage} size="sm" mr={2} />
-                <Text fontStyle="italic" color="gray.500">Langa is typing...</Text>
-              </Flex>
+            
+            {notificationPrompt.show && (
+              <HStack justify="center" p={2}>
+                <Button size="sm" colorScheme="green" onClick={() => handleNotificationResponse(true)}>Yes, Set Up Daily Alerts</Button>
+                <Button size="sm" variant="outline" onClick={() => handleNotificationResponse(false)}>No Thanks</Button>
+              </HStack>
             )}
-            <div ref={messagesEndRef} /> {/* For auto-scrolling */}
+
+            <div ref={messagesEndRef} />
           </VStack>
 
           {/* Input */}

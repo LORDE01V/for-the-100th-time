@@ -151,16 +151,27 @@ const ExpensesPage = () => {
       }}
     >
       <Container maxW="container.xl" py={8} position="relative" zIndex={2}>
-        <Button
-          leftIcon={<FaArrowLeft />}
-          variant="ghost"
-          mb={8}
-          onClick={() => navigate('/home')}
-          color="white"
-          _hover={{ bg: 'whiteAlpha.200' }}
-        >
-          Back to Home
-        </Button>
+        <Flex justify="space-between" align="center" mb={8}>
+          <Button
+            leftIcon={<FaArrowLeft />}
+            variant="ghost"
+            onClick={() => navigate('/home')}
+            color="white"
+            _hover={{ bg: 'whiteAlpha.200' }}
+          >
+            Back to Home
+          </Button>
+          <Button
+            leftIcon={<FaSync />}
+            variant="ghost"
+            onClick={loadTransactions}
+            color="white"
+            _hover={{ bg: 'whiteAlpha.200' }}
+            isLoading={isLoading}
+          >
+            Refresh
+          </Button>
+        </Flex>
 
         <VStack spacing={8} align="stretch">
           <Heading size="xl" color={headingColor}>
@@ -187,7 +198,7 @@ const ExpensesPage = () => {
                 </Text>
               </Flex>
               <Text fontSize="2xl" fontWeight="bold" color={summaryTextColor}>
-                R{expenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}
+                {isLoading ? <Spinner size="sm" /> : `R${expenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}`}
               </Text>
             </Box>
 

@@ -56,11 +56,14 @@ function App() {
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
 
+                {/* ✅ New Payment Redirect Route */}
+                <Route path="/payment-result" element={<PaymentResult />} />
+
                 {/* Protected Routes */}
                 <Route element={<ProtectedRoute />}>
                   <Route path="/home" element={<HomePage />} />
                   <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/top-up" element={<TopUpPage />} />
+                  <Route path="/top-up" element={<TopUpPage />} /> {/* Changed path to /top-up and component to TopUpPage */}
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/impact" element={<ImpactPage />} />
                   <Route path="/expenses" element={<ExpensesPage />} />

@@ -54,9 +54,10 @@ def get_db():
 # ================== CORE FUNCTIONS ==================
 def execute_query(operation=None, query=None, params=None):
     """Execute a database query"""
-    conn, cur = connect_db()
-    if not conn or not cur:
+    conn = get_db_connection()
+    if not conn:
         raise Exception("Database connection failed")
+    cur = conn.cursor()
 
     try:
         if not query:
@@ -92,12 +93,37 @@ def create_user(email, password_hash, full_name=None, phone_number=None):
 
 def get_user_by_email(email):
     """Get user by email address"""
-    query = "SELECT id, email, password_hash, full_name FROM users WHERE email = %s"
+    query = "SELECT id, email, password_hash, full_name, phone, emergency_contact_name, emergency_contact_number, date_of_birth, national_id_number, gender, address_street, address_city, address_province, address_postal_code, employment_status, occupation, monthly_income, employer_name, bank_name, bank_account_number, bank_account_type FROM users WHERE email = %s"
     result = execute_query('search', query, (email,))
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name']
+        columns = ['id', 'email', 'password_hash', 'full_name', 'phone', 'emergency_contact_name', 'emergency_contact_number', 'date_of_birth', 'national_id_number', 'gender', 'address_street', 'address_city', 'address_province', 'address_postal_code', 'employment_status', 'occupation', 'monthly_income', 'employer_name', 'bank_name', 'bank_account_number', 'bank_account_type']
         return dict(zip(columns, result[0]))
     return None
+
+def get_user_balance(email):
+    """Get user balance by email"""
+    query = "SELECT balance FROM users WHERE email = %s"
+    result = execute_query('search', query, (email,))
+    if result and len(result) > 0:
+        return float(result[0][0]) if result[0][0] else 0.0
+    return 0.0
+
+def update_user_balance(email, amount):
+    """Add amount to user's current balance"""
+    query = """
+    UPDATE users 
+    SET balance = COALESCE(balance, 0) + %s 
+    WHERE email = %s 
+    RETURNING balance
+    """
+    result = execute_query('update', query, (amount, email))
+    return float(result[0][0]) if result and result[0] else None
+
+def set_user_balance(email, new_balance):
+    """Set user's balance to a specific amount"""
+    query = "UPDATE users SET balance = %s WHERE email = %s RETURNING balance"
+    result = execute_query('update', query, (new_balance, email))
+    return float(result[0][0]) if result and result[0] else None
 
 def get_user_by_id(user_id):
     """Get user by ID"""

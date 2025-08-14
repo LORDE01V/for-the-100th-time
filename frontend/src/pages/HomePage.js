@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import { Bot } from 'lucide-react';
 import backgroundVideo from '../assets/videos/Slowed-GridX-Video.mp4';
-import OneSignal from 'react-onesignal';
+import useNotifications from '../hooks/useNotifications';
 
 import {
   Box,
@@ -57,6 +57,7 @@ function HomePage() {
   const headingColor = useColorModeValue('gray.900', 'white');
   const spinnerColor = useColorModeValue('blue.500', 'blue.300');
   const user = auth.getCurrentUser();
+  const { isSubscribed, enableNotifications, loading: notificationLoading } = useNotifications(user);
 
   const [isLoadingGreeting, setIsLoadingGreeting] = useState(true);
   const [aiGreeting, setAiGreeting] = useState(null);
@@ -241,15 +242,53 @@ function HomePage() {
                   }
                 }}>Subscribe</Button>
               </Grid>
-              <Button colorScheme="teal" variant="outline" onClick={async () => {
-                try {
-                  await OneSignal.showSlidedownPrompt();
-                  toast({ title: 'Push Notification', description: 'Check your browser prompt to enable notifications.', status: 'info', duration: 5000, isClosable: true });
-                } catch (err) {
-                  toast({ title: 'Push Notification Error', description: 'Could not prompt for notifications.', status: 'error', duration: 5000, isClosable: true });
-                }
-              }}>
-                Enable Push Notifications
+              <Button 
+                colorScheme={isSubscribed ? "green" : "teal"} 
+                variant={isSubscribed ? "solid" : "outline"}
+                isLoading={notificationLoading}
+                loadingText="Processing..."
+                onClick={async () => {
+                  if (isSubscribed) {
+                    toast({ 
+                      title: 'Already Enabled', 
+                      description: 'Push notifications are already enabled for this browser.', 
+                      status: 'info', 
+                      duration: 3000, 
+                      isClosable: true 
+                    });
+                    return;
+                  }
+
+                  const result = await enableNotifications();
+                  
+                  if (result.success) {
+                    toast({ 
+                      title: 'Success!', 
+                      description: result.message, 
+                      status: 'success', 
+                      duration: 5000, 
+                      isClosable: true 
+                    });
+                  } else {
+                    let errorMessage = result.error || 'Could not enable notifications.';
+                    
+                    if (errorMessage.includes('denied')) {
+                      errorMessage = 'Notification permission was denied. Please enable notifications in your browser settings.';
+                    } else if (errorMessage.includes('dismissed')) {
+                      errorMessage = 'Notification prompt was dismissed. Please try again.';
+                    }
+
+                    toast({ 
+                      title: 'Push Notification Error', 
+                      description: errorMessage, 
+                      status: 'error', 
+                      duration: 7000, 
+                      isClosable: true 
+                    });
+                  }
+                }}
+              >
+                {isSubscribed ? '✓ Notifications Enabled' : 'Enable Push Notifications'}
               </Button>
             </Box>
 

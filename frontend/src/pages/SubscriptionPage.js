@@ -13,13 +13,13 @@ import {
   Alert,
   AlertIcon,
   useToast,
-  Spinner,
-  Tooltip,
+
   HStack,
 } from '@chakra-ui/react';
 import { FaArrowLeft, FaCreditCard, FaBolt, FaSun, FaShieldAlt, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useSubscription } from '../context/SubscriptionContext';
+import { auth } from '../services/api'; // Import the API service with token refresh
 import subscriptionsBackground from '../assets/images/subscriptions_page.png';  // Import the background image
 
 function SubscriptionPage() {
@@ -143,80 +143,164 @@ function SubscriptionPage() {
     },
   ], []);
 
-  const [selectedPlans, setSelectedPlans] = useState([]);
-  const [rationale] = useState({});
-  
+  const [currentSubscription, setCurrentSubscription] = useState(null);
+
   useEffect(() => {
-    const savedPlans = localStorage.getItem('selectedPlans');
-    if (savedPlans) {
-      setSelectedPlans(JSON.parse(savedPlans));
+    // Check for successful subscription in localStorage
+    const selectedPlan = localStorage.getItem('selectedPlan');
+    if (selectedPlan) {
+      try {
+        const plan = JSON.parse(selectedPlan);
+        setCurrentSubscription(plan);
+      } catch (error) {
+        console.error('Error parsing selected plan:', error);
+      }
     }
   }, []);
-  
-  let mockRationaleMessages = [
-    "This plan suits your low energy usage pattern based on mock data analysis.",
-    "Based on your data, this is a great match for high efficiency needs.",
-    "Ideal for users with moderate usage; it optimizes costs effectively.",
-    "This option aligns well with your peak-hour energy patterns.",
-    "Perfect for solar-dependent setups like yours.",
-    "Enhances your energy tracking with minimal investment.",
-    "A smart choice for reducing your carbon footprint.",
-    "Tailored for users seeking reliable load shedding solutions.",
-    "Boosts your energy management with advanced features.",
-    "Great for everyday efficiency and cost savings.",
-    "This plan fits users with variable energy demands.",
-    "Optimizes for low-usage scenarios to save more.",
-    "Balances cost and features for your energy profile.",
-    "Supports real-time monitoring for better decisions.",
-    "Ideal if you're focusing on sustainable energy sources.",
-    "Provides excellent value for high-usage households.",
-    "Enhances notifications for proactive energy management.",
-    "A solid pick for users prioritizing 24/7 support.",
-    "Matches your needs for detailed analytics reports.",
-    "Streamlines your energy optimization efforts.",
-    "Best for those with growing energy requirements.",
-    "Delivers premium insights at an affordable rate.",
-    "Adapts to your energy habits for maximum efficiency.",
-    "Unlocks advanced tools for energy conservation.",
-    "Suited for users with solar and grid hybrid systems.",
-    "Offers robust features for budget-conscious users.",
-    "Elevates your setup with priority support options.",
-    "Tailored for peak performance in energy tracking.",
-    "A versatile plan for mixed energy usage patterns.",
-    "Focuses on cost-effective solutions for you.",
-    "Integrates well with your current energy setup.",
-    "Provides comprehensive monitoring for better savings.",
-    "Ideal for users expanding their energy systems.",
-    "Enhances your experience with real-time data insights.",
-    "Perfect match for low-maintenance energy needs.",
-    "Boosts efficiency for users with high demands.",
-    "Supports your goals for sustainable living.",
-    "A reliable choice for everyday energy challenges.",
-    "Optimizes for users with fluctuating usage.",
-    "Delivers value through advanced reporting features.",
-    "Great for those seeking customizable energy plans.",
-    "Aligns with your profile for optimal energy use.",
-    "Enhances control over your energy consumption.",
-    "Tailored to handle your specific energy patterns.",
-    "Provides a strong foundation for energy management.",
-    "Ideal for proactive users monitoring their usage.",
-    "Balances features and cost for your needs.",
-    "Unlocks potential savings with smart analytics.",
-    "Suited for dynamic energy environments.",
-    "Offers premium support for peace of mind.",
-    "A top pick for efficient and eco-friendly options."
-  ];
 
-  mockRationaleMessages = mockRationaleMessages.filter(message => !message.includes("energy profile"));
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    
+    // Check for successful payment return
+    if (query.get('status') === 'success') {
+      const selectedPlan = localStorage.getItem('selectedPlan');
+      if (selectedPlan) {
+        try {
+          const plan = JSON.parse(selectedPlan);
+          setCurrentSubscription(plan);
+          
+          // Update the most recent pending subscription transaction to 'Paid'
+          const existingTransactions = JSON.parse(localStorage.getItem('subscription_transactions') || '[]');
+          if (existingTransactions.length > 0) {
+            const lastTransaction = existingTransactions[existingTransactions.length - 1];
+            if (lastTransaction.status === 'Pending' && lastTransaction.planId === plan.id) {
+              lastTransaction.status = 'Paid';
+              lastTransaction.description = `${plan.name} subscription activated successfully`;
+              localStorage.setItem('subscription_transactions', JSON.stringify(existingTransactions));
+            }
+          }
+          
+          toast({
+            title: 'Subscription Activated!',
+            description: `You are now subscribed to ${plan.name}. Welcome to your new plan!`,
+            status: 'success',
+            duration: 7000,
+            isClosable: true,
+          });
+        } catch (error) {
+          console.error('Error parsing selected plan:', error);
+        }
+      }
+      // Clean up URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (query.get('status') === 'failed') {
+      toast({
+        title: 'Payment Failed',
+        description: 'Your payment was not successful. Please try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      // Clean up URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (query.get('status') === 'error') {
+      toast({
+        title: 'An Error Occurred',
+        description: 'An unexpected error occurred during payment. Please try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      // Clean up URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [toast]);
 
-  const handleSelectPlan = (plan) => {
-    selectPlan(plan);
-    window.location.href = '/dashboard';
+  const handleSelectPlan = async (plan) => {
+    try {
+      const user = auth.getCurrentUser();
+      
+      if (!user) {
+        toast({
+          title: 'Authentication Error',
+          description: 'You must be logged in to select a plan.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        navigate('/login');
+        return;
+      }
+
+      console.log('Making subscription payment request for plan:', plan.name);
+      console.log('Plan details:', { id: plan.id, name: plan.name, price: plan.price });
+
+      // Use the API service which handles token refresh automatically
+      const data = await auth.topup(plan.price, 'subscription');
+
+      if (data.success && data.authorization_url) {
+        console.log('Redirecting to Paystack for subscription:', data.authorization_url);
+        
+        // Store selected plan info for post-payment reference
+        localStorage.setItem('selectedPlan', JSON.stringify({
+          id: plan.id,
+          name: plan.name,
+          price: plan.price
+        }));
+        
+        // Save subscription transaction to localStorage for tracking
+        const transaction = {
+          id: Date.now(),
+          date: new Date().toISOString().split('T')[0],
+          amount: plan.price,
+          category: 'Subscription',
+          status: 'Pending',
+          description: `${plan.name} subscription initiated`,
+          type: 'subscription',
+          planId: plan.id,
+          planName: plan.name
+        };
+        
+        const existingTransactions = JSON.parse(localStorage.getItem('subscription_transactions') || '[]');
+        localStorage.setItem('subscription_transactions', JSON.stringify([...existingTransactions, transaction]));
+        
+        window.location.href = data.authorization_url;
+      } else {
+        console.error('Subscription payment failed:', data);
+        toast({
+          title: 'Payment Failed',
+          description: data.error || data.message || 'Failed to initialize payment.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error selecting plan:', error);
+      
+      // Handle specific authentication errors
+      if (error.message.includes('token') || error.message.includes('authentication') || error.message.includes('401')) {
+        toast({
+          title: 'Session Expired',
+          description: 'Your session has expired. Please log in again.',
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
+        });
+        navigate('/login');
+      } else {
+        toast({
+          title: 'Error',
+          description: error.message || 'An unexpected error occurred. Please try again.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
   };
 
-  const fetchPlanRationale = async (planId) => {
-    // Implementation of fetchPlanRationale function
-  };
+
 
   return (
     <Flex
@@ -269,9 +353,12 @@ function SubscriptionPage() {
           Unlock exclusive savings and features tailored to your energy needs!
         </Text>
 
-        <Alert status="info" mb={8} borderRadius="md">
+        <Alert status={currentSubscription ? "success" : "info"} mb={8} borderRadius="md">
           <AlertIcon />
-          Choose the plan that best fits your energy management needs
+          {currentSubscription 
+            ? `You are currently subscribed to ${currentSubscription.name}` 
+            : "Choose the plan that best fits your energy management needs"
+          }
         </Alert>
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8}>
           {subscriptionPlans.map((plan) => (
@@ -292,7 +379,8 @@ function SubscriptionPage() {
                 maxW="320px"
                 mx="auto"
                 backdropFilter="blur(15px)"
-                borderColor={selectedPlans.includes(plan.id) ? 'green.500' : glassBorderColor}
+                borderColor={currentSubscription && currentSubscription.id === plan.id ? 'blue.500' : glassBorderColor}
+                borderWidth={currentSubscription && currentSubscription.id === plan.id ? '2px' : '1px'}
               >
                 <VStack spacing={4} align="stretch" height="100%">
                   <Flex align="center" justify="center">
@@ -310,22 +398,15 @@ function SubscriptionPage() {
                       </Flex>
                     ))}
                   </VStack>
-                  <Button onClick={() => handleSelectPlan(plan)} colorScheme={selectedPlans.includes(plan.id) ? 'red' : 'green'} width="full">{selectedPlans.includes(plan.id) ? 'Unselect' : 'Select'}</Button>
-                  <Button onClick={() => fetchPlanRationale(plan.id)}>Get Rationale</Button>
+                  <Button 
+                    onClick={() => handleSelectPlan(plan)} 
+                    colorScheme={currentSubscription && currentSubscription.id === plan.id ? "blue" : "green"} 
+                    width="full"
+                    variant={currentSubscription && currentSubscription.id === plan.id ? "solid" : "solid"}
+                  >
+                    {currentSubscription && currentSubscription.id === plan.id ? "Current Plan" : currentSubscription ? "Change to This Plan" : "Select Plan"}
+                  </Button>
                 </VStack>
-                {selectedPlans.includes(plan.id) && (
-                  <Box mt={4}>
-                    {rationale[plan.id]?.isLoading ? (
-                      <Spinner size="md" />
-                    ) : rationale[plan.id]?.message ? (
-                      <Tooltip label={rationale[plan.id].message} hasArrow placement="top">
-                        <Text color={mutedTextColor} fontSize="sm">
-                          {rationale[plan.id].message.slice(0, 50)}...
-                        </Text>
-                      </Tooltip>
-                    ) : null}
-                  </Box>
-                )}
               </Box>
             </motion.div>
           ))}
