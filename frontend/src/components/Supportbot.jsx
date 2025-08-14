@@ -13,7 +13,7 @@ import {
   Button,
   Link,
 } from '@chakra-ui/react';
-import { FaPaperPlane, FaTimes, FaCommentDots, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
+import { FaPaperPlane, FaTimes, FaCommentDots, FaVolumeMute, FaVolumeUp, FaExternalLinkAlt } from 'react-icons/fa';
 // Replaced local image import with a placeholder URL
 // If you have a specific image, you'll need to host it or use a base64 string (not recommended for large images)
 const langaImage = "https://placehold.co/150x150/008080/ffffff?text=Langa";
@@ -48,13 +48,23 @@ function useSiriLikeVoice() {
 
 const langaGreeting = "Hi! I'm Langa. How can I help you today?";
 
+// SearchingAnimation component
+const SearchingAnimation = ({ location }) => (
+  <Box textAlign="center" p={4}>
+    <Box fontSize="lg" fontWeight="bold" mb={2}>
+      🔍 Searching for information about {location}...
+    </Box>
+    <Box fontSize="sm" color="gray.600">
+      This may take a few moments...
+    </Box>
+  </Box>
+);
+
 const SupportBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [typing, setTyping] = useState(false); // State for "Bot is typing..."
-  const [hasSpokenLangaGreeting, setHasSpokenLangaGreeting] = useState(false);
   const [isMuted, setIsMuted] = useState(false); // Mute/unmute state
 
   // --- Langa Voice Logic ---
@@ -62,14 +72,13 @@ const SupportBot = () => {
 
   // State for voice-to-text
   const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchLocation, setSearchLocation] = useState(null);
   const [notificationPrompt, setNotificationPrompt] = useState({ show: false, location: '' });
 
   const toast = useToast();
   const messagesEndRef = useRef(null);
-  const { enableNotifications, getUserId } = useNotifications();
+  // Removed unused useNotifications hook
 
   useSiriLikeVoice();
 
@@ -133,62 +142,59 @@ const SupportBot = () => {
             }),
         });
         if (!response.ok) throw new Error(`Network error: ${response.statusText}`);
-        const data = await response.json();
+        const responseData = await response.json();
 
-        if (data.status === 'LOCATION_NEEDED') {
-            setMessages(prev => [...prev, { id: Date.now(), text: data.response, sender: 'bot' }]);
-        } else if (data.status === 'SEARCH_REQUIRED') {
+        if (responseData.status === 'LOCATION_NEEDED') {
+            setMessages(prev => [...prev, { id: Date.now(), text: responseData.response, sender: 'bot' }]);
+        } else if (responseData.status === 'SEARCH_REQUIRED') {
             setIsSearching(true);
-            setSearchLocation(data.location);
+            setSearchLocation(responseData.location);
             await new Promise(resolve => setTimeout(resolve, 2500));
-            await handleSendMessage(data.prompt, { isFollowUp: true, forceSearch: true });
+            await handleSendMessage(responseData.prompt, { isFollowUp: true, forceSearch: true });
         } else {
             const newBotMessage = {
                 id: Date.now(),
-                text: data.response,
+                text: responseData.response,
                 sender: 'bot',
-                source: data.source_url,
+                source: responseData.source_url,
             };
             
             // Debug logging
             console.log("DEBUG: Bot message data:", {
-                response: data.response,
-                source_url: data.source_url,
-                location: data.location
+                response: responseData.response,
+                source_url: responseData.source_url,
+                location: responseData.location
             });
-            if (data.response && data.location && (
-                data.response.toLowerCase().includes("notifications") || 
-                data.response.toLowerCase().includes("alerts") ||
-                data.response.toLowerCase().includes("set up") ||
-                data.response.toLowerCase().includes("daily")
+            if (responseData.response && responseData.location && (
+                responseData.response.toLowerCase().includes("notifications") || 
+                responseData.response.toLowerCase().includes("alerts")
             )) {
-                console.log("DEBUG: Setting notification prompt for location:", data.location);
-                setNotificationPrompt({ show: true, location: data.location });
+                setNotificationPrompt({ show: true, location: responseData.location });
             }
+            
             setMessages(prev => [...prev, newBotMessage]);
-            if (!isMuted) setTimeout(() => speakReply(data.response), 100);
+            if (!isMuted) speakReply(responseData.response);
         }
     } catch (error) {
         const errorMsg = "I'm having trouble connecting. Please try again.";
         setMessages(prev => [...prev, { id: Date.now(), text: errorMsg, sender: 'bot' }]);
         toast({ title: 'Connection Error', description: error.message, status: 'error' });
     } finally {
-      clearInterval(typingInterval);
       setIsLoading(false);
-      setTyping(false);
     }
+  };
 
-    const botReply = data.reply || data.response || "Sorry, I didn't get a reply.";
-    setMessages(prev => {
-      const updated = [...prev];
-      const lastIdx = updated.findIndex(m => m.typing || m.thinking);
-      if (lastIdx !== -1) {
-        updated[lastIdx] = { text: botReply, sender: 'bot' };
-      } else {
-        updated.push({ text: botReply, sender: 'bot' });
-      }
-      return updated;
-    });
+  // Handle notification response
+  const handleNotificationResponse = (accepted) => {
+    setNotificationPrompt({ show: false, location: '' });
+    if (accepted) {
+      toast({
+        title: 'Notifications Enabled',
+        description: 'Daily alerts will be sent for this location',
+        status: 'success',
+        isClosable: true,
+      });
+    }
   };
 
   // Voice-to-text mic logic

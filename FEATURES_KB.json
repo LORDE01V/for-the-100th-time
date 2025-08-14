@@ -1,0 +1,135 @@
+{
+  "knowledge_base": [
+    {
+      "feature": "Dashboard",
+      "type": "feature_guide",
+      "details": "The Dashboard is your main hub, showing widgets for a complete overview of your power usage, finances, and system status.",
+      "how_to_perform": "From the home screen, navigate to the Dashboard to view and interact with all your energy widgets. You can also click 'Suggest Plan' to get an AI-powered recommendation for a subscription plan based on your usage.",
+      "keywords": ["dashboard", "home screen", "main page", "power usage", "financial summary", "widgets", "solar output", "budget", "suggest plan"]
+    },
+    {
+      "feature": "Profile Details",
+      "type": "feature_guide",
+      "details": "Your Profile Details section is where you can manage and update your personal information.",
+      "steps": [
+        "Navigate to 'Profile Details' from your user menu.",
+        "Edit your personal information, such as name or contact details.",
+        "Save the changes."
+      ],
+      "keywords": ["profile", "profile details", "my information", "update details", "personal information", "change my name"]
+    },
+    {
+      "feature": "Top Up",
+      "type": "feature_guide",
+      "details": "You can add credit to your power account through the Top Up feature. This includes standard top-ups and setting up automatic recharges.",
+      "steps": [
+        "Go to the 'Top Up' screen.",
+        "Enter the amount you wish to add (minimum R50).",
+        "Enter any promo or voucher codes you have.",
+        "Complete the payment to add the funds to your account."
+      ],
+      "keywords": ["top up", "add credit", "buy power", "recharge account", "add funds", "voucher"]
+    },
+    {
+      "feature": "Auto Top-Up",
+      "type": "feature_guide",
+      "details": "Auto Top-Up automatically adds funds to your account when your balance gets low.",
+      "steps": [
+        "On the 'Top Up' screen, find the 'Auto Top-Up' settings.",
+        "Specify a minimum balance that will trigger the top-up.",
+        "Set the amount you want to automatically add.",
+        "Save your settings."
+      ],
+      "keywords": ["auto top-up", "automatic recharge", "low balance"]
+    },
+    {
+      "feature": "Expenses",
+      "type": "feature_guide",
+      "details": "The Expenses feature allows you to track your power-related spending, with summaries for total expenses and your monthly average.",
+      "how_to_perform": "Navigate to the 'Expenses' page to see a list of your recent transactions and their status (e.g., Paid, Pending).",
+      "keywords": ["expenses", "track expenses", "spending", "payment history", "monthly average"]
+    },
+    {
+      "feature": "Notifications",
+      "type": "feature_guide",
+      "details": "The Notifications screen displays all important alerts and updates about your account, such as low balance warnings or system maintenance.",
+      "how_to_perform": "Go to the 'Notifications' page to see your recent alerts. You can dismiss them from this screen.",
+      "keywords": ["notifications", "alerts", "updates", "messages"]
+    },
+    {
+      "feature": "Settings",
+      "type": "feature_guide",
+      "details": "The Settings section is where you manage your account security and preferences.",
+      "how_to_perform": "Navigate to the 'Settings' page to change your password, update your notification preferences (SMS/Email), or delete your account.",
+      "keywords": ["settings", "preferences", "customize", "change password", "delete account", "account settings"]
+    },
+    {
+      "feature": "Impact",
+      "type": "feature_guide",
+      "details": "The Impact page shows your positive effect on the environment from using solar energy, including your CO₂ reduction.",
+      "how_to_perform": "Go to the 'Impact' page to see your stats, read community stories, submit your own testimonial, and download a PDF of your impact report.",
+      "keywords": ["impact", "environmental impact", "carbon footprint", "sustainability", "community", "report"]
+    },
+    {
+      "feature": "Support",
+      "type": "support",
+      "details": "The Support Center is your destination for help, featuring a FAQ and a direct contact form.",
+      "steps": [
+        "Go to the 'Support' page.",
+        "Browse the Frequently Asked Questions (FAQ) for answers.",
+        "If you can't find an answer, fill out the contact form to create a support ticket."
+      ],
+      "keywords": ["support", "help", "contact us", "customer service", "faq", "find answers", "ticket"]
+    },
+    {
+      "feature": "AI Suggestions",
+      "type": "feature_guide",
+      "details": "Our AI provides personalized tips to help you save energy and manage your finances.",
+      "how_to_perform": "On the 'AI Suggestions' page, you can interact with tips by voting, commenting, adding to favorites, or sharing them. You can also search and filter tips by category.",
+      "keywords": ["ai suggestions", "smart tips", "save energy", "manage finances", "recommendations"]
+    },
+    {
+      "feature": "Forum",
+      "type": "feature_guide",
+      "details": "The Forum is a community space for discussions with other GridX users.",
+      "how_to_perform": "Go to the 'Forum' page to read topics or post messages. For long discussions, you can use the 'Summarize' feature. You can also use 'Check Tone' to review your post before submitting.",
+      "keywords": ["forum", "community", "discussion", "ask questions", "summarize", "tone check"]
+    },
+    {
+      "feature": "Refer & Earn",
+      "type": "feature_guide",
+      "details": "Our Refer & Earn program lets you earn rewards by inviting friends to GridX.",
+      "steps": [
+        "Go to the 'Refer & Earn' page.",
+        "Copy your unique referral link.",
+        "Share it with friends directly or through social media."
+      ],
+      "keywords": ["refer and earn", "invite friends", "rewards", "referral program", "share link"]
+    },
+    {
+      "feature": "Subscriptions",
+      "type": "feature_guide",
+      "details": "You can manage your energy subscription plan from the Subscriptions page.",
+      "steps": [
+        "Go to the 'Subscriptions' page to see all available plans.",
+        "Click 'Select Plan' on your desired plan.",
+        "Complete the payment process to activate or change your subscription."
+      ],
+      "keywords": ["subscriptions", "manage plans", "energy plan", "upgrade", "change subscription", "select plan"]
+    },
+    {
+      "feature": "Group Buying",
+      "type": "feature_guide",
+      "details": "Group Buying helps you save money by joining with other users to purchase solar products in bulk.",
+      "how_to_perform": "On the 'Group Buying' page, you can either join an existing campaign or fill out the form to create a new one. You can view product details, supplier ratings, and track the campaign's progress.",
+      "keywords": ["group buying", "group purchase", "solar deals", "save money", "create campaign"]
+    },
+    {
+      "feature": "Load Shedding",
+      "type": "feature_guide",
+      "details": "The Load Shedding feature helps you stay informed about power outages and plan your energy usage accordingly.",
+      "how_to_perform": "Go to the 'Load Shedding' page to view current outage schedules, check your area's status, and get real-time updates. You can also set up notifications to be alerted about upcoming outages in your area.",
+      "keywords": ["load shedding", "loadshedding", "load shading", "power outage", "outage", "power cut", "eskom", "stage", "load reduction"]
+    }
+  ]
+}

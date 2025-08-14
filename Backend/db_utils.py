@@ -21,6 +21,21 @@ def connect_db():
         print(f"🚨 Database connection failed: {e}")
         return None, None
 
+def get_db_connection():
+    """Get database connection (returns just the connection object)"""
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv('DB_HOST', 'localhost'),
+            database=os.getenv('DB_NAME', 'Fintech_Solar'),
+            user=os.getenv('DB_USER', 'postgres'),
+            password=os.getenv('DB_PASSWORD', ''),
+            port=os.getenv('DB_PORT', '5432')
+        )
+        return conn
+    except OperationalError as e:
+        print(f"🚨 Database connection failed: {e}")
+        return None
+
 def execute_query(query_type, query, params=None):
     """Execute a database query"""
     conn = None

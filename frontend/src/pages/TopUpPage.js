@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/api'; // Assuming auth service is still used
-import { FaArrowLeft, FaSync } from 'react-icons/fa'; // Import FaArrowLeft and FaSync
-import axios from 'axios'; // Import axios directly
+import { FaArrowLeft } from 'react-icons/fa'; // Import FaArrowLeft
 
 // Import Chakra UI Components
 import {
@@ -33,13 +32,12 @@ import {
   ModalFooter,
   ModalCloseButton,
   Select,
-  IconButton
 } from '@chakra-ui/react';
 import { useTransactions } from '../context/TransactionsContext'; // Import the hook
 import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs
 
 import topUpBackground from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_d222483d-c556-42dc-bd4b-3883260f86a4.png';
-// Removed: import api from '../services/api'; // No longer needed if using axios directly
+import api from '../services/api';
 
 function TopUpPage() {
   const navigate = useNavigate();

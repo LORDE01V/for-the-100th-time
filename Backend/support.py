@@ -54,7 +54,7 @@ def get_db():
 # ================== CORE FUNCTIONS ==================
 def execute_query(operation=None, query=None, params=None):
     """Execute a database query"""
-    conn = get_db_connection()
+    conn = get_db()
     if not conn:
         raise Exception("Database connection failed")
     cur = conn.cursor()
@@ -556,11 +556,12 @@ def initialize_db():
         if cur: cur.close()
         if conn: conn.close()
 
-# Initialize when imported
-initialize_db()
-
-# Test connection when run directly
+# Only initialize when run directly, not when imported
 if __name__ == "__main__":
+    # Initialize when run directly
+    initialize_db()
+    
+    # Test connection when run directly
     try:
         conn, cur = connect_db()
         if not conn or not cur:
@@ -571,7 +572,7 @@ if __name__ == "__main__":
         if result:
             print("PostgreSQL version: ", result[0])
         else:
-            print("🚨 Failed to get PosstgreSQl version.")
+            print("🚨 Failed to get PostgreSQL version.")
 
     except Exception as e:
         print("🚨 Database connection failed:", e)

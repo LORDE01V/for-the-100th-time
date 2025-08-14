@@ -105,11 +105,6 @@ function ImpactPage() {
     fetchStories();
   }, []);
 
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   // On submit, POST to backend and re-fetch all backend stories
   const handleSubmit = async (e) => {
     e.preventDefault();

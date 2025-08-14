@@ -16,42 +16,11 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaMoneyBill, FaChartLine, FaCalendarAlt, FaBolt } from 'react-icons/fa';
+import { FaArrowLeft, FaMoneyBill, FaChartLine, FaCalendarAlt, FaBolt, FaSync } from 'react-icons/fa';
 import backgroundImageUrl from '../assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_c2363fd3-711f-41c0-b272-af8fbfd0298c.png';
 
 const categories = ['Electricity', 'Solar Maintenance', 'Equipment', 'Battery Replacement', 'Inverter Rental', 'App Subscription'];
 const statuses = ['Paid', 'Pending'];
-
-const generateMockExpenses = () => {
-  const expenses = [];
-  const now = new Date();
-  
-  // First, add one expense for each category to ensure at least one of each
-  categories.forEach((category, index) => {
-    const date = new Date(now.getTime() - Math.random() * 1000 * 60 * 60 * 24 * 90); // Random date within last 90 days
-    expenses.push({
-      id: index + 1,
-      date: date.toISOString().split('T')[0],
-      amount: parseFloat((Math.random() * 400 + 50).toFixed(2)), // R50 to R450
-      category: category,
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-    });
-  });
-  
-  // Now, generate the remaining expenses to reach 50 total
-  const remainingCount = 50 - categories.length;  // 50 total - 6 categories = 44 more
-  for (let i = categories.length; i < 50; i++) {
-    const date = new Date(now.getTime() - Math.random() * 1000 * 60 * 60 * 24 * 90);
-    expenses.push({
-      id: i + 1,
-      date: date.toISOString().split('T')[0],
-      amount: parseFloat((Math.random() * 400 + 50).toFixed(2)),
-      category: categories[Math.floor(Math.random() * categories.length)],
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-    });
-  }
-  return expenses;
-};
 
 const ExpensesPage = () => {
   const navigate = useNavigate();
@@ -76,6 +45,9 @@ const ExpensesPage = () => {
 
   // Get user from state to prevent re-renders
   const [user, setUser] = useState(null);
+
+  // Add this state hook at the top with other hooks
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Set the user from auth service once
@@ -130,6 +102,20 @@ const ExpensesPage = () => {
       </Flex>
     );
   }
+  
+  const loadTransactions = async () => {
+    setIsLoading(true);
+    try {
+      // Your transaction loading logic here
+      // Example:
+      // const response = await api.getTransactions();
+      // setTransactions(response.data);
+    } catch (error) {
+      console.error('Error loading transactions:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Box

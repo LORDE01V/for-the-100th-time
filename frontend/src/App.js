@@ -11,8 +11,17 @@ import Supportbot from './components/Supportbot';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ChakraProvider } from '@chakra-ui/react';
 import { TransactionsProvider } from './context/TransactionsContext';
+import { DashboardProvider } from './context/DashboardContext';
+import { SubscriptionProvider } from './context/SubscriptionContext';
+import theme from './theme';
 // Import your components and contexts
 import HomePage from './pages/HomePage';
+import LandingPage from './pages/LandingPage';
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import AboutPage from './pages/AboutPage';
+import OAuthCallbackHandler from './pages/OAuthCallbackHandler';
+import PaymentResult from './pages/PaymentResult';
 import ExpensesPage from './pages/ExpensesPage';
 import TopUpPage from './pages/TopUpPage';
 import DashboardPage from './pages/DashboardPage';
@@ -29,8 +38,8 @@ import PersonalUserPage from './pages/PersonalUserPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import FaultDetails from './pages/FaultDetails';
-import LoadSheddingPage from './pages/LoadSheddingPage'; // Import LoadSheddingPage
-import ThemeToggleButton from './components/ThemeToggleButton'; // Import ThemeToggleButton
+import LoadSheddingPage from './pages/LoadSheddingPage';
+import ThemeToggleButton from './components/ThemeToggleButton';
 // Protected Route component
 const ProtectedRoute = () => {
   const user = auth.getCurrentUser();
@@ -63,7 +72,7 @@ function App() {
                 <Route element={<ProtectedRoute />}>
                   <Route path="/home" element={<HomePage />} />
                   <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/top-up" element={<TopUpPage />} /> {/* Changed path to /top-up and component to TopUpPage */}
+                  <Route path="/top-up" element={<TopUpPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/impact" element={<ImpactPage />} />
                   <Route path="/expenses" element={<ExpensesPage />} />
@@ -76,7 +85,7 @@ function App() {
                   <Route path="/subscription" element={<SubscriptionPage />} />
                   <Route path="/ai-suggestions" element={<AISuggestions />} />
                   <Route path="/personal-user" element={<PersonalUserPage />} />
-                  <Route path="/fault-details" element={<FaultDetails />} /> {/* Fault Details route */}
+                  <Route path="/fault-details" element={<FaultDetails />} />
                 </Route>
 
                 {/* Static Pages */}

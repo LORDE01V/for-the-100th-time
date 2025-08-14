@@ -18,33 +18,19 @@ import {
 } from '@chakra-ui/react';
 import { FaArrowLeft, FaCreditCard, FaBolt, FaSun, FaShieldAlt, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { useSubscription } from '../context/SubscriptionContext';
+
 import { auth } from '../services/api'; // Import the API service with token refresh
 import subscriptionsBackground from '../assets/images/subscriptions_page.png';  // Import the background image
 
 function SubscriptionPage() {
   const navigate = useNavigate();
   const toast = useToast();
-  const { selectPlan } = useSubscription();
   
-  // Define all useColorModeValue hooks at the top level to avoid React Hook rules violations
+  // Define color mode values for the component
   const headingColor = useColorModeValue('gray.900', 'white');
-  const newCardBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(17, 25, 40, 0.75)');
-  const newBorderColor = useColorModeValue('gray.300', 'gray.700');
   const glassCardBg = useColorModeValue('rgba(255, 255, 255, 0.2)', 'rgba(17, 25, 40, 0.2)');
   const glassBorderColor = useColorModeValue('rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.1)');
   const mutedTextColor = useColorModeValue('gray.600', 'gray.400');
-  const subscriptionBoxBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');
-  const subscriptionBoxShadow = useColorModeValue('md', 'xl');
-  const subscriptionBorderRadius = useColorModeValue('md', 'xl');
-  const subscriptionBackdropFilter = useColorModeValue('none', 'blur(16px)');
-  const subscriptionBorderColor = useColorModeValue('gray.300', 'gray.600');
-  const subscriptionTextColor = useColorModeValue('gray.700', 'white');
-  const cardBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(0, 0, 0, 0.6)');
-  const cardBorderColor = useColorModeValue('gray.200', 'gray.600');
-  const cardColor = useColorModeValue('gray.800', 'white');
-  const cardHeadingColor = useColorModeValue('gray.800', 'white');
-  const cardTextColor = useColorModeValue('gray.800', 'white');
 
   const subscriptionPlans = useMemo(() => [
     {
@@ -362,10 +348,16 @@ function SubscriptionPage() {
         </Alert>
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8}>
           {subscriptionPlans.map((plan) => (
-            <motion.div key={plan.id} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} whileHover={{ scale: 1.05, boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.1)' }} style={{ height: '100%' }}>
+            <motion.div 
+              key={plan.id} 
+              initial={{ opacity: 0, y: 50 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ duration: 0.5 }} 
+              whileHover={{ scale: 1.05, boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.1)' }} 
+              style={{ height: '100%' }}
+            >
               <Box
                 p={6}
-                borderWidth="1px"
                 borderRadius="md"
                 bg={glassCardBg}
                 boxShadow="lg"
@@ -378,7 +370,7 @@ function SubscriptionPage() {
                 minH="340px"
                 maxW="320px"
                 mx="auto"
-                backdropFilter="blur(15px)"
+                sx={{ backdropFilter: "blur(15px)" }}
                 borderColor={currentSubscription && currentSubscription.id === plan.id ? 'blue.500' : glassBorderColor}
                 borderWidth={currentSubscription && currentSubscription.id === plan.id ? '2px' : '1px'}
               >
@@ -387,9 +379,15 @@ function SubscriptionPage() {
                     {plan.id.includes('basic') && <FaBolt size="24px" color="blue" />}
                     {plan.id.includes('standard') && <FaSun size="24px" color="yellow" />}
                     {plan.id.includes('premium') && <FaShieldAlt size="24px" color="gold" />}
-                    <Heading size="md" color={headingColor} ml={2}>{plan.name}</Heading>
+                    <Heading size="md" color={headingColor} ml={2}>
+                      {plan.name}
+                    </Heading>
                   </Flex>
-                  <Text fontSize="2xl" fontWeight="bold" color="green.500">R{plan.price}/month</Text>
+                  
+                  <Text fontSize="2xl" fontWeight="bold" color="green.500">
+                    R{plan.price}/month
+                  </Text>
+                  
                   <VStack align="start" spacing={2} flex="1" maxH="120px" overflowY="auto">
                     {plan.features.map((feature, index) => (
                       <Flex key={index} align="center">
@@ -398,14 +396,19 @@ function SubscriptionPage() {
                       </Flex>
                     ))}
                   </VStack>
+                  
                   <Button 
                     onClick={() => handleSelectPlan(plan)} 
                     colorScheme={currentSubscription && currentSubscription.id === plan.id ? "blue" : "green"} 
                     width="full"
-                    variant={currentSubscription && currentSubscription.id === plan.id ? "solid" : "solid"}
                   >
-                    {currentSubscription && currentSubscription.id === plan.id ? "Current Plan" : currentSubscription ? "Change to This Plan" : "Select Plan"}
-                  </Button>
+                    {currentSubscription && currentSubscription.id === plan.id 
+                      ? "Current Plan" 
+                      : currentSubscription 
+                        ? "Change to This Plan" 
+                        : "Select Plan"
+                    }
+                   </Button>
                 </VStack>
               </Box>
             </motion.div>
