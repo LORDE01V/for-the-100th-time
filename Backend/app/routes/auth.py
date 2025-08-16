@@ -189,7 +189,7 @@ def register():
         data = request.get_json()
         email = data.get('email', '').lower()
         password = data.get('password')
-        full_name = data.get('full_name')  # Changed from 'name' to 'full_name'
+        full_name = data.get('name')  # Changed to expect 'name' from frontend
         phone_number = data.get('phone') # Added phone_number
 
         if not email or not password or not full_name:
