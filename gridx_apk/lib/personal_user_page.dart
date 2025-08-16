@@ -259,7 +259,9 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
                               const SizedBox(height: 30),
                               CircleAvatar(
                                 radius: 40,
-                                backgroundImage: AssetImage('assets/images/avatar_placeholder.png'), // Using local asset for placeholder
+                                backgroundImage: _profilePictureUrl.isNotEmpty
+                                    ? NetworkImage(_profilePictureUrl) as ImageProvider<Object>
+                                    : const AssetImage('assets/images/avatar_placeholder.png'),
                                 backgroundColor: Colors.transparent,
                               ),
                               const SizedBox(height: 10),
@@ -285,11 +287,11 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
                         Container(
                           padding: const EdgeInsets.all(20.0),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withAlpha((0.1 * 255).round()),
                             borderRadius: BorderRadius.circular(15.0),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withAlpha((0.2 * 255).round()),
                                 spreadRadius: 1,
                                 blurRadius: 3,
                                 offset: const Offset(0, 2),
