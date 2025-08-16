@@ -232,12 +232,14 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        const SizedBox(height: 40),
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ),
                         const SizedBox(height: 40),
                         Align(
@@ -257,7 +259,7 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
                               const SizedBox(height: 30),
                               CircleAvatar(
                                 radius: 40,
-                                backgroundImage: NetworkImage(_profilePictureUrl),
+                                backgroundImage: AssetImage('assets/images/avatar_placeholder.png'), // Using local asset for placeholder
                                 backgroundColor: Colors.transparent,
                               ),
                               const SizedBox(height: 10),

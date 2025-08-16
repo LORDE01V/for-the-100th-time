@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http; // Import http package
 import 'dart:convert'; // Import for JSON encoding/decoding
 import 'package:gridx_apk/home_page.dart'; // Import HomePage
 import 'package:gridx_apk/sign_up_screen.dart'; // Import SignUpScreen
+import 'package:shared_preferences/shared_preferences.dart'; // Import for SharedPreferences
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -52,6 +53,10 @@ class _SignInScreenState extends State<SignInScreen> {
         }),
       );
 
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+      print('Response Headers: ${response.headers}');
+
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -60,21 +65,29 @@ class _SignInScreenState extends State<SignInScreen> {
 
       if (response.statusCode == 200) {
         // Login successful
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
-        final String username = responseData['user']['name'] ?? 'User'; // Assuming 'name' key for username
+        final Map<String, dynamic> responseData = response.body.isNotEmpty ? jsonDecode(response.body) : {};
+        final String username = responseData['user']?['name'] ?? 'User'; // Safely access user name
+        final String? token = responseData['token'];
+        final String message = responseData['message'] ?? 'Login successful!';
+
         // You might want to store the token and user data securely (e.g., using shared_preferences or flutter_secure_storage)
-        print("Login successful: ${responseData['message']}"); // Debug: print full response
-        print("Token: ${responseData['token']}");
+        if (token != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token);
+        }
+
+        print("Login successful: $message"); // Debug: print full response
+        print("Token: $token");
         print("User: ${responseData['user']}");
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Signed in successfully!")),
+            SnackBar(content: Text(message)),
           );
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(username: username)));
         }
       } else if (response.statusCode == 401) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        final Map<String, dynamic> responseData = response.body.isNotEmpty ? jsonDecode(response.body) : {};
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(responseData['message'] ?? "Invalid credentials.")),
@@ -83,7 +96,7 @@ class _SignInScreenState extends State<SignInScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Sign in failed. Please try again later.")),
+            SnackBar(content: Text(response.body.isNotEmpty ? (jsonDecode(response.body)?['message'] ?? "Sign in failed. Please try again later.") : "Sign in failed. Please try again later.")),
           );
         }
       }

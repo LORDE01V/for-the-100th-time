@@ -95,9 +95,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final String phoneNumber = _phoneNumberController.text;
     final String password = _passwordController.text;
 
+    final String apiUrl = "http://10.0.2.2:5000/api/auth/register"; // Use 10.0.2.2 for Android emulator
+
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:5000/api/auth/register'), // Use 10.0.2.2 for Android emulator to access host machine localhost
+        Uri.parse(apiUrl),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

@@ -3636,3 +3636,50 @@ What do you need?
 2025-08-16 14:59:28,663 - ERROR - Password mismatch for email: nathi2xx@gmail.com
 2025-08-16 14:59:28,665 - INFO - 127.0.0.1 - - [16/Aug/2025 14:59:28] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
 2025-08-16 14:59:47,923 - INFO - 127.0.0.1 - - [16/Aug/2025 14:59:47] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:22:20,808 - INFO - 127.0.0.1 - - [16/Aug/2025 15:22:20] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:28:13,738 - INFO - 127.0.0.1 - - [16/Aug/2025 15:28:13] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:32:03,775 - INFO - 127.0.0.1 - - [16/Aug/2025 15:32:03] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:32:24,660 - INFO - 127.0.0.1 - - [16/Aug/2025 15:32:24] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:32:34,205 - INFO - 127.0.0.1 - - [16/Aug/2025 15:32:34] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:32:44,469 - INFO - 127.0.0.1 - - [16/Aug/2025 15:32:44] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:33:13,958 - INFO - 127.0.0.1 - - [16/Aug/2025 15:33:13] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:33:55,921 - INFO - 127.0.0.1 - - [16/Aug/2025 15:33:55] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:36:19,417 - INFO - 127.0.0.1 - - [16/Aug/2025 15:36:19] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:36:24,652 - INFO - 127.0.0.1 - - [16/Aug/2025 15:36:24] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:36:26,377 - INFO - 127.0.0.1 - - [16/Aug/2025 15:36:26] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 15:38:00,900 - INFO - 127.0.0.1 - - [16/Aug/2025 15:38:00] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:11:57,630 - INFO - 127.0.0.1 - - [16/Aug/2025 16:11:57] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:12:06,091 - INFO - 127.0.0.1 - - [16/Aug/2025 16:12:06] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:13:07,901 - WARNING - Registration attempt for existing email: nathi2266@gmail.com
+2025-08-16 16:13:07,904 - INFO - 127.0.0.1 - - [16/Aug/2025 16:13:07] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 409 -
+2025-08-16 16:13:15,005 - WARNING - Registration attempt for existing email: nathi2266@gmail.com
+2025-08-16 16:13:15,006 - INFO - 127.0.0.1 - - [16/Aug/2025 16:13:15] "[31m[1mPOST /api/auth/register HTTP/1.1[0m" 409 -
+2025-08-16 16:13:30,318 - INFO - User nathi12266@gmail.com registered successfully with ID: 32
+2025-08-16 16:13:30,321 - INFO - 127.0.0.1 - - [16/Aug/2025 16:13:30] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-08-16 16:13:53,725 - INFO - 127.0.0.1 - - [16/Aug/2025 16:13:53] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:17:01,612 - INFO - 127.0.0.1 - - [16/Aug/2025 16:17:01] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:17:07,278 - INFO - 127.0.0.1 - - [16/Aug/2025 16:17:07] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:18:08,006 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-16 16:18:08,007 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-16 16:18:08,010 - INFO -  * Restarting with stat
+2025-08-16 16:18:10,587 - WARNING -  * Debugger is active!
+2025-08-16 16:18:10,600 - INFO -  * Debugger PIN: 856-441-433
+2025-08-16 16:18:14,374 - INFO - 127.0.0.1 - - [16/Aug/2025 16:18:14] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:18:22,311 - INFO - 127.0.0.1 - - [16/Aug/2025 16:18:22] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:18:45,062 - INFO - 127.0.0.1 - - [16/Aug/2025 16:18:45] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:18:58,352 - INFO - 127.0.0.1 - - [16/Aug/2025 16:18:58] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:19:14,366 - INFO - 127.0.0.1 - - [16/Aug/2025 16:19:14] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:19:28,789 - INFO - 127.0.0.1 - - [16/Aug/2025 16:19:28] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:19:46,700 - INFO - 127.0.0.1 - - [16/Aug/2025 16:19:46] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:25:46,204 - INFO - 127.0.0.1 - - [16/Aug/2025 16:25:46] "POST /api/auth/login HTTP/1.1" 200 -
+2025-08-16 16:36:20,445 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.3:5000
+2025-08-16 16:36:20,446 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-16 16:36:20,449 - INFO -  * Restarting with stat
+2025-08-16 16:36:23,112 - WARNING -  * Debugger is active!
+2025-08-16 16:36:23,126 - INFO -  * Debugger PIN: 856-441-433
