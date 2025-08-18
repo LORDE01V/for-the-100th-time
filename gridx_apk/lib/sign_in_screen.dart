@@ -53,10 +53,6 @@ class _SignInScreenState extends State<SignInScreen> {
         }),
       );
 
-      print('Response Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
-      print('Response Headers: ${response.headers}');
-
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -67,18 +63,14 @@ class _SignInScreenState extends State<SignInScreen> {
         // Login successful
         final Map<String, dynamic> responseData = response.body.isNotEmpty ? jsonDecode(response.body) : {};
         final String username = responseData['user']?['name'] ?? 'User'; // Safely access user name
-        final String? token = responseData['token'];
+        final String? token = responseData['access_token'];
         final String message = responseData['message'] ?? 'Login successful!';
 
         // You might want to store the token and user data securely (e.g., using shared_preferences or flutter_secure_storage)
         if (token != null) {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', token);
+          await prefs.setString('access_token', token);
         }
-
-        print("Login successful: $message"); // Debug: print full response
-        print("Token: $token");
-        print("User: ${responseData['user']}");
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

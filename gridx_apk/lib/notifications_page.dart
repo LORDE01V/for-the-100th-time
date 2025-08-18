@@ -218,7 +218,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         )
                       : Card(
                           margin: const EdgeInsets.symmetric(vertical: 8),
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),

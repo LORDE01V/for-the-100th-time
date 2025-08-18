@@ -32,6 +32,8 @@ class _SettingsPageState extends State<SettingsPage> {
     // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
 
+    if (!mounted) return; // Added mounted check
+
     if (_newPasswordController.text != _confirmNewPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("New passwords do not match!")),

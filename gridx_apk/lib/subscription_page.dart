@@ -73,6 +73,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       _loading = false;
     });
 
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Successfully subscribed to ${_selectedPlan!['name']} plan!")),
     );

@@ -17,6 +17,9 @@ from db_utils import create_topup_table  # Import the new function
 from app.routes.topup import topup_bp  # Add this import
 from app.routes.auth import auth_bp # Import auth_bp
 from app.routes.ai_agent import ai_agent_bp # Import ai_agent_bp
+from app.routes.profile import profile_bp # Import profile_bp
+from app.routes.support import support_bp # Import support_bp
+from app.routes.groupbuying_routes import groupbuying_bp # Import groupbuying_bp
 # from app.routes.recommendation_plan import recommendation_bp # Commented out due to unresolved import
 
 # Set up logging to console only
@@ -57,6 +60,10 @@ jwt = JWTManager(app)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(ai_agent_bp)
+app.register_blueprint(topup_bp)
+app.register_blueprint(profile_bp)
+app.register_blueprint(support_bp)
+app.register_blueprint(groupbuying_bp)
 
 chatbot = EnhancedChatbot()
 

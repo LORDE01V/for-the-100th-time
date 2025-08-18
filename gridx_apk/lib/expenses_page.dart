@@ -92,7 +92,7 @@ class ExpensesPage extends StatelessWidget {
 
                   // Recent Expenses List
                   Card(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
@@ -180,7 +180,7 @@ class ExpensesPage extends StatelessWidget {
 
   Widget _buildSummaryCard({required IconData icon, required String title, required String value, required Color valueColor}) {
     return Card(
-      color: Colors.white.withOpacity(0.1),
+      color: Colors.white.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),

@@ -42,6 +42,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
     // Simulate form submission
     await Future.delayed(const Duration(seconds: 2));
 
+    if (!mounted) return;
+
     setState(() {
       _isSubmitting = false;
       _nameController.clear();

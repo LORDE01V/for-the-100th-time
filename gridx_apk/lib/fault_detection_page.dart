@@ -40,6 +40,7 @@ class _FaultDetectionPageState extends State<FaultDetectionPage> {
       _isLoading = false;
     });
 
+    if (!mounted) return; // Added mounted check
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(_faultMessage)),
     );

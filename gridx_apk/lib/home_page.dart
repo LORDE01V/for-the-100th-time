@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:gridx_apk/personal_user_page.dart'; // Import PersonalUserPage
+import 'package:gridx_apk/support_page.dart'; // Import SupportPage
 
 // This is the main entry point for the application.
 void main() {
@@ -154,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(15.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -225,9 +226,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           itemCount: categories.length,
           itemBuilder: (context, index) {
+            final category = categories[index];
             return _buildCategoryItem(
-              label: categories[index]['label'],
-              icon: categories[index]['icon'],
+              label: category['label'],
+              icon: category['icon'],
+              onTap: () {
+                if (category['label'] == 'Contact Us') {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SupportPage()));
+                } else if (category['label'] == 'Profile') {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PersonalUserPage()));
+                }
+                // Add more navigation logic for other categories as needed
+              },
             );
           },
         ),
@@ -236,37 +246,40 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Helper widget for a single category icon button
-  Widget _buildCategoryItem({required String label, required IconData icon}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 60.0,
-          height: 60.0,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 2),
-              ),
-            ],
+  Widget _buildCategoryItem({required String label, required IconData icon, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 60.0,
+            height: 60.0,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Icon(icon, color: Colors.white, size: 30.0),
           ),
-          child: Icon(icon, color: Colors.white, size: 30.0),
-        ),
-        const SizedBox(height: 8.0),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 10.0, // Reduced font size
+          const SizedBox(height: 8.0),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10.0, // Reduced font size
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -275,11 +288,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF122849).withOpacity(0.8),
+        color: const Color(0xFF122849).withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -353,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(context, MaterialPageRoute(builder: (context) => PersonalUserPage()));
         }
       },
-      backgroundColor: const Color(0xFF122849).withOpacity(0.7),
+      backgroundColor: const Color(0xFF122849).withValues(alpha: 0.7),
       type: BottomNavigationBarType.fixed,
       selectedFontSize: 12.0,
       unselectedFontSize: 12.0,

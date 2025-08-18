@@ -28,6 +28,8 @@ class _DashboardPageState extends State<DashboardPage> {
     // Simulate API call
     await Future.delayed(const Duration(seconds: 1));
 
+    if (!mounted) return;
+
     // Simple mock logic for plan suggestion
     final mockData = {'budget': 70.0};
     _recommendedPlan = _subscriptionPlans.firstWhere(

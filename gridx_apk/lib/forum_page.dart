@@ -121,7 +121,7 @@ class _ForumPageState extends State<ForumPage> {
 
                   // New Post Section
                   Card(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
@@ -147,7 +147,7 @@ class _ForumPageState extends State<ForumPage> {
                               hintText: "Share your energy-saving tips or ask a question...",
                               hintStyle: const TextStyle(color: Colors.white70),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.05),
+                              fillColor: Colors.white.withValues(alpha: 0.05),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                                 borderSide: BorderSide.none,
@@ -192,7 +192,7 @@ class _ForumPageState extends State<ForumPage> {
                       final post = _posts[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 10),
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),

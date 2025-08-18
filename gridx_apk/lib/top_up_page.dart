@@ -53,6 +53,7 @@ class _TopUpPageState extends State<TopUpPage> {
       _isProcessing = false;
     });
 
+    if (!mounted) return; // Added mounted check
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Top-up successful!")),
     );

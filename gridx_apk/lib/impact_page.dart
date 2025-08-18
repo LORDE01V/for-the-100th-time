@@ -21,7 +21,7 @@ class ImpactPage extends StatelessWidget {
   void _downloadImpactReport() {
     // Placeholder for PDF download functionality
     // In a real app, you would generate or fetch a PDF and then trigger a download.
-    print("Downloading Impact Report...");
+    // print("Downloading Impact Report...");
     // You might use a package like `path_provider` and `open_file` to save and open the file.
   }
 
@@ -102,7 +102,7 @@ class ImpactPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final stat = _impactStats[index];
                       return Card(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
@@ -183,7 +183,7 @@ class ImpactPage extends StatelessWidget {
                       final story = _communityStories[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 10),
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
@@ -259,7 +259,7 @@ class ImpactPage extends StatelessWidget {
                   Container(
                     height: 200,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(15.0),
                     ),
                     child: const Center(

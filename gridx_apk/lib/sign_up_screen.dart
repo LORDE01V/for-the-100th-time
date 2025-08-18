@@ -81,6 +81,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
         return;
       }
+      if (!mounted) return; // Added mounted check
       _attemptSignUp(); // Call the new async method
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -113,18 +114,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (response.statusCode == 201) {
         // Success
+        if (!mounted) return; // Added mounted check
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Account created successfully! Please sign in.')),
         );
+        if (!mounted) return; // Added mounted check
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignInScreen()));
       } else {
         // Error or user already exists
         final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (!mounted) return; // Added mounted check
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(responseData['message'] ?? 'Registration failed. Please try again.')),
         );
       }
     } catch (e) {
+      if (!mounted) return; // Added mounted check
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An error occurred: $e')),
       );
@@ -328,9 +333,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(30.0),
-        border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.5),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1.5),
       ),
       child: TextFormField( // Changed to TextFormField
         controller: controller,
@@ -345,7 +350,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           counterText: "", // Hide the default character counter
           prefixIcon: Icon(icon, color: Colors.white),
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
           errorStyle: const TextStyle(color: Colors.redAccent), // Style for validation errors
           border: InputBorder.none,
         ),
@@ -369,9 +374,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(30.0),
-            border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.5),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1.5),
           ),
           child: TextFormField( // Changed to TextFormField
             controller: controller,
@@ -388,7 +393,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onPressed: onToggleVisibility,
               ),
               hintText: hintText,
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
               errorStyle: const TextStyle(color: Colors.redAccent), // Style for validation errors
               border: InputBorder.none,
             ),

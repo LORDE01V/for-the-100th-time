@@ -178,7 +178,7 @@ class _AiSuggestionsPageState extends State<AiSuggestionsPage> {
                       hintStyle: const TextStyle(color: Colors.white70),
                       prefixIcon: const Icon(Icons.search, color: Colors.white70),
                       filled: true,
-                      fillColor: Colors.white.withOpacity(0.1),
+                      fillColor: Colors.white.withValues(alpha: 0.1),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                         borderSide: BorderSide.none,
@@ -247,7 +247,7 @@ class _AiSuggestionsPageState extends State<AiSuggestionsPage> {
                       final suggestion = _filteredSuggestions[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 10),
-                        color: Colors.white.withOpacity(0.1), // Card background with opacity
+                        color: Colors.white.withValues(alpha: 0.1), // Card background with opacity
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),

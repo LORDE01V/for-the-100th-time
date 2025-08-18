@@ -1,6 +1,35 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
+import 'dart:ui'; // Provides BackdropFilter
+import 'package:http/http.dart' as http; // Import for making HTTP requests
+import 'dart:convert'; // Import for JSON encoding/decoding
 
+// This is the main entry point for the application.
+// void main() {
+//   runApp(const MyApp());
+// }
+
+// MyApp is a StatelessWidget that provides the basic app setup.
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false, // Hides the debug banner
+//       title: 'GridX Energy Support',
+//       theme: ThemeData(
+//         brightness: Brightness.light,
+//         primaryColor: const Color(0xFF16c3b6),
+//         // This font is used in the original code, so we ensure it's
+//         // part of the theme for a consistent look.
+//         fontFamily: 'Montserrat',
+//       ),
+//       home: const SupportPage(),
+//     );
+//   }
+// }
+
+// SupportPage is a StatefulWidget to manage the form and FAQ state.
 class SupportPage extends StatefulWidget {
   const SupportPage({super.key});
 
@@ -9,14 +38,16 @@ class SupportPage extends StatefulWidget {
 }
 
 class _SupportPageState extends State<SupportPage> {
+  // Controllers for the form fields to get and set text.
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
 
+  // State variable to show a loading indicator while submitting.
   bool _isSubmitting = false;
 
-  // Dummy FAQ data
+  // Dummy FAQ data for the expandable panels.
   final List<Map<String, dynamic>> _faqItems = [
     {
       'question': 'How do I top up my solar energy credit?',
@@ -38,6 +69,7 @@ class _SupportPageState extends State<SupportPage> {
 
   @override
   void dispose() {
+    // It's important to dispose of controllers to prevent memory leaks.
     _nameController.dispose();
     _emailController.dispose();
     _subjectController.dispose();
@@ -45,7 +77,9 @@ class _SupportPageState extends State<SupportPage> {
     super.dispose();
   }
 
+  // Handles the form submission logic.
   void _handleContactSubmit() async {
+    // Check if required fields are empty and show a snackbar if so.
     if (_nameController.text.isEmpty ||
         _emailController.text.isEmpty ||
         _messageController.text.isEmpty) {
@@ -55,31 +89,65 @@ class _SupportPageState extends State<SupportPage> {
       return;
     }
 
+    // Start submission state to show the loading indicator.
     setState(() {
       _isSubmitting = true;
     });
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    final String name = _nameController.text;
+    final String email = _emailController.text;
+    final String subject = _subjectController.text;
+    final String message = _messageController.text;
 
-    setState(() {
-      _isSubmitting = false;
-      _nameController.clear();
-      _emailController.clear();
-      _subjectController.clear();
-      _messageController.clear();
-    });
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5000/api/support'), // Assuming your backend is at this address
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'name': name,
+          'email': email,
+          'subject': subject,
+          'message': message,
+        }),
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Your support request has been received!")),
-    );
+      if (!mounted) return; // Added mounted check
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Your support request has been received!")),
+        );
+        _nameController.clear();
+        _emailController.clear();
+        _subjectController.clear();
+        _messageController.clear();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to send message: ${response.statusCode}")),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return; // Added mounted check
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Network error: $e")),
+      );
+    } finally {
+      // Reset state and clear fields after successful submission.
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
   }
 
+  // The main build method for the widget.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
+          // Background image with an overlay.
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -88,12 +156,14 @@ class _SupportPageState extends State<SupportPage> {
               ),
             ),
           ),
+          // BackdropFilter creates a blurred effect over the background.
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Container(
               color: const Color.fromARGB(77, 0, 0, 0),
             ),
           ),
+          // SingleChildScrollView allows the content to be scrollable.
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
@@ -101,6 +171,7 @@ class _SupportPageState extends State<SupportPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   const SizedBox(height: 40),
+                  // Back button
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
                     onPressed: () {
@@ -108,6 +179,7 @@ class _SupportPageState extends State<SupportPage> {
                     },
                   ),
                   const SizedBox(height: 40),
+                  // Header section for the page title and subtitle.
                   Align(
                     alignment: Alignment.center,
                     child: Column(
@@ -139,7 +211,7 @@ class _SupportPageState extends State<SupportPage> {
 
                   // FAQ Section
                   Card(
-                    color: Color.fromARGB(25, 255, 255, 255),
+                    color: const Color.fromARGB(25, 255, 255, 255),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
@@ -157,15 +229,17 @@ class _SupportPageState extends State<SupportPage> {
                             ),
                           ),
                           const SizedBox(height: 15),
+                          // ExpansionPanelList to display the FAQs.
                           ExpansionPanelList(
                             expansionCallback: (int index, bool isExpanded) {
                               setState(() {
+                                // Toggles the expanded state for the selected item.
                                 _faqItems[index]['isExpanded'] = !isExpanded;
                               });
                             },
                             children: _faqItems.map<ExpansionPanel>((Map<String, dynamic> item) {
                               return ExpansionPanel(
-                                backgroundColor: Color.fromARGB(13, 255, 255, 255), // Colors.white.withOpacity(0.05)
+                                backgroundColor: const Color.fromARGB(13, 255, 255, 255),
                                 headerBuilder: (BuildContext context, bool isExpanded) {
                                   return ListTile(
                                     title: Text(
@@ -200,7 +274,7 @@ class _SupportPageState extends State<SupportPage> {
 
                   // Contact Form Section
                   Card(
-                    color: Color.fromARGB(25, 255, 255, 255),
+                    color: const Color.fromARGB(25, 255, 255, 255),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
@@ -218,6 +292,7 @@ class _SupportPageState extends State<SupportPage> {
                             ),
                           ),
                           const SizedBox(height: 15),
+                          // Text fields for the contact form.
                           _buildTextField("Your Name", _nameController, TextInputType.text),
                           const SizedBox(height: 20),
                           _buildTextField("Email Address", _emailController, TextInputType.emailAddress),
@@ -226,6 +301,7 @@ class _SupportPageState extends State<SupportPage> {
                           const SizedBox(height: 20),
                           _buildMessageField("Message", _messageController),
                           const SizedBox(height: 30),
+                          // Submit button.
                           Center(
                             child: ElevatedButton(
                               onPressed: _isSubmitting ? null : _handleContactSubmit,
@@ -254,9 +330,9 @@ class _SupportPageState extends State<SupportPage> {
                   ),
                   const SizedBox(height: 30),
 
-                  // Direct Contact Info
+                  // Direct Contact Info section.
                   Card(
-                    color: Color.fromARGB(25, 255, 255, 255),
+                    color: const Color.fromARGB(25, 255, 255, 255),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
@@ -290,6 +366,7 @@ class _SupportPageState extends State<SupportPage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
@@ -299,6 +376,7 @@ class _SupportPageState extends State<SupportPage> {
     );
   }
 
+  // Helper method to build a standard text field.
   Widget _buildTextField(String label, TextEditingController controller, TextInputType keyboardType) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,7 +396,7 @@ class _SupportPageState extends State<SupportPage> {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Color.fromARGB(25, 255, 255, 255),
+            fillColor: const Color.fromARGB(25, 255, 255, 255),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
               borderSide: BorderSide.none,
@@ -329,6 +407,7 @@ class _SupportPageState extends State<SupportPage> {
     );
   }
 
+  // Helper method to build a text area.
   Widget _buildMessageField(String label, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,7 +427,7 @@ class _SupportPageState extends State<SupportPage> {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Color.fromARGB(25, 255, 255, 255),
+            fillColor: const Color.fromARGB(25, 255, 255, 255),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
               borderSide: BorderSide.none,

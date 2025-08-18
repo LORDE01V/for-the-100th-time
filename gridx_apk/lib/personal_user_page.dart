@@ -49,7 +49,7 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
       _isLoading = true;
     });
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token'); // Assuming token is stored after login
+    final token = prefs.getString('access_token'); // Assuming token is stored after login
 
     if (token == null) {
       if (mounted) {
@@ -115,7 +115,7 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
       _isSaving = true;
     });
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+    final token = prefs.getString('access_token');
 
     if (token == null) {
       if (mounted) {
@@ -167,6 +167,7 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Profile updated successfully!')),
           );
+          await _fetchUserData(); // Re-fetch data to update UI
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to update profile: ${response.statusCode}')),
@@ -259,8 +260,8 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
                               const SizedBox(height: 30),
                               CircleAvatar(
                                 radius: 40,
-                                backgroundImage: _profilePictureUrl.isNotEmpty
-                                    ? NetworkImage(_profilePictureUrl) as ImageProvider<Object>
+                                backgroundImage: _profilePictureUrl.isNotEmpty && Uri.tryParse(_profilePictureUrl)?.hasAbsolutePath == true
+                                    ? NetworkImage(_profilePictureUrl)
                                     : const AssetImage('assets/images/avatar_placeholder.png'),
                                 backgroundColor: Colors.transparent,
                               ),
