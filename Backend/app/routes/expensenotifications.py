@@ -1,13 +1,16 @@
 from flask import Blueprint, request, jsonify
 from Backend.support import execute_query
+from .auth_middleware import token_required
 
 expensenotifications_bp = Blueprint('expensenotifications', __name__)
 
 @expensenotifications_bp.route('/user/notifications', methods=['GET'])
+@token_required
 def get_notifications():
-    user_id = request.args.get('user_id')
-    if not user_id:
-        return jsonify({'error': 'Missing user_id'}), 400
+    user_id = request.user_id  # Get user_id from token
+    # The user_id is now retrieved from the token, so this check is redundant
+    # if not user_id:
+    #     return jsonify({'error': 'Missing user_id'}), 400
 
     query = """
         SELECT id, message, created_at, is_read

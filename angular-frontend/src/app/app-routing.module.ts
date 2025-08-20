@@ -3,12 +3,15 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { Dashboard } from './pages/dashboard_page/dashboard';
 import { AiSuggestions } from './pages/ai-suggestions_page/ai-suggestions';
+import { NotificationsPage } from './pages/notifications_page/notifications-page';
+import { authGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomePageComponent },
   { path: 'dashboard', component: Dashboard },
   { path: 'ai-suggestions', component: AiSuggestions },
+  { path: 'notifications', component: NotificationsPage, canActivate: [authGuard] },
   { path: '**', redirectTo: '/home' } // Handle 404
 ];
 

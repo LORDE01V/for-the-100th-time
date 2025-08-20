@@ -1,53 +1,314 @@
-<div class="forum-container">
-    <h1 class="forum-title">Community Forum</h1>
-    <p class="forum-subtitle">Connect with other users, share tips, and get support!</p>
+<div class="forum-container" [style.background-image]="'url(' + backgroundImageUrl + ')'">
+  <div class="forum-overlay"></div>
   
-    <ng-container *ngIf="!selectedTopic">
+  <div class="forum-content">
+    <!-- Header Section -->
+    <div class="forum-header">
+      <h1 class="forum-title">Community Forum</h1>
+      <p class="forum-subtitle">Connect with other users, share tips, and get support!</p>
+    </div>
+
+    <!-- Environmental Impact Section -->
+    <section class="impact-section">
+      <h2 class="section-title">Environmental Impact</h2>
+      
+      <!-- Impact Statistics Cards -->
+      <div class="impact-stats">
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-content">
+            <h3>Total Solar Energy Provided</h3>
+            <p class="stat-value">1.2M kWh saved</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">🏠</div>
+          <div class="stat-content">
+            <h3>Households Served</h3>
+            <p class="stat-value">4,300+ families empowered</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">🌿</div>
+          <div class="stat-content">
+            <h3>CO₂ Emissions Reduced</h3>
+            <p class="stat-value">620 tons offset</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Community Voices Section -->
+    <section class="testimonials-section">
+      <h2 class="section-title">Community Voices</h2>
+      
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <div class="profile-image">
+            <img src="assets/images/profile-woman.jpg" alt="Community Member" />
+          </div>
+          <blockquote class="testimonial-quote">
+            "Solar energy has never been easier."
+          </blockquote>
+          <div class="rating">
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+          </div>
+          <p class="testimonial-author">David Wilson</p>
+        </div>
+        
+        <!-- Navigation Dots -->
+        <div class="testimonial-dots">
+          <span class="dot active"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Share Your Story Section -->
+    <section class="share-story-section">
+      <h2 class="section-title">Share Your Story</h2>
+      
+      <div class="story-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" placeholder="Enter your name" />
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Your Email</label>
+            <input type="email" id="email" placeholder="Enter your email" />
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="story">Share your story</label>
+          <textarea id="story" rows="4" placeholder="Tell us about your renewable energy journey..."></textarea>
+        </div>
+        
+        <div class="rating-section">
+          <label>Rate your experience</label>
+          <div class="rating-input">
+            <span class="rating-star" data-rating="1">☆</span>
+            <span class="rating-star" data-rating="2">☆</span>
+            <span class="rating-star" data-rating="3">☆</span>
+            <span class="rating-star" data-rating="4">☆</span>
+            <span class="rating-star" data-rating="5">☆</span>
+          </div>
+        </div>
+        
+        <button class="submit-btn">Submit Story</button>
+      </div>
+    </section>
+
+    <!-- Upcoming Events Calendar Section -->
+    <section class="events-section">
+      <h2 class="section-title">Upcoming Events Calendar</h2>
+      
+      <div class="events-controls">
+        <div class="search-bar">
+          <input type="text" placeholder="Search events..." />
+          <span class="search-icon">🔍</span>
+        </div>
+        
+        <div class="filter-dropdown">
+          <select>
+            <option value="">Filter by event type</option>
+            <option value="meeting">Meeting</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="appointment">Appointment</option>
+            <option value="reminder">Reminder</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="calendar-widget">
+        <div class="calendar-header">
+          <button class="calendar-nav">‹</button>
+          <h3>August 2025</h3>
+          <button class="calendar-nav">›</button>
+        </div>
+        
+        <div class="calendar-grid">
+          <div class="calendar-days">
+            <span>Sun</span>
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+          </div>
+          
+          <div class="calendar-dates">
+            <!-- Calendar dates with events -->
+            <div class="date-cell">
+              <span class="date">1</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">2</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">3</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">4</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">5</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">6</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">7</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">8</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">9</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">10</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">11</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">12</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">13</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">14</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">15</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">16</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">17</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">18</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">19</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">20</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">21</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">22</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">23</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">24</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">25</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">26</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">27</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">28</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">29</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">30</span>
+            </div>
+            <div class="date-cell">
+              <span class="date">31</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Event Legend -->
+        <div class="event-legend">
+          <div class="legend-item">
+            <span class="legend-color meeting"></span>
+            <span>Meeting</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color maintenance"></span>
+            <span>Maintenance</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color appointment"></span>
+            <span>Appointment</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color reminder"></span>
+            <span>Reminder</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color other"></span>
+            <span>Other</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Solar + Fintech Matters Section -->
+    <section class="why-matters-section">
+      <h2 class="section-title">Why Solar + Fintech Matters</h2>
+      
+      <div class="matters-content">
+        <p class="matters-text">
+          Combining solar technology with fintech solutions empowers communities, drives sustainable growth, 
+          and builds a cleaner future for generations to come. Our platform bridges the gap between renewable 
+          energy adoption and financial accessibility, making green energy solutions available to everyone 
+          while contributing to a more sustainable planet.
+        </p>
+      </div>
+    </section>
+
+    <!-- Original Forum Topics (Hidden by default, can be toggled) -->
+    <ng-container *ngIf="showOriginalForum">
       <div class="topics-list">
         <div
           class="topic-card"
           *ngFor="let topic of dummyTopics"
           (click)="selectTopic(topic)"
         >
-          <h2>{{ topic.title }}</h2>
-          <p>by {{ topic.author }} | Last activity: {{ topic.lastActivity }} | Replies: {{ topic.replies }}</p>
-        </div>
-      </div>
-    </ng-container>
-  
-    <ng-container *ngIf="selectedTopic">
-      <div class="discussion-card">
-        <button class="back-btn" (click)="selectedTopic = null">Back to Topics</button>
-        <h2>{{ selectedTopic.title }}</h2>
-        <div class="posts-list">
-          <div class="post" *ngFor="let post of getCurrentPosts()">
-            <span class="avatar" [style.background]="post.avatarColor">{{ post.name[0] }}</span>
-            <div>
-              <strong>{{ post.name }}</strong>
-              <p>{{ post.message }}</p>
+          <div class="topic-header">
+            <h2 class="topic-title">{{ topic.title }}</h2>
+            <div class="topic-meta">
+              <span class="author">by {{ topic.author }}</span>
+              <span class="last-activity">Last activity: {{ topic.lastActivity }}</span>
+              <span class="replies-count">{{ topic.replies }} replies</span>
             </div>
           </div>
-        </div>
-        <textarea
-          [(ngModel)]="newMessage"
-          placeholder="Type your message here..."
-          rows="3"
-          class="message-input"
-        ></textarea>
-        <div class="actions">
-          <button (click)="postMessage()" [disabled]="isLoading">Post Message</button>
-          <button (click)="summarizeDiscussion()" [disabled]="isSummarized || isLoading">
-            {{ isSummarized ? 'Summarized' : 'Summarize Discussion' }}
-          </button>
-          <button (click)="checkTone()" [disabled]="isCheckingTone">
-            Check Tone
-          </button>
-          <button *ngIf="isSummarized" (click)="showFullPosts()">Show Full Posts</button>
-        </div>
-        <div *ngIf="isLoading" class="loading">Loading...</div>
-        <div *ngIf="tone" class="tone" [ngClass]="tone">
-          Detected Tone: {{ tone | titlecase }}
+          <div class="topic-preview">
+            <p>{{ topic.posts[0].message || 'No messages yet...' }}</p>
+          </div>
         </div>
       </div>
     </ng-container>
   </div>
+</div>

@@ -27,13 +27,13 @@ export class NotificationsPage implements OnInit {
 
   ngOnInit() {
     // Replace with your actual auth service logic
-    const userStr = localStorage.getItem('currentUser');
-    if (!userStr) {
-      alert('Please log in to access this page');
-      this.router.navigate(['/login']);
-      return;
-    }
-    this.user = JSON.parse(userStr);
+    // const userStr = localStorage.getItem('currentUser');
+    // if (!userStr) {
+    //   alert('Please log in to access this page');
+    //   this.router.navigate(['/login']);
+    //   return;
+    // }
+    // this.user = JSON.parse(userStr);
 
     this.fetchNotifications();
   }

@@ -1,11 +1,13 @@
 from flask import Blueprint, request, jsonify
 from support import execute_query
+from .auth_middleware import token_required
 
 notifications_bp = Blueprint('notifications', __name__)
 
 @notifications_bp.route('/notifications/preferences', methods=['GET', 'POST'])
+@token_required
 def notification_preferences():
-    user_id = request.headers.get('User-ID')  # Assuming user ID is passed in headers
+    user_id = request.user_id  # Get user_id from token
 
     if not user_id:
         return jsonify({'error': 'User ID is required'}), 400

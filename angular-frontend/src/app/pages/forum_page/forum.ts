@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 interface ForumPost {
   name: string;
@@ -25,6 +26,9 @@ interface ForumTopic {
   imports: [CommonModule, FormsModule]
 })
 export class Forum {
+  // Background image for renewable energy theme
+  backgroundImageUrl: SafeUrl;
+
   dummyTopics: ForumTopic[] = [
     {
       id: 1,
@@ -40,7 +44,66 @@ export class Forum {
         { name: "Zanele", avatarColor: "pink", message: "Angle adjustments based on seasons help." },
       ]
     },
-    // ... (add the rest of the topics from ForumPage.js)
+    {
+      id: 2,
+      title: 'Best Energy Storage Solutions',
+      author: 'Sarah Wilson',
+      lastActivity: '2025-03-14',
+      replies: 8,
+      posts: [
+        { name: "David", avatarColor: "green", message: "Lithium-ion batteries are the most efficient for home use." },
+        { name: "Maria", avatarColor: "red", message: "Consider the lifespan and warranty before purchasing." },
+        { name: "James", avatarColor: "indigo", message: "Flow batteries are great for long-term storage." },
+      ]
+    },
+    {
+      id: 3,
+      title: 'Wind Turbine Installation Guide',
+      author: 'Mike Johnson',
+      lastActivity: '2025-03-13',
+      replies: 12,
+      posts: [
+        { name: "Emma", avatarColor: "yellow", message: "Height and location are crucial for optimal performance." },
+        { name: "Robert", avatarColor: "cyan", message: "Check local zoning regulations first." },
+        { name: "Lisa", avatarColor: "magenta", message: "Professional installation is highly recommended." },
+      ]
+    },
+    {
+      id: 4,
+      title: 'Energy Bill Reduction Strategies',
+      author: 'Alex Chen',
+      lastActivity: '2025-03-12',
+      replies: 15,
+      posts: [
+        { name: "Tom", avatarColor: "lime", message: "Smart thermostats can save up to 20% on heating/cooling." },
+        { name: "Anna", avatarColor: "brown", message: "LED lighting is a simple but effective upgrade." },
+        { name: "Chris", avatarColor: "navy", message: "Energy audits help identify waste areas." },
+      ]
+    },
+    {
+      id: 5,
+      title: 'Renewable Energy Tax Incentives',
+      author: 'Jennifer Lee',
+      lastActivity: '2025-03-11',
+      replies: 6,
+      posts: [
+        { name: "Mark", avatarColor: "olive", message: "Federal tax credits can cover 30% of installation costs." },
+        { name: "Rachel", avatarColor: "coral", message: "State incentives vary significantly by location." },
+        { name: "Paul", avatarColor: "slate", message: "Keep all receipts for tax documentation." },
+      ]
+    },
+    {
+      id: 6,
+      title: 'Smart Grid Integration Tips',
+      author: 'Carlos Rodriguez',
+      lastActivity: '2025-03-10',
+      replies: 9,
+      posts: [
+        { name: "Sophie", avatarColor: "gold", message: "Smart meters provide real-time energy usage data." },
+        { name: "Daniel", avatarColor: "silver", message: "Grid-tied systems can sell excess energy back." },
+        { name: "Nina", avatarColor: "bronze", message: "Battery backup systems provide power during outages." },
+      ]
+    }
   ];
 
   selectedTopic: ForumTopic | null = null;
@@ -51,6 +114,12 @@ export class Forum {
   tone: string | null = null;
   isSummarized: boolean = false;
   isCheckingTone: boolean = false;
+  showOriginalForum: boolean = true;
+
+  constructor(private sanitizer: DomSanitizer) {
+    // Set renewable energy background image
+    this.backgroundImageUrl = this.sanitizer.bypassSecurityTrustUrl('assets/images/renewable-energy-background.jpg');
+  }
 
   selectTopic(topic: ForumTopic) {
     this.selectedTopic = topic;
