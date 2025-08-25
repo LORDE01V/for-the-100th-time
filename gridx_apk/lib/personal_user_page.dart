@@ -50,6 +50,7 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
     });
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token'); // Assuming token is stored after login
+    print('DEBUG: Token retrieved from SharedPreferences in PersonalUserPage: $token'); // Add this line
 
     if (token == null) {
       if (mounted) {
@@ -71,7 +72,7 @@ class _PersonalUserPageState extends State<PersonalUserPage> {
 
       if (mounted) {
         if (response.statusCode == 200) {
-          final Map<String, dynamic> data = jsonDecode(response.body);
+          final data = json.decode(response.body);
           _emergencyContactNameController.text = data['emergency_contact_name'] ?? '';
           _emergencyContactNumberController.text = data['emergency_contact_number'] ?? '';
           _fullNameController.text = data['full_name'] ?? '';

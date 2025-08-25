@@ -129,107 +129,107 @@ def get_db():
         return None
 
 # Auth routes (updated for PostgreSQL)
-@flask_app.route('/api/auth/register', methods=['POST'])
-def flask_register():
-    conn = None
-    try:
-        data = request.get_json()
-        print(f"DEBUG: Raw data received by backend: {data}")
-        if data is None:
-            print("DEBUG: request.get_json() returned None. Check Content-Type header or request body.")
-        elif not isinstance(data, dict):
-            print(f"DEBUG: Data is not a dictionary: {type(data)}")
-        else:
-            print(f"DEBUG: Keys in received data: {data.keys()}")
-            print(f"DEBUG: Values in received data: {data.values()}")
+# @flask_app.route('/api/auth/register', methods=['POST'])
+# def flask_register():
+#     conn = None
+#     try:
+#         data = request.get_json()
+#         print(f"DEBUG: Raw data received by backend: {data}")
+#         if data is None:
+#             print("DEBUG: request.get_json() returned None. Check Content-Type header or request body.")
+#         elif not isinstance(data, dict):
+#             print(f"DEBUG: Data is not a dictionary: {type(data)}")
+#         else:
+#             print(f"DEBUG: Keys in received data: {data.keys()}")
+#             print(f"DEBUG: Values in received data: {data.values()}")
         
-        # Validate required fields
-        if not all(key in data for key in ['name', 'email', 'password']):
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+#         # Validate required fields
+#         if not all(key in data for key in ['name', 'email', 'password']):
+#             return jsonify({'success': False, 'message': 'Missing required fields'}), 400
 
-        # Get optional phone or set None
-        phone = data.get('phone', None)
+#         # Get optional phone or set None
+#         phone = data.get('phone', None)
 
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database error'}), 500
+#         conn = get_db()
+#         if not conn:
+#             return jsonify({'success': False, 'message': 'Database error'}), 500
 
-        with conn.cursor() as cur:
-            # Check existing user
-            cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
-            if cur.fetchone():
-                return jsonify({'success': False, 'message': 'Email already exists'}), 400
+#         with conn.cursor() as cur:
+#             # Check existing user
+#             cur.execute("SELECT id FROM users WHERE email = %s", (data['email'],))
+#             if cur.fetchone():
+#                 return jsonify({'success': False, 'message': 'Email already exists'}), 400
 
-            # Create user with proper hash length
-            hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
-            cur.execute(
-                """INSERT INTO users (email, password_hash, full_name, phone_number)
-                VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
-                (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
-            )
-            user_data = cur.fetchone()
-            if not user_data:
-                return jsonify({'success': False, 'message': 'Failed to create user'}), 500
-            conn.commit()
+#             # Create user with proper hash length
+#             hashed_pw = generate_password_hash(data['password'], method='pbkdf2:sha256', salt_length=8)  # Explicit method
+#             cur.execute(
+#                 """INSERT INTO users (email, password_hash, full_name, phone_number)
+#                 VALUES (%s, %s, %s, %s) RETURNING id, email, full_name""",
+#                 (data['email'].lower(), hashed_pw, data['name'], phone)  # Force lowercase
+#             )
+#             user_data = cur.fetchone()
+#             if not user_data:
+#                 return jsonify({'success': False, 'message': 'Failed to create user'}), 500
+#             conn.commit()
 
-        send_welcome_email(data['email'], data['name'])
+#         send_welcome_email(data['email'], data['name'])
 
-        return jsonify({
-            'success': True,
-            'user': {
-                'id': user_data[0],
-                'email': user_data[1],
-                'name': user_data[2]
-            }
-        }), 201
+#         return jsonify({
+#             'success': True,
+#             'user': {
+#                 'id': user_data[0],
+#                 'email': user_data[1],
+#                 'name': user_data[2]
+#             }
+#         }), 201
 
-    except Exception as e:
-        print(f"Registration Error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Registration failed'}), 500
-    finally:
-        if conn: conn.close()
+#     except Exception as e:
+#         print(f"Registration Error: {str(e)}")
+#         return jsonify({'success': False, 'message': 'Registration failed'}), 500
+#     finally:
+#         if conn: conn.close()
 
-@flask_app.route('/api/auth/login', methods=['POST'])
-def flask_login():
-    try:
-        data = request.get_json()
-        email = data.get('email', '').lower()  # Force lowercase
-        password = data.get('password')
+# @flask_app.route('/api/auth/login', methods=['POST'])
+# def flask_login():
+#     try:
+#         data = request.get_json()
+#         email = data.get('email', '').lower()  # Force lowercase
+#         password = data.get('password')
 
-        if not email or not password:
-            return jsonify({'success': False, 'message': 'Missing credentials'}), 400
+#         if not email or not password:
+#             return jsonify({'success': False, 'message': 'Missing credentials'}), 400
 
-        conn = get_db()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Database connection error'}), 500
-        with conn.cursor() as cur:
-            cur.execute('''
-                SELECT id, password_hash, full_name 
-                FROM users 
-                WHERE email = %s
-            ''', (email,))
-            user = cur.fetchone()
+#         conn = get_db()
+#         if not conn:
+#             return jsonify({'success': False, 'message': 'Database connection error'}), 500
+#         with conn.cursor() as cur:
+#             cur.execute('''
+#                 SELECT id, password_hash, full_name 
+#                 FROM users 
+#                 WHERE email = %s
+#             ''', (email,))
+#             user = cur.fetchone()
 
-            if user and check_password_hash(user[1], password):
-                access_token = create_access_token(identity=user[0])
-                return jsonify({
-                    'success': True,
-                    'token': access_token,
-                    'user': {
-                        'id': user[0],
-                        'name': user[2],
-                        'email': email
-                    }
-                }), 200
+#             if user and check_password_hash(user[1], password):
+#                 access_token = create_access_token(identity=user[0])
+#                 return jsonify({
+#                     'success': True,
+#                     'token': access_token,
+#                     'user': {
+#                         'id': user[0],
+#                         'name': user[2],
+#                         'email': email
+#                     }
+#                 }), 200
 
-        return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+#         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
-    except Exception as e:
-        flask_app.logger.error(f"Login error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Login failed'}), 500
-    finally:
-        if conn:
-            conn.close()
+#     except Exception as e:
+#         flask_app.logger.error(f"Login error: {str(e)}")
+#         return jsonify({'success': False, 'message': 'Login failed'}), 500
+#     finally:
+#         if conn:
+#             conn.close()
 
 @flask_app.route('/api/topup', methods=['OPTIONS'])
 def handle_topup_options():
@@ -1048,4 +1048,4 @@ if __name__ == '__main__':
     for rule in flask_app.url_map.iter_rules():
         print(rule)
     print("=========================")
-    flask_app.run(host='0.0.0.0', port=5000, debug=True)
+    flask_app.run(debug=True, host='0.0.0.0', port=5000)

@@ -3,9 +3,10 @@ import 'dart:ui';
 
 import 'package:http/http.dart' as http; // Import http package
 import 'dart:convert'; // Import for JSON encoding/decoding
-import 'package:gridx_apk/home_page.dart'; // Import HomePage
 import 'package:gridx_apk/sign_up_screen.dart'; // Import SignUpScreen
 import 'package:shared_preferences/shared_preferences.dart'; // Import for SharedPreferences
+import 'package:google_sign_in/google_sign_in.dart'; // Import for Google Sign-In
+import 'package:gridx_apk/main.dart'; // Import WelcomeScreen
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -19,6 +20,8 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _rememberMe = false;
   bool _isLoading = false;
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   void dispose() {
@@ -62,7 +65,6 @@ class _SignInScreenState extends State<SignInScreen> {
       if (response.statusCode == 200) {
         // Login successful
         final Map<String, dynamic> responseData = response.body.isNotEmpty ? jsonDecode(response.body) : {};
-        final String username = responseData['user']?['name'] ?? 'User'; // Safely access user name
         final String? token = responseData['access_token'];
         final String message = responseData['message'] ?? 'Login successful!';
 
@@ -76,7 +78,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(message)),
           );
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(username: username)));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const WelcomeScreen()));
         }
       } else if (response.statusCode == 401) {
         final Map<String, dynamic> responseData = response.body.isNotEmpty ? jsonDecode(response.body) : {};
@@ -99,6 +101,93 @@ class _SignInScreenState extends State<SignInScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Network error: $e")),
+        );
+      }
+    }
+  }
+
+  void _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        // The user canceled the sign-in
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // TODO: Send googleAuth.accessToken or googleAuth.idToken to your backend for verification
+      // and to create/link a user account.
+
+      if (googleAuth.idToken == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Failed to get Google ID token.")),
+          );
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final backendResponse = await http.post(
+        Uri.parse('http://10.0.2.2:5000/api/auth/google-verify'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'id_token': googleAuth.idToken!,
+        }),
+      );
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+
+      if (backendResponse.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(backendResponse.body);
+        final String? token = responseData['access_token'];
+
+        if (token != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('access_token', token);
+        }
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['message'] ?? "Google Sign-In successful!")),
+          );
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const WelcomeScreen()));
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(backendResponse.body.isNotEmpty ? (jsonDecode(backendResponse.body)?['message'] ?? "Google Sign-In failed on backend.") : "Google Sign-In failed on backend.")),
+          );
+        }
+      }
+
+    } catch (error) {
+      print('Error during Google Sign-In: $error');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Google Sign-In failed: $error")),
         );
       }
     }
@@ -278,6 +367,48 @@ class _SignInScreenState extends State<SignInScreen> {
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _isLoading ? null : _handleGoogleSignIn,
+                      borderRadius: BorderRadius.circular(30.0),
+                      child: Center(
+                        child: _isLoading
+                            ? const CircularProgressIndicator(color: Colors.black54)
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Image.asset('assets/images/googleicon.png', height: 24.0),
+                                  const SizedBox(width: 10),
+                                  const Text(
+                                    "Sign in with Google",
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                       ),
                     ),

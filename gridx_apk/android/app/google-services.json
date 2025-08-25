@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "958958813651",
+    "project_id": "grid-x-301",
+    "storage_bucket": "grid-x-301.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958958813651:android:9ff9f7df6b3430a630ef26",
+        "android_client_info": {
+          "package_name": "com.example.gridx_apk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "958958813651-72cq2dvuo235oghjsnrviv5tmaganrrn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gridx_apk",
+            "certificate_hash": "e203fd193de4b1a7bb29f3b12c4bf18d3595b97a"
+          }
+        },
+        {
+          "client_id": "618326948816-l761boof5ta4kf0lhbmki57uja9uj32p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvYmr3nxndbH7mBBjCFdHl8aDdlp8xT5E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "958958813651-10a9tcqmbf558pf76ct3v5vpi24rhddv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

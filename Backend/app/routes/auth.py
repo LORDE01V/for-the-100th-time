@@ -10,6 +10,8 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from flask_cors import CORS, cross_origin
 from flask import jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/auth")
@@ -182,6 +184,62 @@ def login():
     except Exception as e:
         logging.error(f'Login error: {str(e)}')
         return create_response('Login failed', 500)
+
+@auth_bp.route('/google-verify', methods=['POST'])
+def google_verify():
+    try:
+        id_token_from_frontend = request.json.get('id_token')
+        if not id_token_from_frontend:
+            return create_response('ID token not provided', 400)
+
+        # Specify the CLIENT_ID of the app that accesses the backend
+        # (the CLIENT_ID of the Android app, iOS app, or web app)
+        client_id = os.getenv('GOOGLE_CLIENT_ID') # Get CLIENT_ID from environment variables
+
+        # Verify the ID token
+        # Use the requests_toolbelt.adapters.ssl.SSLAdapter for older Python versions if needed
+        # or ensure your environment has up-to-date certificates.
+        # For most cases, `google_requests.Request()` should work directly.
+        id_info = id_token.verify_oauth2_token(id_token_from_frontend, google_requests.Request(), client_id)
+
+        if id_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            raise ValueError('Wrong issuer.')
+
+        # ID token is valid. Get the user's Google Account ID, email, and name
+        user_email = id_info['email']
+        user_full_name = id_info.get('name', user_email.split('@')[0])
+
+        user = get_user_by_email(user_email)
+        if not user:
+            # User does not exist in our DB, create a new one.
+            # You might want to generate a random password or mark this user as Google authenticated
+            # For simplicity, we'll create with a placeholder password_hash
+            password_hash = generate_password_hash(f'google_user_{user_email}')
+            user_id = create_user(email=user_email, password_hash=password_hash, full_name=user_full_name)
+            if not user_id:
+                return create_response('Failed to create user after Google sign-in', 500)
+            user = get_user_by_email(user_email) # Fetch the newly created user
+
+        # Generate your app's access token
+        access_token = create_access_token(identity=str(user['id']))
+
+        return jsonify({
+            'success': True,
+            'message': 'Google sign-in successful',
+            'access_token': access_token,
+            'user': {
+                'id': user['id'],
+                'email': user['email'],
+                'name': user['full_name']
+            }
+        }), 200
+
+    except ValueError as e:
+        logging.error(f"Google token verification error: {str(e)}")
+        return create_response(f'Invalid Google ID token: {str(e)}', 400)
+    except Exception as e:
+        logging.error(f"Google sign-in backend error: {str(e)}")
+        return create_response('Google sign-in failed', 500)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():

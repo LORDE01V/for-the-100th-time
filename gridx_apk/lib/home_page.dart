@@ -4,27 +4,27 @@ import 'package:gridx_apk/personal_user_page.dart'; // Import PersonalUserPage
 import 'package:gridx_apk/support_page.dart'; // Import SupportPage
 
 // This is the main entry point for the application.
-void main() {
-  runApp(const MyApp());
-}
+// void main() {
+//   runApp(const MyApp());
+// }
 
 // MyApp is a StatelessWidget that provides the basic app setup.
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false, // Hides the debug banner
-      title: 'GridX Energy',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomeScreen(),
-    );
-  }
-}
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false, // Hides the debug banner
+//       title: 'GridX Energy',
+//       theme: ThemeData(
+//         brightness: Brightness.light,
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: const HomeScreen(),
+//     );
+//   }
+// }
 
 // HomeScreen is a StatefulWidget to manage the state of the active tab.
 class HomeScreen extends StatefulWidget {
@@ -362,11 +362,17 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _selectedIndex = index;
         });
-        if (index == 3) { // Assuming Profile is the 4th item (index 3)
+        if (index == 0) { // Dashboard button
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false, // Remove all previous routes
+          );
+        } else if (index == 3) { // Profile button
           Navigator.push(context, MaterialPageRoute(builder: (context) => PersonalUserPage()));
         }
       },
-      backgroundColor: const Color(0xFF122849).withValues(alpha: 0.7),
+      backgroundColor: const Color(0xFF122849).withOpacity(0.7),
       type: BottomNavigationBarType.fixed,
       selectedFontSize: 12.0,
       unselectedFontSize: 12.0,

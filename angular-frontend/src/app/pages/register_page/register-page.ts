@@ -95,7 +95,7 @@ export class RegisterPage {
     this.loading = true;
     try {
       const userData = {
-        full_name: this.name,
+        name: this.name,
         email: this.email,
         password: this.password,
         phone: this.phone
