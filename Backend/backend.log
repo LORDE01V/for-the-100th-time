@@ -4175,3 +4175,85 @@ LINE 1: ...d, email, password_hash, full_name, phone_number, last_login...
 2025-10-18 00:26:57,289 - INFO -  * Restarting with stat
 2025-10-18 00:26:59,501 - WARNING -  * Debugger is active!
 2025-10-18 00:26:59,508 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:27:19,905 - INFO - 127.0.0.1 - - [18/Oct/2025 00:27:19] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-10-18 00:27:19,958 - INFO - 127.0.0.1 - - [18/Oct/2025 00:27:19] "OPTIONS /notifications/preferences HTTP/1.1" 200 -
+2025-10-18 00:27:20,282 - INFO - 127.0.0.1 - - [18/Oct/2025 00:27:20] "GET /api/auth/user HTTP/1.1" 200 -
+2025-10-18 00:27:20,347 - INFO - 127.0.0.1 - - [18/Oct/2025 00:27:20] "GET /notifications/preferences HTTP/1.1" 200 -
+2025-10-18 00:28:11,525 - INFO - 127.0.0.1 - - [18/Oct/2025 00:28:11] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-10-18 00:28:11,872 - INFO - 127.0.0.1 - - [18/Oct/2025 00:28:11] "OPTIONS /notifications/preferences HTTP/1.1" 200 -
+2025-10-18 00:28:11,942 - INFO - 127.0.0.1 - - [18/Oct/2025 00:28:11] "GET /api/auth/user HTTP/1.1" 200 -
+2025-10-18 00:28:12,167 - INFO - 127.0.0.1 - - [18/Oct/2025 00:28:12] "GET /notifications/preferences HTTP/1.1" 200 -
+2025-10-18 00:28:18,487 - INFO - 127.0.0.1 - - [18/Oct/2025 00:28:18] "OPTIONS /api/auth/delete-account HTTP/1.1" 200 -
+2025-10-18 00:28:18,861 - INFO - Database connection successful.
+2025-10-18 00:28:18,903 - INFO - 127.0.0.1 - - [18/Oct/2025 00:28:18] "DELETE /api/auth/delete-account HTTP/1.1" 200 -
+2025-10-18 00:28:22,621 - INFO - 127.0.0.1 - - [18/Oct/2025 00:28:22] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-10-18 00:28:23,125 - ERROR - User not found for email: angelz@gmail.com
+2025-10-18 00:28:23,126 - INFO - 127.0.0.1 - - [18/Oct/2025 00:28:23] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2025-10-18 00:29:30,421 - INFO - 127.0.0.1 - - [18/Oct/2025 00:29:30] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-10-18 00:29:31,285 - INFO - User angelz@gmail.com registered successfully with ID: 43
+2025-10-18 00:29:31,286 - INFO - 127.0.0.1 - - [18/Oct/2025 00:29:31] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-10-18 00:29:34,504 - INFO - 127.0.0.1 - - [18/Oct/2025 00:29:34] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-10-18 00:29:35,332 - INFO - Database connection successful.
+2025-10-18 00:29:35,337 - INFO - 127.0.0.1 - - [18/Oct/2025 00:29:35] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-18 00:30:31,199 - INFO - 127.0.0.1 - - [18/Oct/2025 00:30:31] "[33mGET /api/community-stories HTTP/1.1[0m" 404 -
+2025-10-18 00:30:31,442 - INFO - 127.0.0.1 - - [18/Oct/2025 00:30:31] "[33mGET /api/community-stories HTTP/1.1[0m" 404 -
+2025-10-18 00:40:58,833 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-10-18 00:40:58,833 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-18 00:40:58,835 - INFO -  * Restarting with stat
+2025-10-18 00:41:00,560 - WARNING -  * Debugger is active!
+2025-10-18 00:41:00,564 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:44:41,223 - INFO - 127.0.0.1 - - [18/Oct/2025 00:44:41] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-10-18 00:44:41,968 - INFO - Database connection successful.
+2025-10-18 00:44:41,975 - INFO - 127.0.0.1 - - [18/Oct/2025 00:44:41] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-18 00:44:51,121 - INFO - 127.0.0.1 - - [18/Oct/2025 00:44:51] "[33mOPTIONS /stories HTTP/1.1[0m" 404 -
+2025-10-18 00:45:13,037 - INFO - 127.0.0.1 - - [18/Oct/2025 00:45:13] "[33mOPTIONS /stories HTTP/1.1[0m" 404 -
+2025-10-18 00:46:34,686 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\main.py', reloading
+2025-10-18 00:46:34,830 - INFO -  * Restarting with stat
+2025-10-18 00:46:37,636 - WARNING -  * Debugger is active!
+2025-10-18 00:46:37,644 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:46:46,032 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\main.py', reloading
+2025-10-18 00:46:46,200 - INFO -  * Restarting with stat
+2025-10-18 00:46:48,104 - WARNING -  * Debugger is active!
+2025-10-18 00:46:48,108 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:49:42,952 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\app\\routes\\stories.py', reloading
+2025-10-18 00:49:43,179 - INFO -  * Restarting with stat
+2025-10-18 00:49:45,599 - WARNING -  * Debugger is active!
+2025-10-18 00:49:45,604 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:49:50,505 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\app\\routes\\stories.py', reloading
+2025-10-18 00:49:50,654 - INFO -  * Restarting with stat
+2025-10-18 00:49:53,029 - WARNING -  * Debugger is active!
+2025-10-18 00:49:53,036 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:50:20,494 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\app\\routes\\stories.py', reloading
+2025-10-18 00:50:20,663 - INFO -  * Restarting with stat
+2025-10-18 00:50:22,961 - WARNING -  * Debugger is active!
+2025-10-18 00:50:22,972 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:50:34,681 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\app\\routes\\stories.py', reloading
+2025-10-18 00:50:34,856 - INFO -  * Restarting with stat
+2025-10-18 00:50:36,847 - WARNING -  * Debugger is active!
+2025-10-18 00:50:36,852 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:51:16,439 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\app\\routes\\stories.py', reloading
+2025-10-18 00:51:16,602 - INFO -  * Restarting with stat
+2025-10-18 00:51:18,550 - WARNING -  * Debugger is active!
+2025-10-18 00:51:18,554 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:51:22,737 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\app\\routes\\stories.py', reloading
+2025-10-18 00:51:22,884 - INFO -  * Restarting with stat
+2025-10-18 00:51:24,606 - WARNING -  * Debugger is active!
+2025-10-18 00:51:24,610 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:51:31,157 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\app\\routes\\stories.py', reloading
+2025-10-18 00:51:31,321 - INFO -  * Restarting with stat
+2025-10-18 00:51:33,124 - WARNING -  * Debugger is active!
+2025-10-18 00:51:33,127 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:51:47,938 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\app\\routes\\stories.py', reloading
+2025-10-18 00:51:48,082 - INFO -  * Restarting with stat
+2025-10-18 00:53:01,223 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-10-18 00:53:01,224 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-18 00:53:01,228 - INFO -  * Restarting with stat
+2025-10-18 00:53:03,024 - WARNING -  * Debugger is active!
+2025-10-18 00:53:03,027 - INFO -  * Debugger PIN: 839-823-662
+2025-10-18 00:53:26,656 - INFO - 127.0.0.1 - - [18/Oct/2025 00:53:26] "[33mOPTIONS /stories HTTP/1.1[0m" 404 -

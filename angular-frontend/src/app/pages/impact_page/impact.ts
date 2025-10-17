@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 
-interface Testimonial {
+interface Story {
+  id: number;
   name: string;
   quote: string;
-  avatar: string;
   rating: number;
+  user_avatar: string;
+  created_at: string;
 }
 
 @Component({
@@ -24,56 +27,81 @@ export class Impact implements OnInit {
     { label: 'CO₂ Emissions Reduced', value: '620 tons offset', icon: 'eco' }
   ];
 
-  testimonials: Testimonial[] = [
-    { name: 'Emily Johnson', quote: 'GridX made solar simple for my family!', avatar: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167', rating: 5 },
-    { name: 'Michael Smith', quote: 'Fantastic support and easy to use.', avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91', rating: 4 },
-    { name: 'Jessica Brown', quote: 'I love tracking my energy savings.', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9', rating: 5 },
-    { name: 'David Wilson', quote: 'Solar energy has never been easier.', avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e', rating: 5 },
-    { name: 'Ashley Miller', quote: 'GridX is a game changer for my home.', avatar: 'https://images.unsplash.com/photo-1464983953574-0892a716854b', rating: 4 }
-    // ...add more as needed
-  ];
+  stories: Story[] = [];
+  currentStoryIndex = 0;
+  loading = true;
+  error: string | null = null;
 
-  // Testimonial form
-  quote = '';
+  // Form fields
   name = '';
   email = '';
+  quote = '';
   rating = 0;
 
-  // Carousel state
-  currentTestimonial = 0;
+  constructor(private apiService: ApiService) {}
 
-  ngOnInit() {
-    // Optionally, fetch testimonials from backend here
+  async ngOnInit() {
+    await this.loadStories();
   }
 
-  nextTestimonial() {
-    this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
+  async loadStories() {
+    this.loading = true;
+    this.error = null;
+    try {
+      this.stories = await this.apiService.get<Story[]>('/stories').toPromise() || [];
+      this.loading = false;
+    } catch (err) {
+      console.error('Failed to load stories:', err);
+      this.error = 'Failed to load stories. Please try again later.';
+      this.loading = false;
+    }
   }
 
-  prevTestimonial() {
-    this.currentTestimonial = (this.currentTestimonial - 1 + this.testimonials.length) % this.testimonials.length;
+  nextStory() {
+    if (this.currentStoryIndex < this.stories.length - 1) {
+      this.currentStoryIndex++;
+    }
+  }
+
+  prevStory() {
+    if (this.currentStoryIndex > 0) {
+      this.currentStoryIndex--;
+    }
   }
 
   setRating(star: number) {
     this.rating = star;
   }
 
-  submitTestimonial() {
+  async submitTestimonial() {
     if (!this.name || !this.email || !this.quote || !this.rating) {
       alert('Please fill in all fields and select a rating.');
       return;
     }
-    this.testimonials.push({
-      name: this.name,
-      quote: this.quote,
-      avatar: 'https://via.placeholder.com/50',
-      rating: this.rating
-    });
-    this.name = '';
-    this.email = '';
-    this.quote = '';
-    this.rating = 0;
-    alert('Thank you for your story!');
+
+    try {
+      const response = await this.apiService.post<any>('/stories', {
+        name: this.name,
+        email: this.email,
+        quote: this.quote,
+        rating: this.rating
+      }).toPromise();
+
+      alert('Thank you for your story! ' + 
+           (response?.needs_approval ? 'Your story is pending approval.' : 'Your story is now live!'));
+      
+      // Reset form
+      this.name = '';
+      this.email = '';
+      this.quote = '';
+      this.rating = 0;
+
+      // Refresh stories
+      await this.loadStories();
+    } catch (err) {
+      console.error('Failed to submit story:', err);
+      alert('Failed to submit your story. Please try again.');
+    }
   }
 
   downloadPDF() {

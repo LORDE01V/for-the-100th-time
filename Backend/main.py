@@ -103,6 +103,8 @@ flask_app.register_blueprint(events_calendar_bp)
 flask_app.register_blueprint(topup_bp, url_prefix='/api')
 flask_app.register_blueprint(expenses_bp, url_prefix='/api')
 flask_app.register_blueprint(expensenotifications_bp, url_prefix='/api')
+from app.routes.stories import stories_bp
+flask_app.register_blueprint(stories_bp, url_prefix='/api')
 
 # Serve static files
 @flask_app.route('/static/<path:filename>')
