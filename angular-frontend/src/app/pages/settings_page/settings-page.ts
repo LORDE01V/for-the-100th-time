@@ -157,9 +157,14 @@ export class SettingsPage {
   // Delete account handler
   async handleDeleteAccount() {
     this.showDeleteModal = false;
-    // Replace with real API call
-    alert('Account deleted (mock). Redirecting to home...');
-    window.location.href = '/';
+    try {
+      const res = await this.apiService.delete<any>('/api/auth/delete-account').toPromise();
+      // Clear local session and redirect to login
+      this.apiService.logout();
+      this.router.navigate(['/login']);
+    } catch (err) {
+      alert('Failed to delete account. Please try again.');
+    }
   }
 
   goBack() {

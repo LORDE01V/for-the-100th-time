@@ -381,19 +381,38 @@ def change_password():
 
 
 # Route to delete account
-
-
-# Route to delete account
 @auth_bp.route('/delete-account', methods=['DELETE'])
 @jwt_required()
 def delete_account():
     user_id = get_jwt_identity()
     conn = get_db()
-    with conn.cursor() as cur:
-        # Delete the user (and cascade to related data if your schema supports it)
-        cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
-        conn.commit()
-    return jsonify({'message': 'Account deleted successfully'}), 200
+    try:
+        with conn.cursor() as cur:
+            # Remove dependent records first (for tables without FK cascade)
+            cur.execute("DELETE FROM profiledetails WHERE id = %s", (int(user_id),))
+            cur.execute("DELETE FROM notification_preference WHERE user_id = %s", (int(user_id),))
+            cur.execute("DELETE FROM notifications WHERE user_id = %s", (int(user_id),))
+            cur.execute("DELETE FROM expenses WHERE user_id = %s", (int(user_id),))
+            cur.execute("DELETE FROM topup_settings WHERE user_id = %s", (int(user_id),))
+            cur.execute("DELETE FROM topup_transactions WHERE user_id = %s", (int(user_id),))
+
+            # Forum content (if present) - best effort
+            try:
+                cur.execute("DELETE FROM forum_replies WHERE user_id = %s", (int(user_id),))
+                cur.execute("DELETE FROM forum_topics WHERE user_id = %s", (int(user_id),))
+            except Exception:
+                pass
+
+            # Finally delete the user
+            cur.execute("DELETE FROM users WHERE id = %s", (int(user_id),))
+            conn.commit()
+
+        # Clear session after delete
+        session.clear()
+        return jsonify({'success': True, 'message': 'Account deleted successfully'}), 200
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'success': False, 'message': f'Failed to delete account: {str(e)}'}), 500
 
 # Route to handle login
 # @auth_bp.route('/login', methods=['POST'])
