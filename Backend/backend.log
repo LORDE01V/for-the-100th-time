@@ -4007,3 +4007,16 @@ What do you need?
 2025-08-25 10:22:08,646 - INFO - 127.0.0.1 - - [25/Aug/2025 10:22:08] "POST /api/auth/login HTTP/1.1" 200 -
 2025-08-25 10:22:27,789 - INFO - 127.0.0.1 - - [25/Aug/2025 10:22:27] "OPTIONS /api/auth/login HTTP/1.1" 200 -
 2025-08-25 10:22:28,376 - INFO - 127.0.0.1 - - [25/Aug/2025 10:22:28] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-17 23:18:26,474 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-10-17 23:18:26,474 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-17 23:18:26,477 - INFO -  * Restarting with stat
+2025-10-17 23:18:28,113 - WARNING -  * Debugger is active!
+2025-10-17 23:18:28,116 - INFO -  * Debugger PIN: 839-823-662
+2025-10-17 23:27:55,598 - INFO - 127.0.0.1 - - [17/Oct/2025 23:27:55] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-10-17 23:27:55,846 - ERROR - Registration error: DB_PASSWORD environment variable must be set.
+2025-10-17 23:27:55,848 - INFO - 127.0.0.1 - - [17/Oct/2025 23:27:55] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
+2025-10-17 23:31:13,273 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\main.py', reloading
+2025-10-17 23:31:13,534 - INFO -  * Restarting with stat

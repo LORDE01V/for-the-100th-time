@@ -531,7 +531,9 @@ def initialize_db():
         if conn: conn.close()
 
 # Initialize when imported
-initialize_db()
+import os
+if os.getenv('AUTO_INIT_DB', 'false').lower() in ('1', 'true', 'yes'):
+    initialize_db()
 
 # Test connection when run directly
 if __name__ == "__main__":
