@@ -4020,3 +4020,50 @@ What do you need?
 2025-10-17 23:27:55,848 - INFO - 127.0.0.1 - - [17/Oct/2025 23:27:55] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 500 -
 2025-10-17 23:31:13,273 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\main.py', reloading
 2025-10-17 23:31:13,534 - INFO -  * Restarting with stat
+2025-10-17 23:35:10,999 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-10-17 23:35:11,000 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-17 23:35:11,002 - INFO -  * Restarting with stat
+2025-10-17 23:35:12,478 - WARNING -  * Debugger is active!
+2025-10-17 23:35:12,482 - INFO -  * Debugger PIN: 839-823-662
+2025-10-17 23:35:57,282 - INFO - 127.0.0.1 - - [17/Oct/2025 23:35:57] "OPTIONS /api/auth/register HTTP/1.1" 200 -
+2025-10-17 23:35:57,985 - INFO - User angelz@gmail.com registered successfully with ID: 42
+2025-10-17 23:35:57,986 - INFO - 127.0.0.1 - - [17/Oct/2025 23:35:57] "[35m[1mPOST /api/auth/register HTTP/1.1[0m" 201 -
+2025-10-17 23:37:00,939 - INFO - 127.0.0.1 - - [17/Oct/2025 23:37:00] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-10-17 23:37:01,568 - INFO - 127.0.0.1 - - [17/Oct/2025 23:37:01] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-17 23:42:22,749 - INFO - 127.0.0.1 - - [17/Oct/2025 23:42:22] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-10-17 23:42:43,209 - INFO - 127.0.0.1 - - [17/Oct/2025 23:42:43] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-10-17 23:42:43,936 - INFO - 127.0.0.1 - - [17/Oct/2025 23:42:43] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-17 23:42:43,948 - INFO - 127.0.0.1 - - [17/Oct/2025 23:42:43] "OPTIONS /api/auth/user HTTP/1.1" 200 -
+2025-10-17 23:42:44,054 - INFO - 127.0.0.1 - - [17/Oct/2025 23:42:44] "[33mGET /api/auth/user HTTP/1.1[0m" 404 -
+2025-10-17 23:42:50,266 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\support.py', reloading
+2025-10-17 23:42:50,986 - INFO -  * Restarting with stat
+2025-10-17 23:42:57,247 - WARNING -  * Debugger is active!
+2025-10-17 23:42:57,254 - INFO -  * Debugger PIN: 839-823-662
+2025-10-17 23:43:21,043 - INFO - 127.0.0.1 - - [17/Oct/2025 23:43:21] "OPTIONS /profile/me HTTP/1.1" 200 -
+2025-10-17 23:43:21,495 - INFO - 127.0.0.1 - - [17/Oct/2025 23:43:21] "[35m[1mGET /profile/me HTTP/1.1[0m" 500 -
+2025-10-17 23:43:23,537 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\main.py', reloading
+2025-10-17 23:43:23,780 - INFO -  * Restarting with stat
+2025-10-17 23:50:46,346 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.65:5000
+2025-10-17 23:50:46,348 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-17 23:50:46,350 - INFO -  * Restarting with stat
+2025-10-17 23:50:48,184 - WARNING -  * Debugger is active!
+2025-10-17 23:50:48,190 - INFO -  * Debugger PIN: 839-823-662
+2025-10-17 23:51:01,749 - INFO - 127.0.0.1 - - [17/Oct/2025 23:51:01] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-10-17 23:51:02,439 - INFO - 127.0.0.1 - - [17/Oct/2025 23:51:02] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-17 23:55:12,279 - INFO - 127.0.0.1 - - [17/Oct/2025 23:55:12] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-10-17 23:55:12,927 - INFO - 127.0.0.1 - - [17/Oct/2025 23:55:12] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-17 23:58:06,321 - INFO - 127.0.0.1 - - [17/Oct/2025 23:58:06] "OPTIONS /api/user/expenses?user_id=42 HTTP/1.1" 200 -
+2025-10-17 23:58:06,772 - INFO - 127.0.0.1 - - [17/Oct/2025 23:58:06] "GET /api/user/expenses?user_id=42 HTTP/1.1" 200 -
+2025-10-17 23:58:24,503 - INFO - 127.0.0.1 - - [17/Oct/2025 23:58:24] "OPTIONS /api/topup HTTP/1.1" 200 -
+2025-10-17 23:58:50,122 - INFO - 127.0.0.1 - - [17/Oct/2025 23:58:50] "OPTIONS /api/user/expenses?user_id=42 HTTP/1.1" 200 -
+2025-10-17 23:58:50,559 - INFO - 127.0.0.1 - - [17/Oct/2025 23:58:50] "GET /api/user/expenses?user_id=42 HTTP/1.1" 200 -
+2025-10-17 23:59:47,421 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\main.py', reloading
+2025-10-17 23:59:47,693 - INFO -  * Restarting with stat
+2025-10-17 23:59:50,054 - WARNING -  * Debugger is active!
+2025-10-17 23:59:50,060 - INFO -  * Debugger PIN: 839-823-662

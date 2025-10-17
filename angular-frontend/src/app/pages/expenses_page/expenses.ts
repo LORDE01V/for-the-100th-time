@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-expenses',
@@ -12,6 +13,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrl: './expenses.scss'
 })
 export class Expenses implements OnInit {
+
   // Signals for state
   expenses = signal<any[]>([]);
   loadingExpenses = signal(true);
@@ -22,46 +24,62 @@ export class Expenses implements OnInit {
   // For background image
   backgroundImageUrl: SafeUrl;
 
-  constructor(private router: Router, private sanitizer: DomSanitizer) {
+  constructor(private router: Router, private sanitizer: DomSanitizer, private apiService: ApiService) {
     this.backgroundImageUrl = this.sanitizer.bypassSecurityTrustUrl('assets/images/Mpho_Jesica_Create_a_high-resolution_background_image_for_a_modern_energy_man_c2363fd3-711f-41c0-b272-af8fbfd0298c.png');
   }
 
   ngOnInit(): void {
-    // Simulate auth.getCurrentUser()
-    const currentUser = { id: 1, name: 'Demo User' }; // Replace with real auth logic
+    const currentUser = this.apiService.getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+      this.loadingExpenses.set(false);
+      this.loadingTopup.set(false);
+      return;
+    }
     this.user.set(currentUser);
-
-    // Simulate API calls
-    this.fetchLatestTopup();
     this.fetchExpenses();
   }
 
   fetchLatestTopup() {
-    this.loadingTopup.set(true);
-    setTimeout(() => {
-      // Simulate API response
+    // Derive latest topup from expenses with category 'Topup'
+    const topups = this.expenses().filter(e => (e.category || '').toLowerCase() === 'topup');
+    if (topups.length > 0) {
+      const latest = topups.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
       this.latestTopup.set({
-        transaction_type: 'recharge',
-        created_at: new Date().toISOString(),
-        promo_code: 'SAVE20',
-        voucher_code: '',
-        amount: 250,
+        transaction_type: 'topup',
+        created_at: latest.date,
+        promo_code: latest.promo_code || null,
+        voucher_code: latest.voucher_code || null,
+        amount: latest.amount,
       });
-      this.loadingTopup.set(false);
-    }, 1000);
+    } else {
+      this.latestTopup.set(null);
+    }
+    this.loadingTopup.set(false);
   }
 
   fetchExpenses() {
     this.loadingExpenses.set(true);
-    setTimeout(() => {
-      // Simulate API response
-      this.expenses.set([
-        { id: 1, category: 'Electricity', date: new Date().toISOString(), amount: 120.5, status: 'Paid' },
-        { id: 2, category: 'Water', date: new Date(Date.now() - 86400000).toISOString(), amount: 80.0, status: 'Pending' },
-        { id: 3, category: 'Internet', date: new Date(Date.now() - 2 * 86400000).toISOString(), amount: 60.0, status: 'Paid' },
-      ]);
-      this.loadingExpenses.set(false);
-    }, 1000);
+    const current = this.user();
+    this.apiService.get<{ expenses: any[] }>(`/api/user/expenses?user_id=${current.id}`).subscribe({
+      next: (res) => {
+        this.expenses.set((res?.expenses || []).map(e => ({
+          id: e.id,
+          category: e.category,
+          date: e.date,
+          amount: e.amount,
+          status: e.status
+        })));
+        this.loadingExpenses.set(false);
+        // After expenses are loaded, derive latest topup
+        this.loadingTopup.set(true);
+        this.fetchLatestTopup();
+      },
+      error: () => {
+        this.expenses.set([]);
+        this.loadingExpenses.set(false);
+        this.loadingTopup.set(false);
+      }
+    });
   }
 
   goHome() {

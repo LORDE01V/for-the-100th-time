@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-topup-page',
@@ -10,6 +11,7 @@ import { CommonModule } from '@angular/common';
   imports: [FormsModule, CommonModule]
 })
 export class TopupPage implements OnInit {
+
   // Form state
   balance = 'R0.00';
   amount = '';
@@ -30,6 +32,8 @@ export class TopupPage implements OnInit {
   // Status messages
   statusMessage: { type: 'success' | 'error' | 'warning', message: string } | null = null;
 
+  constructor(private apiService: ApiService) {}
+
   ngOnInit() {
     this.fetchBalance();
     this.fetchAutoTopUpSettings();
@@ -43,9 +47,8 @@ export class TopupPage implements OnInit {
   // Fetch balance from API
   async fetchBalance() {
     try {
-      // Replace with your real API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      this.balance = 'R150.00'; // Mock data
+      // If you have an endpoint to fetch balance, call it here.
+      // For now, keep the current value until topup response updates it.
     } catch (error) {
       console.error('Error fetching balance:', error);
     }
@@ -54,15 +57,10 @@ export class TopupPage implements OnInit {
   // Fetch auto top-up settings
   async fetchAutoTopUpSettings() {
     try {
-      // Replace with your real API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      // Mock data - replace with real API response
-      this.isAutoTopUpEnabled = false;
-      this.minBalance = '';
-      this.autoTopUpAmount = '';
-      this.autoTopUpFrequency = 'weekly';
-    } catch (error) {
-      console.error('Error fetching auto top-up settings:', error);
+      // TODO: Implement API call to fetch user's auto top-up settings when backend is ready.
+      // Keep current UI state for now.
+    } catch (err) {
+      console.error('Error fetching auto top-up settings:', err);
     }
   }
 
@@ -80,12 +78,27 @@ export class TopupPage implements OnInit {
     this.statusMessage = null;
 
     try {
-      // Replace with your real API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const newBalance = 150 + topUpAmount; // Mock calculation
-      this.balance = `R${newBalance.toFixed(2)}`;
-      this.showStatus('success', `Top-up successful! New balance: R${newBalance.toFixed(2)}`);
+      const currentUser = this.apiService.getCurrentUser();
+      if (!currentUser || !currentUser.id) {
+        this.showStatus('error', 'You must be logged in to top up.');
+        return;
+      }
+      const payload = {
+        user_id: currentUser.id,
+        amount: topUpAmount,
+        promo_code: this.promoCode || null,
+        voucher_code: this.voucherCode || null,
+      };
+      const res = await this.apiService.post<any>('/api/topup', payload).toPromise();
+      if (res?.success) {
+        const nb = typeof res.newBalance === 'number' ? res.newBalance : parseFloat(res.newBalance);
+        if (!isNaN(nb)) {
+          this.balance = `R${nb.toFixed(2)}`;
+        }
+        this.showStatus('success', 'Top-up successful!');
+      } else {
+        this.showStatus('error', res?.message || 'Payment failed. Please try again.');
+      }
       
       // Clear form
       this.amount = '';
@@ -102,7 +115,7 @@ export class TopupPage implements OnInit {
   async handleAutoTopUpSave() {
     if (!this.minBalance || !this.autoTopUpAmount) {
       this.showStatus('warning', 'Please fill in all required fields for Auto Top-Up.');
-      return;
+      // ...
     }
 
     this.isProcessing = true;

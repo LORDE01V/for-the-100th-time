@@ -39,8 +39,14 @@ from app.routes.events_calendar import events_calendar_bp
 from app.routes.topup import topup_bp
 from Backend.app.routes.expenses import expenses_bp
 from app.routes.expensenotifications import expensenotifications_bp
-from Backend.support import update_user_balance
-from Backend.support import save_payment_method, fetch_user_payment_methods # Assuming these are in support.py or will be added there
+from support import update_user_balance
+from support import (
+    save_payment_method,
+    fetch_user_payment_methods,
+    record_topup_transaction,
+    create_expense,
+    create_notification,
+) # Helpers for payments and notifications
 
 
 # Add the Backend directory and its parent to the Python path
@@ -233,10 +239,19 @@ def get_db():
 @flask_app.route('/api/topup', methods=['OPTIONS'])
 def handle_topup_options():
     response = make_response()
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    allowed_origins = {
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:4200',
+        'http://localhost:5000',
+    }
+    origin = request.headers.get('Origin', '')
+    if origin in allowed_origins:
+        response.headers['Access-Control-Allow-Origin'] = origin
+    response.headers['Vary'] = 'Origin'
     response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-    response.headers['Access-Control-Allow-Credentials'] = 'true' 
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
     return response
 
 
@@ -244,11 +259,46 @@ def handle_topup_options():
 def api_topup():
     data = request.get_json()
     if not data:
-        return jsonify({'error': 'Invalid request body'}), 400
+        return jsonify({'success': False, 'message': 'Invalid request body'}), 400
+
     user_id = data.get('user_id')
     amount = data.get('amount')
-    new_balance = update_user_balance(user_id, amount)
-    return jsonify({'newBalance': new_balance, 'success': True})
+    promo_code = data.get('promo_code')
+    voucher_code = data.get('voucher_code')
+
+    if not user_id or amount is None:
+        return jsonify({'success': False, 'message': 'user_id and amount are required'}), 400
+
+    try:
+        amount_val = float(amount)
+        if amount_val <= 0:
+            return jsonify({'success': False, 'message': 'amount must be greater than 0'}), 400
+    except Exception:
+        return jsonify({'success': False, 'message': 'amount must be numeric'}), 400
+
+    try:
+        # 1) Record transaction
+        tx_id = record_topup_transaction(user_id, amount_val, promo_code, voucher_code, 'topup')
+
+        # 2) Update balance
+        new_balance = update_user_balance(user_id, amount_val)
+
+        # 3) Create expense entry
+        expense_id = create_expense(user_id, amount_val, category='Topup', status='Paid')
+
+        # 4) Create notification
+        message = f"Topup of {amount_val:.2f} processed successfully."
+        notification_id = create_notification(user_id, message)
+
+        return jsonify({
+            'success': True,
+            'transaction_id': tx_id,
+            'expense_id': expense_id,
+            'notification_id': notification_id,
+            'newBalance': new_balance
+        }), 201
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Failed to process topup: {str(e)}'}), 500
 
 
 

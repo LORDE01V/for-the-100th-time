@@ -303,6 +303,32 @@ def update_user_balance(user_id, amount):
     raise Exception("Failed to update or insert user balance")
 
 
+def record_topup_transaction(user_id, amount, promo_code=None, voucher_code=None, transaction_type='topup'):
+    """Persist a topup transaction and return the new id."""
+    query = """
+    INSERT INTO topup_transactions (user_id, amount, promo_code, voucher_code, transaction_type)
+    VALUES (%s, %s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (user_id, amount, promo_code, voucher_code, transaction_type))
+
+
+def create_expense(user_id, amount, category='Topup', status='Paid'):
+    """Create an expense entry for the user and return the new id."""
+    query = """
+    INSERT INTO expenses (user_id, amount, category, status)
+    VALUES (%s, %s, %s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (user_id, amount, category, status))
+
+
+def create_notification(user_id, message):
+    """Create a notification for the user and return the new id."""
+    query = """
+    INSERT INTO notifications (user_id, message)
+    VALUES (%s, %s) RETURNING id
+    """
+    return execute_query('insert', query, (user_id, message))
+
 def save_auto_topup_settings(user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency):
     query = """
     INSERT INTO topup_settings (user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency)
