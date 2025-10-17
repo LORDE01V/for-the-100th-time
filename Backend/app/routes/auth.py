@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, url_for, session, jsonify, request, current_app, render_template
 from app import oauth
-from support import get_user_by_email, create_user, update_user_by_id, get_db
+from support import get_user_by_email, get_user_by_id, create_user, update_user_by_id, get_db
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
 import time
@@ -121,18 +121,18 @@ def google_callback():
 @auth_bp.route('/user')
 @jwt_required()
 def get_current_user():
-    user_email = get_jwt_identity()
-    user = get_user_by_email(user_email)
+    # JWT identity is user_id (set in login/register)
+    user_id = get_jwt_identity()
+    user = get_user_by_id(user_id)
     if not user:
         return create_response("User not found", 404)
         
     return jsonify({
         "id": user['id'],
-        "full_name": user['full_name'],
-        "surname": user.get('surname', ''),
-        "email": user['email'],
-        "phone_number": user.get('phone', ''),
-        "address": user.get('address', ''),
+        "full_name": user.get('full_name', ''),
+        "email": user.get('email', ''),
+        "phone_number": user.get('phone_number', ''),
+        "last_login": user.get('last_login')
     })
 
 @auth_bp.route('/logout')
@@ -168,6 +168,14 @@ def login():
                 return create_response('Invalid credentials', 401)
             
             access_token = create_access_token(identity=str(user['id']))
+            # Update last_login timestamp
+            try:
+                conn = get_db()
+                with conn.cursor() as cur:
+                    cur.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = %s", (int(user['id']),))
+                    conn.commit()
+            except Exception as _:
+                pass
             return jsonify({
                 'success': True,
                 'user': {

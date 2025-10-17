@@ -80,6 +80,19 @@ def execute_query(operation=None, query=None, params=None):
         if cur: cur.close()
         if conn: conn.close()
 
+# ================== SCHEMA HELPERS ==================
+def ensure_last_login_column():
+    """Ensure users.last_login exists (safe to call repeatedly)."""
+    conn, cur = connect_db()
+    if not conn or not cur:
+        raise Exception("Database connection failed")
+    try:
+        cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login TIMESTAMP;")
+        conn.commit()
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
 # ================== USER OPERATIONS ==================
 def create_user(email, password_hash, full_name=None, phone_number=None):
     """Create a new user account"""
@@ -91,10 +104,17 @@ def create_user(email, password_hash, full_name=None, phone_number=None):
 
 def get_user_by_email(email):
     """Get user by email address"""
-    query = "SELECT id, email, password_hash, full_name FROM users WHERE email = %s"
-    result = execute_query('search', query, (email,))
+    query = "SELECT id, email, password_hash, full_name, phone_number, last_login FROM users WHERE email = %s"
+    try:
+        result = execute_query('search', query, (email,))
+    except Exception as e:
+        if 'last_login' in str(e):
+            ensure_last_login_column()
+            result = execute_query('search', query, (email,))
+        else:
+            raise
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name']
+        columns = ['id', 'email', 'password_hash', 'full_name', 'phone_number', 'last_login']
         return dict(zip(columns, result[0]))
     return None
 
@@ -104,10 +124,17 @@ def get_user_by_id(user_id):
         user_id = int(user_id)
     except Exception:
         return None
-    query = "SELECT id, email, password_hash, full_name FROM users WHERE id = %s"
-    result = execute_query('search', query, (user_id,))
+    query = "SELECT id, email, password_hash, full_name, phone_number, last_login FROM users WHERE id = %s"
+    try:
+        result = execute_query('search', query, (user_id,))
+    except Exception as e:
+        if 'last_login' in str(e):
+            ensure_last_login_column()
+            result = execute_query('search', query, (user_id,))
+        else:
+            raise
     if result:
-        columns = ['id', 'email', 'password_hash', 'full_name']
+        columns = ['id', 'email', 'password_hash', 'full_name', 'phone_number', 'last_login']
         return dict(zip(columns, result[0]))
     return None
 
@@ -388,6 +415,7 @@ def initialize_db():
             phone_number VARCHAR(20)
         )""")
         cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone_number VARCHAR(20);") # Add phone_number column if it doesn't exist
+        cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login TIMESTAMP;") # Track last login
         cur.execute("""
         CREATE TABLE IF NOT EXISTS solar_systems (
             id SERIAL PRIMARY KEY,

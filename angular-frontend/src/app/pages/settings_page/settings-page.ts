@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ApiService } from '../../services/api.service';
+import { Router } from '@angular/router';
 
 interface PasswordErrors {
   oldPassword?: string;
@@ -16,10 +18,10 @@ interface PasswordErrors {
   imports: [FormsModule, CommonModule]
 })
 export class SettingsPage {
-  // Mock user object (replace with real auth service)
+  // User view model for template (keeps lastLogin casing expected by HTML)
   user = {
-    email: 'user@example.com',
-    lastLogin: new Date().toISOString()
+    email: '',
+    lastLogin: ''
   };
 
   // Password change state
@@ -38,6 +40,44 @@ export class SettingsPage {
 
   // Delete account modal
   showDeleteModal = false;
+
+  constructor(private apiService: ApiService, private router: Router) {
+    // Initialize from local storage (fast paint)
+    const current = this.apiService.getCurrentUser();
+    if (current && current.email) {
+      this.user.email = current.email;
+    }
+    // Try to fetch authoritative user (with last_login) from backend
+    try {
+      this.apiService.get<any>('/api/auth/user').subscribe({
+        next: (res) => {
+          if (res?.email) this.user.email = res.email;
+          if (res?.last_login) this.user.lastLogin = res.last_login;
+        },
+        error: () => {
+          // ignore; keep local values
+        }
+      });
+    } catch { /* noop */ }
+  }
+
+  ngOnInit() {
+    this.loadPreferences();
+  }
+
+  loadPreferences() {
+    try {
+      this.apiService.get<any>('/notifications/preferences').subscribe({
+        next: (res) => {
+          if (typeof res?.receiveSms === 'boolean') this.receiveSms = res.receiveSms;
+          if (typeof res?.receiveEmail === 'boolean') this.receiveEmail = res.receiveEmail;
+        },
+        error: () => {
+          // keep defaults
+        }
+      });
+    } catch { /* noop */ }
+  }
 
   // Format last login date
   formatLastLogin(dateString: string): string {
@@ -77,14 +117,19 @@ export class SettingsPage {
 
     this.passwordChangeLoading = true;
     try {
-      // Replace with real API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const res = await this.apiService.post<any>('/api/auth/change-password', {
+        old_password: this.oldPassword,
+        new_password: this.newPassword
+      }).toPromise();
+
+      // Success
       this.oldPassword = '';
       this.newPassword = '';
       this.confirmNewPassword = '';
-      this.passwordChangeStatus = { status: 'success', message: 'Password updated successfully' };
-    } catch {
-      this.passwordChangeStatus = { status: 'error', message: 'Password change failed' };
+      this.passwordChangeStatus = { status: 'success', message: 'Password updated successfully.' };
+    } catch (err: any) {
+      const msg = err?.message || 'Password change failed';
+      this.passwordChangeStatus = { status: 'error', message: msg };
     } finally {
       this.passwordChangeLoading = false;
       setTimeout(() => this.passwordChangeStatus = null, 5000);
@@ -96,8 +141,10 @@ export class SettingsPage {
     this.preferencesSaving = true;
     this.preferencesStatus = null;
     try {
-      // Replace with real API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const res = await this.apiService.post<any>('/notifications/preferences', {
+        receiveSms: this.receiveSms,
+        receiveEmail: this.receiveEmail
+      }).toPromise();
       this.preferencesStatus = { status: 'success', message: 'Preferences saved successfully' };
     } catch {
       this.preferencesStatus = { status: 'error', message: 'Failed to save preferences' };
