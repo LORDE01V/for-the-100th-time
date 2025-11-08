@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { firstValueFrom } from 'rxjs';
+import { ApiService } from '../../services/api.service';
 
 interface FaqItem {
   question: string;
@@ -15,6 +17,8 @@ interface FaqItem {
   imports: [FormsModule, CommonModule]
 })
 export class SupportPage {
+  constructor(private readonly apiService: ApiService) {}
+
   // FAQ Data
   faqItems: FaqItem[] = [
     {
@@ -59,11 +63,25 @@ export class SupportPage {
   // Contact form submit
   async handleContactSubmit(event: Event) {
     event.preventDefault();
+    if (!this.name.trim() || !this.email.trim() || !this.message.trim()) {
+      this.submitStatus = {
+        type: 'error',
+        message: 'Please fill in your name, email, and message before submitting.'
+      };
+      return;
+    }
+
     this.isSubmitting = true;
     this.submitStatus = null;
     try {
-      // Replace with your real API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const payload = {
+        name: this.name.trim(),
+        email: this.email.trim(),
+        subject: this.subject.trim() || null,
+        message: this.message.trim()
+      };
+
+      await firstValueFrom(this.apiService.post('/api/support', payload));
       this.submitStatus = {
         type: 'success',
         message: 'Your support request has been received. We will contact you shortly.'
