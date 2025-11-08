@@ -58,13 +58,11 @@ export class TopupPage implements OnInit {
   // Fetch auto top-up settings
   async fetchAutoTopUpSettings() {
     try {
-      const currentUser = this.apiService.getCurrentUser();
-      if (!currentUser?.id) {
-        return;
-      }
+      const userId = await this.resolveUserId();
+      if (!userId) return;
 
       const response = await firstValueFrom(
-        this.apiService.get<any>(`/api/user/auto-topup-settings?user_id=${currentUser.id}`)
+        this.apiService.get<any>(`/api/user/auto-topup-settings?user_id=${userId}`)
       );
 
       if (response) {
@@ -107,13 +105,13 @@ export class TopupPage implements OnInit {
     this.statusMessage = null;
 
     try {
-      const currentUser = this.apiService.getCurrentUser();
-      if (!currentUser || !currentUser.id) {
+      const userId = await this.resolveUserId();
+      if (!userId) {
         this.showStatus('error', 'You must be logged in to top up.');
         return;
       }
       const payload = {
-        user_id: currentUser.id,
+        user_id: userId,
         amount: topUpAmount,
         promo_code: this.promoCode || null,
         voucher_code: this.voucherCode || null,
@@ -157,14 +155,14 @@ export class TopupPage implements OnInit {
     this.isProcessing = true;
     this.statusMessage = null;
     try {
-      const currentUser = this.apiService.getCurrentUser();
-      if (!currentUser?.id) {
+      const userId = await this.resolveUserId();
+      if (!userId) {
         this.showStatus('error', 'You must be logged in to manage auto top-up settings.');
         return;
       }
 
       const payload = {
-        user_id: currentUser.id,
+        user_id: userId,
         is_auto_topup: true,
         min_balance: minBalanceValue,
         auto_topup_amount: autoTopUpAmountValue,
@@ -185,6 +183,22 @@ export class TopupPage implements OnInit {
     } finally {
       this.isProcessing = false;
     }
+  }
+
+  // Resolve user id from local storage or backend (JWT)
+  private async resolveUserId(): Promise<number | null> {
+    const local = this.apiService.getCurrentUser();
+    if (local?.id) return local.id;
+    try {
+      const me = await firstValueFrom(this.apiService.get<any>('/api/auth/user'));
+      if (me?.id) {
+        localStorage.setItem('user', JSON.stringify({ id: me.id, email: me.email, name: me.full_name }));
+        return me.id;
+      }
+    } catch (_) {
+      // ignore; caller will handle null
+    }
+    return null;
   }
 
   // Show status message

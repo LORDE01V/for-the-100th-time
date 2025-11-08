@@ -4432,3 +4432,37 @@ LINE 2:         INSERT INTO stories (user_id, name, email, quote, ra...
 2025-11-08 19:13:12,494 - WARNING -  * Debugger is active!
 2025-11-08 19:13:12,504 - INFO -  * Debugger PIN: 737-778-261
 2025-11-08 19:13:17,990 - INFO -  * Detected change in 'C:\\for-the-100th-time\\Backend\\app\\routes\\community_stories.py', reloading
+2025-11-08 19:13:18,218 - INFO -  * Restarting with stat
+2025-11-08 19:13:21,858 - WARNING -  * Debugger is active!
+2025-11-08 19:13:21,869 - INFO -  * Debugger PIN: 737-778-261
+2025-11-08 19:13:48,262 - INFO - 127.0.0.1 - - [08/Nov/2025 19:13:48] "OPTIONS /api/community-stories HTTP/1.1" 200 -
+2025-11-08 19:13:48,739 - INFO - 127.0.0.1 - - [08/Nov/2025 19:13:48] "GET /api/community-stories HTTP/1.1" 200 -
+2025-11-08 19:13:52,095 - INFO - 127.0.0.1 - - [08/Nov/2025 19:13:52] "GET /api/community-stories HTTP/1.1" 200 -
+2025-11-08 19:14:32,812 - INFO - 127.0.0.1 - - [08/Nov/2025 19:14:32] "OPTIONS /api/community-stories HTTP/1.1" 200 -
+2025-11-08 19:14:33,208 - INFO - 127.0.0.1 - - [08/Nov/2025 19:14:33] "POST /api/community-stories HTTP/1.1" 200 -
+2025-11-08 19:14:36,905 - INFO - 127.0.0.1 - - [08/Nov/2025 19:14:36] "GET /api/community-stories HTTP/1.1" 200 -
+2025-11-08 19:15:58,569 - INFO - 127.0.0.1 - - [08/Nov/2025 19:15:58] "OPTIONS /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:15:59,031 - INFO - 127.0.0.1 - - [08/Nov/2025 19:15:59] "GET /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:21:34,601 - INFO - 127.0.0.1 - - [08/Nov/2025 19:21:34] "OPTIONS /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:21:35,102 - INFO - 127.0.0.1 - - [08/Nov/2025 19:21:35] "GET /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:23:06,270 - INFO - 127.0.0.1 - - [08/Nov/2025 19:23:06] "OPTIONS /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:23:06,649 - INFO - 127.0.0.1 - - [08/Nov/2025 19:23:06] "GET /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:23:09,308 - INFO - 127.0.0.1 - - [08/Nov/2025 19:23:09] "GET /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:23:10,912 - INFO - 127.0.0.1 - - [08/Nov/2025 19:23:10] "GET /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:26:39,159 - INFO - 127.0.0.1 - - [08/Nov/2025 19:26:39] "OPTIONS /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:26:39,731 - INFO - 127.0.0.1 - - [08/Nov/2025 19:26:39] "GET /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:27:14,410 - INFO - 127.0.0.1 - - [08/Nov/2025 19:27:14] "OPTIONS /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:27:14,865 - INFO - 127.0.0.1 - - [08/Nov/2025 19:27:14] "GET /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:27:15,965 - INFO - 127.0.0.1 - - [08/Nov/2025 19:27:15] "GET /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:28:30,534 - INFO - 127.0.0.1 - - [08/Nov/2025 19:28:30] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-11-08 19:28:31,544 - INFO - Database connection successful.
+2025-11-08 19:28:31,554 - INFO - 127.0.0.1 - - [08/Nov/2025 19:28:31] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-08 19:28:36,755 - INFO - 127.0.0.1 - - [08/Nov/2025 19:28:36] "OPTIONS /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:28:37,255 - INFO - 127.0.0.1 - - [08/Nov/2025 19:28:37] "GET /api/user/auto-topup-settings?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:33:45,937 - INFO - 127.0.0.1 - - [08/Nov/2025 19:33:45] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2025-11-08 19:33:46,872 - INFO - Database connection successful.
+2025-11-08 19:33:46,884 - INFO - 127.0.0.1 - - [08/Nov/2025 19:33:46] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-08 19:33:52,979 - INFO - 127.0.0.1 - - [08/Nov/2025 19:33:52] "OPTIONS /profile/me HTTP/1.1" 200 -
+2025-11-08 19:33:53,462 - INFO - 127.0.0.1 - - [08/Nov/2025 19:33:53] "GET /profile/me HTTP/1.1" 200 -
+2025-11-08 19:34:01,966 - INFO - 127.0.0.1 - - [08/Nov/2025 19:34:01] "OPTIONS /api/user/expenses?user_id=43 HTTP/1.1" 200 -
+2025-11-08 19:34:02,408 - INFO - 127.0.0.1 - - [08/Nov/2025 19:34:02] "GET /api/user/expenses?user_id=43 HTTP/1.1" 200 -
