@@ -21,20 +21,28 @@ def submit_community_story():
 def fetch_community_stories():
     try:
         stories = get_all_community_stories()
-        if not stories:  # Check if stories is None or empty
-            return jsonify({'error': 'No stories found'}), 404
-        # Assuming get_all_community_stories returns a list of tuples
-        stories_list = [
-            {
-                "id": row[0],
-                "user_name": row[1],
-                "story_text": row[2],
-                "rating": row[3],
-                "created_at": row[4] if len(row) > 4 else None
-            }
-            for row in stories
-        ]
-        return jsonify(stories_list)
+        if not stories:
+            return jsonify([])
+        # Normalize rows into dicts (supports tuple or dict return)
+        normalized = []
+        for row in stories:
+            if isinstance(row, dict):
+                normalized.append({
+                    "id": row.get("id"),
+                    "user_name": row.get("user_name"),
+                    "story_text": row.get("story_text"),
+                    "rating": row.get("rating"),
+                    "created_at": row.get("created_at"),
+                })
+            else:
+                normalized.append({
+                    "id": row[0],
+                    "user_name": row[1],
+                    "story_text": row[2],
+                    "rating": row[3],
+                    "created_at": row[4] if len(row) > 4 else None
+                })
+        return jsonify(normalized)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
         

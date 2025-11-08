@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { TopupPage } from './topup-page';
 
@@ -8,7 +9,7 @@ describe('TopupPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TopupPage]
+      imports: [TopupPage, HttpClientTestingModule]
     })
     .compileComponents();
 

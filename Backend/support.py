@@ -65,12 +65,26 @@ def execute_query(operation=None, query=None, params=None):
         else:
             cur.execute(query)
 
-        if operation == 'search':
+        normalized_op = (operation or '').lower()
+        if normalized_op in ('search', 'select'):
             return cur.fetchall()
-        elif operation == 'insert':
+        elif normalized_op in ('insert', 'update', 'delete', 'create', 'alter'):
             conn.commit()
-            result = cur.fetchone()
-            return result[0] if result and cur.description else None
+            # For INSERT ... RETURNING, UPDATE ... RETURNING, etc.
+            if cur.description:
+                row = cur.fetchone()
+                if row is None:
+                    return None
+                # Return the first column if a single id is returned, else the whole row
+                return row[0] if len(row) == 1 else row
+            return None
+        else:
+            # Default: commit if it mutates, best-effort safe fallback
+            try:
+                conn.commit()
+            except Exception:
+                pass
+            return None
     except Exception as e:
         if conn:
             conn.rollback()

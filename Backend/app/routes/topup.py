@@ -1,5 +1,11 @@
 from flask import Blueprint, request, jsonify, session
-from Backend.support import get_user_balance, update_user_balance, save_auto_topup_settings, execute_query
+from Backend.support import (
+    get_user_balance,
+    update_user_balance,
+    save_auto_topup_settings,
+    execute_query,
+    create_notification,
+)
 
 
 topup_bp = Blueprint('topup', __name__)
@@ -171,6 +177,18 @@ def set_auto_topup_settings():
 
     result = save_auto_topup_settings(user_id, is_auto_topup, min_balance, auto_topup_amount, auto_topup_frequency)
     if result:
+        try:
+            status_phrase = "enabled" if is_auto_topup else "disabled"
+            message = (
+                f"Auto top-up {status_phrase}. "
+                f"Amount: R{float(auto_topup_amount):.2f}, "
+                f"Threshold: R{float(min_balance):.2f}, "
+                f"Frequency: {auto_topup_frequency.capitalize()}."
+            )
+            create_notification(user_id, message)
+        except Exception as notification_error:
+            print(f"Warning: failed to create auto top-up notification: {notification_error}")
+
         return jsonify({"message": "Auto Top-Up settings saved", "id": result}), 200
     else:
         return jsonify({"error": "Failed to save settings"}), 500

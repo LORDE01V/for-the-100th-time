@@ -3,13 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { firstValueFrom } from 'rxjs';
 
 interface Story {
   id: number;
   name: string;
   quote: string;
   rating: number;
-  user_avatar: string;
+  user_avatar: string | null;
   created_at: string;
 }
 
@@ -48,7 +49,22 @@ export class Impact implements OnInit {
     this.loading = true;
     this.error = null;
     try {
-      this.stories = await this.apiService.get<Story[]>('/stories').toPromise() || [];
+      const raw = await firstValueFrom(
+        this.apiService.get<any[]>('/api/community-stories')
+      );
+      const mapped = (raw ?? []).map((s: any, idx: number) => {
+        const name = s.user_name || s.name || 'Community Member';
+        return {
+          id: s.id ?? idx,
+          name,
+          quote: s.story_text ?? s.quote ?? '',
+          rating: s.rating ?? 0,
+          user_avatar: s.user_avatar ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
+          created_at: s.created_at ?? new Date().toISOString()
+        } as Story;
+      });
+      this.stories = mapped;
+      this.currentStoryIndex = 0;
       this.loading = false;
     } catch (err) {
       console.error('Failed to load stories:', err);
@@ -80,24 +96,21 @@ export class Impact implements OnInit {
     }
 
     try {
-      const response = await this.apiService.post<any>('/stories', {
-        name: this.name,
-        email: this.email,
-        quote: this.quote,
-        rating: this.rating
-      }).toPromise();
+      await firstValueFrom(
+        this.apiService.post<any>('/api/community-stories', {
+          user_name: this.name,
+          story_text: this.quote,
+          rating: this.rating
+        })
+      );
+      alert('Thank you for your story!');
+      await this.loadStories();
 
-      alert('Thank you for your story! ' + 
-           (response?.needs_approval ? 'Your story is pending approval.' : 'Your story is now live!'));
-      
       // Reset form
       this.name = '';
       this.email = '';
       this.quote = '';
       this.rating = 0;
-
-      // Refresh stories
-      await this.loadStories();
     } catch (err) {
       console.error('Failed to submit story:', err);
       alert('Failed to submit your story. Please try again.');

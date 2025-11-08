@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-topup-page',
@@ -57,8 +58,36 @@ export class TopupPage implements OnInit {
   // Fetch auto top-up settings
   async fetchAutoTopUpSettings() {
     try {
-      // TODO: Implement API call to fetch user's auto top-up settings when backend is ready.
-      // Keep current UI state for now.
+      const currentUser = this.apiService.getCurrentUser();
+      if (!currentUser?.id) {
+        return;
+      }
+
+      const response = await firstValueFrom(
+        this.apiService.get<any>(`/api/user/auto-topup-settings?user_id=${currentUser.id}`)
+      );
+
+      if (response) {
+        this.isAutoTopUpEnabled = !!response.is_auto_topup;
+
+        if (response.min_balance !== undefined && response.min_balance !== null) {
+          const parsedMinBalance = Number(response.min_balance);
+          this.minBalance = !isNaN(parsedMinBalance)
+            ? parsedMinBalance.toFixed(2)
+            : `${response.min_balance}`;
+        }
+
+        if (response.auto_topup_amount !== undefined && response.auto_topup_amount !== null) {
+          const parsedAutoAmount = Number(response.auto_topup_amount);
+          this.autoTopUpAmount = !isNaN(parsedAutoAmount)
+            ? parsedAutoAmount.toFixed(2)
+            : `${response.auto_topup_amount}`;
+        }
+
+        if (response.auto_topup_frequency) {
+          this.autoTopUpFrequency = response.auto_topup_frequency;
+        }
+      }
     } catch (err) {
       console.error('Error fetching auto top-up settings:', err);
     }
@@ -89,7 +118,7 @@ export class TopupPage implements OnInit {
         promo_code: this.promoCode || null,
         voucher_code: this.voucherCode || null,
       };
-      const res = await this.apiService.post<any>('/api/topup', payload).toPromise();
+      const res = await firstValueFrom(this.apiService.post<any>('/api/topup', payload));
       if (res?.success) {
         const nb = typeof res.newBalance === 'number' ? res.newBalance : parseFloat(res.newBalance);
         if (!isNaN(nb)) {
@@ -115,17 +144,42 @@ export class TopupPage implements OnInit {
   async handleAutoTopUpSave() {
     if (!this.minBalance || !this.autoTopUpAmount) {
       this.showStatus('warning', 'Please fill in all required fields for Auto Top-Up.');
-      // ...
+      return;
+    }
+
+    const minBalanceValue = parseFloat(this.minBalance);
+    const autoTopUpAmountValue = parseFloat(this.autoTopUpAmount);
+    if (isNaN(minBalanceValue) || minBalanceValue < 0 || isNaN(autoTopUpAmountValue) || autoTopUpAmountValue <= 0) {
+      this.showStatus('warning', 'Please provide valid numeric values for minimum balance and auto top-up amount.');
+      return;
     }
 
     this.isProcessing = true;
+    this.statusMessage = null;
     try {
-      // Replace with your real API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
+      const currentUser = this.apiService.getCurrentUser();
+      if (!currentUser?.id) {
+        this.showStatus('error', 'You must be logged in to manage auto top-up settings.');
+        return;
+      }
+
+      const payload = {
+        user_id: currentUser.id,
+        is_auto_topup: true,
+        min_balance: minBalanceValue,
+        auto_topup_amount: autoTopUpAmountValue,
+        auto_topup_frequency: this.autoTopUpFrequency
+      };
+
+      await firstValueFrom(this.apiService.post('/api/user/auto-topup-settings', payload));
+
       this.isAutoTopUpEnabled = true;
+      this.minBalance = minBalanceValue.toFixed(2);
+      this.autoTopUpAmount = autoTopUpAmountValue.toFixed(2);
       this.showAutoTopUpModal = false;
       this.showStatus('success', `Auto Top-Up enabled! Your account will be topped up with R${this.autoTopUpAmount} when balance falls below R${this.minBalance}.`);
+
+      await this.fetchAutoTopUpSettings();
     } catch (error) {
       this.showStatus('error', 'Failed to save auto top-up settings.');
     } finally {
